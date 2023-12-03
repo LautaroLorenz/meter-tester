@@ -1,11 +1,11 @@
 {
-  "name": "angular-electron",
-  "version": "13.0.0",
-  "description": "Angular 16 with Electron 25 (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "name": "meter-tester",
+  "version": "1.0.0",
+  "description": "Meter tester",
+  "homepage": "https://github.com/LautaroLorenz/meter-tester",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Lautaro Lorenz",
+    "email": "lautaro.lorenz@gmail.com"
   },
   "keywords": [
     "angular",
