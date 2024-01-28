@@ -7,7 +7,7 @@ const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
 function createWindow(): BrowserWindow {
-
+  console.log('test commit');
   const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
