@@ -1,6 +1,9 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import database from './resources/database/database';
+
+const config = { isProduction: true };
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -40,6 +43,8 @@ function createWindow(): BrowserWindow {
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
   }
+
+  database.connect(config);
 
   // Emitted when the window is closed.
   win.on('closed', () => {

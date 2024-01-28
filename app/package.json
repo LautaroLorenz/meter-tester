@@ -5,8 +5,17 @@
     "name": "Lautaro Lorenz",
     "email": "lautaro.lorenz@gmail.com"
   },
+  "scripts": {
+    "migrate": "knex migrate:latest --knexfile ./resources/database/knexfile.js",
+    "migrate:rollback": "knex migrate:rollback --knexfile ./resources/database/knexfile.js",
+    "seed": "knex seed:run --knexfile ./resources/database/knexfile.js"
+  },
   "version": "1.0.0",
   "main": "main.js",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@faker-js/faker": "^8.4.0",
+    "knex": "^3.1.0",
+    "sqlite3": "^5.1.7"
+  }
 }
