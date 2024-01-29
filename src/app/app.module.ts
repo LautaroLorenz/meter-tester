@@ -2,19 +2,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
-
 import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // NG Translate
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { HomeModule } from './features/home/home.module';
-import { DetailModule } from './features/detail/detail.module';
-
 import { AppComponent } from './app.component';
+import { FeaturesModule } from './features/features.module';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
@@ -23,14 +19,12 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    CoreModule,
-    SharedModule,
-    HomeModule,
-    DetailModule,
     AppRoutingModule,
+    FeaturesModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

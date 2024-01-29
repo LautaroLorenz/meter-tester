@@ -7,7 +7,7 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ElectronService {
   ipcRenderer!: typeof ipcRenderer;
@@ -26,13 +26,19 @@ export class ElectronService {
       this.childProcess = (window as any).require('child_process');
       this.childProcess.exec('node -v', (error, stdout, stderr) => {
         if (error) {
+          // FIXME
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           console.error(`error: ${error.message}`);
           return;
         }
         if (stderr) {
+          // FIXME
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           console.error(`stderr: ${stderr}`);
           return;
         }
+        // FIXME
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.log(`stdout:\n${stdout}`);
       });
 

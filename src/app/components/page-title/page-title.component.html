@@ -1,0 +1,25 @@
+<p-toolbar
+  appTrackHeight="appPageTitle"
+  styleClass="bg-bluegray-50 py-2 border-noround"
+>
+  <div class="flex align-items-center">
+    <p-button
+      *ngIf="showBack"
+      icon="pi pi-arrow-left"
+      styleClass="p-button-rounded p-button-text"
+      (click)="backEvent.emit()"
+      pTooltip="Volver a la página anterior"
+    ></p-button>
+    <p>
+      <span
+        *ngIf="headerIcon"
+        [class]="headerIcon"
+        style="font-size: 1.2rem"
+        class="mx-2"
+      ></span>
+      <span class="ml-2 text-xl">{{ title }}</span>
+    </p>
+    <ng-content select="[toolbar-left]"></ng-content>
+  </div>
+  <ng-content select="[toolbar-right]"></ng-content>
+</p-toolbar>

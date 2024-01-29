@@ -1,0 +1,150 @@
+<p-toolbar styleClass="py-5 px-3 border-noround">
+  <div class="p-toolbar-group-left">
+    <span class="p-input-icon-left">
+      <i *ngIf="!search.getRawValue()" class="pi pi-search"></i>
+      <i
+        *ngIf="search.getRawValue()"
+        class="pi pi-times cursor-pointer"
+        pRipple
+        pTooltip="Limpiar búsqueda"
+        [showDelay]="700"
+        (click)="clearSearch()"
+      ></i>
+      <input
+        type="text"
+        class="w-20rem"
+        pInputText
+        placeholder="Buscar"
+        [formControl]="search"
+      />
+    </span>
+  </div>
+  <div class="p-toolbar-group-right">
+    <ng-container *ngIf="abmDetailTemplate">
+      <p-button
+        label="Nuevo"
+        icon="pi pi-plus"
+        styleClass="ml-2 p-button-outlined"
+        (click)="createElement()"
+      ></p-button>
+    </ng-container>
+    <ng-content select="[toolbar-group-right]"></ng-content>
+  </div>
+</p-toolbar>
+
+<p-table
+  #primeNgTable
+  styleClass="p-datatable-gridlines p-datatable-striped mx-3"
+  [columns]="columns"
+  [value]="dataset"
+  [paginator]="paginator"
+  [rows]="rows"
+  [(selection)]="selected"
+>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th class="w-3rem p-0 m-0 text-center">
+        <p-menu
+          #menu
+          appendTo="body"
+          [model]="checkboxColumnMenuItems"
+          [popup]="true"
+        ></p-menu>
+        <button
+          pButton
+          icon="pi pi-list"
+          class="p-button-text w-full"
+          (click)="menu.toggle($event)"
+        ></button>
+      </th>
+      <th
+        *ngFor="let col of columns"
+        [pSortableColumn]="col.field"
+        [pSortableColumnDisabled]="!col.sortable"
+        [pTooltip]="col.headerTooltip"
+        tooltipPosition="top"
+        [colSpan]="col.colSpan"
+      >
+        {{ col.header }}
+        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+      </th>
+      <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <td class="text-center">
+        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+      </td>
+      <ng-container *ngFor="let col of columns">
+        <td class="{{ col.styleClass }}">
+          {{ col.prefix }}{{ rowData | dotStringAsObject : col.field
+          }}{{ col.suffix }}
+        </td>
+        <ng-container *ngFor="let colSpanColumn of col.colSpanColumns">
+          <td class="{{ colSpanColumn.styleClass }}">
+            {{ colSpanColumn.prefix
+            }}{{ rowData | dotStringAsObject : colSpanColumn.field
+            }}{{ colSpanColumn.suffix }}
+          </td>
+        </ng-container>
+      </ng-container>
+      <td class="p-2 text-center">
+        <ng-container
+          [ngTemplateOutlet]="tableColumnButtonsTemplate"
+          [ngTemplateOutletContext]="{ element: rowData }"
+        ></ng-container>
+        <ng-container *ngIf="abmDetailTemplate">
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+            (click)="editElement(rowData)"
+          ></button>
+        </ng-container>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+          (click)="deleteElement(rowData)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<ng-container *ngIf="abmDetailTemplate">
+  <p-dialog
+    [(visible)]="detailDialogVisible"
+    [style]="{ minWidth: '450px' }"
+    header="Detalle"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <ng-container *ngTemplateOutlet="abmDetailTemplate"></ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        pRipple
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text p-button-outlined"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        label="Guardar"
+        icon="pi pi-check"
+        class="p-button p-button-success"
+        (click)="saveElement()"
+        [disabled]="!detailFormValid"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</ng-container>
