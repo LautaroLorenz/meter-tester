@@ -1,7 +1,18 @@
+import { ipcMain } from 'electron';
+
+function getProductionPath(): string {
+  return  `${__dirname}/database.db`.replace('/app.asar/resources/database', '')
+}
+
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 export default {
+  register: () => {
+    ipcMain.handle('get-database-path', async () => {
+      return getProductionPath();
+    });
+  },
   development: {
     client: 'sqlite3',
     connection: `${__dirname}/../../../src/assets/database.db`,

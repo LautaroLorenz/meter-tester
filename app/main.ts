@@ -2,6 +2,9 @@ import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import database from './resources/database/database';
+import knexFile from './resources/database/knexfile';
+
+knexFile.register();
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
