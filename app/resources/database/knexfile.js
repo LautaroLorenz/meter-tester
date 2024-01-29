@@ -10,21 +10,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
-function getProductionPath() {
-    return `${__dirname}/database.db`.replace('/app.asar/resources/database', '');
+const path = require('path');
+let _isProduction;
+function getDatabasePath() {
+    console.log('get path', _isProduction);
+    const separator = path.sep;
+    let databasePath;
+    if (_isProduction) {
+        databasePath = `${__dirname}${separator}database.db`.replace(`${separator}app.asar${separator}resources${separator}database`, '');
+    }
+    else {
+        databasePath = `${__dirname}${separator}..${separator}..${separator}..${separator}src${separator}assets${separator}database.db`;
+    }
+    return databasePath;
 }
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 exports.default = {
+    setIsProduction: (isProduction) => {
+        _isProduction = isProduction;
+    },
     register: () => {
         electron_1.ipcMain.handle('get-database-path', () => __awaiter(void 0, void 0, void 0, function* () {
-            return getProductionPath();
+            return getDatabasePath();
         }));
     },
     development: {
         client: 'sqlite3',
-        connection: `${__dirname}/../../../src/assets/database.db`,
+        connection: getDatabasePath(),
         useNullAsDefault: true,
         migrations: {
             // Will create your migrations in the data folder automatically
@@ -41,7 +55,7 @@ exports.default = {
     },
     production: {
         client: 'sqlite3',
-        connection: `${__dirname}/database.db`.replace('/app.asar/resources/database', ''),
+        connection: getDatabasePath(),
         useNullAsDefault: true,
         migrations: {
             // Will create your migrations in the data folder automatically
