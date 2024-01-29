@@ -14,13 +14,7 @@ export class HomeComponent implements OnInit {
 
     this.ipcService
       .invoke('get-database-path')
-      .then((res) => console.log(res))
+      .then((res) => console.log('get-database-path', res))
       .catch(() => console.log('no se pudo cargar dirname'));
-    setTimeout(() => {
-      this.ipcService
-        .invoke('get-database-path')
-        .then((res) => console.log(res))
-        .catch(() => console.log('no se pudo cargar dirname'));
-    }, 5000);
   }
 }

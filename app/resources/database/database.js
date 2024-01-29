@@ -7,7 +7,6 @@ let knex;
 exports.default = {
     connect: ({ isProduction }) => {
         const environment = isProduction ? 'production' : 'development';
-        knexfile_1.default.setIsProduction(isProduction);
         knex = require('knex')(knexfile_1.default[environment]);
         abm_1.default.setKnex(knex);
         // setEssayKnex(knex);

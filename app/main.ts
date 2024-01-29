@@ -42,8 +42,8 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    const url = new URL(path.join('file:', __dirname, pathIndex));
     database.connect({ isProduction: true });
+    const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
   }
 
