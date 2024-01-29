@@ -23,7 +23,7 @@ exports.default = {
     },
     production: {
         client: 'sqlite3',
-        connection: `${__dirname}/../../../src/assets/database.db`,
+        connection: `${__dirname}/database.db`.replace('/app.asar/resources/database', ''),
         useNullAsDefault: true,
         migrations: {
             // Will create your migrations in the data folder automatically

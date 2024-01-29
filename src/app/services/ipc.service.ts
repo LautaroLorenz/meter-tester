@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */ // FIXME
 import { Injectable } from '@angular/core';
 import { IpcRenderer } from 'electron';
 
@@ -47,8 +48,6 @@ export class IpcService {
     if (!this.ipc) {
       throw new Error('IpcRenderer not initialized');
     }
-    // FIXME
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.ipc.invoke(channel, ...args);
   }
 

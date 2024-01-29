@@ -3,8 +3,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import database from './resources/database/database';
 
-const config = { isProduction: true };
-
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
   serve = args.some((val) => val === '--serve');
@@ -30,6 +28,7 @@ function createWindow(): BrowserWindow {
     debug();
 
     require('electron-reloader')(module);
+    database.connect({ isProduction: false });
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -41,10 +40,9 @@ function createWindow(): BrowserWindow {
     }
 
     const url = new URL(path.join('file:', __dirname, pathIndex));
+    database.connect({ isProduction: true });
     win.loadURL(url.href);
   }
-
-  database.connect(config);
 
   // Emitted when the window is closed.
   win.on('closed', () => {
