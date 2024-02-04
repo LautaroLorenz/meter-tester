@@ -8,12 +8,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
+import { MetersComponent } from './meters/meters.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
-    BrandsComponent,
     PageNotFoundComponent,
+    BrandsComponent,
+    MetersComponent,
   ],
   imports: [
     CommonModule,

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrandsComponent } from './brands/brands.component';
 import { PageUrlName } from '../components/menu/models/page-name.model';
+import { MetersComponent } from './meters/meters.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: PageUrlName.brands,
     component: BrandsComponent,
+  },
+  {
+    path: PageUrlName.meters,
+    component: MetersComponent,
   },
 ];
 

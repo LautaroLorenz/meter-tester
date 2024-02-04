@@ -1,0 +1,312 @@
+<app-page-title [title]="title" [headerIcon]="haderIcon"></app-page-title>
+<ng-container *ngIf="meters$ | async as meters">
+  <app-abm
+    [dataset]="meters"
+    [columns]="cols"
+    [detailFormValid]="form.valid"
+    [abmDetailTemplate]="abmDetailTemplate"
+    (deleteEvent)="deleteMeters($event)"
+    (openDetailEvent)="setFormValues($event)"
+    (saveDetailEvent)="saveMeter()"
+  >
+    <ng-template #abmDetailTemplate>
+      <form novalidate [formGroup]="form" class="w-30rem">
+        <input type="hidden" formControlName="id" />
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="brand_id"
+                >Marca<span class="ml-1 text-red-300">*</span>
+              </label>
+              <p-dropdown
+                id="brand_id"
+                [options]="dropdownBrandOptions"
+                formControlName="brand_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container *ngIf="form.get('brand_id') as brandIdField">
+                <small
+                  class="text-red-500"
+                  *ngIf="brandIdField.invalid && brandIdField.dirty"
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="field">
+              <label for="model"
+                >Modelo<span class="ml-1 text-red-300">*</span></label
+              >
+              <input
+                type="text"
+                pInputText
+                id="model"
+                formControlName="model"
+                required
+              />
+              <ng-container *ngIf="form.get('model') as modelField">
+                <small
+                  class="text-red-500"
+                  *ngIf="modelField.invalid && modelField.dirty"
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="connection_id"
+                >Conexión<span class="ml-1 text-red-300">*</span>
+              </label>
+              <p-dropdown
+                id="connection_id"
+                [options]="dropdownConnectionOptions"
+                formControlName="connection_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container
+                *ngIf="form.get('connection_id') as connectionIdField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="connectionIdField.invalid && connectionIdField.dirty"
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label for="ratedVoltage" class="mb-2"
+                >Tensión nominal (Un) [V]<span class="ml-1 text-red-300"
+                  >*</span
+                ></label
+              >
+              <p-inputNumber
+                id="ratedVoltage"
+                formControlName="ratedVoltage"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="form.get('ratedVoltage') as ratedVoltageField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="ratedVoltageField.invalid && ratedVoltageField.dirty"
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="maximumCurrent" class="mb-2"
+                >Corriente máxima (Imax) [A]<span class="ml-1 text-red-300"
+                  >*</span
+                ></label
+              >
+              <p-inputNumber
+                id="maximumCurrent"
+                formControlName="maximumCurrent"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="form.get('maximumCurrent') as maximumCurrentField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="
+                    maximumCurrentField.invalid && maximumCurrentField.dirty
+                  "
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label for="ratedCurrent" class="mb-2"
+                >Corriente nominal (In) [A]<span class="ml-1 text-red-300"
+                  >*</span
+                ></label
+              >
+              <p-inputNumber
+                id="ratedCurrent"
+                formControlName="ratedCurrent"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="form.get('ratedCurrent') as ratedCurrentField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="ratedCurrentField.invalid && ratedCurrentField.dirty"
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="activeConstantValue" class="mb-2"
+                >Constante de energía activa<span class="ml-1 text-red-300"
+                  >*</span
+                ></label
+              >
+              <p-inputNumber
+                id="activeConstantValue"
+                formControlName="activeConstantValue"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="
+                  form.get('activeConstantValue') as activeConstantValueField
+                "
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="
+                    activeConstantValueField.invalid &&
+                    activeConstantValueField.dirty
+                  "
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label for="activeConstantUnit_id"
+                >Unidad de constante activa<span class="ml-1 text-red-300"
+                  >*</span
+                >
+              </label>
+              <p-dropdown
+                id="activeConstantUnit_id"
+                [options]="dropdownActiveConstantUnitOptions"
+                formControlName="activeConstantUnit_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container
+                *ngIf="
+                  form.get('activeConstantUnit_id') as activeConstantUnitIdField
+                "
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="
+                    activeConstantUnitIdField.invalid &&
+                    activeConstantUnitIdField.dirty
+                  "
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="reactiveConstantValue" class="mb-2"
+                >Constante de energía reactiva<span class="ml-1 text-red-300"
+                  >*</span
+                ></label
+              >
+              <p-inputNumber
+                id="reactiveConstantValue"
+                formControlName="reactiveConstantValue"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="
+                  form.get(
+                    'reactiveConstantValue'
+                  ) as reactiveConstantValueField
+                "
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="
+                    reactiveConstantValueField.invalid &&
+                    reactiveConstantValueField.dirty
+                  "
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label for="reactiveConstantUnit_id"
+                >Unidad de constante reactiva<span class="ml-1 text-red-300"
+                  >*</span
+                >
+              </label>
+              <p-dropdown
+                id="reactiveConstantUnit_id"
+                [options]="dropdownReactiveConstantUnitOptions"
+                formControlName="reactiveConstantUnit_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container
+                *ngIf="
+                  form.get(
+                    'reactiveConstantUnit_id'
+                  ) as reactiveConstantUnitIdField
+                "
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="
+                    reactiveConstantUnitIdField.invalid &&
+                    reactiveConstantUnitIdField.dirty
+                  "
+                  >Requerido</small
+                >
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </form>
+    </ng-template>
+  </app-abm>
+</ng-container>

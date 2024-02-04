@@ -40,8 +40,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
 
   ngOnInit(): void {
     this.dbService.getTable(BrandDbTableContext.tableName, {
-      // FIXME
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       relations: BrandDbTableContext.foreignTables.map((ft) => ft.tableName),
     });
   }
@@ -57,8 +55,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
         })
       )
       .subscribe({
-        // FIXME
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         error: () => this.messagesService.error('No se pudo crear el elemento'),
       });
   }
@@ -75,8 +71,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       )
       .subscribe({
         error: () =>
-          // FIXME
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           this.messagesService.error('No se pudo editar el elemento'),
       });
   }
@@ -96,8 +90,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       )
       .subscribe({
         error: () =>
-          // FIXME
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           this.messagesService.error(
             'Verifique que ningun elemento este en uso antes de eliminar'
           ),
