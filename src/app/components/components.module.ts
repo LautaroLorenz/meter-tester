@@ -6,8 +6,8 @@ import { AbmComponent } from './abm/abm.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { MenuComponent } from './menu/menu.component';
 
-// import { MenuComponent } from './menu/menu.component';
 // import { PipesModule } from '../pipes/pipes.module';
 // import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 // import { ReactiveFormsModule } from '@angular/forms';
@@ -47,7 +47,7 @@ const AppComponents = [
   PageTitleComponent,
   AbmComponent,
   ConfirmDialogComponent,
-  //   MenuComponent,
+  MenuComponent,
   //   TabMenuTestComponent,
   //   FillAvailableSpaceComponent,
   //   StepSelectorComponent,
@@ -88,7 +88,7 @@ const AppComponents = [
     PipesModule,
     ReactiveFormsModule,
     // DirectivesModule,
-    // HttpClientModule,
+    // HttpClientModule
   ],
   exports: [PrimeNgModule, AppComponents],
 })

@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrandsComponent } from './brands/brands.component';
+import { PageUrlName } from '../components/menu/models/page-name.model';
 
 const routes: Routes = [
   {
@@ -15,7 +16,7 @@ const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'brands',
+    path: PageUrlName.brands,
     component: BrandsComponent,
   },
 ];

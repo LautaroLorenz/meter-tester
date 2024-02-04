@@ -1,0 +1,13 @@
+@import "primeflex/primeflex.scss";
+
+::ng-deep .emetsy-menubar {
+  .p-submenu-list {
+    width: 13rem;
+  }
+
+  .logo {
+    &:hover {
+      @include styleclass("surface-hover");
+    }
+  }
+}
