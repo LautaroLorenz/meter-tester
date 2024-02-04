@@ -16,23 +16,22 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.items = [
-      // {
-      // FIXME urls de los botones
-      //   label: 'Ensayos',
-      //   icon: PrimeIcons.CHECK_SQUARE,
-      //   items: [
-      //     {
-      //       label: 'Ensayos disponibles',
-      //       icon: PrimeIcons.BRIEFCASE,
-      //       routerLink: '/'.concat(PageUrlName.availableTest),
-      //     },
-      //     {
-      //       label: 'Historial y reportes',
-      //       icon: PrimeIcons.BOOK,
-      //       routerLink: '/'.concat(PageUrlName.historyAndReports),
-      //     },
-      //   ],
-      // },
+      {
+        label: 'Ensayos',
+        icon: PrimeIcons.CHECK_SQUARE,
+        items: [
+          {
+            label: 'Ensayos disponibles',
+            icon: PrimeIcons.BRIEFCASE,
+            routerLink: '/'.concat(PageUrlName.availableTest),
+          },
+          // {
+          //   label: 'Historial y reportes',
+          //   icon: PrimeIcons.BOOK,
+          //   routerLink: '/'.concat(PageUrlName.historyAndReports),
+          // },
+        ],
+      },
       {
         label: 'ABMs',
         icon: PrimeIcons.FOLDER,

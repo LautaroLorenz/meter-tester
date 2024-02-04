@@ -1,0 +1,38 @@
+<app-page-title [title]="title" [headerIcon]="haderIcon"></app-page-title>
+<app-tab-menu-test></app-tab-menu-test>
+<ng-container *ngIf="essayTemplates$ | async as essayTemplates">
+  <app-abm
+    [dataset]="essayTemplates"
+    [columns]="cols"
+    [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
+    actionColumnStyleClass="w-12rem"
+    (deleteEvent)="deleteEssayTemplates($event)"
+  >
+    <ng-container toolbar-group-right>
+      <p-button
+        label="Nuevo"
+        icon="pi pi-plus"
+        styleClass="ml-2 p-button-outlined"
+        routerLink="/nuevo-template-ensayo"
+      ></p-button>
+    </ng-container>
+    <ng-template #tableColumnButtonsTemplate let-element="element">
+      <button
+        pButton
+        pRipple
+        icon="pi pi-play"
+        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+        routerLink="/ejecutar-ensayo"
+        [queryParams]="{ id: element.id }"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-pencil"
+        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+        routerLink="/editar-template-ensayo"
+        [queryParams]="{ id: element.id }"
+      ></button>
+    </ng-template>
+  </app-abm>
+</ng-container>

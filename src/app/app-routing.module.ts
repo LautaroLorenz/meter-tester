@@ -7,7 +7,7 @@ import { PageUrlName } from './components/menu/models/page-name.model';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: PageUrlName.meters,
+    redirectTo: PageUrlName.availableTest,
     pathMatch: 'full',
   },
   {
