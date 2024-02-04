@@ -5,9 +5,9 @@ import { PageTitleComponent } from './page-title/page-title.component';
 import { AbmComponent } from './abm/abm.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 // import { MenuComponent } from './menu/menu.component';
-// import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 // import { PipesModule } from '../pipes/pipes.module';
 // import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 // import { ReactiveFormsModule } from '@angular/forms';
@@ -46,8 +46,8 @@ import { PipesModule } from '../pipes/pipes.module';
 const AppComponents = [
   PageTitleComponent,
   AbmComponent,
+  ConfirmDialogComponent,
   //   MenuComponent,
-  //   ConfirmDialogComponent,
   //   TabMenuTestComponent,
   //   FillAvailableSpaceComponent,
   //   StepSelectorComponent,

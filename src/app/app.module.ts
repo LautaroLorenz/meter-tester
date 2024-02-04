@@ -11,6 +11,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
 import { FeaturesModule } from './features/features.module';
+import { ComponentsModule } from './components/components.module';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
@@ -32,6 +33,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         deps: [HttpClient],
       },
     }),
+    ComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
