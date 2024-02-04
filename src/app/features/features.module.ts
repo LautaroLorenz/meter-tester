@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
-import { DetailComponent } from './detail/detail.component';
 import { FeaturesRoutingModule } from './features-routing.module';
 import { BrandsComponent } from './brands/brands.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -12,7 +11,6 @@ import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    DetailComponent,
     HomeComponent,
     BrandsComponent,
     PageNotFoundComponent,

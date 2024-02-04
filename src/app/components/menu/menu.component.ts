@@ -37,11 +37,11 @@ export class MenuComponent implements OnInit {
         label: 'ABMs',
         icon: PrimeIcons.FOLDER,
         items: [
-          // {
-          //   label: 'Medidores',
-          //   icon: PrimeIcons.BOX,
-          //   routerLink: '/'.concat(PageUrlName.meters),
-          // },
+          {
+            label: 'Medidores',
+            icon: PrimeIcons.BOX,
+            routerLink: '/'.concat(PageUrlName.meters),
+          },
           {
             label: 'Marcas',
             icon: PrimeIcons.BOOKMARK,

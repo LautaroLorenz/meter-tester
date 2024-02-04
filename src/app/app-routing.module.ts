@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FeaturesRoutingModule } from './features/features-routing.module';
 import { PageNotFoundComponent } from './features/page-not-found/page-not-found.component';
+import { PageUrlName } from './components/menu/models/page-name.model';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: PageUrlName.meters,
     pathMatch: 'full',
   },
   {
