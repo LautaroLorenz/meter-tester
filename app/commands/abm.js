@@ -16,79 +16,79 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const { ipcMain } = require('electron');
-let knex;
-ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, e_1, _b, _c;
-    const { tableName, relations, conditions } = dbTableConnection;
-    const relationsMap = {};
-    const queryBuilder = knex(tableName).orderBy('id', 'desc');
-    for (const condition of conditions) {
-        const { kind, columnName, operator, value } = condition;
-        if (kind === 'where') {
-            queryBuilder.where(columnName, operator, value);
-        }
-        if (kind === 'andWhere') {
-            queryBuilder.andWhere(columnName, operator, value);
-        }
-        if (kind === 'orWhere') {
-            queryBuilder.orWhere(columnName, operator, value);
-        }
-    }
-    const rows = yield queryBuilder;
-    try {
-        for (var _d = true, relations_1 = __asyncValues(relations), relations_1_1; relations_1_1 = yield relations_1.next(), _a = relations_1_1.done, !_a;) {
-            _c = relations_1_1.value;
-            _d = false;
-            try {
-                const relation = _c;
-                relationsMap[relation] = yield knex(relation);
-            }
-            finally {
-                _d = true;
-            }
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (!_d && !_a && (_b = relations_1.return)) yield _b.call(relations_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    reply('get-table-reply', {
-        tableNameReply: tableName,
-        rows,
-        relations: relationsMap,
-    });
-}));
-ipcMain.handle('get-table-row', (_, { tableName, id }) => __awaiter(void 0, void 0, void 0, function* () {
-    const row = yield knex(tableName).select().where('id', id);
-    return row[0];
-}));
-ipcMain.handle('delete-from-table', (_, { tableName, ids }) => __awaiter(void 0, void 0, void 0, function* () {
-    const numberOfElementsDeleted = yield knex(tableName)
-        .delete()
-        .whereIn('id', ids);
-    return numberOfElementsDeleted;
-}));
-ipcMain.handle('add-to-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const newElementsIds = yield knex(tableName).insert(element);
-        return newElementsIds;
-    }
-    catch (_e) {
-        return null;
-    }
-}));
-ipcMain.handle('edit-from-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = element;
-    const numberOfElementsUpdated = yield knex(tableName)
-        .update(element)
-        .where('id', id);
-    return numberOfElementsUpdated;
-}));
+const electron_1 = require("electron");
 exports.default = {
-    setKnex: (args) => (knex = args),
+    register: (knex) => {
+        electron_1.ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, e_1, _b, _c;
+            const { tableName, relations, conditions } = dbTableConnection;
+            const relationsMap = {};
+            const queryBuilder = knex(tableName).orderBy('id', 'desc');
+            for (const condition of conditions) {
+                const { kind, columnName, operator, value } = condition;
+                if (kind === 'where') {
+                    queryBuilder.where(columnName, operator, value);
+                }
+                if (kind === 'andWhere') {
+                    queryBuilder.andWhere(columnName, operator, value);
+                }
+                if (kind === 'orWhere') {
+                    queryBuilder.orWhere(columnName, operator, value);
+                }
+            }
+            const rows = yield queryBuilder;
+            try {
+                for (var _d = true, relations_1 = __asyncValues(relations), relations_1_1; relations_1_1 = yield relations_1.next(), _a = relations_1_1.done, !_a;) {
+                    _c = relations_1_1.value;
+                    _d = false;
+                    try {
+                        const relation = _c;
+                        relationsMap[relation] = yield knex(relation);
+                    }
+                    finally {
+                        _d = true;
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (!_d && !_a && (_b = relations_1.return)) yield _b.call(relations_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            reply('get-table-reply', {
+                tableNameReply: tableName,
+                rows,
+                relations: relationsMap,
+            });
+        }));
+        electron_1.ipcMain.handle('get-table-row', (_, { tableName, id }) => __awaiter(void 0, void 0, void 0, function* () {
+            const row = yield knex(tableName).select().where('id', id);
+            return row[0];
+        }));
+        electron_1.ipcMain.handle('delete-from-table', (_, { tableName, ids }) => __awaiter(void 0, void 0, void 0, function* () {
+            const numberOfElementsDeleted = yield knex(tableName)
+                .delete()
+                .whereIn('id', ids);
+            return numberOfElementsDeleted;
+        }));
+        electron_1.ipcMain.handle('add-to-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const newElementsIds = yield knex(tableName).insert(element);
+                return newElementsIds;
+            }
+            catch (_e) {
+                return null;
+            }
+        }));
+        electron_1.ipcMain.handle('edit-from-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
+            const { id } = element;
+            const numberOfElementsUpdated = yield knex(tableName)
+                .update(element)
+                .where('id', id);
+            return numberOfElementsUpdated;
+        }));
+    },
 };
 //# sourceMappingURL=abm.js.map

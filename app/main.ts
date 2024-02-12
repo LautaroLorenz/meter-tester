@@ -3,8 +3,14 @@ import * as path from 'path';
 import * as fs from 'fs';
 import database from './resources/database/database';
 import knexFile from './resources/database/knexfile';
+import abm from './commands/abm';
+import essay from './commands/essay';
 
-knexFile.register();
+function registerIpc(knex: any) {
+  knexFile.register();
+  abm.register(knex);
+  essay.register(knex);
+}
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -26,12 +32,13 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  let knex: any;
   if (serve) {
     const debug = require('electron-debug');
     debug();
 
     require('electron-reloader')(module);
-    database.connect({ isProduction: false });
+    knex = database.connect({ isProduction: false });
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -42,10 +49,12 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    database.connect({ isProduction: true });
+    knex = database.connect({ isProduction: true });
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
   }
+
+  registerIpc(knex);
 
   // Emitted when the window is closed.
   win.on('closed', () => {
