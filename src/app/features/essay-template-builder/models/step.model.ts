@@ -4,6 +4,7 @@ import { DbForeignKey, DbTableContext } from '../../../models/database.model';
 export interface Step extends DbForeignKey {
   id: number;
   name: string;
+  userSelectableOnCreateEssayTemplate: boolean;
 }
 
 export const StepDbTableContext: DbTableContext = {
