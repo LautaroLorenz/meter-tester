@@ -40,7 +40,8 @@
             "style": "kebab-case"
           }
         ],
-        "jsdoc/newline-after-description": 0
+        "jsdoc/newline-after-description": 0,
+        "@typescript-eslint/member-ordering": ["error"]
       }
     },
     {
