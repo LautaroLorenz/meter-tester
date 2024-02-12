@@ -5,6 +5,8 @@ import { BrandsComponent } from './brands/brands.component';
 import { PageUrlName } from '../components/menu/models/page-name.model';
 import { MetersComponent } from './meters/meters.component';
 import { AvailableTestComponent } from './available-test/available-test.component';
+import { PendingChangesGuard } from '../guards/peding-changes.guard';
+import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 
 const routes: Routes = [
   {
@@ -18,6 +20,11 @@ const routes: Routes = [
   {
     path: PageUrlName.availableTest,
     component: AvailableTestComponent,
+  },
+  {
+    path: PageUrlName.newEssayTemplate,
+    component: EssayTemplateBuilderComponent,
+    canDeactivate: [PendingChangesGuard]
   },
 ];
 

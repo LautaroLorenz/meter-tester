@@ -9,6 +9,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { MetersComponent } from './meters/meters.component';
 import { AvailableTestComponent } from './available-test/available-test.component';
+import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
+import { PendingChangesGuard } from '../guards/peding-changes.guard';
+import { DirectivesModule } from '../directives/directives.model';
+import { StepsSequenceTableComponent } from './essay-template-builder/components/steps-sequence-table/steps-sequence-table.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +20,8 @@ import { AvailableTestComponent } from './available-test/available-test.componen
     BrandsComponent,
     MetersComponent,
     AvailableTestComponent,
+    EssayTemplateBuilderComponent,
+    StepsSequenceTableComponent,
   ],
   imports: [
     CommonModule,
@@ -24,6 +30,8 @@ import { AvailableTestComponent } from './available-test/available-test.componen
     ComponentsModule,
     ReactiveFormsModule,
     PipesModule,
+    DirectivesModule,
   ],
+  providers: [PendingChangesGuard],
 })
 export class FeaturesModule {}
