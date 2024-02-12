@@ -1,0 +1,7 @@
+@import "primeflex/primeflex.scss";
+
+.name-input {
+  &:hover:not(:focus) {
+    background-color: var(--surface-100) !important;
+  }
+}

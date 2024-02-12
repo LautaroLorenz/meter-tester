@@ -34,4 +34,10 @@ export const EssayTemplateStepDbTableContext: DbTableContext = {
   ],
 };
 
-export const EssayTemplateStepTableColumns: AbmColum[] = [];
+export const EssayTemplateStepTableColumns: AbmColum[] = [
+  {
+    field: 'order',
+    header: 'Orden de ejecución',
+    sortable: false,
+  },
+];
