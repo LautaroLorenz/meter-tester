@@ -13,6 +13,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
 import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { DirectivesModule } from '../directives/directives.model';
 import { StepsSequenceTableComponent } from './essay-template-builder/components/steps-sequence-table/steps-sequence-table.component';
+import { AddStepToSequenceComponent } from './essay-template-builder/components/add-step-to-sequence/add-step-to-sequence.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { StepsSequenceTableComponent } from './essay-template-builder/components
     AvailableTestComponent,
     EssayTemplateBuilderComponent,
     StepsSequenceTableComponent,
+    AddStepToSequenceComponent,
   ],
   imports: [
     CommonModule,
