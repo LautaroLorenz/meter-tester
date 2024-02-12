@@ -31,7 +31,7 @@ export class AddStepToSequenceComponent implements OnChanges {
     }
   }
 
-  createElement(): void {
+  openDialog(): void {
     this.detailDialogVisible = true;
   }
 
