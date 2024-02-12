@@ -8,6 +8,7 @@ import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MenuComponent } from './menu/menu.component';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
+import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 
 // import { PipesModule } from '../pipes/pipes.module';
 // import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
@@ -37,7 +38,6 @@ import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 // import { MeterApprovesComponent } from './dashboard/meter-approves/meter-approves.component';
 // import { StandUsedComponent } from './dashboard/stand-used/stand-used.component';
 // import { HttpClientModule } from '@angular/common/http';
-// import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 // import { VacuumTestExecutionActionComponent } from './actions/vacuum-test-execution-action/vacuum-test-execution-action.component';
 // import { VacuumTestParametersActionComponent } from './actions/vacuum-test-parameters-action/vacuum-test-parameters-action.component';
 // import { CommandLineComponent } from './command-line/command-line.component';
@@ -50,6 +50,7 @@ const AppComponents = [
   ConfirmDialogComponent,
   MenuComponent,
   TabMenuTestComponent,
+  ValidatorMessagesComponent,
   //   FillAvailableSpaceComponent,
   //   StepSelectorComponent,
   //   FormArrayControlsOrderListComponent,
@@ -73,7 +74,6 @@ const AppComponents = [
   //   ExecutionByEssayComponent,
   //   MeterApprovesComponent,
   //   StandUsedComponent,
-  //   ValidatorMessagesComponent,
   //   VacuumTestExecutionActionComponent,
   //   VacuumTestParametersActionComponent,
   //   CommandLineComponent,
