@@ -1,0 +1,21 @@
+<p-overlayPanel #op>
+  <ng-template pTemplate>
+    <ng-container *ngFor="let error of errorsArray; let last = last">
+      <div
+        class="flex flex-column p-3 border-1 border-yellow-500 border-round w-24rem"
+        [ngClass]="{ 'mb-2': last === false }"
+      >
+        <span class="text-500 mb-1">{{ error.code }}</span>
+        <span class="text-700">{{ error.message }}</span>
+      </div>
+    </ng-container>
+  </ng-template>
+</p-overlayPanel>
+
+<p-button
+  *ngIf="hasErrors"
+  pTooltip="Ver validaciones"
+  icon="pi pi-exclamation-triangle"
+  styleClass="p-button-text p-button-lg p-button-rounded p-button-warning"
+  (click)="op.toggle($event)"
+></p-button>
