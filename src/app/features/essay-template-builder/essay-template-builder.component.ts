@@ -65,9 +65,6 @@ export class EssayTemplateBuilderComponent
   // get hasSelectedIndex(): boolean {
   //   return this.selectedIndex !== null;
   // }
-  get saveButtonDisabled(): boolean {
-    return !this.form.valid || this.form.pristine;
-  }
   // get confirmBeforeBack(): boolean {
   //   return this.form.dirty;
   // }
@@ -131,6 +128,41 @@ export class EssayTemplateBuilderComponent
     // this.id$ = this.route.queryParams.pipe(
     //   filter(({ id }) => id),
     //   map(({ id }) => id)
+    // );
+  }
+
+  get saveButtonDisabled(): boolean {
+    return !this.form.valid || this.form.pristine;
+  }
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> {
+    return of(true);
+    // return of(this.confirmBeforeBack).pipe(
+    //   first(),
+    //   switchMap((confirm) => {
+    //     if (!confirm) {
+    //       return of(true);
+    //     } else {
+    //       return new Observable<boolean>((observer) => {
+    //         this.confirmationService.confirm({
+    //           message: this.confirmBeforeBackText,
+    //           header: this.confirmBeforeBackHeader,
+    //           icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+    //           defaultFocus: 'reject',
+    //           acceptButtonStyleClass: 'p-button-outlined',
+    //           accept: () => {
+    //             observer.next(true);
+    //             observer.complete();
+    //           },
+    //           reject: () => {
+    //             observer.next(false);
+    //             observer.complete();
+    //           },
+    //         });
+    //       });
+    //     }
+    //   })
     // );
   }
 
@@ -201,37 +233,6 @@ export class EssayTemplateBuilderComponent
     this.save$().subscribe();
   }
 
-  @HostListener('window:beforeunload')
-  canDeactivate(): Observable<boolean> {
-    return of(true);
-    // return of(this.confirmBeforeBack).pipe(
-    //   first(),
-    //   switchMap((confirm) => {
-    //     if (!confirm) {
-    //       return of(true);
-    //     } else {
-    //       return new Observable<boolean>((observer) => {
-    //         this.confirmationService.confirm({
-    //           message: this.confirmBeforeBackText,
-    //           header: this.confirmBeforeBackHeader,
-    //           icon: PrimeIcons.EXCLAMATION_TRIANGLE,
-    //           defaultFocus: 'reject',
-    //           acceptButtonStyleClass: 'p-button-outlined',
-    //           accept: () => {
-    //             observer.next(true);
-    //             observer.complete();
-    //           },
-    //           reject: () => {
-    //             observer.next(false);
-    //             observer.complete();
-    //           },
-    //         });
-    //       });
-    //     }
-    //   })
-    // );
-  }
-
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
@@ -278,13 +279,18 @@ export class EssayTemplateBuilderComponent
       first(),
       filter((valid) => valid),
       map(() => this.form.getRawValue()),
-      switchMap(({ essayTemplate, essayTemplateSteps }) =>
-        this.essayService.saveEssayTemplate$(essayTemplate, essayTemplateSteps)
-      ),
-      tap((savedFormValue) => {
-        this.messagesService.success('Guardado correctamente');
-        this.form.reset(savedFormValue);
-      }),
+
+      // TODO
+      tap((value) => console.log(value)),
+
+      // TODO
+      // switchMap(({ essayTemplate, essayTemplateSteps }) =>
+      //   this.essayService.saveEssayTemplate$(essayTemplate, essayTemplateSteps)
+      // ),
+      // tap((savedFormValue) => {
+      //   this.messagesService.success('Guardado correctamente');
+      //   this.form.reset(savedFormValue);
+      // }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
         return throwError(() => new Error(e));

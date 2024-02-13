@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { ControlValueAccessor } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder } from '@angular/forms';
 import { Step } from '../../models/step.model';
 import {
   EssayTemplateStep,
@@ -12,33 +18,28 @@ import {
   styleUrls: ['./steps-sequence-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StepsSequenceTableComponent implements ControlValueAccessor {
+export class StepsSequenceTableComponent implements OnChanges {
   @Input() stepOptions!: Step[];
+  @Input() inputFormArray!: AbstractControl<any, any> | null;
 
-  value: EssayTemplateStep[] = [];
+  formArray!: FormArray<any>;
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
-  onChange: ((...args: any) => any) | undefined = undefined;
-  onTouched: ((...args: any) => any) | undefined = undefined;
+  constructor(private fb: FormBuilder) {}
 
-  registerOnChange(fn: any) {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any) {
-    this.onTouched = fn;
-  }
-
-  writeValue(value: EssayTemplateStep[]): void {
-    this.setValue(value, false);
-  }
-
-  setValue(value: EssayTemplateStep[], emitEvent = true): void {
-    this.value = value;
-
-    if (emitEvent && this.onChange) {
-      this.onChange(value);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.inputFormArray) {
+      this.formArray = changes.inputFormArray.currentValue as FormArray<any>;
     }
+  }
+
+  addEssayTemplateStep(step: Step): void {
+    const essayTemplateStep: Partial<EssayTemplateStep> = {
+      order: this.formArray.length + 1,
+      step_id: step.id,
+      actions_raw_data: [],
+    };
+    this.formArray.push(this.fb.control(essayTemplateStep));
   }
 }

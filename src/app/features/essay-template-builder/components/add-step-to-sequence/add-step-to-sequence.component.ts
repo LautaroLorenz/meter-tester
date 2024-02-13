@@ -20,7 +20,7 @@ export class AddStepToSequenceComponent implements OnChanges {
 
   @Output() selectedStep = new EventEmitter<Step>();
 
-  detailDialogVisible = false;
+  dialogOpened = false;
   userSelectableStepOptions!: Step[];
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -32,7 +32,12 @@ export class AddStepToSequenceComponent implements OnChanges {
   }
 
   openDialog(): void {
-    this.detailDialogVisible = true;
+    this.dialogOpened = true;
+  }
+
+  stepSelected(step: Step): void {
+    this.selectedStep.emit({ ...step });
+    this.dialogOpened = false;
   }
 
   private getUserSelectableStepOptions(steps: Step[]): Step[] {

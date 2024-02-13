@@ -1,12 +1,13 @@
 <app-add-step-to-sequence
   [stepOptions]="stepOptions"
+  (selectedStep)="addEssayTemplateStep($event)"
 ></app-add-step-to-sequence>
 
 <p-table
   #primeNgTable
   styleClass="p-datatable-gridlines p-datatable-striped mx-3"
   [columns]="EssayTemplateStepTableColumns"
-  [value]="value"
+  [value]="this.formArray.value"
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
