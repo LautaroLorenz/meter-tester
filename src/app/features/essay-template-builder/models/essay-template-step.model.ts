@@ -38,6 +38,11 @@ export const EssayTemplateStepTableColumns: AbmColum[] = [
   {
     field: 'order',
     header: 'Orden de ejecución',
-    sortable: false,
+    sortable: false
+  },
+  {
+    field: 'foreign.step.name',
+    header: 'Paso',
+    sortable: false
   },
 ];

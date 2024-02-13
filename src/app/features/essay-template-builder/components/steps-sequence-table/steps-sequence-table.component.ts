@@ -39,6 +39,9 @@ export class StepsSequenceTableComponent implements OnChanges {
       order: this.formArray.length + 1,
       step_id: step.id,
       actions_raw_data: [],
+      foreign: {
+        step: { ...step },
+      },
     };
     this.formArray.push(this.fb.control(essayTemplateStep));
   }
