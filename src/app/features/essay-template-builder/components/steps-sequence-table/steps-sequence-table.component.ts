@@ -5,7 +5,12 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+} from '@angular/forms';
 import { Step } from '../../models/step.model';
 import {
   EssayTemplateStep,
@@ -22,7 +27,7 @@ export class StepsSequenceTableComponent implements OnChanges {
   @Input() stepOptions!: Step[];
   @Input() inputFormArray!: AbstractControl<any, any> | null;
 
-  formArray!: FormArray<any>;
+  formArray!: FormArray<FormControl<Partial<EssayTemplateStep>>>;
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
@@ -30,19 +35,37 @@ export class StepsSequenceTableComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputFormArray) {
-      this.formArray = changes.inputFormArray.currentValue as FormArray<any>;
+      this.formArray = changes.inputFormArray.currentValue as FormArray<
+        FormControl<Partial<EssayTemplateStep>>
+      >;
     }
   }
 
-  addEssayTemplateStep(step: Step): void {
+  addEssayTemplateStepControl(step: Step): void {
     const essayTemplateStep: Partial<EssayTemplateStep> = {
-      order: this.formArray.length + 1,
       step_id: step.id,
       actions_raw_data: [],
       foreign: {
         step: { ...step },
       },
     };
-    this.formArray.push(this.fb.control(essayTemplateStep));
+    this.formArray.push(
+      this.fb.control(essayTemplateStep, { nonNullable: true })
+    );
+    this.recalculateEssayTemplateStepsOrder();
+  }
+
+  deleteEssayTemplateStepControl(index: number): void {
+    this.formArray.removeAt(index);
+    this.recalculateEssayTemplateStepsOrder();
+  }
+
+  private recalculateEssayTemplateStepsOrder(): void {
+    this.formArray.controls.forEach((control, index) => {
+      control.setValue({
+        ...control.value,
+        order: index + 1,
+      });
+    });
   }
 }

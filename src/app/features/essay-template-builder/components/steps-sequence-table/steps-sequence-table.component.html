@@ -1,6 +1,6 @@
 <app-add-step-to-sequence
   [stepOptions]="stepOptions"
-  (selectedStep)="addEssayTemplateStep($event)"
+  (selectedStep)="addEssayTemplateStepControl($event)"
 ></app-add-step-to-sequence>
 
 <p-table
@@ -25,7 +25,12 @@
       <th aria-label="Acciones" class="w-10rem"></th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
+  <ng-template
+    pTemplate="body"
+    let-rowData
+    let-columns="columns"
+    let-index="rowIndex"
+  >
     <tr>
       <ng-container *ngFor="let col of columns">
         <td class="{{ col.styleClass }}">
@@ -50,14 +55,14 @@
             class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
             (click)="editElement(rowData)"
           ></button>
-        </ng-container>
+        </ng-container>  -->
         <button
           pButton
           pRipple
           icon="pi pi-trash"
           class="p-button-outlined p-button-rounded p-button-text p-button-danger"
-          (click)="deleteElement(rowData)"
-        ></button>       -->
+          (click)="deleteEssayTemplateStepControl(index)"
+        ></button>
       </td>
     </tr>
   </ng-template>
