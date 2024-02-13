@@ -45,7 +45,7 @@ export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
   readonly title: string = 'Ensayo';
-  // readonly id$: Observable<number>;
+  readonly id$: Observable<number>;
   readonly form: FormGroup;
   // readonly confirmBeforeBackHeader: string = 'Salir sin guardar';
   // readonly confirmBeforeBackText: string =
@@ -71,31 +71,6 @@ export class EssayTemplateBuilderComponent
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
-  // private readonly requestTableEssayTemplateSteps = (
-  //   essayTemplateId: number
-  // ): void => {
-  //   const { foreignTables } = EssayTemplateStepDbTableContext;
-  //   const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
-  //   const foreignTablesFiltered = foreignTables.filter(
-  //     (ft) => ft.tableName !== essayTemplateTableName
-  //   );
-  //   const foreignTableNames = foreignTablesFiltered.map((ft) => ft.tableName);
-  //   const getTableOptions = {
-  //     relations: foreignTableNames,
-  //     conditions: [
-  //       {
-  //         kind: WhereKind.where,
-  //         columnName: 'essay_template_id',
-  //         operator: WhereOperator.equal,
-  //         value: essayTemplateId,
-  //       },
-  //     ],
-  //   };
-  //   this.dbServiceEssayTemplateStep.getTable(
-  //     EssayTemplateStepDbTableContext.tableName,
-  //     getTableOptions
-  //   );
-  // };
   // private readonly addEssaytemplateStepControl = (
   //   essayTemplateStep: Partial<EssayTemplateStep>
   // ): void => {
@@ -109,26 +84,22 @@ export class EssayTemplateBuilderComponent
   //   );
   // };
 
-  // private readonly route: ActivatedRoute,
-  // private readonly dbService: DatabaseService<EssayTemplate>,
   // private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
   // private readonly confirmationService: ConfirmationService
   constructor(
+    private readonly route: ActivatedRoute,
     private readonly navigationService: NavigationService,
     private readonly fb: FormBuilder,
     private readonly dbServiceSteps: DatabaseService<Step>,
     private readonly messagesService: MessagesService,
-    private readonly essayService: EssayService
+    private readonly essayService: EssayService,
+    private readonly dbService: DatabaseService<EssayTemplate>
   ) {
     this.form = this.buildForm();
     this.steps$ = this.getSteps$();
     this.steps$.subscribe();
     this.saveButtonMenuItems = this.getSaveButtonMenuItems();
-
-    // this.id$ = this.route.queryParams.pipe(
-    //   filter(({ id }) => id),
-    //   map(({ id }) => id)
-    // );
+    this.id$ = this.getId$();
   }
 
   get saveButtonDisabled(): boolean {
@@ -167,22 +138,8 @@ export class EssayTemplateBuilderComponent
   }
 
   ngOnInit(): void {
+    this.observeRoute();
     this.requestToolsTables();
-    // this.id$
-    //   .pipe(
-    //     takeUntil(this.destroyed$),
-    //     switchMap((id) =>
-    //       this.dbService.getTableElement$(
-    //         EssayTemplateDbTableContext.tableName,
-    //         id
-    //       )
-    //     ),
-    //     tap((essayTemplate) =>
-    //       this.form.get('essayTemplate')?.patchValue(essayTemplate)
-    //     ),
-    //     tap(({ id }) => this.requestTableEssayTemplateSteps(id))
-    //   )
-    //   .subscribe();
     // this.dbServiceEssayTemplateStep
     //   .getTableReply$(EssayTemplateStepDbTableContext.tableName)
     //   .pipe(
@@ -238,6 +195,51 @@ export class EssayTemplateBuilderComponent
     this.destroyed$.complete();
   }
 
+  private observeRoute(): void {
+    this.id$
+      .pipe(
+        takeUntil(this.destroyed$),
+        switchMap((id) =>
+          this.dbService.getTableElement$(
+            EssayTemplateDbTableContext.tableName,
+            id
+          )
+        ),
+        tap((essayTemplate) =>
+          this.form.get('essayTemplate')?.patchValue(essayTemplate)
+        )
+        // tap(({ id }) => this.requestTableEssayTemplateSteps(id))
+      )
+      .subscribe();
+  }
+
+  // TODO
+  // private readonly requestTableEssayTemplateSteps = (
+  //   essayTemplateId: number
+  // ): void => {
+  //   const { foreignTables } = EssayTemplateStepDbTableContext;
+  //   const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
+  //   const foreignTablesFiltered = foreignTables.filter(
+  //     (ft) => ft.tableName !== essayTemplateTableName
+  //   );
+  //   const foreignTableNames = foreignTablesFiltered.map((ft) => ft.tableName);
+  //   const getTableOptions = {
+  //     relations: foreignTableNames,
+  //     conditions: [
+  //       {
+  //         kind: WhereKind.where,
+  //         columnName: 'essay_template_id',
+  //         operator: WhereOperator.equal,
+  //         value: essayTemplateId,
+  //       },
+  //     ],
+  //   };
+  //   this.dbServiceEssayTemplateStep.getTable(
+  //     EssayTemplateStepDbTableContext.tableName,
+  //     getTableOptions
+  //   );
+  // };
+
   private requestToolsTables(): void {
     this.dbServiceSteps.getTable(StepDbTableContext.tableName, {
       relations: StepDbTableContext.foreignTables.map((ft) => ft.tableName),
@@ -271,6 +273,13 @@ export class EssayTemplateBuilderComponent
       );
   }
 
+  private getId$(): Observable<number> {
+    return this.route.queryParams.pipe(
+      filter(({ id }) => id),
+      map(({ id }) => id)
+    );
+  }
+
   private save$(): Observable<{
     essayTemplate: EssayTemplate;
     essayTemplateSteps: EssayTemplateStep[];
@@ -279,18 +288,13 @@ export class EssayTemplateBuilderComponent
       first(),
       filter((valid) => valid),
       map(() => this.form.getRawValue()),
-
-      // TODO
-      tap((value) => console.log(value)),
-
-      // TODO
-      // switchMap(({ essayTemplate, essayTemplateSteps }) =>
-      //   this.essayService.saveEssayTemplate$(essayTemplate, essayTemplateSteps)
-      // ),
-      // tap((savedFormValue) => {
-      //   this.messagesService.success('Guardado correctamente');
-      //   this.form.reset(savedFormValue);
-      // }),
+      switchMap(({ essayTemplate, essayTemplateSteps }) =>
+        this.essayService.saveEssayTemplate$(essayTemplate, essayTemplateSteps)
+      ),
+      tap((savedFormValue) => {
+        this.messagesService.success('Guardado correctamente');
+        this.form.reset(savedFormValue);
+      }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
         return throwError(() => new Error(e));

@@ -24,7 +24,12 @@ const routes: Routes = [
   {
     path: PageUrlName.newEssayTemplate,
     component: EssayTemplateBuilderComponent,
-    canDeactivate: [PendingChangesGuard]
+    canDeactivate: [PendingChangesGuard],
+  },
+  {
+    path: PageUrlName.editEssayTemplate,
+    component: EssayTemplateBuilderComponent,
+    canDeactivate: [PendingChangesGuard],
   },
 ];
 
