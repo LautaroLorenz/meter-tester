@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -33,7 +32,7 @@ export class StepsSequenceTableComponent implements OnChanges {
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
-  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputFormArray) {
