@@ -22,7 +22,7 @@
         {{ col.header }}
         <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
       </th>
-      <th aria-label="Acciones" class="w-10rem"></th>
+      <th aria-label="Acciones" class="w-16rem"></th>
     </tr>
   </ng-template>
   <ng-template
@@ -56,6 +56,29 @@
             (click)="editElement(rowData)"
           ></button>
         </ng-container>  -->
+
+        <p-button
+          icon="pi pi-arrow-down"
+          styleClass="p-button-outlined p-button-rounded p-button-text"
+          pTooltip="Bajar orden de ejecución"
+          tooltipPosition="bottom"
+          [showDelay]="1250"
+          [disabled]="index === formArray.length - 1"
+          [tooltipDisabled]="index === formArray.length - 1"
+          (click)="moveDownByIndex(index)"
+        ></p-button>
+
+        <p-button
+          icon="pi pi-arrow-up"
+          styleClass="p-button-outlined p-button-rounded p-button-text"
+          pTooltip="Subir orden de ejecución"
+          tooltipPosition="bottom"
+          [showDelay]="1250"
+          [disabled]="index === 0"
+          [tooltipDisabled]="index === 0"
+          (click)="moveUpByIndex(index)"
+        ></p-button>
+
         <button
           pButton
           pRipple

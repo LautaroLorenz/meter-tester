@@ -60,6 +60,34 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.recalculateEssayTemplateStepsOrder();
   }
 
+  moveDownByIndex(indexFrom: number): void {
+    if (indexFrom === null) {
+      return;
+    }
+    if (indexFrom === this.formArray.length - 1) {
+      return;
+    }
+    const indexTo = indexFrom + 1;
+    const temp = this.formArray.at(indexFrom);
+    this.formArray.removeAt(indexFrom);
+    this.formArray.insert(indexTo, temp);
+    this.recalculateEssayTemplateStepsOrder();
+  }
+
+  moveUpByIndex(indexFrom: number): void {
+    if (indexFrom === null) {
+      return;
+    }
+    if (indexFrom === 0) {
+      return;
+    }
+    const indexTo = indexFrom - 1;
+    const temp = this.formArray.at(indexFrom);
+    this.formArray.removeAt(indexFrom);
+    this.formArray.insert(indexTo, temp);
+    this.recalculateEssayTemplateStepsOrder();
+  }
+
   private recalculateEssayTemplateStepsOrder(): void {
     this.formArray.controls.forEach((control, index) => {
       control.setValue({
