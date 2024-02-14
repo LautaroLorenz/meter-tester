@@ -56,6 +56,7 @@ export class EssayTemplateBuilderComponent
   // selectedIndex: number | null = null;
   // scrollToIndex: number | null = null;
   nameInputFocused = false;
+  savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
   // get selectedControl(): FormControl | null {
   //   return this.hasSelectedIndex
@@ -84,7 +85,6 @@ export class EssayTemplateBuilderComponent
   //   );
   // };
 
-  // private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
   // private readonly confirmationService: ConfirmationService
   constructor(
     private readonly route: ActivatedRoute,
@@ -93,7 +93,8 @@ export class EssayTemplateBuilderComponent
     private readonly dbServiceSteps: DatabaseService<Step>,
     private readonly messagesService: MessagesService,
     private readonly essayService: EssayService,
-    private readonly dbService: DatabaseService<EssayTemplate>
+    private readonly dbService: DatabaseService<EssayTemplate>,
+    private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>
   ) {
     this.form = this.buildForm();
     this.steps$ = this.getSteps$();
@@ -139,29 +140,8 @@ export class EssayTemplateBuilderComponent
 
   ngOnInit(): void {
     this.observeRoute();
+    this.observeTables();
     this.requestToolsTables();
-    // this.dbServiceEssayTemplateStep
-    //   .getTableReply$(EssayTemplateStepDbTableContext.tableName)
-    //   .pipe(
-    //     takeUntil(this.destroyed$),
-    //     map(({ rows, relations }) => {
-    //       const { foreignTables } = EssayTemplateStepDbTableContext;
-    //       return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
-    //         rows,
-    //         relations,
-    //         foreignTables
-    //       );
-    //     }),
-    //     map((essayTemplateStep) =>
-    //       essayTemplateStep.sort((a, b) => a.order - b.order)
-    //     ),
-    //     tap((essayTemplateSteps) =>
-    //       essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) =>
-    //         this.addEssaytemplateStepControl(essayTemplateStep)
-    //       )
-    //     )
-    //   )
-    //   .subscribe();
   }
 
   // getEssaytemplateStepControls(): FormArray<FormControl> {
@@ -207,38 +187,59 @@ export class EssayTemplateBuilderComponent
         ),
         tap((essayTemplate) =>
           this.form.get('essayTemplate')?.patchValue(essayTemplate)
-        )
-        // tap(({ id }) => this.requestTableEssayTemplateSteps(id))
+        ),
+        tap(({ id }) => this.requestTableEssayTemplateSteps(id))
       )
       .subscribe();
   }
 
-  // TODO
-  // private readonly requestTableEssayTemplateSteps = (
-  //   essayTemplateId: number
-  // ): void => {
-  //   const { foreignTables } = EssayTemplateStepDbTableContext;
-  //   const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
-  //   const foreignTablesFiltered = foreignTables.filter(
-  //     (ft) => ft.tableName !== essayTemplateTableName
-  //   );
-  //   const foreignTableNames = foreignTablesFiltered.map((ft) => ft.tableName);
-  //   const getTableOptions = {
-  //     relations: foreignTableNames,
-  //     conditions: [
-  //       {
-  //         kind: WhereKind.where,
-  //         columnName: 'essay_template_id',
-  //         operator: WhereOperator.equal,
-  //         value: essayTemplateId,
-  //       },
-  //     ],
-  //   };
-  //   this.dbServiceEssayTemplateStep.getTable(
-  //     EssayTemplateStepDbTableContext.tableName,
-  //     getTableOptions
-  //   );
-  // };
+  private observeTables(): void {
+    this.dbServiceEssayTemplateStep
+      .getTableReply$(EssayTemplateStepDbTableContext.tableName)
+      .pipe(
+        takeUntil(this.destroyed$),
+        map(({ rows, relations }) => {
+          const { foreignTables } = EssayTemplateStepDbTableContext;
+          return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
+            rows,
+            relations,
+            foreignTables
+          );
+        }),
+        map((essayTemplateStep) =>
+          essayTemplateStep.sort((a, b) => a.order - b.order)
+        ),
+        tap(
+          (essayTemplateSteps) =>
+            (this.savedEssayTemplateSteps = essayTemplateSteps)
+        )
+      )
+      .subscribe();
+  }
+
+  private requestTableEssayTemplateSteps(essayTemplateId: number): void {
+    const { foreignTables } = EssayTemplateStepDbTableContext;
+    const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
+    const foreignTablesFiltered = foreignTables.filter(
+      (ft) => ft.tableName !== essayTemplateTableName
+    );
+    const foreignTableNames = foreignTablesFiltered.map((ft) => ft.tableName);
+    const getTableOptions = {
+      relations: foreignTableNames,
+      conditions: [
+        {
+          kind: WhereKind.where,
+          columnName: 'essay_template_id',
+          operator: WhereOperator.equal,
+          value: essayTemplateId,
+        },
+      ],
+    };
+    this.dbServiceEssayTemplateStep.getTable(
+      EssayTemplateStepDbTableContext.tableName,
+      getTableOptions
+    );
+  }
 
   private requestToolsTables(): void {
     this.dbServiceSteps.getTable(StepDbTableContext.tableName, {

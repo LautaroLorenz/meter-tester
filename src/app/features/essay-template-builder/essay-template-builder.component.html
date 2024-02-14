@@ -44,6 +44,7 @@
   <ng-container *ngIf="steps$ | async as steps">
     <app-steps-sequence-table
       [inputFormArray]="form.get('essayTemplateSteps')"
+      [savedEssayTemplateSteps]="savedEssayTemplateSteps"
       [stepOptions]="steps"
     ></app-steps-sequence-table>
   </ng-container>

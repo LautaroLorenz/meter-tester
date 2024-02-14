@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -26,12 +27,13 @@ import {
 export class StepsSequenceTableComponent implements OnChanges {
   @Input() stepOptions!: Step[];
   @Input() inputFormArray!: AbstractControl<any, any> | null;
+  @Input() savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
   formArray!: FormArray<FormControl<Partial<EssayTemplateStep>>>;
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputFormArray) {
@@ -39,9 +41,17 @@ export class StepsSequenceTableComponent implements OnChanges {
         FormControl<Partial<EssayTemplateStep>>
       >;
     }
+    if (
+      changes.savedEssayTemplateSteps &&
+      changes.savedEssayTemplateSteps.currentValue
+    ) {
+      this.addSavedEssayTemplateStepsControl(
+        changes.savedEssayTemplateSteps.currentValue as EssayTemplateStep[]
+      );
+    }
   }
 
-  addEssayTemplateStepControl(step: Step): void {
+  addEssayTemplateStepControlByStep(step: Step): void {
     const essayTemplateStep: Partial<EssayTemplateStep> = {
       step_id: step.id,
       actions_raw_data: [],
@@ -49,15 +59,14 @@ export class StepsSequenceTableComponent implements OnChanges {
         step: { ...step },
       },
     };
-    this.formArray.push(
-      this.fb.control(essayTemplateStep, { nonNullable: true })
-    );
-    this.recalculateEssayTemplateStepsOrder();
+    this.addEssayTemplateStepControl(essayTemplateStep);
+    this.formArray.markAsDirty();
   }
 
   deleteEssayTemplateStepControl(index: number): void {
     this.formArray.removeAt(index);
     this.recalculateEssayTemplateStepsOrder();
+    this.formArray.markAsDirty();
   }
 
   moveDownByIndex(indexFrom: number): void {
@@ -72,6 +81,7 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.formArray.removeAt(indexFrom);
     this.formArray.insert(indexTo, temp);
     this.recalculateEssayTemplateStepsOrder();
+    this.formArray.markAsDirty();
   }
 
   moveUpByIndex(indexFrom: number): void {
@@ -86,6 +96,7 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.formArray.removeAt(indexFrom);
     this.formArray.insert(indexTo, temp);
     this.recalculateEssayTemplateStepsOrder();
+    this.formArray.markAsDirty();
   }
 
   private recalculateEssayTemplateStepsOrder(): void {
@@ -95,5 +106,22 @@ export class StepsSequenceTableComponent implements OnChanges {
         order: index + 1,
       });
     });
+  }
+
+  private addSavedEssayTemplateStepsControl(
+    essayTemplateSteps: EssayTemplateStep[]
+  ): void {
+    essayTemplateSteps.forEach((essayTemplateStep) =>
+      this.addEssayTemplateStepControl(essayTemplateStep)
+    );
+  }
+
+  private addEssayTemplateStepControl(
+    essayTemplateStep: EssayTemplateStep | Partial<EssayTemplateStep>
+  ): void {
+    this.formArray.push(
+      this.fb.control(essayTemplateStep, { nonNullable: true })
+    );
+    this.recalculateEssayTemplateStepsOrder();
   }
 }
