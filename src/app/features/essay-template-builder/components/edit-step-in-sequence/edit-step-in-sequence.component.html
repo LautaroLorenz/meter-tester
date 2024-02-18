@@ -1,0 +1,33 @@
+<p-dialog
+  [(visible)]="dialogOpened"
+  [style]="{ minWidth: '450px' }"
+  header="Detalle"
+  [modal]="true"
+  styleClass="p-fluid"
+  (onHide)="dialogHide.emit()"
+>
+  <p>edit-step-in-sequence works!</p>
+  <!-- <ng-template pTemplate="content">
+  <ng-container *ngTemplateOutlet="abmDetailTemplate"></ng-container>
+</ng-template>
+
+<ng-template pTemplate="footer">
+  <button
+    pButton
+    pRipple
+    label="Cancelar"
+    icon="pi pi-times"
+    class="p-button-text p-button-outlined"
+    (click)="closeDialog()"
+  ></button>
+  <button
+    pButton
+    pRipple
+    label="Guardar"
+    icon="pi pi-check"
+    class="p-button p-button-success"
+    (click)="saveElement()"
+    [disabled]="!detailFormValid"
+  ></button>
+</ng-template> -->
+</p-dialog>

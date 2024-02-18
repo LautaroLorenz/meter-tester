@@ -29,6 +29,7 @@ export class StepsSequenceTableComponent implements OnChanges {
   @Input() savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
   formArray!: FormArray<FormControl<Partial<EssayTemplateStep>>>;
+  selectedEssayTemplateStepToEdit: EssayTemplateStep | undefined;
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
@@ -96,6 +97,14 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.formArray.insert(indexTo, temp);
     this.recalculateEssayTemplateStepsOrder();
     this.formArray.markAsDirty();
+  }
+
+  editEssayTemplateStep(essayTemplateStep: EssayTemplateStep): void {
+    this.selectedEssayTemplateStepToEdit = essayTemplateStep;
+  }
+
+  editStepInSequenceDialogHide(): void {
+    this.selectedEssayTemplateStepToEdit = undefined;
   }
 
   private recalculateEssayTemplateStepsOrder(): void {
