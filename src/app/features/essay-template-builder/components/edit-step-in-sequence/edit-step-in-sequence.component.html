@@ -6,12 +6,11 @@
   styleClass="p-fluid"
   (onHide)="dialogHide.emit()"
 >
-  <p>edit-step-in-sequence works!</p>
-  <!-- <ng-template pTemplate="content">
-  <ng-container *ngTemplateOutlet="abmDetailTemplate"></ng-container>
-</ng-template>
+  <ng-container *ngIf="!!essayTemplateStep">
+    <app-essay-template-step-form [essayTemplateStep]="essayTemplateStep"></app-essay-template-step-form>
+  </ng-container>
 
-<ng-template pTemplate="footer">
+  <!-- <ng-template pTemplate="footer">
   <button
     pButton
     pRipple
