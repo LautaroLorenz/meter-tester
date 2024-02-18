@@ -24,11 +24,7 @@ export class EditStepInSequenceComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.essayTemplateStep) {
-      if (changes.essayTemplateStep.currentValue) {
-        this.dialogOpened = true;
-      } else {
-        this.dialogOpened = false;
-      }
+      this.dialogOpened = !!changes.essayTemplateStep.currentValue;
     }
   }
 }
