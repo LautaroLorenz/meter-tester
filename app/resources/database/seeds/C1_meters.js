@@ -28,15 +28,15 @@ exports.seed = async function (knex) {
     mockMeters.push({
       id,
       model: models[index],
-      maximumCurrent: faker.datatype.number({ min: 1, max: 120 }),
-      ratedCurrent: faker.datatype.number({ min: 1, max: 40 }),
-      ratedVoltage: faker.datatype.number({ min: 1, max: 380 }),
-      activeConstantValue: faker.datatype.number({ min: 1, max: 9999 }),
-      reactiveConstantValue: faker.datatype.number({ min: 1, max: 9999 }),
-      connection_id: faker.datatype.number({ min: 1, max: 2 }),
-      brand_id: faker.datatype.number({ min: 1, max: 5 }),
-      activeConstantUnit_id: faker.datatype.number({ min: 1, max: 2 }),
-      reactiveConstantUnit_id: faker.datatype.number({ min: 1, max: 2 }),
+      maximumCurrent: faker.number.int({ min: 1, max: 120 }),
+      ratedCurrent: faker.number.int({ min: 1, max: 40 }),
+      ratedVoltage: faker.number.int({ min: 1, max: 380 }),
+      activeConstantValue: faker.number.int({ min: 1, max: 9999 }),
+      reactiveConstantValue: faker.number.int({ min: 1, max: 9999 }),
+      connection_id: faker.number.int({ min: 1, max: 2 }),
+      brand_id: faker.number.int({ min: 1, max: 5 }),
+      activeConstantUnit_id: faker.number.int({ min: 1, max: 2 }),
+      reactiveConstantUnit_id: faker.number.int({ min: 1, max: 2 }),
     });
   }
 
