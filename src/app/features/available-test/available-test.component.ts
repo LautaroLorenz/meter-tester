@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
-import { AbmPage } from '../../models/abm-page.model';
+import { AbmPage } from '../../models/core/abm-page.model';
 import {
   EssayTemplate,
   EssayTemplateDbTableContext,
   EssayTemplateTableColumns,
-} from './models/essay-template.model';
+} from '../../models/business/database/essay-template.model';
 import { MessagesService } from '../../services/messages.service';
 import { DatabaseService } from '../../services/database.service';
 

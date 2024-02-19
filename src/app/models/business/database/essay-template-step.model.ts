@@ -1,9 +1,9 @@
 import { AbmColum } from '../../../components/abm/models/abm.model';
-import { DbForeignKey, DbTableContext } from '../../../models/database.model';
+import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import {
   EssayTemplate,
   EssayTemplateDbTableContext,
-} from '../../available-test/models/essay-template.model';
+} from './essay-template.model';
 import { Step, StepDbTableContext } from './step.model';
 
 export interface EssayTemplateStep extends DbForeignKey {
@@ -38,11 +38,11 @@ export const EssayTemplateStepTableColumns: AbmColum[] = [
   {
     field: 'order',
     header: 'Orden de ejecución',
-    sortable: false
+    sortable: false,
   },
   {
     field: 'foreign.step.name',
     header: 'Paso',
-    sortable: false
+    sortable: false,
   },
 ];

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { EssayTemplateStep } from '../../models/essay-template-step.model';
+import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-essay-template-step-form',

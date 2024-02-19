@@ -3,27 +3,30 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { AbmPage } from '../../models/abm-page.model';
+import { AbmPage } from '../../models/core/abm-page.model';
 import {
   Meter,
   MeterDbTableContext,
   MeterTableColumns,
-} from './models/meter.model';
+} from '../../models/business/database/meter.model';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
-import { Brand, BrandDbTableContext } from '../brands/models/brand.model';
+import {
+  Brand,
+  BrandDbTableContext,
+} from '../../models/business/database/brand.model';
 import {
   ActiveConstantUnit,
   ActiveConstantUnitDbTableContext,
-} from './models/active-constant-unit.model';
+} from '../../models/business/database/active-constant-unit.model';
 import {
   ReactiveConstantUnit,
   ReactiveConstantUnitDbTableContext,
-} from './models/reactive-constant-unit.model';
+} from '../../models/business/database/reactive-constant-unit.model';
 import {
   Connection,
   ConnectionDbTableContext,
-} from './models/connection.model';
+} from '../../models/business/database/connection.model';
 
 @Component({
   templateUrl: './meters.component.html',

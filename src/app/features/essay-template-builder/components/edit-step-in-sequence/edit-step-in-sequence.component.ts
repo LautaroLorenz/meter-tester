@@ -7,7 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { EssayTemplateStep } from '../../models/essay-template-step.model';
+import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-edit-step-in-sequence',

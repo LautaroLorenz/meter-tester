@@ -1,5 +1,5 @@
 import { AbmColum } from '../../../components/abm/models/abm.model';
-import { DbTableContext } from '../../../models/database.model';
+import { DbTableContext } from '../../core/database.model';
 
 export interface Connection {
   id: number;

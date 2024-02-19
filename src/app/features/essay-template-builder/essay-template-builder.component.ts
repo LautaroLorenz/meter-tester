@@ -20,22 +20,28 @@ import {
 import { ComponentCanDeactivate } from '../../guards/peding-changes.guard';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
-import { Step, StepDbTableContext } from './models/step.model';
+import {
+  Step,
+  StepDbTableContext,
+} from '../../models/business/database/step.model';
 import {
   EssayTemplate,
   EssayTemplateDbTableContext,
-} from '../available-test/models/essay-template.model';
+} from '../../models/business/database/essay-template.model';
 import {
   EssayTemplateStep,
   EssayTemplateStepDbTableContext,
-} from './models/essay-template-step.model';
-import { WhereKind, WhereOperator } from '../../models/database.model';
+} from '../../models/business/database/essay-template-step.model';
+import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { PageUrlName } from '../../components/menu/models/page-name.model';
 import { EssayService } from '../../services/essay.service';
-import { RelationsManager } from '../../models/relations-manager.model';
-import { EssayTemplateForm } from './models/essay-template-form.model';
+import { RelationsManager } from '../../models/core/relations-manager.model';
+import {
+  EssayTemplateForm,
+  EssayTemplateFormGroup,
+} from '../../models/business/forms/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
-import { essayTemplateValidator } from './models/essate-template-form-validator.model';
+import { essayTemplateValidator } from '../../models/business/forms/essate-template-form-validator.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -248,11 +254,11 @@ export class EssayTemplateBuilderComponent
   }
 
   private buildForm(): FormGroup {
-    return this.fb.group<EssayTemplateForm>(
+    return this.fb.group<EssayTemplateFormGroup>(
       {
-        essayTemplate: this.fb.group<any>({
-          id: this.fb.control(undefined),
-          name: this.fb.control(''),
+        essayTemplate: this.fb.group<EssayTemplateForm>({
+          id: this.fb.control(undefined, { nonNullable: true }),
+          name: this.fb.control(undefined, { nonNullable: true }),
         }),
         essayTemplateSteps: this.fb.array<FormControl<any>>([]),
       },

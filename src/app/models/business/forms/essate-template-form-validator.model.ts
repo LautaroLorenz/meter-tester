@@ -4,8 +4,8 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { EssayTemplateForm } from './essay-template-form.model';
-import { EssayTemplate } from '../../available-test/models/essay-template.model';
+import { EssayTemplateFormGroup } from './essay-template-form.model';
+import { EssayTemplate } from '../database/essay-template.model';
 
 export enum EssayErrorCodeEnum {
   name = 'name',
@@ -32,7 +32,7 @@ export const EssayErrorMessages: Record<
   //   },
 };
 
-const name = (essayTemplate: EssayTemplate): boolean => {
+const name = (essayTemplate: Partial<EssayTemplate>): boolean => {
   return !essayTemplate.name || essayTemplate.name.length === 0;
 };
 
@@ -52,14 +52,14 @@ const name = (essayTemplate: EssayTemplate): boolean => {
 
 export function essayTemplateValidator(): ValidatorFn {
   return (form: AbstractControl): ValidationErrors | null => {
-    const formGroup = form as FormGroup<EssayTemplateForm>;
+    const formGroup = form as FormGroup<EssayTemplateFormGroup>;
     let errors: ValidationErrors = {};
 
     const {
       // essayTemplateSteps,
       essayTemplate,
     } = formGroup.controls;
-    const essay: EssayTemplate = essayTemplate.getRawValue();
+    const essay: Partial<EssayTemplate> = essayTemplate.getRawValue();
     // const steps: EssayTemplateStep[] = essayTemplateSteps.getRawValue();
 
     if (name(essay)) {

@@ -15,7 +15,7 @@ import {
   RequestTableResponse,
   TableName,
   Where,
-} from '../models/database.model';
+} from '../models/core/database.model';
 
 @Injectable({
   providedIn: 'root',

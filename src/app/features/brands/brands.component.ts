@@ -6,10 +6,10 @@ import {
   Brand,
   BrandDbTableContext,
   BrandTableColumns,
-} from './models/brand.model';
+} from '../../models/business/database/brand.model';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
-import { AbmPage } from '../../models/abm-page.model';
+import { AbmPage } from '../../models/core/abm-page.model';
 
 @Component({
   templateUrl: './brands.component.html',

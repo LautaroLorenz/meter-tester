@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { IpcService } from './ipc.service';
-import { EssayTemplateStep } from '../features/essay-template-builder/models/essay-template-step.model';
-import { EssayTemplate } from '../features/available-test/models/essay-template.model';
+import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
+import { EssayTemplate } from '../models/business/database/essay-template.model';
 
 @Injectable({
   providedIn: 'root',

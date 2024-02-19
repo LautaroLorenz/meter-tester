@@ -1,5 +1,5 @@
 import { map, Observable, tap } from 'rxjs';
-import { DatabaseService } from '../services/database.service';
+import { DatabaseService } from '../../services/database.service';
 import { DbTableContext, TableRelationsMap } from './database.model';
 import { RelationsManager } from './relations-manager.model';
 

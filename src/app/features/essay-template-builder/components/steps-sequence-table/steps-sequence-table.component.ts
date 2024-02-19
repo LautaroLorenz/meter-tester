@@ -11,11 +11,11 @@ import {
   FormBuilder,
   FormControl,
 } from '@angular/forms';
-import { Step } from '../../models/step.model';
+import { Step } from '../../../../models/business/database/step.model';
 import {
   EssayTemplateStep,
   EssayTemplateStepTableColumns,
-} from '../../models/essay-template-step.model';
+} from '../../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-steps-sequence-table',

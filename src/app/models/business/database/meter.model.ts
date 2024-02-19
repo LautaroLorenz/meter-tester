@@ -1,6 +1,6 @@
 import { AbmColum } from '../../../components/abm/models/abm.model';
-import { DbForeignKey, DbTableContext } from '../../../models/database.model';
-import { Brand, BrandDbTableContext } from '../../brands/models/brand.model';
+import { DbForeignKey, DbTableContext } from '../../core/database.model';
+import { Brand, BrandDbTableContext } from './brand.model';
 import {
   ActiveConstantUnit,
   ActiveConstantUnitDbTableContext,
