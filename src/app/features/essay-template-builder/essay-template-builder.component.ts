@@ -41,7 +41,7 @@ import {
   EssayTemplateFormGroup,
 } from '../../models/business/forms/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
-import { essayTemplateValidator } from '../../models/business/forms/essate-template-form-validator.model';
+import { essayTemplateValidator } from '../../models/business/forms/essay-template-form-validator.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
