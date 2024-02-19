@@ -4,9 +4,9 @@ import { DbTableContext, TableRelationsMap } from './database.model';
 import { RelationsManager } from './relations-manager.model';
 
 export class AbmPage<T> {
+  protected _relations: TableRelationsMap = {};
   private readonly _dbService: DatabaseService<T>;
   private readonly _dbTableConnection: DbTableContext;
-  protected _relations: TableRelationsMap = {};
 
   constructor(
     dbService: DatabaseService<T>,
@@ -14,10 +14,6 @@ export class AbmPage<T> {
   ) {
     this._dbService = dbService;
     this._dbTableConnection = dbTableConnection;
-  }
-
-  private _setRelations(relations: TableRelationsMap): void {
-    this._relations = { ...this._relations, ...relations };
   }
 
   protected refreshDataWhenDatabaseReply$(tableName: string): Observable<T[]> {
@@ -35,5 +31,9 @@ export class AbmPage<T> {
         )
       )
     );
+  }
+
+  private _setRelations(relations: TableRelationsMap): void {
+    this._relations = { ...this._relations, ...relations };
   }
 }
