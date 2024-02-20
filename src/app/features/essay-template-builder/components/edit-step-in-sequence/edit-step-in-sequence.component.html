@@ -9,7 +9,7 @@
   <ng-container *ngIf="!!essayTemplateStep">
     <ng-container [ngSwitch]="essayTemplateStep.step_id">
       <ng-container *ngSwitchCase="Steps.BootTest">
-        
+        <app-boot-test-build-form></app-boot-test-build-form>
       </ng-container>
     </ng-container>
 

@@ -8,7 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
-import { Steps } from '../../../../models/business/essay-template-steps/steps.model';
+import { Steps } from '../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-edit-step-in-sequence',

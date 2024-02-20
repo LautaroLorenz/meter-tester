@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { MenuComponent } from './menu/menu.component';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
+import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-test-build-form/boot-test-build-form.component';
 
 // import { PipesModule } from '../pipes/pipes.module';
 // import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
@@ -51,6 +52,7 @@ const AppComponents = [
   MenuComponent,
   TabMenuTestComponent,
   ValidatorMessagesComponent,
+  BootTestBuildFormComponent,
   //   FillAvailableSpaceComponent,
   //   StepSelectorComponent,
   //   FormArrayControlsOrderListComponent,
