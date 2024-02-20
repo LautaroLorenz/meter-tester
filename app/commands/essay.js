@@ -53,8 +53,8 @@ const essayTemplateStepsUpdateExisting = (knex, essayTemplateSteps, transaction)
             _d = false;
             try {
                 const et = _c;
-                const { foreign, animationState, actions_raw_data } = et, remainingProperties = __rest(et, ["foreign", "animationState", "actions_raw_data"]);
-                const propertiesToUpdate = Object.assign(Object.assign({}, remainingProperties), { actions_raw_data: JSON.stringify(actions_raw_data) });
+                const { foreign, animationState, form_control_raw } = et, remainingProperties = __rest(et, ["foreign", "animationState", "form_control_raw"]);
+                const propertiesToUpdate = Object.assign(Object.assign({}, remainingProperties), { form_control_raw: JSON.stringify(form_control_raw) });
                 yield knex('essay_templates_steps')
                     .transacting(transaction)
                     .update(propertiesToUpdate)
@@ -83,8 +83,8 @@ const essayTemplateStepsCreateNews = (knex, essayTemplateSteps, transaction) => 
             _h = false;
             try {
                 const et = _g;
-                const { foreign, animationState, actions_raw_data } = et, remainingProperties = __rest(et, ["foreign", "animationState", "actions_raw_data"]);
-                const propertiesToInsert = Object.assign(Object.assign({}, remainingProperties), { actions_raw_data: JSON.stringify(actions_raw_data) });
+                const { foreign, animationState, form_control_raw } = et, remainingProperties = __rest(et, ["foreign", "animationState", "form_control_raw"]);
+                const propertiesToInsert = Object.assign(Object.assign({}, remainingProperties), { form_control_raw: JSON.stringify(form_control_raw) });
                 const [id] = yield knex('essay_templates_steps')
                     .transacting(transaction)
                     .insert(propertiesToInsert);

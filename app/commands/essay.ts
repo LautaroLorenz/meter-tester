@@ -41,12 +41,12 @@ const essayTemplateStepsUpdateExisting = async (
     const {
       foreign,
       animationState,
-      actions_raw_data,
+      form_control_raw,
       ...remainingProperties
     } = et;
     const propertiesToUpdate = {
       ...remainingProperties,
-      actions_raw_data: JSON.stringify(actions_raw_data),
+      form_control_raw: JSON.stringify(form_control_raw),
     };
     await knex('essay_templates_steps')
       .transacting(transaction)
@@ -68,12 +68,12 @@ const essayTemplateStepsCreateNews = async (
     const {
       foreign,
       animationState,
-      actions_raw_data,
+      form_control_raw,
       ...remainingProperties
     } = et;
     const propertiesToInsert = {
       ...remainingProperties,
-      actions_raw_data: JSON.stringify(actions_raw_data),
+      form_control_raw: JSON.stringify(form_control_raw),
     };
     const [id] = await knex('essay_templates_steps')
       .transacting(transaction)

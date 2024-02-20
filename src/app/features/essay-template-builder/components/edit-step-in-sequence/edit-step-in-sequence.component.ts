@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
+import { Steps } from '../../../../models/business/essay-template-steps/steps.model';
 
 @Component({
   selector: 'app-edit-step-in-sequence',
@@ -21,6 +22,8 @@ export class EditStepInSequenceComponent implements OnChanges {
   @Output() dialogHide = new EventEmitter<void>();
 
   dialogOpened = false;
+
+  readonly Steps = Steps;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.essayTemplateStep) {

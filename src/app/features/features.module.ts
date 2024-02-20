@@ -15,7 +15,6 @@ import { DirectivesModule } from '../directives/directives.model';
 import { StepsSequenceTableComponent } from './essay-template-builder/components/steps-sequence-table/steps-sequence-table.component';
 import { AddStepToSequenceComponent } from './essay-template-builder/components/add-step-to-sequence/add-step-to-sequence.component';
 import { EditStepInSequenceComponent } from './essay-template-builder/components/edit-step-in-sequence/edit-step-in-sequence.component';
-import { EssayTemplateStepFormComponent } from './essay-template-builder/components/essay-template-step-form/essay-template-step-form.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +26,6 @@ import { EssayTemplateStepFormComponent } from './essay-template-builder/compone
     StepsSequenceTableComponent,
     AddStepToSequenceComponent,
     EditStepInSequenceComponent,
-    EssayTemplateStepFormComponent,
   ],
   imports: [
     CommonModule,

@@ -12,7 +12,7 @@ export interface EssayTemplateStep extends DbForeignKey {
   order: number;
   essay_template_id: number;
   step_id: number;
-  actions_raw_data: any[];
+  form_control_raw: any;
   foreign: {
     essayTemplate?: EssayTemplate;
     step?: Step;

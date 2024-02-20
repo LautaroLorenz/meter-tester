@@ -54,7 +54,7 @@ export class StepsSequenceTableComponent implements OnChanges {
   addEssayTemplateStepControlByStep(step: Step): void {
     const essayTemplateStep: Partial<EssayTemplateStep> = {
       step_id: step.id,
-      actions_raw_data: [],
+      form_control_raw: {},
       foreign: {
         step: { ...step },
       },
