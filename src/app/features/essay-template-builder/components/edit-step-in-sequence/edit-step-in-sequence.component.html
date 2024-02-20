@@ -6,31 +6,38 @@
   styleClass="p-fluid"
   (onHide)="dialogHide.emit()"
 >
-  <ng-container *ngIf="!!essayTemplateStep">
-    <ng-container [ngSwitch]="essayTemplateStep.step_id">
-      <ng-container *ngSwitchCase="Steps.BootTest">
-        <app-boot-test-build-form></app-boot-test-build-form>
+  <ng-template pTemplate="content">
+    <ng-container *ngIf="!!essayTemplateStep && dialogOpened">
+      <ng-container [ngSwitch]="essayTemplateStep.step_id">
+        <ng-container *ngSwitchCase="Steps.BootTest">
+          <app-boot-test-build-form
+            [essayTemplateStep]="essayTemplateStep"
+            (formValidChange)="formValid = $event"
+            (formValueChange)="formValue = $event"
+          ></app-boot-test-build-form>
+        </ng-container>
       </ng-container>
     </ng-container>
+  </ng-template>
 
-    <!-- <ng-template pTemplate="footer">
-  <button
-    pButton
-    pRipple
-    label="Cancelar"
-    icon="pi pi-times"
-    class="p-button-text p-button-outlined"
-    (click)="closeDialog()"
-  ></button>
-  <button
-    pButton
-    pRipple
-    label="Guardar"
-    icon="pi pi-check"
-    class="p-button p-button-success"
-    (click)="saveElement()"
-    [disabled]="!detailFormValid"
-  ></button>
-</ng-template> -->
-  </ng-container>
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancelar"
+      icon="pi pi-times"
+      class="p-button-text p-button-outlined"
+      (click)="closeDialog()"
+    ></button>
+
+    <button
+      pButton
+      pRipple
+      label="Aceptar"
+      icon="pi pi-check"
+      class="p-button p-button-outlined"
+      (click)="acceptChanges()"
+      [disabled]="!formValid"
+    ></button>
+  </ng-template>
 </p-dialog>

@@ -1,1 +1,86 @@
-<p>boot-test-build-form works!</p>
+<fom novalidate [formGroup]="form">
+  <div class="flex flex-1 flex-column">
+    <div class="field">
+      <label for="name">Nombre<span class="ml-1 text-red-300">*</span></label>
+      <input type="text" pInputText id="name" formControlName="name" required />
+      <ng-container *ngIf="form.get('name') as field">
+        <small class="text-red-500" *ngIf="field.invalid && field.dirty">
+          Requerido
+        </small>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- <div class="flex flex-1 flex-column">
+      <label
+        for="allowedPulses"
+        class="mb-2"
+      >Cantidad de impulsos permitida<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon2
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op2.show($event, helpIcon2)"
+            (mouseleave)="op2.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op2
+          [appendTo]="helpIcon2"
+        >
+          <ng-template pTemplate>
+            <div class="text-sm text-700 flex flex-column">
+              Para superar la prueba la cantidad de impulsos debe ser igual o
+              mayor a la permitida y debe suceder luego del tiempo mínimo y
+              antes del tiempo máximo.
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="allowedPulses"
+          formControlName="allowedPulses"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div> -->
+
+  <!-- <div class="flex flex-1 flex-column mt-3">
+      <label
+        for="minDurationSeconds"
+        class="mb-2"
+      >Tiempo de ejecución mínimo [s]<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="minDurationSeconds"
+          formControlName="minDurationSeconds"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div> -->
+
+  <!-- <div class="flex flex-1 flex-column mt-3">
+      <label
+        for="maxDurationSeconds"
+        class="mb-2"
+      >Tiempo de ejecución máximo [s]<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="maxDurationSeconds"
+          formControlName="maxDurationSeconds"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div> -->
+</fom>

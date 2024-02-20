@@ -20,8 +20,13 @@ export class EditStepInSequenceComponent implements OnChanges {
   @Input() essayTemplateStep: EssayTemplateStep | undefined;
 
   @Output() dialogHide = new EventEmitter<void>();
+  @Output() essayTemplateStepChange = new EventEmitter<
+    Partial<EssayTemplateStep>
+  >();
 
   dialogOpened = false;
+  formValid = false;
+  formValue: Partial<EssayTemplateStep> | undefined;
 
   readonly Steps = Steps;
 
@@ -29,5 +34,19 @@ export class EditStepInSequenceComponent implements OnChanges {
     if (changes.essayTemplateStep) {
       this.dialogOpened = !!changes.essayTemplateStep.currentValue;
     }
+  }
+
+  closeDialog(): void {
+    this.dialogOpened = false;
+    this.essayTemplateStep = undefined;
+    this.formValid = false;
+  }
+
+  acceptChanges(): void {
+    if (!this.formValue) {
+      return;
+    }
+    this.essayTemplateStepChange.emit(this.formValue);
+    this.dialogOpened = false;
   }
 }

@@ -4,8 +4,9 @@
 ></app-add-step-to-sequence>
 
 <app-edit-step-in-sequence
-  [essayTemplateStep]="selectedEssayTemplateStepToEdit"
+  [essayTemplateStep]="selectedEssayTemplateStepToEdit.step"
   (dialogHide)="editStepInSequenceDialogHide()"
+  (essayTemplateStepChange)="saveEditedStepInSequenceChanges($event)"
 ></app-edit-step-in-sequence>
 
 <p-table
@@ -78,7 +79,7 @@
           pRipple
           icon="pi pi-pencil"
           class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-          (click)="editEssayTemplateStep(rowData)"
+          (click)="editEssayTemplateStep(rowData, index)"
         ></button>
 
         <button

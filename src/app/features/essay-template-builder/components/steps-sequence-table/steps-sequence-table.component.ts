@@ -29,7 +29,13 @@ export class StepsSequenceTableComponent implements OnChanges {
   @Input() savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
   formArray!: FormArray<FormControl<Partial<EssayTemplateStep>>>;
-  selectedEssayTemplateStepToEdit: EssayTemplateStep | undefined;
+  selectedEssayTemplateStepToEdit: {
+    step: EssayTemplateStep | undefined;
+    index: number | undefined;
+  } = {
+    step: undefined,
+    index: undefined,
+  };
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
@@ -99,12 +105,25 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.formArray.markAsDirty();
   }
 
-  editEssayTemplateStep(essayTemplateStep: EssayTemplateStep): void {
-    this.selectedEssayTemplateStepToEdit = essayTemplateStep;
+  editEssayTemplateStep(
+    essayTemplateStep: EssayTemplateStep,
+    stepIndex: number
+  ): void {
+    this.selectedEssayTemplateStepToEdit.step = essayTemplateStep;
+    this.selectedEssayTemplateStepToEdit.index = stepIndex;
   }
 
   editStepInSequenceDialogHide(): void {
-    this.selectedEssayTemplateStepToEdit = undefined;
+    this.selectedEssayTemplateStepToEdit.step = undefined;
+    this.selectedEssayTemplateStepToEdit.index = undefined;
+  }
+
+  saveEditedStepInSequenceChanges(essayTemplateStep: Partial<EssayTemplateStep>): void {
+    if(this.selectedEssayTemplateStepToEdit.index === undefined) {
+      return;
+    }
+    this.formArray.at(this.selectedEssayTemplateStepToEdit.index).patchValue(essayTemplateStep);
+    this.formArray.markAsDirty();
   }
 
   private recalculateEssayTemplateStepsOrder(): void {
