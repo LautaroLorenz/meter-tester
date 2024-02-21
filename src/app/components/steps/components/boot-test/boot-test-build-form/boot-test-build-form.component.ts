@@ -66,12 +66,7 @@ export class BootTestBuildFormComponent
   }
 
   patchInitValue(): void {
-    this.form.patchValue({
-      ...this.essayTemplateStep,
-      form_control_raw: JSON.parse(
-        this.essayTemplateStep.form_control_raw as unknown as string
-      ),
-    });
+    this.form.patchValue(this.essayTemplateStep);
   }
 
   private observeForm(): void {

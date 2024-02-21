@@ -212,8 +212,14 @@ export class EssayTemplateBuilderComponent
             foreignTables
           );
         }),
-        map((essayTemplateStep) =>
-          essayTemplateStep.sort((a, b) => a.order - b.order)
+        map((essayTemplateSteps) =>
+          essayTemplateSteps.sort((a, b) => a.order - b.order)
+        ),
+        map((essayTemplateSteps) =>
+          essayTemplateSteps.map((essayTemplateStep) => ({
+            ...essayTemplateStep,
+            form_control_raw: JSON.parse(essayTemplateStep.form_control_raw),
+          }))
         ),
         tap(
           (essayTemplateSteps) =>
