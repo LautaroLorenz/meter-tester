@@ -21,6 +21,7 @@
         </ng-container>
       </div>
     </ng-container>
+
     <ng-container toolbar-right>
       <div class="flex align-items-center">
         <div class="mr-2">
@@ -29,6 +30,7 @@
             [errors]="form.errors"
           ></app-validator-messages>
         </div>
+
         <p-splitButton
           label="Guardar"
           styleClass="p-button-success"
@@ -48,85 +50,4 @@
       [stepOptions]="steps"
     ></app-steps-sequence-table>
   </ng-container>
-
-  <!-- <app-fill-available-space class="flex justify-content-evenly">
-   <div class="flex flex-1 flex-column pl-3">
-    <p class="p-font-family text-lg text-700">Herramientas</p>
-      <p-panel class="w-full" styleClass="shadow-none">
-        <ng-template pTemplate="header"> Selector de pasos </ng-template>
-        <ng-container *ngIf="steps$ | async as steps">
-          <app-step-selector
-            [steps]="steps"
-            (stepSelected)="addEssayTemplateStep($event)"
-          ></app-step-selector>
-        </ng-container>
-      </p-panel>
-    </div>
-
-   <p-divider layout="vertical"></p-divider>
-
-    <div class="flex flex-1 flex-column">
-      <ng-container
-        *ngIf="getEssaytemplateStepControls() as essatTemplateStepsArrayForm"
-      >
-        <app-form-array-controls-order-list
-          headerText="Listado de pasos"
-          [(selectedIndex)]="selectedIndex"
-          [scrollToIndex]="scrollToIndex"
-          [arrayOfControls]="essatTemplateStepsArrayForm"
-          [itemTemplate]="itemTemplate"
-          (onChanges)="form.markAsDirty()"
-        >
-          <ng-template
-            #itemTemplate
-            let-controlValue="controlValue"
-            let-index="index"
-          >
-            <div class="flex">
-              <div
-                class="p-3 border-right-1 border-200"
-                [ngClass]="{ 'border-purple-100': selectedIndex === index }"
-              >
-                <span
-                  class="p-font-family text-800 select-none"
-                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
-                  >{{ index + 1 | number : "2.0" }}</span
-                >
-              </div>
-              <div class="flex align-items-center pl-3">
-                <span
-                  class="p-font-family text-800 select-none"
-                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
-                  >{{ controlValue.foreign.step.name }}</span
-                >
-              </div>
-            </div>
-          </ng-template>
-        </app-form-array-controls-order-list>
-      </ng-container>
-    </div>
-
-    <p-divider layout="vertical"></p-divider>
-
-    <div class="flex flex-1 flex-column pr-3 pb-4">
-      <ng-container *ngIf="hasSelectedIndex">
-        <div
-          class="p-font-family text-lg py-3 border-bottom-3 border-purple-300 text-700"
-        >
-          <span>{{ selectedIndex! + 1 | number : "2.0" }}</span>
-          <span class="mx-1">-</span>
-          <span>{{ selectedControl?.value.foreign.step.name }}</span>
-        </div>
-        <app-step-build-form
-          class="overflow-auto mt-2 pr-2"
-          [selectedIndex]="selectedIndex"
-          [stepId]="selectedControl?.value.step_id"
-          [essayTemplateStep]="selectedControl?.value"
-          [(actionsRawData)]="selectedControl?.value.actions_raw_data"
-          (actionsRawDataChange)="form.markAsDirty()"
-        >
-        </app-step-build-form>
-      </ng-container>
-    </div>
-  </app-fill-available-space>  -->
 </form>

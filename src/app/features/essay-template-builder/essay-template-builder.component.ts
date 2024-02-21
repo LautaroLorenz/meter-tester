@@ -50,35 +50,17 @@ import { essayTemplateValidator } from '../../models/business/forms/essay-templa
 export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
-  readonly title: string = 'Ensayo';
-  readonly id$: Observable<number>;
-  readonly form: FormGroup;
-  // readonly confirmBeforeBackHeader: string = 'Salir sin guardar';
-  // readonly confirmBeforeBackText: string =
-  //   '¿Confirma qué quiere salir sin guardar?';
-  readonly saveButtonMenuItems: MenuItem[] = [];
-  readonly steps$: Observable<Step[]>;
-
-  // selectedIndex: number | null = null;
-  // scrollToIndex: number | null = null;
   nameInputFocused = false;
   savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
-  // get selectedControl(): FormControl | null {
-  //   return this.hasSelectedIndex
-  //     ? this.getEssaytemplateStepControls().controls[this.selectedIndex!]
-  //     : null;
-  // }
-  // get hasSelectedIndex(): boolean {
-  //   return this.selectedIndex !== null;
-  // }
-  // get confirmBeforeBack(): boolean {
-  //   return this.form.dirty;
-  // }
+  readonly title: string = 'Ensayo';
+  readonly id$: Observable<number>;
+  readonly form: FormGroup;
+  readonly saveButtonMenuItems: MenuItem[] = [];
+  readonly steps$: Observable<Step[]>;
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
-  // private readonly confirmationService: ConfirmationService
   constructor(
     private readonly route: ActivatedRoute,
     private readonly navigationService: NavigationService,
@@ -87,7 +69,8 @@ export class EssayTemplateBuilderComponent
     private readonly messagesService: MessagesService,
     private readonly essayService: EssayService,
     private readonly dbService: DatabaseService<EssayTemplate>,
-    private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>
+    private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
+    private readonly confirmationService: ConfirmationService
   ) {
     this.form = this.buildForm();
     this.steps$ = this.getSteps$();
@@ -102,33 +85,32 @@ export class EssayTemplateBuilderComponent
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> {
-    return of(true);
-    // return of(this.confirmBeforeBack).pipe(
-    //   first(),
-    //   switchMap((confirm) => {
-    //     if (!confirm) {
-    //       return of(true);
-    //     } else {
-    //       return new Observable<boolean>((observer) => {
-    //         this.confirmationService.confirm({
-    //           message: this.confirmBeforeBackText,
-    //           header: this.confirmBeforeBackHeader,
-    //           icon: PrimeIcons.EXCLAMATION_TRIANGLE,
-    //           defaultFocus: 'reject',
-    //           acceptButtonStyleClass: 'p-button-outlined',
-    //           accept: () => {
-    //             observer.next(true);
-    //             observer.complete();
-    //           },
-    //           reject: () => {
-    //             observer.next(false);
-    //             observer.complete();
-    //           },
-    //         });
-    //       });
-    //     }
-    //   })
-    // );
+    return of(this.form.dirty).pipe(
+      first(),
+      switchMap((confirm) => {
+        if (!confirm) {
+          return of(true);
+        } else {
+          return new Observable<boolean>((observer) => {
+            this.confirmationService.confirm({
+              message: 'Salir sin guardar',
+              header: '¿Confirma qué quiere salir sin guardar?',
+              icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+              defaultFocus: 'reject',
+              acceptButtonStyleClass: 'p-button-outlined',
+              accept: () => {
+                observer.next(true);
+                observer.complete();
+              },
+              reject: () => {
+                observer.next(false);
+                observer.complete();
+              },
+            });
+          });
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -136,24 +118,6 @@ export class EssayTemplateBuilderComponent
     this.observeTables();
     this.requestToolsTables();
   }
-
-  // getEssaytemplateStepControls(): FormArray<FormControl> {
-  //   return this.form.get('essayTemplateSteps') as FormArray<
-  //     FormControl<EssayTemplateStep>
-  //   >;
-  // }
-
-  // addEssayTemplateStep(step: Step): void {
-  //   const newEssayTemplateStep: Partial<EssayTemplateStep> = {
-  //     step_id: step.id,
-  //     actions_raw_data: [],
-  //     foreign: { step },
-  //   };
-  //   this.addEssaytemplateStepControl(newEssayTemplateStep);
-  //   this.selectedIndex = this.getEssaytemplateStepControls().length - 1;
-  //   this.scrollToIndex = this.selectedIndex;
-  //   this.form.markAsDirty();
-  // }
 
   exit(): void {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
