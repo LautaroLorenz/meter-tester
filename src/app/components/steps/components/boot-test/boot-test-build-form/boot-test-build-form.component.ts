@@ -43,6 +43,9 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<
           current: undefined,
           anglePhi: undefined,
         }),
+        allowedPulses: undefined,
+        minDurationSeconds: undefined,
+        maxDurationSeconds: undefined,
       }),
       foreign: undefined,
     }) as BootTestStepFormGroup;

@@ -1,55 +1,52 @@
 <ng-container [formGroup]="formGroup">
-  <div class="px-3 py-2">
-    <div class="mb-3 flex flex-1 justify-content-center">
-      <label class="text-lg"> Fase {{ faseLabel }} </label>
+  <div class="mb-3 flex justify-content-center">
+    <label class="text-lg"> Fase {{ faseLabel }} </label>
+  </div>
+  <div class="flex flex-column">
+    <div *ngIf="voltageFormControlName" class="flex flex-column">
+      <label for="{{ voltageFormControlName }}" class="mb-2"
+        >Tensión de ensayo {{ voltageLabel }} [V]<span class="ml-1 text-red-300"
+          >*</span
+        >
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="{{ voltageFormControlName }}"
+        [formControlName]="voltageFormControlName"
+        autofocus
+        [useGrouping]="false"
+      ></p-inputNumber>
     </div>
-    <div class="flex flex-1 flex-column" >
-      <div *ngIf="voltageFormControlName" class="flex flex-1 flex-column">
-        <label for="{{ voltageFormControlName }}" class="mb-2"
-          >Tensión de ensayo {{ voltageLabel }} [V]<span
-            class="ml-1 text-red-300"
-            >*</span
-          >
-        </label>
-        <p-inputNumber
-          styleClass="flex flex-1"
-          id="{{ voltageFormControlName }}"
-          [formControlName]="voltageFormControlName"
-          autofocus
-          [useGrouping]="false"
-        ></p-inputNumber>
-      </div>
 
-      <div *ngIf="currentFormControlName" class="flex flex-1 flex-column mt-3">
-        <label for="{{ currentFormControlName }}" class="mb-2"
-          >Corriente de ensayo {{ currentLabel }} [A]<span
-            class="ml-1 text-red-300"
-            >*</span
-          >
-        </label>
-        <p-inputNumber
-          styleClass="flex flex-1"
-          id="{{ currentFormControlName }}"
-          [formControlName]="currentFormControlName"
-          autofocus
-          [useGrouping]="false"
-        ></p-inputNumber>
-      </div>
+    <div *ngIf="currentFormControlName" class="flex flex-column mt-3">
+      <label for="{{ currentFormControlName }}" class="mb-2"
+        >Corriente de ensayo {{ currentLabel }} [A]<span
+          class="ml-1 text-red-300"
+          >*</span
+        >
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="{{ currentFormControlName }}"
+        [formControlName]="currentFormControlName"
+        autofocus
+        [useGrouping]="false"
+      ></p-inputNumber>
+    </div>
 
-      <div *ngIf="angleFormControlName" class="flex flex-1 flex-column mt-3">
-        <label for="{{ angleFormControlName }}" class="mb-2"
-          >Ángulo de ensayo {{ angleLabel }} [º]<span class="ml-1 text-red-300"
-            >*</span
-          >
-        </label>
-        <p-inputNumber
-          styleClass="flex flex-1"
-          id="{{ angleFormControlName }}"
-          [formControlName]="angleFormControlName"
-          autofocus
-          [useGrouping]="false"
-        ></p-inputNumber>
-      </div>
+    <div *ngIf="angleFormControlName" class="flex flex-column mt-3">
+      <label for="{{ angleFormControlName }}" class="mb-2"
+        >Ángulo de ensayo {{ angleLabel }} [º]<span class="ml-1 text-red-300"
+          >*</span
+        >
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="{{ angleFormControlName }}"
+        [formControlName]="angleFormControlName"
+        autofocus
+        [useGrouping]="false"
+      ></p-inputNumber>
     </div>
   </div>
 </ng-container>

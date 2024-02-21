@@ -9,6 +9,9 @@ export interface BootTestFormControlRaw {
   phaseL1: Phase;
   phaseL2: Phase;
   phaseL3: Phase;
+  allowedPulses: number;
+  minDurationSeconds: number;
+  maxDurationSeconds: number;
 }
 
 export interface BootTestStep extends EssayTemplateStep {
@@ -39,6 +42,9 @@ export type BootTestStepFormGroup = FormGroup<{
       current: FormControl<number>;
       anglePhi: FormControl<number>;
     }>;
+    allowedPulses: FormControl<number>
+    minDurationSeconds: FormControl<number>;
+    maxDurationSeconds: FormControl<number>;
   }>;
   foreign: FormControl<Record<string, any>>;
 }>;
