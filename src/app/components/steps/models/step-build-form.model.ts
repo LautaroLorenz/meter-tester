@@ -1,19 +1,14 @@
-import { FormControl, FormGroup } from '@angular/forms';
 import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
-import { Steps } from '../../../models/business/enums/steps.model';
 import { EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 
 export interface StepBuildForm<T extends EssayTemplateStep> {
   formValidChange: EventEmitter<boolean>;
-  formValueChange: EventEmitter<Partial<T>>;
-  stepId: Steps;
+  formValueChange: EventEmitter<T>;
   essayTemplateStep: T;
-  form: FormGroup<{
-    [Property in keyof T]: FormControl<T[Property] | undefined>;
-  }>;
+  form: FormGroup;
   onDestroy: Subject<void>;
-  buildForm(): FormGroup<{
-    [Property in keyof T]: FormControl<T[Property] | undefined>;
-  }>;
+  buildForm(): FormGroup;
+  patchInitValue(): void;
 }

@@ -1,15 +1,25 @@
 <fom novalidate [formGroup]="form">
   <div class="flex flex-1 flex-column">
     <div class="field">
-      <label for="name">Nombre<span class="ml-1 text-red-300">*</span></label>
-      <input type="text" pInputText id="name" formControlName="name" required />
-      <ng-container *ngIf="form.get('name') as field">
-        <small class="text-red-500" *ngIf="field.invalid && field.dirty">
-          Requerido
-        </small>
-      </ng-container>
+      <label for="name">Nombre</label>
+      <input type="text" pInputText id="name" formControlName="name" />
     </div>
   </div>
+
+  <ng-container formGroupName="form_control_raw">
+    <div class="field pb-0 mb-3">
+      <label for="meterConstant" class="mb-2"
+        >Constante del medidor<span class="ml-1 text-red-300">*</span>
+      </label>
+      <p-selectButton
+        [options]="MeterConstants"
+        id="meterConstant"
+        formControlName="meterConstant"
+        optionLabel="name"
+        optionValue="id"
+      ></p-selectButton>
+    </div>
+  </ng-container>
 
   <!-- <div class="flex flex-1 flex-column">
       <label

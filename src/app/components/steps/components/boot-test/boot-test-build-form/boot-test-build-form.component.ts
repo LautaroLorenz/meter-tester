@@ -8,10 +8,13 @@ import {
   Output,
 } from '@angular/core';
 import { StepBuildForm } from '../../../models/step-build-form.model';
-import { BootTestStep, BootTestStepForm } from './models/boot-test-step.model';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Steps } from '../../../../../models/business/enums/steps.model';
+import {
+  BootTestStep,
+  BootTestStepFormGroup,
+} from './models/boot-test-step.model';
+import { FormBuilder } from '@angular/forms';
 import { Subject, takeUntil, tap } from 'rxjs';
+import { MeterConstants } from '../../../../../models/business/constants/meter-constant.model';
 
 @Component({
   selector: 'app-boot-test-build-form',
@@ -25,22 +28,21 @@ export class BootTestBuildFormComponent
   @Input() essayTemplateStep!: BootTestStep;
 
   @Output() formValidChange: EventEmitter<boolean>;
-  @Output() formValueChange: EventEmitter<Partial<BootTestStep>>;
+  @Output() formValueChange: EventEmitter<BootTestStep>;
 
-  readonly form: FormGroup<BootTestStepForm>;
-  readonly stepId: Steps.BootTest;
+  readonly form: BootTestStepFormGroup;
   readonly onDestroy: Subject<void>;
+  readonly MeterConstants = MeterConstants;
 
   constructor(private fb: FormBuilder) {
     this.formValidChange = new EventEmitter<boolean>();
-    this.formValueChange = new EventEmitter<Partial<BootTestStep>>();
+    this.formValueChange = new EventEmitter<BootTestStep>();
     this.onDestroy = new Subject<void>();
-    this.stepId = Steps.BootTest;
     this.form = this.buildForm();
   }
 
-  ngOnInit(): void {  
-    this.form.patchValue(this.essayTemplateStep);
+  ngOnInit(): void {
+    this.patchInitValue();
     this.observeForm();
   }
 
@@ -49,16 +51,27 @@ export class BootTestBuildFormComponent
     this.onDestroy.complete();
   }
 
-  buildForm(): FormGroup<BootTestStepForm> {
+  buildForm(): BootTestStepFormGroup {
     return this.fb.nonNullable.group({
       id: undefined,
       name: undefined,
       order: undefined,
       essay_template_id: undefined,
-      step_id: this.stepId,
-      form_control_raw: undefined,
+      step_id: undefined,
+      form_control_raw: this.fb.nonNullable.group({
+        meterConstant: undefined,
+      }),
       foreign: undefined,
-    }) as FormGroup<BootTestStepForm>;
+    }) as BootTestStepFormGroup;
+  }
+
+  patchInitValue(): void {
+    this.form.patchValue({
+      ...this.essayTemplateStep,
+      form_control_raw: JSON.parse(
+        this.essayTemplateStep.form_control_raw as unknown as string
+      ),
+    });
   }
 
   private observeForm(): void {
@@ -72,7 +85,7 @@ export class BootTestBuildFormComponent
     this.form.valueChanges
       .pipe(
         takeUntil(this.onDestroy),
-        tap((value) => this.formValueChange.emit(value))
+        tap(() => this.formValueChange.emit(this.form.getRawValue()))
       )
       .subscribe();
   }
