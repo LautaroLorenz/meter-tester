@@ -2,9 +2,13 @@ import { EssayTemplateStep } from '../../../../../../models/business/database/es
 import { Steps } from '../../../../../../models/business/enums/steps.model';
 import { MeterConstant } from '../../../../../../models/business/constants/meter-constant.model';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Phase } from '../../../../../../models/business/forms/phase-form.model';
 
 export interface BootTestFormControlRaw {
   meterConstant: MeterConstant;
+  phaseL1: Phase;
+  phaseL2: Phase;
+  phaseL3: Phase;
 }
 
 export interface BootTestStep extends EssayTemplateStep {
@@ -20,6 +24,21 @@ export type BootTestStepFormGroup = FormGroup<{
   step_id: FormControl<number>;
   form_control_raw: FormGroup<{
     meterConstant: FormControl<MeterConstant>;
+    phaseL1: FormGroup<{
+      voltage: FormControl<number>;
+      current: FormControl<number>;
+      anglePhi: FormControl<number>;
+    }>;
+    phaseL2: FormGroup<{
+      voltage: FormControl<number>;
+      current: FormControl<number>;
+      anglePhi: FormControl<number>;
+    }>;
+    phaseL3: FormGroup<{
+      voltage: FormControl<number>;
+      current: FormControl<number>;
+      anglePhi: FormControl<number>;
+    }>;
   }>;
   foreign: FormControl<Record<string, any>>;
 }>;

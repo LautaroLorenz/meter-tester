@@ -60,6 +60,21 @@ export class BootTestBuildFormComponent
       step_id: undefined,
       form_control_raw: this.fb.nonNullable.group({
         meterConstant: undefined,
+        phaseL1: this.fb.nonNullable.group({
+          voltage: undefined,
+          current: undefined,
+          anglePhi: undefined,
+        }),
+        phaseL2: this.fb.nonNullable.group({
+          voltage: undefined,
+          current: undefined,
+          anglePhi: undefined,
+        }),
+        phaseL3: this.fb.nonNullable.group({
+          voltage: undefined,
+          current: undefined,
+          anglePhi: undefined,
+        }),
       }),
       foreign: undefined,
     }) as BootTestStepFormGroup;

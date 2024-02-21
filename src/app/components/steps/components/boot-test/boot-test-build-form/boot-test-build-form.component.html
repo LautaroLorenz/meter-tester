@@ -19,6 +19,45 @@
         optionValue="id"
       ></p-selectButton>
     </div>
+
+    <div class="flex flex-1 flex-row">
+      <div class="field">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL1') | asFormGroup"
+          faseLabel="L1"
+          voltageFormControlName="voltage"
+          voltageLabel="U1"
+          currentFormControlName="current"
+          currentLabel="I1"
+          angleFormControlName="anglePhi"
+          angleLabel="&#632;1"
+        ></app-phase-form-group>
+      </div>
+      <div class="field">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL2') | asFormGroup"
+          faseLabel="L2"
+          voltageFormControlName="voltage"
+          voltageLabel="U2"
+          currentFormControlName="current"
+          currentLabel="I2"
+          angleFormControlName="anglePhi"
+          angleLabel="&#632;2"
+        ></app-phase-form-group>
+      </div>
+      <div class="field">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL3') | asFormGroup"
+          faseLabel="L3"
+          voltageFormControlName="voltage"
+          voltageLabel="U3"
+          currentFormControlName="current"
+          currentLabel="I3"
+          angleFormControlName="anglePhi"
+          angleLabel="&#632;3"
+        ></app-phase-form-group>
+      </div>
+    </div>
   </ng-container>
 
   <!-- <div class="flex flex-1 flex-column">
