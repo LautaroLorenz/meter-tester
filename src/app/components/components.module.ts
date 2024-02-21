@@ -10,10 +10,8 @@ import { MenuComponent } from './menu/menu.component';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-test-build-form/boot-test-build-form.component';
+import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 
-// import { PipesModule } from '../pipes/pipes.module';
-// import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
-// import { ReactiveFormsModule } from '@angular/forms';
 // import { DirectivesModule } from '../directives/directives.module';
 // import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
 // import { StepSelectorComponent } from './step-selector/step-selector.component';
@@ -21,7 +19,6 @@ import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-te
 // import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
 // import { ActionSwitchListComponent } from './action-switch-list/action-switch-list.component';
 // import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
-// import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 // import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
 // import { ContrastTestParametersActionComponent } from './actions/contrast-test-parameters-action/contrast-test-parameters-action.component';
 // import { UserIdentificationActionComponent } from './actions/user-identification-action/user-identification-action.component';
@@ -53,13 +50,13 @@ const AppComponents = [
   TabMenuTestComponent,
   ValidatorMessagesComponent,
   BootTestBuildFormComponent,
+  PhaseFormGroupComponent,
   //   FillAvailableSpaceComponent,
   //   StepSelectorComponent,
   //   FormArrayControlsOrderListComponent,
   //   StandIdentificationActionComponent,
   //   ActionSwitchListComponent,
   //   PhotocellAdjustmentValuesActionComponent,
-  //   PhaseFormGroupComponent,
   //   EnterTestValuesActionComponent,
   //   ContrastTestParametersActionComponent,
   //   UserIdentificationActionComponent,
