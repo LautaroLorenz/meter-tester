@@ -21,6 +21,7 @@ export interface EssayTemplateStep extends DbForeignKey {
 
 export const EssayTemplateStepDbTableContext: DbTableContext = {
   tableName: 'essay_templates_steps',
+  rawProperties: ['form_control_raw'],
   foreignTables: [
     {
       tableName: EssayTemplateDbTableContext.tableName,

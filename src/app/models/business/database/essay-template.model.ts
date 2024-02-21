@@ -8,6 +8,7 @@ export interface EssayTemplate extends DbForeignKey {
 
 export const EssayTemplateDbTableContext: DbTableContext = {
   tableName: 'essay_templates',
+  rawProperties: [],
   foreignTables: [],
 };
 

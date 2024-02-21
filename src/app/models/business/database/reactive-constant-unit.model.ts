@@ -8,6 +8,7 @@ export interface ReactiveConstantUnit {
 
 export const ReactiveConstantUnitDbTableContext: DbTableContext = {
   tableName: 'reactive_constant_unit',
+  rawProperties: [],
   foreignTables: [],
 };
 

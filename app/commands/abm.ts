@@ -3,7 +3,8 @@ import { ipcMain } from 'electron';
 export default {
   register: (knex: any) => {
     ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
-      const { tableName, relations, conditions } = dbTableConnection;
+      const { tableName, relations, conditions, rawProperties } =
+        dbTableConnection;
       const relationsMap: any = {};
       const queryBuilder = knex(tableName).orderBy('id', 'desc');
 
@@ -20,7 +21,15 @@ export default {
         }
       }
 
-      const rows = await queryBuilder;
+      let rows = await queryBuilder;
+      if (rawProperties.length > 0) {
+        rows = rows.map((row: any) => {
+          rawProperties.forEach((rawProperty: string) => {
+            row[rawProperty] = JSON.parse(row[rawProperty]);
+          });
+          return { ...row };
+        });
+      }
       for await (const relation of relations) {
         relationsMap[relation] = await knex(relation);
       }

@@ -19,6 +19,7 @@ export type TableName = string;
 export interface DbTableContext {
   tableName: TableName;
   foreignTables: ForeignTable[];
+  rawProperties: string[];
 }
 
 export interface ForeignTable {

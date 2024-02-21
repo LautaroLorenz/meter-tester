@@ -9,6 +9,7 @@ export interface Step extends DbForeignKey {
 
 export const StepDbTableContext: DbTableContext = {
   tableName: 'steps',
+  rawProperties: [],
   foreignTables: [],
 };
 

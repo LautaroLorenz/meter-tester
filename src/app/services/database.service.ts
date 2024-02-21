@@ -39,9 +39,10 @@ export class DatabaseService<T> {
   private readonly _getDatabaseTable = (
     tableName: TableName,
     relations: TableName[] = [],
-    conditions: Where[] = []
+    conditions: Where[] = [],
+    rawProperties: string[] = []
   ): void => {
-    this.ipcService.send('get-table', { tableName, relations, conditions });
+    this.ipcService.send('get-table', { tableName, relations, conditions, rawProperties });
   };
   private readonly _getTableDataAsObservable = (
     tableName: string
@@ -83,9 +84,10 @@ export class DatabaseService<T> {
     } = {
       relations: [],
       conditions: [],
-    }
+    },
+    rawProperties: string[] = []
   ): void {
-    this._getDatabaseTable(tableName, options.relations, options.conditions);
+    this._getDatabaseTable(tableName, options.relations, options.conditions, rawProperties);
   }
 
   getTableReply$(tableName: string): Observable<RequestTableResponse<T>> {

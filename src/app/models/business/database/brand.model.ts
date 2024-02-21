@@ -11,6 +11,7 @@ export interface Brand extends DbForeignKey {
 
 export const BrandDbTableContext: DbTableContext = {
   tableName: 'brands',
+  rawProperties: [],
   foreignTables: [],
 };
 

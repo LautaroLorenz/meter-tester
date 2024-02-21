@@ -8,6 +8,7 @@ export interface Connection {
 
 export const ConnectionDbTableContext: DbTableContext = {
   tableName: 'connections',
+  rawProperties: [],
   foreignTables: [],
 };
 

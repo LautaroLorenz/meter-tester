@@ -78,19 +78,6 @@ export class EssayTemplateBuilderComponent
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
-  // private readonly addEssaytemplateStepControl = (
-  //   essayTemplateStep: Partial<EssayTemplateStep>
-  // ): void => {
-  //   this.getEssaytemplateStepControls().push(
-  //     new FormControl({
-  //       ...essayTemplateStep,
-  //       actions_raw_data: JSON.parse(
-  //         essayTemplateStep?.actions_raw_data?.toString() || '[]'
-  //       ),
-  //     })
-  //   );
-  // };
-
   // private readonly confirmationService: ConfirmationService
   constructor(
     private readonly route: ActivatedRoute,
@@ -215,12 +202,6 @@ export class EssayTemplateBuilderComponent
         map((essayTemplateSteps) =>
           essayTemplateSteps.sort((a, b) => a.order - b.order)
         ),
-        map((essayTemplateSteps) =>
-          essayTemplateSteps.map((essayTemplateStep) => ({
-            ...essayTemplateStep,
-            form_control_raw: JSON.parse(essayTemplateStep.form_control_raw),
-          }))
-        ),
         tap(
           (essayTemplateSteps) =>
             (this.savedEssayTemplateSteps = essayTemplateSteps)
@@ -249,7 +230,8 @@ export class EssayTemplateBuilderComponent
     };
     this.dbServiceEssayTemplateStep.getTable(
       EssayTemplateStepDbTableContext.tableName,
-      getTableOptions
+      getTableOptions,
+      EssayTemplateStepDbTableContext.rawProperties
     );
   }
 

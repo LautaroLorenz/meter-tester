@@ -33,6 +33,7 @@ export interface Meter extends DbForeignKey {
 
 export const MeterDbTableContext: DbTableContext = {
   tableName: 'meters',
+  rawProperties: [],
   foreignTables: [
     {
       tableName: ConnectionDbTableContext.tableName,

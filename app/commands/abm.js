@@ -21,7 +21,7 @@ exports.default = {
     register: (knex) => {
         electron_1.ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, e_1, _b, _c;
-            const { tableName, relations, conditions } = dbTableConnection;
+            const { tableName, relations, conditions, rawProperties } = dbTableConnection;
             const relationsMap = {};
             const queryBuilder = knex(tableName).orderBy('id', 'desc');
             for (const condition of conditions) {
@@ -36,7 +36,15 @@ exports.default = {
                     queryBuilder.orWhere(columnName, operator, value);
                 }
             }
-            const rows = yield queryBuilder;
+            let rows = yield queryBuilder;
+            if (rawProperties.length > 0) {
+                rows = rows.map((row) => {
+                    rawProperties.forEach((rawProperty) => {
+                        row[rawProperty] = JSON.parse(row[rawProperty]);
+                    });
+                    return Object.assign({}, row);
+                });
+            }
             try {
                 for (var _d = true, relations_1 = __asyncValues(relations), relations_1_1; relations_1_1 = yield relations_1.next(), _a = relations_1_1.done, !_a;) {
                     _c = relations_1_1.value;

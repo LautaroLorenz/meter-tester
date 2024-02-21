@@ -8,6 +8,7 @@ export interface ActiveConstantUnit {
 
 export const ActiveConstantUnitDbTableContext: DbTableContext = {
   tableName: 'active_constant_unit',
+  rawProperties: [],
   foreignTables: [],
 };
 
