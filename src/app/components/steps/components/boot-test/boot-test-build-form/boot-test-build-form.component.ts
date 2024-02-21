@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StepBuildFormComponent } from '../../../models/step-build-form-component.model';
 import {
   BootTestStep,
@@ -13,10 +13,10 @@ import { MeterConstants } from '../../../../../models/business/constants/meter-c
   styleUrls: ['./boot-test-build-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootTestBuildFormComponent
-  extends StepBuildFormComponent<BootTestStep, BootTestStepFormGroup>
-  implements OnDestroy
-{
+export class BootTestBuildFormComponent extends StepBuildFormComponent<
+  BootTestStep,
+  BootTestStepFormGroup
+> {
   readonly MeterConstants = MeterConstants;
 
   override buildForm(fb: FormBuilder): BootTestStepFormGroup {
