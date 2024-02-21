@@ -1,1 +1,5 @@
-Drag and drop en el componente StepsSequenceTableComponent
+- en el componente essay template builder 
+  - Drag and drop 
+  - Mover input para poner el nombre dentro de la página
+  - Paso de preparacion
+  - Paso de reporte
