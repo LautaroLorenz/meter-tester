@@ -8,5 +8,5 @@ export interface EssayTemplateForm {
 
 export interface EssayTemplateFormGroup {
   essayTemplate: FormGroup<EssayTemplateForm>;
-  essayTemplateSteps: FormArray<FormControl<EssayTemplateStep>>;
+  essayTemplateSteps: FormArray<FormControl<Partial<EssayTemplateStep>>>;
 }

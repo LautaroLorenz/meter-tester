@@ -73,7 +73,6 @@ export class EssayTemplateBuilderComponent
   ) {
     this.form = this.buildForm();
     this.steps$ = this.getSteps$();
-    this.steps$.subscribe();
     this.saveButtonMenuItems = this.getSaveButtonMenuItems();
     this.id$ = this.getId$();
   }
@@ -211,7 +210,9 @@ export class EssayTemplateBuilderComponent
           id: this.fb.control(undefined, { nonNullable: true }),
           name: this.fb.control(undefined, { nonNullable: true }),
         }),
-        essayTemplateSteps: this.fb.array<FormControl<any>>([]),
+        essayTemplateSteps: this.fb.array<
+          FormControl<Partial<EssayTemplateStep>>
+        >([]),
       },
       { validators: essayTemplateValidator() }
     );

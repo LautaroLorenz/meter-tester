@@ -138,6 +138,7 @@ export class StepsSequenceTableComponent implements OnChanges {
   private addSavedEssayTemplateStepsControl(
     essayTemplateSteps: EssayTemplateStep[]
   ): void {
+    this.formArray.clear();
     essayTemplateSteps.forEach((essayTemplateStep) =>
       this.addEssayTemplateStepControl(essayTemplateStep)
     );
