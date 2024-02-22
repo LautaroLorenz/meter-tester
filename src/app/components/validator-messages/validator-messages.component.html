@@ -16,6 +16,8 @@
   *ngIf="hasErrors"
   pTooltip="Ver validaciones"
   icon="pi pi-exclamation-triangle"
-  styleClass="p-button-text p-button-lg p-button-rounded p-button-warning"
+  styleClass="p-button-lg p-button-warning"
+  [rounded]="true"
+  [text]="true"
   (click)="op.toggle($event)"
 ></p-button>

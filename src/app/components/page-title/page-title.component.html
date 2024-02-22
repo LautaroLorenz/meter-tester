@@ -6,7 +6,8 @@
     <p-button
       *ngIf="showBack"
       icon="pi pi-arrow-left"
-      styleClass="p-button-rounded p-button-text"
+      [rounded]="true"
+      [text]="true"
       (click)="backEvent.emit()"
       pTooltip="Volver a la página anterior"
     ></p-button>

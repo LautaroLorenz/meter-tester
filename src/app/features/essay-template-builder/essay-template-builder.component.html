@@ -1,27 +1,5 @@
-<form novalidate [formGroup]="form" class="">
+<form novalidate [formGroup]="form">
   <app-page-title [title]="title" [showBack]="true" (backEvent)="exit()">
-    <ng-container toolbar-left>
-      <div class="ml-3">
-        <ng-container formGroupName="essayTemplate">
-          <input
-            #nameInput
-            placeholder="Nombre"
-            type="text"
-            pInputText
-            id="name"
-            formControlName="name"
-            class="name-input w-15rem"
-            [appSelectOnFocus]="true"
-            [(appFocused)]="nameInputFocused"
-            [ngClass]="{
-              'cursor-pointer': !nameInputFocused,
-              'border-none': !nameInputFocused && nameInput.value
-            }"
-          />
-        </ng-container>
-      </div>
-    </ng-container>
-
     <ng-container toolbar-right>
       <div class="flex align-items-center">
         <div class="mr-2">
@@ -42,6 +20,15 @@
       </div>
     </ng-container>
   </app-page-title>
+
+  <ng-container formGroupName="essayTemplate">
+    <div class="formgrid grid my-5 mx-3">
+      <span class="p-float-label">
+        <input pInputText id="name" formControlName="name" />
+        <label htmlFor="name">Nombre</label>
+      </span>
+    </div>
+  </ng-container>
 
   <ng-container *ngIf="steps$ | async as steps">
     <app-steps-sequence-table

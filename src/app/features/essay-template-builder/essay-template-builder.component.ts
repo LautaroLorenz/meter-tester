@@ -50,7 +50,6 @@ import { essayTemplateValidator } from '../../models/business/forms/essay-templa
 export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
-  nameInputFocused = false;
   savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
 
   readonly title: string = 'Ensayo';
