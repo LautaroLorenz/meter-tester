@@ -10,8 +10,11 @@
     <ng-container *ngIf="!!essayTemplateStep && dialogOpened">
       <ng-container [ngSwitch]="essayTemplateStep.step_id">
         <ng-container *ngSwitchCase="Steps.Preparation">
-          <!-- TODO -->
-          <app-preparation-build-form></app-preparation-build-form>
+          <app-preparation-build-form
+            [essayTemplateStep]="essayTemplateStep"
+            (formValidChange)="formValid = $event"
+            (formValueChange)="formValue = $event"
+          ></app-preparation-build-form>
         </ng-container>
 
         <ng-container *ngSwitchCase="Steps.BootTest">

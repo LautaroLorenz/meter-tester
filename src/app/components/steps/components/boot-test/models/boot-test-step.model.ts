@@ -1,7 +1,7 @@
 import { EssayTemplateStep } from '../../../../../models/business/database/essay-template-step.model';
 import { Steps } from '../../../../../models/business/enums/steps.model';
 import { MeterConstant } from '../../../../../models/business/constants/meter-constant.model';
-import { Phase } from '../../../../../models/business/forms/phase-form.model';
+import { Phase } from '../../../../../models/business/interafces/phase.model';
 
 export interface BootTestFormControlRaw {
   meterConstant: MeterConstant;

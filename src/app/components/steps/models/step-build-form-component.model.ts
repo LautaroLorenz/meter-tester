@@ -36,6 +36,8 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   ngOnInit(): void {
     this.patchInitValue();
     this.observeForm();
+    this.observeTables();
+    this.requestToolsTables();
     this.onSuperInit();
   }
 
@@ -48,6 +50,10 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   protected onSuperInit(): void {}
 
   protected onSuperDestroy(): void {}
+
+  protected observeTables(): void {}
+
+  protected requestToolsTables(): void {}
 
   private patchInitValue(): void {
     this.form.patchValue(this.essayTemplateStep);
