@@ -1,6 +1,6 @@
 - implementar Drag and drop en abm component y usarlo en creación de template de ensayo. 
 - Creación de template de ensayo:
-  - Agregar al ValidatorFn un check de que todos los pasos tengan la información de su formulario completa.
+  - Agregar al ValidatorFn un check de que todos los pasos tengan la información de su formulario completa. (se podría poner una class a la row)
   - Paso de preparacion.
   - Paso de reporte.
 - Historial de ejecuciones:
