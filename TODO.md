@@ -1,5 +1,7 @@
-- en el componente essay template builder 
-  - Drag and drop 
-  - Mover input para poner el nombre dentro de la página
-  - Paso de preparacion
-  - Paso de reporte
+- implementar Drag and drop en abm component y usarlo en creación de template de ensayo. 
+- Creación de template de ensayo:
+  - Agregar al ValidatorFn un check de que todos los pasos tengan la información de su formulario completa.
+  - Paso de preparacion.
+  - Paso de reporte.
+- Historial de ejecuciones:
+  - Cargar tabla con paginado (posible implementacion en ABM component).
