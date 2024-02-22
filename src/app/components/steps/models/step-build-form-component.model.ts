@@ -11,22 +11,21 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject, takeUntil, tap } from 'rxjs';
+import { AbstractFormGroup } from '../../../models/core/abstract-form-group.model';
 
 @Component({
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export abstract class StepBuildFormComponent<
-  T extends EssayTemplateStep,
-  K extends FormGroup
-> implements OnInit, OnDestroy
+export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
+  implements OnInit, OnDestroy
 {
   @Input() essayTemplateStep!: T;
 
   @Output() formValidChange = new EventEmitter<boolean>();
   @Output() formValueChange = new EventEmitter<T>();
 
-  readonly form: K;
+  readonly form: FormGroup;
   readonly onDestroy = new Subject<void>();
   readonly fb = inject(FormBuilder);
 
@@ -70,5 +69,5 @@ export abstract class StepBuildFormComponent<
       .subscribe();
   }
 
-  abstract buildForm(fb: FormBuilder): K;
+  abstract buildForm(fb: FormBuilder): AbstractFormGroup<T>;
 }

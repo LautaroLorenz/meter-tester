@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StepBuildFormComponent } from '../../../models/step-build-form-component.model';
-import {
-  BootTestStep,
-  BootTestStepFormGroup,
-} from './models/boot-test-step.model';
+import { BootTestStep } from './models/boot-test-step.model';
 import { FormBuilder } from '@angular/forms';
 import { MeterConstants } from '../../../../../models/business/constants/meter-constant.model';
+import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';
 
 @Component({
   selector: 'app-boot-test-build-form',
@@ -13,13 +11,10 @@ import { MeterConstants } from '../../../../../models/business/constants/meter-c
   styleUrls: ['./boot-test-build-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootTestBuildFormComponent extends StepBuildFormComponent<
-  BootTestStep,
-  BootTestStepFormGroup
-> {
+export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestStep> {
   readonly MeterConstants = MeterConstants;
 
-  override buildForm(fb: FormBuilder): BootTestStepFormGroup {
+  override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
     return fb.nonNullable.group({
       id: undefined,
       name: undefined,
@@ -48,6 +43,6 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<
         maxDurationSeconds: undefined,
       }),
       foreign: undefined,
-    }) as BootTestStepFormGroup;
+    }) as AbstractFormGroup<BootTestStep>;
   }
 }
