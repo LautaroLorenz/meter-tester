@@ -21,23 +21,25 @@
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      label="Cancelar"
-      icon="pi pi-times"
-      class="p-button-text p-button-outlined"
-      (click)="closeDialog()"
-    ></button>
+    <div class="mt-2">
+      <button
+        pButton
+        pRipple
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text p-button-outlined"
+        (click)="closeDialog()"
+      ></button>
 
-    <button
-      pButton
-      pRipple
-      label="Aceptar"
-      icon="pi pi-check"
-      class="p-button p-button-outlined"
-      (click)="acceptChanges()"
-      [disabled]="!formValid"
-    ></button>
+      <button
+        pButton
+        pRipple
+        label="Aceptar"
+        icon="pi pi-check"
+        class="p-button p-button-outlined"
+        (click)="acceptChanges()"
+        [disabled]="!formValid"
+      ></button>
+    </div>
   </ng-template>
 </p-dialog>

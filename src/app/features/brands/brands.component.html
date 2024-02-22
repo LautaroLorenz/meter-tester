@@ -11,27 +11,29 @@
   >
     <ng-template #abmDetailTemplate>
       <form novalidate [formGroup]="form">
-        <input type="hidden" formControlName="id" />
+        <div class="formgrid grid">
+          <input type="hidden" formControlName="id" />
 
-        <div class="field">
-          <label for="name" class="mb-2"
-            >Marca<span class="ml-1 text-red-300">*</span></label
-          >
-          <input
-            type="text"
-            pInputText
-            id="name"
-            formControlName="name"
-            autofocus
-            required
-          />
-          <ng-container *ngIf="form.get('name') as nameField">
-            <small
-              class="text-red-500"
-              *ngIf="nameField.invalid && nameField.dirty"
-              >Requerido</small
+          <div class="field col col-12">
+            <label for="name" class="mb-2"
+              >Marca<span class="ml-1 text-red-300">*</span></label
             >
-          </ng-container>
+            <input
+              type="text"
+              pInputText
+              id="name"
+              formControlName="name"
+              autofocus
+              required
+            />
+            <ng-container *ngIf="form.get('name') as nameField">
+              <small
+                class="text-red-500"
+                *ngIf="nameField.invalid && nameField.dirty"
+                >Requerido</small
+              >
+            </ng-container>
+          </div>
         </div>
       </form>
     </ng-template>
