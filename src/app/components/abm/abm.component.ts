@@ -31,6 +31,9 @@ export class AbmComponent
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
   @Input() detailFormValid = false;
+  @Input() toolbar = true;
+  @Input() selectable = true;
+  @Input() deleteButton = true;
   @Input() actionColumnStyleClass = 'w-8rem';
   @Input() abmDetailTemplate: TemplateRef<any> | null = null;
   @Input() tableColumnButtonsTemplate: TemplateRef<any> | null = null;
@@ -48,10 +51,6 @@ export class AbmComponent
 
   selected: any[] = [];
   detailDialogVisible = false;
-
-  get deleteDisabled(): boolean {
-    return this.selected.length === 0;
-  }
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -90,13 +89,8 @@ export class AbmComponent
     this.initFormValueChangeListeners();
   }
 
-  private initFormValueChangeListeners(): void {
-    this.search.valueChanges
-      .pipe(
-        takeUntil(this.destroyed$),
-        tap((value: string) => this.filterByText(value))
-      )
-      .subscribe();
+  get deleteDisabled(): boolean {
+    return this.selected.length === 0;
   }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
@@ -204,5 +198,14 @@ export class AbmComponent
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  private initFormValueChangeListeners(): void {
+    this.search.valueChanges
+      .pipe(
+        takeUntil(this.destroyed$),
+        tap((value: string) => this.filterByText(value))
+      )
+      .subscribe();
   }
 }

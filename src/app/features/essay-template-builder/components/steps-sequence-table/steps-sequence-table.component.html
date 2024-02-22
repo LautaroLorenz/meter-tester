@@ -9,91 +9,60 @@
   (essayTemplateStepChange)="saveEditedStepInSequenceChanges($event)"
 ></app-edit-step-in-sequence>
 
-<p-table
-  #primeNgTable
-  styleClass="p-datatable-gridlines p-datatable-striped mx-3"
+<app-abm
+  [dataset]="this.formArray.value"
   [columns]="EssayTemplateStepTableColumns"
-  [value]="this.formArray.value"
+  [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
+  [toolbar]="false"
+  [selectable]="false"
+  [deleteButton]="false"
+  actionColumnStyleClass="w-16rem"
 >
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th
-        *ngFor="let col of columns"
-        [pSortableColumn]="col.field"
-        [pSortableColumnDisabled]="!col.sortable"
-        [pTooltip]="col.headerTooltip"
-        tooltipPosition="top"
-        [colSpan]="col.colSpan"
-      >
-        {{ col.header }}
-        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
-      </th>
-      <th aria-label="Acciones" class="w-16rem"></th>
-    </tr>
-  </ng-template>
   <ng-template
-    pTemplate="body"
-    let-rowData
-    let-columns="columns"
-    let-index="rowIndex"
+    #tableColumnButtonsTemplate
+    let-element="element"
+    let-index="index"
   >
-    <tr>
-      <ng-container *ngFor="let col of columns">
-        <td class="{{ col.styleClass }}">
-          {{ col.prefix }}{{ rowData | dotStringAsObject : col.field
-          }}{{ col.suffix }}
-        </td>
-        <ng-container *ngFor="let colSpanColumn of col.colSpanColumns">
-          <td class="{{ colSpanColumn.styleClass }}">
-            {{ colSpanColumn.prefix
-            }}{{ rowData | dotStringAsObject : colSpanColumn.field
-            }}{{ colSpanColumn.suffix }}
-          </td>
-        </ng-container>
-      </ng-container>
-      <td class="p-2 text-center">
-        <p-button
-          icon="pi pi-arrow-down"
-          [outlined]="true"
-          [rounded]="true"
-          [text]="true"
-          pTooltip="Bajar orden de ejecución"
-          tooltipPosition="bottom"
-          [showDelay]="1250"
-          [disabled]="index === formArray.length - 1"
-          [tooltipDisabled]="index === formArray.length - 1"
-          (click)="moveDownByIndex(index)"
-        ></p-button>
+    <p-button
+      icon="pi pi-arrow-down"
+      [outlined]="true"
+      [rounded]="true"
+      [text]="true"
+      pTooltip="Bajar orden de ejecución"
+      tooltipPosition="bottom"
+      [showDelay]="1250"
+      [disabled]="index === formArray.length - 1"
+      [tooltipDisabled]="index === formArray.length - 1"
+      (click)="moveDownByIndex(index)"
+    ></p-button>
 
-        <p-button
-          icon="pi pi-arrow-up"
-          [outlined]="true"
-          [rounded]="true"
-          [text]="true"
-          pTooltip="Subir orden de ejecución"
-          tooltipPosition="bottom"
-          [showDelay]="1250"
-          [disabled]="index === 0"
-          [tooltipDisabled]="index === 0"
-          (click)="moveUpByIndex(index)"
-        ></p-button>
+    <p-button
+      icon="pi pi-arrow-up"
+      [outlined]="true"
+      [rounded]="true"
+      [text]="true"
+      pTooltip="Subir orden de ejecución"
+      tooltipPosition="bottom"
+      [showDelay]="1250"
+      [disabled]="index === 0"
+      [tooltipDisabled]="index === 0"
+      (click)="moveUpByIndex(index)"
+    ></p-button>
 
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-          (click)="editEssayTemplateStep(rowData, index)"
-        ></button>
+    <button
+      pButton
+      pRipple
+      icon="pi pi-pencil"
+      class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+      (click)="editEssayTemplateStep(element, index)"
+    ></button>
 
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-outlined p-button-rounded p-button-text p-button-danger"
-          (click)="deleteEssayTemplateStepControl(index)"
-        ></button>
-      </td>
-    </tr>
+    <button
+      pButton
+      pRipple
+      icon="pi pi-trash"
+      class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+      (click)="deleteEssayTemplateStepControl(index)"
+    ></button>
   </ng-template>
-</p-table>
+</app-abm>

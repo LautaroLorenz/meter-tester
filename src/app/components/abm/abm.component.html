@@ -1,37 +1,39 @@
-<p-toolbar styleClass="py-5 px-3 border-noround">
-  <div class="p-toolbar-group-left">
-    <span class="p-input-icon-left">
-      <i *ngIf="!search.getRawValue()" class="pi pi-search"></i>
-      <i
-        *ngIf="search.getRawValue()"
-        class="pi pi-times cursor-pointer"
-        pRipple
-        pTooltip="Limpiar búsqueda"
-        [showDelay]="700"
-        (click)="clearSearch()"
-      ></i>
-      <input
-        type="text"
-        class="w-20rem"
-        pInputText
-        placeholder="Buscar"
-        [formControl]="search"
-      />
-    </span>
-  </div>
-  <div class="p-toolbar-group-right">
-    <ng-container *ngIf="abmDetailTemplate">
-      <p-button
-        label="Nuevo"
-        icon="pi pi-plus"
-        styleClass="ml-2"
-        [outlined]="true"
-        (click)="createElement()"
-      ></p-button>
-    </ng-container>
-    <ng-content select="[toolbar-group-right]"></ng-content>
-  </div>
-</p-toolbar>
+<ng-container *ngIf="toolbar">
+  <p-toolbar styleClass="py-5 px-3 border-noround">
+    <div class="p-toolbar-group-left">
+      <span class="p-input-icon-left">
+        <i *ngIf="!search.getRawValue()" class="pi pi-search"></i>
+        <i
+          *ngIf="search.getRawValue()"
+          class="pi pi-times cursor-pointer"
+          pRipple
+          pTooltip="Limpiar búsqueda"
+          [showDelay]="700"
+          (click)="clearSearch()"
+        ></i>
+        <input
+          type="text"
+          class="w-20rem"
+          pInputText
+          placeholder="Buscar"
+          [formControl]="search"
+        />
+      </span>
+    </div>
+    <div class="p-toolbar-group-right">
+      <ng-container *ngIf="abmDetailTemplate">
+        <p-button
+          label="Nuevo"
+          icon="pi pi-plus"
+          styleClass="ml-2"
+          [outlined]="true"
+          (click)="createElement()"
+        ></p-button>
+      </ng-container>
+      <ng-content select="[toolbar-group-right]"></ng-content>
+    </div>
+  </p-toolbar>
+</ng-container>
 
 <p-table
   #primeNgTable
@@ -44,20 +46,23 @@
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th class="w-3rem p-0 m-0 text-center">
-        <p-menu
-          #menu
-          appendTo="body"
-          [model]="checkboxColumnMenuItems"
-          [popup]="true"
-        ></p-menu>
-        <button
-          pButton
-          icon="pi pi-list"
-          class="p-button-text w-full"
-          (click)="menu.toggle($event)"
-        ></button>
-      </th>
+      <ng-container *ngIf="selectable">
+        <th class="w-3rem p-0 m-0 text-center">
+          <p-menu
+            #menu
+            appendTo="body"
+            [model]="checkboxColumnMenuItems"
+            [popup]="true"
+          ></p-menu>
+          <button
+            pButton
+            icon="pi pi-list"
+            class="p-button-text w-full"
+            (click)="menu.toggle($event)"
+          ></button>
+        </th>
+      </ng-container>
+
       <th
         *ngFor="let col of columns"
         [pSortableColumn]="col.field"
@@ -72,11 +77,19 @@
       <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
+  <ng-template
+    pTemplate="body"
+    let-rowData
+    let-columns="columns"
+    let-rowIndex="rowIndex"
+  >
     <tr>
-      <td class="text-center">
-        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
-      </td>
+      <ng-container *ngIf="selectable">
+        <td class="text-center">
+          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+        </td>
+      </ng-container>
+      
       <ng-container *ngFor="let col of columns">
         <td class="{{ col.styleClass }}">
           {{ col.prefix }}{{ rowData | dotStringAsObject : col.field
@@ -93,7 +106,7 @@
       <td class="p-2 text-center">
         <ng-container
           [ngTemplateOutlet]="tableColumnButtonsTemplate"
-          [ngTemplateOutletContext]="{ element: rowData }"
+          [ngTemplateOutletContext]="{ element: rowData, index: rowIndex }"
         ></ng-container>
         <ng-container *ngIf="abmDetailTemplate">
           <button
@@ -104,13 +117,15 @@
             (click)="editElement(rowData)"
           ></button>
         </ng-container>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-outlined p-button-rounded p-button-text p-button-danger"
-          (click)="deleteElement(rowData)"
-        ></button>
+        <ng-container *ngIf="deleteButton">
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+            (click)="deleteElement(rowData)"
+          ></button>
+        </ng-container>
       </td>
     </tr>
   </ng-template>
