@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -16,6 +17,7 @@ import {
   EssayTemplateStep,
   EssayTemplateStepTableColumns,
 } from '../../../../models/business/database/essay-template-step.model';
+import { Steps } from '../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-steps-sequence-table',
@@ -39,7 +41,7 @@ export class StepsSequenceTableComponent implements OnChanges {
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputFormArray) {
@@ -55,9 +57,20 @@ export class StepsSequenceTableComponent implements OnChanges {
         changes.savedEssayTemplateSteps.currentValue as EssayTemplateStep[]
       );
     }
+    if (changes.stepOptions) {
+      setTimeout(() => {
+        this.addDefaultEssayTemplateStepsControl(
+          changes.stepOptions.currentValue as Step[]
+        );
+        this.cd.detectChanges();
+      });
+    }
   }
 
-  addEssayTemplateStepControlByStep(step: Step): void {
+  addEssayTemplateStepControlByStep(
+    step: Step,
+    { markForCheck } = { markForCheck: true }
+  ): void {
     const essayTemplateStep: Partial<EssayTemplateStep> = {
       step_id: step.id,
       form_control_raw: {},
@@ -66,7 +79,10 @@ export class StepsSequenceTableComponent implements OnChanges {
       },
     };
     this.addEssayTemplateStepControl(essayTemplateStep);
-    this.formArray.markAsDirty();
+
+    if (markForCheck) {
+      this.formArray.markAsDirty();
+    }
   }
 
   deleteEssayTemplateStepControl(index: number): void {
@@ -118,11 +134,15 @@ export class StepsSequenceTableComponent implements OnChanges {
     this.selectedEssayTemplateStepToEdit.index = undefined;
   }
 
-  saveEditedStepInSequenceChanges(essayTemplateStep: Partial<EssayTemplateStep>): void {
-    if(this.selectedEssayTemplateStepToEdit.index === undefined) {
+  saveEditedStepInSequenceChanges(
+    essayTemplateStep: Partial<EssayTemplateStep>
+  ): void {
+    if (this.selectedEssayTemplateStepToEdit.index === undefined) {
       return;
     }
-    this.formArray.at(this.selectedEssayTemplateStepToEdit.index).patchValue(essayTemplateStep);
+    this.formArray
+      .at(this.selectedEssayTemplateStepToEdit.index)
+      .patchValue(essayTemplateStep);
     this.formArray.markAsDirty();
   }
 
@@ -151,5 +171,20 @@ export class StepsSequenceTableComponent implements OnChanges {
       this.fb.control(essayTemplateStep, { nonNullable: true })
     );
     this.recalculateEssayTemplateStepsOrder();
+  }
+
+  private addDefaultEssayTemplateStepsControl(steps: Step[]): void {
+    if (!steps) {
+      return;
+    }
+    if (this.formArray.length > 0) {
+      return;
+    }
+    const defaultEssayTemplateSteps = steps.filter((step) =>
+      [Steps.Preparation].includes(step.id)
+    );
+    defaultEssayTemplateSteps.forEach((step) =>
+      this.addEssayTemplateStepControlByStep(step, { markForCheck: false })
+    );
   }
 }

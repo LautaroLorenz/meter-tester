@@ -31,8 +31,8 @@
       pTooltip="Bajar orden de ejecución"
       tooltipPosition="bottom"
       [showDelay]="1250"
-      [disabled]="index === formArray.length - 1"
-      [tooltipDisabled]="index === formArray.length - 1"
+      [disabled]="index === 0 || index === formArray.length - 1"
+      [tooltipDisabled]="index === 0 || index === formArray.length - 1"
       (click)="moveDownByIndex(index)"
     ></p-button>
 
@@ -44,8 +44,8 @@
       pTooltip="Subir orden de ejecución"
       tooltipPosition="bottom"
       [showDelay]="1250"
-      [disabled]="index === 0"
-      [tooltipDisabled]="index === 0"
+      [disabled]="index === 0 || index === 1"
+      [tooltipDisabled]="index === 0 || index === 1"
       (click)="moveUpByIndex(index)"
     ></p-button>
 
