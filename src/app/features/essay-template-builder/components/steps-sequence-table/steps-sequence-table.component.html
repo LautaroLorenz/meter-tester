@@ -62,6 +62,7 @@
       pRipple
       icon="pi pi-trash"
       class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+      [disabled]="index === 0"
       (click)="deleteEssayTemplateStepControl(index)"
     ></button>
   </ng-template>
