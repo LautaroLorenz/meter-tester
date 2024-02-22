@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import {
@@ -208,7 +213,10 @@ export class EssayTemplateBuilderComponent
       {
         essayTemplate: this.fb.group<EssayTemplateForm>({
           id: this.fb.control(undefined, { nonNullable: true }),
-          name: this.fb.control(undefined, { nonNullable: true }),
+          name: this.fb.control(undefined, {
+            nonNullable: true,
+            validators: Validators.required.bind(this),
+          }),
         }),
         essayTemplateSteps: this.fb.array<
           FormControl<Partial<EssayTemplateStep>>
