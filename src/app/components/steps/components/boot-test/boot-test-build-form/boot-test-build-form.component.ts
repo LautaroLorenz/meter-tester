@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StepBuildFormComponent } from '../../../models/step-build-form-component.model';
-import { BootTestStep } from './models/boot-test-step.model';
+import { BootTestStep } from '../models/boot-test-step.model';
 import { FormBuilder } from '@angular/forms';
 import { MeterConstants } from '../../../../../models/business/constants/meter-constant.model';
 import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';

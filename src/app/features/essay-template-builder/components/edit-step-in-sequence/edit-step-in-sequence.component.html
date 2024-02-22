@@ -9,12 +9,27 @@
   <ng-template pTemplate="content">
     <ng-container *ngIf="!!essayTemplateStep && dialogOpened">
       <ng-container [ngSwitch]="essayTemplateStep.step_id">
+        <ng-container *ngSwitchCase="Steps.Preparation">
+          <!-- TODO -->
+          <app-preparation-build-form></app-preparation-build-form>
+        </ng-container>
+
         <ng-container *ngSwitchCase="Steps.BootTest">
           <app-boot-test-build-form
             [essayTemplateStep]="essayTemplateStep"
             (formValidChange)="formValid = $event"
             (formValueChange)="formValue = $event"
           ></app-boot-test-build-form>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="Steps.VacuumTest">
+          <!-- TODO -->
+          Vacuum test
+        </ng-container>
+
+        <ng-container *ngSwitchCase="Steps.ContrastTest">
+          <!-- TODO -->
+          Contrast Test
         </ng-container>
       </ng-container>
     </ng-container>

@@ -11,7 +11,9 @@ import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
+import { PreparationBuildFormComponent } from './steps/components/preparation/preparation-build-form/preparation-build-form.component';
 
+// TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
 // import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
 // import { StepSelectorComponent } from './step-selector/step-selector.component';
@@ -51,45 +53,12 @@ const AppComponents = [
   ValidatorMessagesComponent,
   BootTestBuildFormComponent,
   PhaseFormGroupComponent,
-  //   FillAvailableSpaceComponent,
-  //   StepSelectorComponent,
-  //   FormArrayControlsOrderListComponent,
-  //   StandIdentificationActionComponent,
-  //   ActionSwitchListComponent,
-  //   PhotocellAdjustmentValuesActionComponent,
-  //   EnterTestValuesActionComponent,
-  //   ContrastTestParametersActionComponent,
-  //   UserIdentificationActionComponent,
-  //   StepExecutionStatusListComponent,
-  //   StepBuildFormComponent,
-  //   PhotocellAdjustmentExecutionActionComponent,
-  //   LoadingDotsComponent,
-  //   PhasesComponent,
-  //   ContrastTestExecutionActionComponent,
-  //   StandResultComponent,
-  //   DevicesComponent,
-  //   LedComponent,
-  //   ReportActionComponent,
-  //   ExecutionByEssayComponent,
-  //   MeterApprovesComponent,
-  //   StandUsedComponent,
-  //   VacuumTestExecutionActionComponent,
-  //   VacuumTestParametersActionComponent,
-  //   CommandLineComponent,
-  //   BootTestParametersActionComponent,
-  //   BootTestExecutionActionComponent,
+  PreparationBuildFormComponent,
 ];
 
 @NgModule({
   declarations: [AppComponents],
-  imports: [
-    CommonModule,
-    PrimeNgModule,
-    PipesModule,
-    ReactiveFormsModule,
-    // DirectivesModule,
-    // HttpClientModule
-  ],
+  imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
   exports: [PrimeNgModule, AppComponents],
 })
 export class ComponentsModule {}
