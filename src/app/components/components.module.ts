@@ -12,6 +12,7 @@ import { ValidatorMessagesComponent } from './validator-messages/validator-messa
 import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 import { PreparationBuildFormComponent } from './steps/components/preparation/preparation-build-form/preparation-build-form.component';
+import { ContrastTestBuildFormComponent } from './steps/components/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
 
 // TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
@@ -57,7 +58,7 @@ const AppComponents = [
 ];
 
 @NgModule({
-  declarations: [AppComponents],
+  declarations: [AppComponents, ContrastTestBuildFormComponent],
   imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
   exports: [PrimeNgModule, AppComponents],
 })
