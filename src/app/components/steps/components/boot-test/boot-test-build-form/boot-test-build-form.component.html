@@ -57,6 +57,9 @@
             [useGrouping]="false"
             [min]="0"
           ></p-inputNumber>
+          <app-input-error
+            formControlName="maxDurationSeconds"
+          ></app-input-error>
         </div>
 
         <div class="field col col-4">
@@ -87,8 +90,10 @@
               formControlName="allowedPulses"
               autofocus
               [useGrouping]="false"
+              [min]="0"
             ></p-inputNumber>
           </div>
+          <app-input-error formControlName="allowedPulses"></app-input-error>
         </div>
       </div>
 

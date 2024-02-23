@@ -38,9 +38,30 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
           current: [undefined, Validators.required.bind(this)],
           anglePhi: [undefined, Validators.required.bind(this)],
         }),
-        allowedPulses: [undefined, Validators.required.bind(this)],
-        minDurationSeconds: [undefined, [Validators.required.bind(this), Validators.min(0)]],
-        maxDurationSeconds: [undefined, Validators.required.bind(this)],
+        allowedPulses: [
+          undefined,
+          [
+            Validators.required.bind(this),
+            Validators.min(0),
+            Validators.max(99),
+          ],
+        ],
+        minDurationSeconds: [
+          undefined,
+          [
+            Validators.required.bind(this),
+            Validators.min(0),
+            Validators.max(9999),
+          ],
+        ],
+        maxDurationSeconds: [
+          undefined,
+          [
+            Validators.required.bind(this),
+            Validators.min(0),
+            Validators.max(9999),
+          ],
+        ],
       }),
       foreign: undefined,
     }) as AbstractFormGroup<BootTestStep>;
