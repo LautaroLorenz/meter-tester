@@ -2,7 +2,6 @@
 - Creación de template de ensayo:
   - Agregar al ValidatorFn un check de que todos los pasos tengan la información de su formulario completa. (se podría poner una class a la row)
   - Hacer los formularios de creacion:
-    - Preparación
     - Ensayo de contraste
     - Ensayo de vacío
 - Historial de ejecuciones:

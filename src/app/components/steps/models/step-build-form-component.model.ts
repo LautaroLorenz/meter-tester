@@ -38,18 +38,22 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
     this.observeForm();
     this.observeTables();
     this.requestToolsTables();
-    this.onSuperInit();
+    this.afterSuperInit();
   }
 
   ngOnDestroy(): void {
     this.onDestroy.next();
     this.onDestroy.complete();
-    this.onSuperDestroy();
+    this.afterSuperDestroy();
   }
 
-  protected onSuperInit(): void {}
+  protected afterSuperInit(): void {}
 
-  protected onSuperDestroy(): void {}
+  protected afterSuperDestroy(): void {}
+
+  protected afterSuperPatchInitValue(): void {}
+  
+  protected afterSuperObserveForm(): void {}
 
   protected observeTables(): void {}
 
@@ -57,6 +61,7 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
 
   private patchInitValue(): void {
     this.form.patchValue(this.essayTemplateStep);
+    this.afterSuperPatchInitValue();
   }
 
   private observeForm(): void {
@@ -73,6 +78,8 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
         tap(() => this.formValueChange.emit(this.form.getRawValue() as T))
       )
       .subscribe();
+
+    this.afterSuperObserveForm();
   }
 
   abstract buildForm(fb: FormBuilder): AbstractFormGroup<T>;

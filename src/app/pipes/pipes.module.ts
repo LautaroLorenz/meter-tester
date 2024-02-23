@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import {
   CommonModule,
+  DecimalPipe,
   // DecimalPipe
 } from '@angular/common';
 import { DotStringAsObjectPipe } from './dot-string-as-object.pipe';
@@ -8,17 +9,19 @@ import { CastAbstractControlToFormGroupPipe } from './cast-abstract-control-to-f
 // import { ExecutionStatusPipe } from './execution-status.pipe';
 // import { DeviceErrorCode } from './device-error-code.pipe';
 
-const Pipes = [
+const AppPipes = [
   DotStringAsObjectPipe,
   CastAbstractControlToFormGroupPipe,
   //   ExecutionStatusPipe,
   //   DeviceErrorCode,
 ];
 
+const CommonPipes = [DecimalPipe];
+
 @NgModule({
-  declarations: [Pipes],
+  declarations: [AppPipes],
   imports: [CommonModule],
-  exports: [Pipes],
-  providers: [Pipes],
+  exports: [AppPipes, CommonPipes],
+  providers: [AppPipes, CommonPipes],
 })
 export class PipesModule {}

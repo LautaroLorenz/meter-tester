@@ -9,10 +9,11 @@ import {
   Meter,
   MeterDbTableContext,
 } from '../../../../../models/business/database/meter.model';
-import { Observable, map, takeUntil } from 'rxjs';
+import { Observable, map, takeUntil, tap } from 'rxjs';
 import { RelationsManager } from '../../../../../models/core/relations-manager.model';
 import { Stand } from '../../../../../models/business/interafces/stand.model';
 import { YearOfProductionConstants } from '../../../../../models/business/constants/year-of-production-constant.model';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-preparation-build-form',
@@ -25,12 +26,21 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
   readonly YearOfProductionConstants = YearOfProductionConstants;
 
-  private dbServiceMeters = inject(DatabaseService<Meter>);
+  private readonly dbServiceMeters = inject(DatabaseService<Meter>);
+  private readonly decimalPipe = inject(DecimalPipe);
 
   get standsFormArray(): FormArray<AbstractFormGroup<Stand>> {
     return this.form.get('form_control_raw') as FormArray<
       AbstractFormGroup<Stand>
     >;
+  }
+
+  copyStandToAll(strandFormGroup: AbstractFormGroup<Stand>): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { name, ...propsToCopy } = strandFormGroup.getRawValue();
+    this.standsFormArray.controls.forEach((group) => {
+      group.patchValue({ ...propsToCopy });
+    });
   }
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<PreparationStep> {
@@ -40,10 +50,10 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
     )
       .fill(undefined)
       .map(
-        (_, index) =>
+        () =>
           fb.nonNullable.group({
-            index,
-            isActive: false,
+            name: undefined,
+            isActive: true,
             meterId: undefined,
             serialNumber: undefined,
             yearOfProduction: undefined,
@@ -87,6 +97,49 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
   override requestToolsTables(): void {
     this.dbServiceMeters.getTable(MeterDbTableContext.tableName, {
       relations: MeterDbTableContext.foreignTables.map((ft) => ft.tableName),
+    });
+  }
+
+  override afterSuperObserveForm(): void {
+    this.standsFormArray.controls.forEach((standFormGroup) => {
+      standFormGroup
+        .get('isActive')
+        ?.valueChanges.pipe(
+          takeUntil(this.onDestroy),
+          tap((isActive) => {
+            if (isActive) {
+              standFormGroup.get('meterId')?.enable();
+              standFormGroup.get('serialNumber')?.enable();
+              standFormGroup.get('yearOfProduction')?.enable();
+            } else {
+              standFormGroup.get('meterId')?.disable();
+              standFormGroup.get('meterId')?.reset();
+              standFormGroup.get('serialNumber')?.disable();
+              standFormGroup.get('serialNumber')?.reset();
+              standFormGroup.get('yearOfProduction')?.disable();
+              standFormGroup.get('yearOfProduction')?.reset();
+            }
+            standFormGroup.get('meterId')?.updateValueAndValidity();
+            standFormGroup.get('serialNumber')?.updateValueAndValidity();
+            standFormGroup.get('yearOfProduction')?.updateValueAndValidity();
+          })
+        )
+        .subscribe();
+
+      standFormGroup.get('isActive')?.updateValueAndValidity();
+    });
+  }
+
+  override afterSuperPatchInitValue(): void {
+    this.setStandsName();
+  }
+
+  private setStandsName(): void {
+    this.standsFormArray.controls.forEach((group, index) => {
+      const name = `Puesto ${
+        this.decimalPipe.transform(index + 1, '2.0') ?? ''
+      }`;
+      group.get('name')?.setValue(name);
     });
   }
 }

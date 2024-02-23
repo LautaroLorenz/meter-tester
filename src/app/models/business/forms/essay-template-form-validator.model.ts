@@ -6,31 +6,10 @@ import {
 } from '@angular/forms';
 import { EssayTemplateFormGroup } from './essay-template-form.model';
 import { EssayTemplate } from '../database/essay-template.model';
-
-export enum EssayErrorCodeEnum {
-  name = 'name',
-  //   AtLeastOneStep = 'AtLeastOneStep',
-  //   ReportAtEnd = 'ReportAtEnd',
-}
-export type EssayErrorCode = EssayErrorCodeEnum;
-
-export const EssayErrorMessages: Record<
-  EssayErrorCode,
-  { code: string; message: string }
-> = {
-  [EssayErrorCodeEnum.name]: {
-    code: 'Nombre',
-    message: 'Debes ingresar un nombre de ensayo',
-  },
-  //   [EssayErrorCodeEnum.AtLeastOneStep]: {
-  //     code: 'Requerido',
-  //     message: 'El ensayo debe contener al menos un paso',
-  //   },
-  //   [EssayErrorCodeEnum.ReportAtEnd]: {
-  //     code: 'Finalizar con reporte',
-  //     message: 'El reporte debe ocurrir al final',
-  //   },
-};
+import {
+  ErrorCodes,
+  concatErrorByCode,
+} from '../constants/error-codes-constant.model';
 
 const name = (essayTemplate: Partial<EssayTemplate>): boolean => {
   return !essayTemplate.name || essayTemplate.name.length === 0;
@@ -63,10 +42,7 @@ export function essayTemplateValidator(): ValidatorFn {
     // const steps: EssayTemplateStep[] = essayTemplateSteps.getRawValue();
 
     if (name(essay)) {
-      errors = {
-        ...errors,
-        [EssayErrorCodeEnum.name]: EssayErrorMessages[EssayErrorCodeEnum.name],
-      };
+      errors = concatErrorByCode(ErrorCodes.name, errors);
     }
 
     // if (atLeastOneStep(steps)) {

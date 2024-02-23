@@ -1,7 +1,66 @@
-<!-- TODO: crear el componente stand form group -->
-<!-- TODO: con copia de valores, el primero a todos, el resto copiar del anterior -->
-<pre *ngFor="let strandFormGroup of standsFormArray.controls">
-    <ng-container [formGroup]="strandFormGroup">
-        {{ strandFormGroup.getRawValue() | json }}
-    </ng-container>
-</pre>
+<ng-container
+  *ngFor="let strandFormGroup of standsFormArray.controls; let last = last"
+>
+  <ng-container [formGroup]="strandFormGroup">
+    <div [class.mb-4]="!last">
+      <p-fieldset [class.isActive]="strandFormGroup.get('isActive')?.value">
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-8">
+            <p-inputSwitch formControlName="isActive"></p-inputSwitch>
+            <span class="stand-name">
+              {{ strandFormGroup.get("name")!.value }}
+            </span>
+            <p-button
+              icon="pi pi-copy"
+              [outlined]="true"
+              (click)="copyStandToAll(strandFormGroup)"
+              pTooltip="Replicar valores en todos los puestos"
+            ></p-button>
+          </div>
+        </ng-template>
+
+        <div class="formgrid grid">
+          <ng-container *ngIf="meters$ | async as meters">
+            <div class="field col col-4">
+              <label for="meterId">Modelo de medidor</label>
+              <p-dropdown
+                id="meterId"
+                [options]="meters"
+                formControlName="meterId"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+
+            <div class="field col col-4">
+              <label for="serialNumber">Número de serie</label>
+              <input
+                type="text"
+                pInputText
+                id="serialNumber"
+                formControlName="serialNumber"
+              />
+            </div>
+
+            <div class="field col col-4">
+              <label for="yearOfProduction">Año de fabricación</label>
+              <p-dropdown
+                id="yearOfProduction"
+                [options]="YearOfProductionConstants"
+                formControlName="yearOfProduction"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+          </ng-container>
+        </div>
+      </p-fieldset>
+    </div>
+  </ng-container>
+</ng-container>

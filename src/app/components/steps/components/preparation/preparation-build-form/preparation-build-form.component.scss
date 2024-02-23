@@ -1,0 +1,40 @@
+@import "primeflex/primeflex.scss";
+
+:host ::ng-deep {
+  .p-fieldset {
+    .field {
+      label {
+        color: var(--surface-400);
+      }
+    }
+  }
+
+  .p-fieldset-legend {
+    background-color: var(--surface-50);
+
+    .stand-name {
+      color: var(--surface-400);
+    }
+  }
+
+  .isActive {
+    .p-fieldset {
+      border-color: var(--surface-400);
+
+      .field {
+        label {
+          color: var(--text-color);
+        }
+      }
+    }
+
+    .p-fieldset-legend {
+      background-color: var(--surface-100);
+      border-color: var(--surface-400);
+
+      .stand-name {
+        color: var(--surface-800);
+      }
+    }
+  }
+}

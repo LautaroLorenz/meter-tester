@@ -1,5 +1,5 @@
 export interface Stand {
-  index: number;
+  name: string;
   isActive: boolean;
   meterId: number;
   serialNumber: string;
