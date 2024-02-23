@@ -18,6 +18,7 @@ import {
   EssayTemplateStepTableColumns,
 } from '../../../../models/business/database/essay-template-step.model';
 import { Steps } from '../../../../models/business/enums/steps.model';
+import { ConfirmationService, PrimeIcons } from 'primeng/api';
 
 @Component({
   selector: 'app-steps-sequence-table',
@@ -41,7 +42,11 @@ export class StepsSequenceTableComponent implements OnChanges {
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 
-  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
+    private confirmationService: ConfirmationService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputFormArray) {
@@ -85,9 +90,19 @@ export class StepsSequenceTableComponent implements OnChanges {
   }
 
   deleteEssayTemplateStepControl(index: number): void {
-    this.formArray.removeAt(index);
-    this.recalculateEssayTemplateStepsOrder();
-    this.formArray.markAsDirty();
+    this.confirmationService.confirm({
+      message: '¿Eliminar fila de la tabla?',
+      header: 'Confirmar borrado',
+      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+      defaultFocus: 'reject',
+      acceptButtonStyleClass: 'p-button-outlined',
+      accept: () => {
+        this.formArray.removeAt(index);
+        this.recalculateEssayTemplateStepsOrder();
+        this.formArray.markAsDirty();
+        this.cd.detectChanges();
+      },
+    });
   }
 
   moveDownByIndex(indexFrom: number): void {
