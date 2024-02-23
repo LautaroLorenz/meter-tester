@@ -37,7 +37,12 @@
             formControlName="maxAllowedError"
             autofocus
             [useGrouping]="false"
+            mode="decimal"
+            [min]="0"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="2"
           ></p-inputNumber>
+          <app-input-error formControlName="maxAllowedError"></app-input-error>
         </div>
 
         <div class="field col col-6">
@@ -52,7 +57,9 @@
             formControlName="meterPulses"
             autofocus
             [useGrouping]="false"
+            [min]="0"
           ></p-inputNumber>
+          <app-input-error formControlName="meterPulses"></app-input-error>
         </div>
       </div>
 

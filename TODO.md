@@ -6,3 +6,9 @@
     - Ensayo de vacío
 - Historial de ejecuciones:
   - Cargar tabla con paginado (posible implementacion en ABM component).
+
+
+VALIDACIONES
+- Paso de preparacion
+- Constante activa/reactiva
+- Grupo de fases (consulta con Nico) (actualizar todos los steps forms con los valores y el componente fase)
