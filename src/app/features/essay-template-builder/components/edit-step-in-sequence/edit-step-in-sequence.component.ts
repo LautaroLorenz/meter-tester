@@ -32,6 +32,7 @@ export class EditStepInSequenceComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.essayTemplateStep) {
+      this.reset();
       this.dialogOpened = !!changes.essayTemplateStep.currentValue;
     }
   }
@@ -39,7 +40,7 @@ export class EditStepInSequenceComponent implements OnChanges {
   closeDialog(): void {
     this.dialogOpened = false;
     this.essayTemplateStep = undefined;
-    this.formValid = false;
+    this.reset();
   }
 
   acceptChanges(): void {
@@ -48,5 +49,10 @@ export class EditStepInSequenceComponent implements OnChanges {
     }
     this.essayTemplateStepChange.emit(this.formValue);
     this.dialogOpened = false;
+  }
+
+  private reset(): void {
+    this.formValid = false;
+    this.formValue = undefined;
   }
 }
