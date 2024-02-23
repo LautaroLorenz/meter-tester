@@ -1,1 +1,7 @@
-<p>preparation-build-form works!</p>
+<!-- TODO: crear el componente stand form group -->
+<!-- TODO: con copia de valores, el primero a todos, el resto copiar del anterior -->
+<pre *ngFor="let strandFormGroup of standsFormArray.controls">
+    <ng-container [formGroup]="strandFormGroup">
+        {{ strandFormGroup.getRawValue() | json }}
+    </ng-container>
+</pre>
