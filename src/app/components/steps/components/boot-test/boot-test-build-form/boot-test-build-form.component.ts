@@ -24,19 +24,19 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
       form_control_raw: fb.nonNullable.group({
         meterConstant: [undefined, Validators.required.bind(this)],
         phaseL1: fb.nonNullable.group({
-          voltage: undefined,
-          current: undefined,
-          anglePhi: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
+          current: [undefined, Validators.required.bind(this)],
+          anglePhi: [undefined, Validators.required.bind(this)],
         }),
         phaseL2: fb.nonNullable.group({
-          voltage: undefined,
-          current: undefined,
-          anglePhi: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
+          current: [undefined, Validators.required.bind(this)],
+          anglePhi: [undefined, Validators.required.bind(this)],
         }),
         phaseL3: fb.nonNullable.group({
-          voltage: undefined,
-          current: undefined,
-          anglePhi: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
+          current: [undefined, Validators.required.bind(this)],
+          anglePhi: [undefined, Validators.required.bind(this)],
         }),
         allowedPulses: [undefined, Validators.required.bind(this)],
         minDurationSeconds: undefined,

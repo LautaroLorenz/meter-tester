@@ -20,17 +20,17 @@ export class VacuumTestBuildFormComponent extends StepBuildFormComponent<VacuumT
       name: undefined,
       order: undefined,
       essay_template_id: undefined,
-      step_id: undefined,
+      step_id: [undefined, Validators.required.bind(this)],
       form_control_raw: fb.nonNullable.group({
         meterConstant: [undefined, Validators.required.bind(this)],
         phaseL1: fb.nonNullable.group({
-          voltage: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
         }),
         phaseL2: fb.nonNullable.group({
-          voltage: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
         }),
         phaseL3: fb.nonNullable.group({
-          voltage: undefined,
+          voltage: [undefined, Validators.required.bind(this)],
         }),
         maxAllowedPulses: [undefined, Validators.required.bind(this)],
         durationSeconds: [undefined, Validators.required.bind(this)],
