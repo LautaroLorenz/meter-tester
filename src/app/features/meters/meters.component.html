@@ -29,11 +29,7 @@
                 [required]="true"
                 [autoDisplayFirst]="false"
               ></p-dropdown>
-              <app-input-error
-                [invalid]="form.get('brand_id')?.invalid"
-                [dirty]="form.get('brand_id')?.dirty"
-                [errors]="form.get('brand_id')?.errors"
-              ></app-input-error>
+              <app-input-error formControlName="brand_id"></app-input-error>
             </div>
           </div>
 
@@ -49,11 +45,7 @@
                 formControlName="model"
                 required
               />
-              <app-input-error
-                [invalid]="form.get('model')?.invalid"
-                [dirty]="form.get('model')?.dirty"
-                [errors]="form.get('model')?.errors"
-              ></app-input-error>
+              <app-input-error formControlName="model"></app-input-error>
             </div>
           </div>
 
@@ -73,9 +65,7 @@
                 [autoDisplayFirst]="false"
               ></p-dropdown>
               <app-input-error
-                [invalid]="form.get('connection_id')?.invalid"
-                [dirty]="form.get('connection_id')?.dirty"
-                [errors]="form.get('connection_id')?.errors"
+                formControlName="connection_id"
               ></app-input-error>
             </div>
           </div>
@@ -95,11 +85,7 @@
                 [useGrouping]="false"
                 [min]="0"
               ></p-inputNumber>
-              <app-input-error
-                [invalid]="form.get('ratedVoltage')?.invalid"
-                [dirty]="form.get('ratedVoltage')?.dirty"
-                [errors]="form.get('ratedVoltage')?.errors"
-              ></app-input-error>
+              <app-input-error formControlName="ratedVoltage"></app-input-error>
             </div>
           </div>
 
@@ -119,9 +105,7 @@
                 [min]="0"
               ></p-inputNumber>
               <app-input-error
-                [invalid]="form.get('maximumCurrent')?.invalid"
-                [dirty]="form.get('maximumCurrent')?.dirty"
-                [errors]="form.get('maximumCurrent')?.errors"
+                formControlName="maximumCurrent"
               ></app-input-error>
             </div>
           </div>
@@ -141,11 +125,7 @@
                 [useGrouping]="false"
                 [min]="0"
               ></p-inputNumber>
-              <app-input-error
-                [invalid]="form.get('ratedCurrent')?.invalid"
-                [dirty]="form.get('ratedCurrent')?.dirty"
-                [errors]="form.get('ratedCurrent')?.errors"
-              ></app-input-error>
+              <app-input-error formControlName="ratedCurrent"></app-input-error>
             </div>
           </div>
 
@@ -165,9 +145,7 @@
                 [min]="0"
               ></p-inputNumber>
               <app-input-error
-                [invalid]="form.get('activeConstantValue')?.invalid"
-                [dirty]="form.get('activeConstantValue')?.dirty"
-                [errors]="form.get('activeConstantValue')?.errors"
+                formControlName="activeConstantValue"
               ></app-input-error>
             </div>
           </div>
@@ -190,9 +168,7 @@
                 [autoDisplayFirst]="false"
               ></p-dropdown>
               <app-input-error
-                [invalid]="form.get('activeConstantUnit_id')?.invalid"
-                [dirty]="form.get('activeConstantUnit_id')?.dirty"
-                [errors]="form.get('activeConstantUnit_id')?.errors"
+                formControlName="activeConstantUnit_id"
               ></app-input-error>
             </div>
           </div>
@@ -213,9 +189,7 @@
                 [min]="0"
               ></p-inputNumber>
               <app-input-error
-                [invalid]="form.get('reactiveConstantValue')?.invalid"
-                [dirty]="form.get('reactiveConstantValue')?.dirty"
-                [errors]="form.get('reactiveConstantValue')?.errors"
+                formControlName="reactiveConstantValue"
               ></app-input-error>
             </div>
           </div>
@@ -238,9 +212,7 @@
                 [autoDisplayFirst]="false"
               ></p-dropdown>
               <app-input-error
-                [invalid]="form.get('reactiveConstantUnit_id')?.invalid"
-                [dirty]="form.get('reactiveConstantUnit_id')?.dirty"
-                [errors]="form.get('reactiveConstantUnit_id')?.errors"
+                formControlName="reactiveConstantUnit_id"
               ></app-input-error>
             </div>
           </div>

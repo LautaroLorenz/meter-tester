@@ -30,15 +30,17 @@
               >*</span
             >
           </label>
-          <div class="p-inputgroup">
-            <p-inputNumber
-              styleClass="flex flex-1"
-              id="minDurationSeconds"
-              formControlName="minDurationSeconds"
-              autofocus
-              [useGrouping]="false"
-            ></p-inputNumber>
-          </div>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="minDurationSeconds"
+            formControlName="minDurationSeconds"
+            autofocus
+            [useGrouping]="false"
+            [min]="0"
+          ></p-inputNumber>
+          <app-input-error
+            formControlName="minDurationSeconds"
+          ></app-input-error>
         </div>
 
         <div class="field col col-4">
@@ -47,15 +49,14 @@
               >*</span
             >
           </label>
-          <div class="p-inputgroup">
-            <p-inputNumber
-              styleClass="flex flex-1"
-              id="maxDurationSeconds"
-              formControlName="maxDurationSeconds"
-              autofocus
-              [useGrouping]="false"
-            ></p-inputNumber>
-          </div>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="maxDurationSeconds"
+            formControlName="maxDurationSeconds"
+            autofocus
+            [useGrouping]="false"
+            [min]="0"
+          ></p-inputNumber>
         </div>
 
         <div class="field col col-4">

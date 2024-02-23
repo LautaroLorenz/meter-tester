@@ -26,11 +26,7 @@
               autofocus
               required
             />
-            <app-input-error
-              [invalid]="form.get('name')?.invalid"
-              [dirty]="form.get('name')?.dirty"
-              [errors]="form.get('name')?.errors"
-            ></app-input-error>
+            <app-input-error formControlName="name"></app-input-error>
           </div>
         </div>
       </form>

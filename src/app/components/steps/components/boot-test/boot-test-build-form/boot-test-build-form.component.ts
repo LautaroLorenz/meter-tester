@@ -39,7 +39,7 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
           anglePhi: [undefined, Validators.required.bind(this)],
         }),
         allowedPulses: [undefined, Validators.required.bind(this)],
-        minDurationSeconds: undefined,
+        minDurationSeconds: [undefined, [Validators.required.bind(this), Validators.min(0)]],
         maxDurationSeconds: [undefined, Validators.required.bind(this)],
       }),
       foreign: undefined,
