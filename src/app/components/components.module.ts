@@ -14,6 +14,7 @@ import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.com
 import { PreparationBuildFormComponent } from './steps/components/preparation/preparation-build-form/preparation-build-form.component';
 import { ContrastTestBuildFormComponent } from './steps/components/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
 import { VacuumTestBuildFormComponent } from './steps/components/vacuum-test/vacuum-test-build-form/vacuum-test-build-form.component';
+import { InputErrorComponent } from './input-error/input-error.component';
 
 // TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
@@ -58,6 +59,7 @@ const AppComponents = [
   PreparationBuildFormComponent,
   ContrastTestBuildFormComponent,
   VacuumTestBuildFormComponent,
+  InputErrorComponent,
 ];
 
 @NgModule({

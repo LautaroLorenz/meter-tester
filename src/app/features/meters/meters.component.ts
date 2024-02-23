@@ -61,24 +61,35 @@ export class MetersComponent
     this.form = this.fb.group({
       id: this.fb.control(undefined),
       model: this.fb.control(undefined, Validators.required.bind(this)),
-      maximumCurrent: this.fb.control(
-        undefined,
-        Validators.required.bind(this)
-      ),
-      ratedCurrent: this.fb.control(undefined, Validators.required.bind(this)),
-      ratedVoltage: this.fb.control(undefined, Validators.required.bind(this)),
-      activeConstantValue: this.fb.control(
-        undefined,
-        Validators.required.bind(this)
-      ),
+      maximumCurrent: this.fb.control(undefined, [
+        Validators.required.bind(this),
+        Validators.min(0),
+        Validators.max(999),
+      ]),
+      ratedCurrent: this.fb.control(undefined, [
+        Validators.required.bind(this),
+        Validators.min(0),
+        Validators.max(999),
+      ]),
+      ratedVoltage: this.fb.control(undefined, [
+        Validators.required.bind(this),
+        Validators.min(0),
+        Validators.max(999),
+      ]),
+      activeConstantValue: this.fb.control(undefined, [
+        Validators.required.bind(this),
+        Validators.min(0),
+        Validators.max(99999),
+      ]),
       activeConstantUnit_id: this.fb.control(
         undefined,
         Validators.required.bind(this)
       ),
-      reactiveConstantValue: this.fb.control(
-        undefined,
-        Validators.required.bind(this)
-      ),
+      reactiveConstantValue: this.fb.control(undefined, [
+        Validators.required.bind(this),
+        Validators.min(0),
+        Validators.max(99999),
+      ]),
       reactiveConstantUnit_id: this.fb.control(
         undefined,
         Validators.required.bind(this)

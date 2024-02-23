@@ -29,13 +29,11 @@
                 [required]="true"
                 [autoDisplayFirst]="false"
               ></p-dropdown>
-              <ng-container *ngIf="form.get('brand_id') as brandIdField">
-                <small
-                  class="text-red-500"
-                  *ngIf="brandIdField.invalid && brandIdField.dirty"
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('brand_id')?.invalid"
+                [dirty]="form.get('brand_id')?.dirty"
+                [errors]="form.get('brand_id')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -51,13 +49,11 @@
                 formControlName="model"
                 required
               />
-              <ng-container *ngIf="form.get('model') as modelField">
-                <small
-                  class="text-red-500"
-                  *ngIf="modelField.invalid && modelField.dirty"
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('model')?.invalid"
+                [dirty]="form.get('model')?.dirty"
+                [errors]="form.get('model')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -76,15 +72,11 @@
                 [required]="true"
                 [autoDisplayFirst]="false"
               ></p-dropdown>
-              <ng-container
-                *ngIf="form.get('connection_id') as connectionIdField"
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="connectionIdField.invalid && connectionIdField.dirty"
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('connection_id')?.invalid"
+                [dirty]="form.get('connection_id')?.dirty"
+                [errors]="form.get('connection_id')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -101,16 +93,13 @@
                 autofocus
                 [required]="true"
                 [useGrouping]="false"
+                [min]="0"
               ></p-inputNumber>
-              <ng-container
-                *ngIf="form.get('ratedVoltage') as ratedVoltageField"
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="ratedVoltageField.invalid && ratedVoltageField.dirty"
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('ratedVoltage')?.invalid"
+                [dirty]="form.get('ratedVoltage')?.dirty"
+                [errors]="form.get('ratedVoltage')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -127,18 +116,13 @@
                 autofocus
                 [required]="true"
                 [useGrouping]="false"
+                [min]="0"
               ></p-inputNumber>
-              <ng-container
-                *ngIf="form.get('maximumCurrent') as maximumCurrentField"
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="
-                    maximumCurrentField.invalid && maximumCurrentField.dirty
-                  "
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('maximumCurrent')?.invalid"
+                [dirty]="form.get('maximumCurrent')?.dirty"
+                [errors]="form.get('maximumCurrent')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -155,16 +139,13 @@
                 autofocus
                 [required]="true"
                 [useGrouping]="false"
+                [min]="0"
               ></p-inputNumber>
-              <ng-container
-                *ngIf="form.get('ratedCurrent') as ratedCurrentField"
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="ratedCurrentField.invalid && ratedCurrentField.dirty"
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('ratedCurrent')?.invalid"
+                [dirty]="form.get('ratedCurrent')?.dirty"
+                [errors]="form.get('ratedCurrent')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -181,21 +162,13 @@
                 autofocus
                 [required]="true"
                 [useGrouping]="false"
+                [min]="0"
               ></p-inputNumber>
-              <ng-container
-                *ngIf="
-                  form.get('activeConstantValue') as activeConstantValueField
-                "
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="
-                    activeConstantValueField.invalid &&
-                    activeConstantValueField.dirty
-                  "
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('activeConstantValue')?.invalid"
+                [dirty]="form.get('activeConstantValue')?.dirty"
+                [errors]="form.get('activeConstantValue')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -216,20 +189,11 @@
                 [required]="true"
                 [autoDisplayFirst]="false"
               ></p-dropdown>
-              <ng-container
-                *ngIf="
-                  form.get('activeConstantUnit_id') as activeConstantUnitIdField
-                "
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="
-                    activeConstantUnitIdField.invalid &&
-                    activeConstantUnitIdField.dirty
-                  "
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('activeConstantUnit_id')?.invalid"
+                [dirty]="form.get('activeConstantUnit_id')?.dirty"
+                [errors]="form.get('activeConstantUnit_id')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -246,23 +210,13 @@
                 autofocus
                 [required]="true"
                 [useGrouping]="false"
+                [min]="0"
               ></p-inputNumber>
-              <ng-container
-                *ngIf="
-                  form.get(
-                    'reactiveConstantValue'
-                  ) as reactiveConstantValueField
-                "
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="
-                    reactiveConstantValueField.invalid &&
-                    reactiveConstantValueField.dirty
-                  "
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('reactiveConstantValue')?.invalid"
+                [dirty]="form.get('reactiveConstantValue')?.dirty"
+                [errors]="form.get('reactiveConstantValue')?.errors"
+              ></app-input-error>
             </div>
           </div>
 
@@ -283,22 +237,11 @@
                 [required]="true"
                 [autoDisplayFirst]="false"
               ></p-dropdown>
-              <ng-container
-                *ngIf="
-                  form.get(
-                    'reactiveConstantUnit_id'
-                  ) as reactiveConstantUnitIdField
-                "
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="
-                    reactiveConstantUnitIdField.invalid &&
-                    reactiveConstantUnitIdField.dirty
-                  "
-                  >Requerido</small
-                >
-              </ng-container>
+              <app-input-error
+                [invalid]="form.get('reactiveConstantUnit_id')?.invalid"
+                [dirty]="form.get('reactiveConstantUnit_id')?.dirty"
+                [errors]="form.get('reactiveConstantUnit_id')?.errors"
+              ></app-input-error>
             </div>
           </div>
         </div>
