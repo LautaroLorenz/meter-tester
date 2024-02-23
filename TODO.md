@@ -9,5 +9,4 @@
 
 
 VALIDACIONES
-- Paso de preparacion
 - Grupo de fases (consulta con Nico) (actualizar todos los steps forms con los valores y el componente fase)
