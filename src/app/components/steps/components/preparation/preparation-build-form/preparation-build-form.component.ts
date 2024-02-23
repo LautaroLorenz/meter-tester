@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { StepBuildFormComponent } from '../../../models/build-steps/step-build-form-component.model';
-import { PreparationStep } from '../../../models/build-steps/preparation-step.model';
+import { StepBuildFormComponent } from '../../../models/step-build-form-component.model';
+import { PreparationStep } from '../../../models/steps/preparation-step.model';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';
 import { APP_CONFIG } from '../../../../../../environments/environment';
