@@ -55,10 +55,11 @@ const AppComponents = [
   BootTestBuildFormComponent,
   PhaseFormGroupComponent,
   PreparationBuildFormComponent,
+  ContrastTestBuildFormComponent,
 ];
 
 @NgModule({
-  declarations: [AppComponents, ContrastTestBuildFormComponent],
+  declarations: [AppComponents],
   imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
   exports: [PrimeNgModule, AppComponents],
 })

@@ -31,8 +31,11 @@
         </ng-container>
 
         <ng-container *ngSwitchCase="Steps.ContrastTest">
-          <!-- TODO -->
-          Contrast Test
+          <app-contrast-test-build-form
+            [essayTemplateStep]="essayTemplateStep"
+            (formValidChange)="formValid = $event"
+            (formValueChange)="formValue = $event"
+          ></app-contrast-test-build-form>
         </ng-container>
       </ng-container>
     </ng-container>
