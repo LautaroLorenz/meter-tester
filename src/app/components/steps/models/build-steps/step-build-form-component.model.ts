@@ -1,4 +1,4 @@
-import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
+import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject, takeUntil, tap } from 'rxjs';
-import { AbstractFormGroup } from '../../../models/core/abstract-form-group.model';
+import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
 
 @Component({
   template: '',
@@ -52,7 +52,7 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   protected afterSuperDestroy(): void {}
 
   protected afterSuperPatchInitValue(): void {}
-  
+
   protected afterSuperObserveForm(): void {}
 
   protected observeTables(): void {}
