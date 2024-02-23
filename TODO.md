@@ -10,5 +10,4 @@
 
 VALIDACIONES
 - Paso de preparacion
-- Constante activa/reactiva
 - Grupo de fases (consulta con Nico) (actualizar todos los steps forms con los valores y el componente fase)
