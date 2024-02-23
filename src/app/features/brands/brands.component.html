@@ -26,13 +26,11 @@
               autofocus
               required
             />
-            <ng-container *ngIf="form.get('name') as nameField">
-              <small
-                class="text-red-500"
-                *ngIf="nameField.invalid && nameField.dirty"
-                >Requerido</small
-              >
-            </ng-container>
+            <app-input-error
+              [invalid]="form.get('name')?.invalid"
+              [dirty]="form.get('name')?.dirty"
+              [errors]="form.get('name')?.errors"
+            ></app-input-error>
           </div>
         </div>
       </form>
