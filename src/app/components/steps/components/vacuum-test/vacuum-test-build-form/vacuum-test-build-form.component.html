@@ -1,0 +1,97 @@
+<fom novalidate [formGroup]="form">
+  <div class="formgrid grid">
+    <div class="field col col-6">
+      <label for="name">Nombre</label>
+      <input type="text" pInputText id="name" formControlName="name" />
+    </div>
+
+    <ng-container formGroupName="form_control_raw">
+      <div class="field col col-6">
+        <label for="meterConstant" class="mb-2"
+          >Constante del medidor<span class="ml-1 text-red-300">*</span>
+        </label>
+        <p-selectButton
+          [options]="MeterConstants"
+          id="meterConstant"
+          formControlName="meterConstant"
+          optionLabel="name"
+          optionValue="id"
+        ></p-selectButton>
+      </div>
+
+      <div class="field col col-6">
+        <label for="maxAllowedPulses" class="mb-2"
+          >Cantidad de impulsos máxima permitida<span class="ml-1 text-red-300"
+            >*</span
+          >
+        </label>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">
+            <i
+              #helpIcon
+              class="pi pi-info-circle"
+              (mouseenter)="op2.show($event, helpIcon)"
+              (mouseleave)="op2.hide()"
+            ></i>
+          </span>
+          <p-overlayPanel #op2>
+            <div class="text-sm text-700 max-w-20rem">
+              Para superar la prueba la cantidad de impulsos debe ser menor o
+              igual al máximo permitido. Y debe suceder antes de que se cumpla
+              el tiempo.
+            </div>
+          </p-overlayPanel>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="maxAllowedPulses"
+            formControlName="maxAllowedPulses"
+            autofocus
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <div class="field col col-6">
+        <label for="durationSeconds" class="mb-2"
+          >Tiempo de ejecución [s]<span class="ml-1 text-red-300">*</span>
+        </label>
+        <div class="p-inputgroup">
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="durationSeconds"
+            formControlName="durationSeconds"
+            autofocus
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <div class="field col col-4">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL1') | asFormGroup"
+          faseLabel="L1"
+          voltageFormControlName="voltage"
+          voltageLabel="U1"
+        ></app-phase-form-group>
+      </div>
+
+      <div class="field col col-4">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL2') | asFormGroup"
+          faseLabel="L2"
+          voltageFormControlName="voltage"
+          voltageLabel="U2"
+        ></app-phase-form-group>
+      </div>
+
+      <div class="field col col-4">
+        <app-phase-form-group
+          [formGroup]="form.get('form_control_raw.phaseL3') | asFormGroup"
+          faseLabel="L3"
+          voltageFormControlName="voltage"
+          voltageLabel="U3"
+        ></app-phase-form-group>
+      </div>
+    </ng-container>
+  </div>
+</fom>

@@ -26,8 +26,11 @@
         </ng-container>
 
         <ng-container *ngSwitchCase="Steps.VacuumTest">
-          <!-- TODO -->
-          Vacuum test
+          <app-vacuum-test-build-form
+            [essayTemplateStep]="essayTemplateStep"
+            (formValidChange)="formValid = $event"
+            (formValueChange)="formValue = $event"
+          ></app-vacuum-test-build-form>
         </ng-container>
 
         <ng-container *ngSwitchCase="Steps.ContrastTest">

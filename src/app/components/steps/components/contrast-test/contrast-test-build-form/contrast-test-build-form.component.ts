@@ -3,7 +3,7 @@ import { StepBuildFormComponent } from '../../../models/build-steps/step-build-f
 import { MeterConstants } from '../../../../../models/business/constants/meter-constant.model';
 import { ContrastTestStep } from '../../../models/build-steps/contrast-test-step.model';
 import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-contrast-test-build-form',
@@ -22,7 +22,7 @@ export class ContrastTestBuildFormComponent extends StepBuildFormComponent<Contr
       essay_template_id: undefined,
       step_id: undefined,
       form_control_raw: fb.nonNullable.group({
-        meterConstant: undefined,
+        meterConstant: [undefined, Validators.required.bind(this)],
         phaseL1: fb.nonNullable.group({
           voltage: undefined,
           current: undefined,
@@ -38,8 +38,8 @@ export class ContrastTestBuildFormComponent extends StepBuildFormComponent<Contr
           current: undefined,
           anglePhi: undefined,
         }),
-        maxAllowedError: undefined,
-        meterPulses: undefined,
+        maxAllowedError: [undefined, Validators.required.bind(this)],
+        meterPulses: [undefined, Validators.required.bind(this)],
       }),
       foreign: undefined,
     }) as AbstractFormGroup<ContrastTestStep>;
