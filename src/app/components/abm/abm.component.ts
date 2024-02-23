@@ -30,6 +30,7 @@ export class AbmComponent
 {
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
+  @Input() paginator = true;
   @Input() detailFormValid = false;
   @Input() toolbar = true;
   @Input() selectable = true;
@@ -45,7 +46,6 @@ export class AbmComponent
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
 
   readonly checkboxColumnMenuItems: MenuItem[] = [];
-  readonly paginator = true;
   readonly rows = 5;
   readonly search: FormControl;
 
