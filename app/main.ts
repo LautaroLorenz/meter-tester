@@ -31,6 +31,7 @@ function createWindow(): BrowserWindow {
       contextIsolation: false,
     },
   });
+  win.setMenuBarVisibility(false);
 
   let knex: any;
   if (serve) {
