@@ -22,8 +22,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;
 
-  private readonly updateDropdownOptions = (): void => {};
-
   constructor(
     private readonly dbService: DatabaseService<Brand>,
     private readonly messagesService: MessagesService
@@ -42,37 +40,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
     this.dbService.getTable(BrandDbTableContext.tableName, {
       relations: BrandDbTableContext.foreignTables.map((ft) => ft.tableName),
     });
-  }
-
-  private createBrand(brand: Brand) {
-    this.dbService
-      .addElementToTable$(BrandDbTableContext.tableName, brand)
-      .pipe(
-        first(),
-        tap(() => {
-          this.dbService.getTable(BrandDbTableContext.tableName);
-          this.messagesService.success('Agregado correctamente');
-        })
-      )
-      .subscribe({
-        error: () => this.messagesService.error('No se pudo crear el elemento'),
-      });
-  }
-
-  private editBrand(brand: Brand) {
-    this.dbService
-      .editElementFromTable$(BrandDbTableContext.tableName, brand)
-      .pipe(
-        first(),
-        tap(() => {
-          this.dbService.getTable(BrandDbTableContext.tableName);
-          this.messagesService.success('Editado correctamente');
-        })
-      )
-      .subscribe({
-        error: () =>
-          this.messagesService.error('No se pudo editar el elemento'),
-      });
   }
 
   deleteBrands(ids: string[] = []) {
@@ -112,5 +79,38 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
     } else {
       this.createBrand(brand);
     }
+  }
+
+  private readonly updateDropdownOptions = (): void => {};
+
+  private createBrand(brand: Brand) {
+    this.dbService
+      .addElementToTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.messagesService.success('Agregado correctamente');
+        })
+      )
+      .subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento'),
+      });
+  }
+
+  private editBrand(brand: Brand) {
+    this.dbService
+      .editElementFromTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.messagesService.success('Editado correctamente');
+        })
+      )
+      .subscribe({
+        error: () =>
+          this.messagesService.error('No se pudo editar el elemento'),
+      });
   }
 }
