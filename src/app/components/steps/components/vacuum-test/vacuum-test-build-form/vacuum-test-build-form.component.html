@@ -53,23 +53,25 @@
               formControlName="maxAllowedPulses"
               autofocus
               [useGrouping]="false"
+              [min]="0"
             ></p-inputNumber>
           </div>
+          <app-input-error formControlName="maxAllowedPulses"></app-input-error>
         </div>
 
         <div class="field col col-6">
           <label for="durationSeconds" class="mb-2"
             >Tiempo de ejecución [s]<span class="ml-1 text-red-300">*</span>
           </label>
-          <div class="p-inputgroup">
-            <p-inputNumber
-              styleClass="flex flex-1"
-              id="durationSeconds"
-              formControlName="durationSeconds"
-              autofocus
-              [useGrouping]="false"
-            ></p-inputNumber>
-          </div>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="durationSeconds"
+            formControlName="durationSeconds"
+            autofocus
+            [useGrouping]="false"
+            [min]="0"
+          ></p-inputNumber>
+          <app-input-error formControlName="durationSeconds"></app-input-error>
         </div>
       </div>
 

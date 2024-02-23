@@ -24,19 +24,46 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
       form_control_raw: fb.nonNullable.group({
         meterConstant: [undefined, Validators.required.bind(this)],
         phaseL1: fb.nonNullable.group({
-          voltage: [undefined, Validators.required.bind(this)],
-          current: [undefined, Validators.required.bind(this)],
-          anglePhi: [undefined, Validators.required.bind(this)],
+          voltage: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          current: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          anglePhi: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
         }),
         phaseL2: fb.nonNullable.group({
-          voltage: [undefined, Validators.required.bind(this)],
-          current: [undefined, Validators.required.bind(this)],
-          anglePhi: [undefined, Validators.required.bind(this)],
+          voltage: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          current: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          anglePhi: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
         }),
         phaseL3: fb.nonNullable.group({
-          voltage: [undefined, Validators.required.bind(this)],
-          current: [undefined, Validators.required.bind(this)],
-          anglePhi: [undefined, Validators.required.bind(this)],
+          voltage: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          current: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
+          anglePhi: [
+            undefined,
+            [Validators.required.bind(this), Validators.min(0)],
+          ],
         }),
         allowedPulses: [
           undefined,

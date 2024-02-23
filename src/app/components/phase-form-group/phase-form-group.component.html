@@ -15,7 +15,11 @@
         [formControlName]="voltageFormControlName"
         autofocus
         [useGrouping]="false"
+        [min]="0"
       ></p-inputNumber>
+      <app-input-error
+        [formControlName]="voltageFormControlName"
+      ></app-input-error>
     </div>
 
     <div *ngIf="currentFormControlName" class="flex flex-column mt-3">
@@ -31,7 +35,11 @@
         [formControlName]="currentFormControlName"
         autofocus
         [useGrouping]="false"
+        [min]="0"
       ></p-inputNumber>
+      <app-input-error
+        [formControlName]="currentFormControlName"
+      ></app-input-error>
     </div>
 
     <div *ngIf="angleFormControlName" class="flex flex-column mt-3">
@@ -46,7 +54,11 @@
         [formControlName]="angleFormControlName"
         autofocus
         [useGrouping]="false"
+        [min]="0"
       ></p-inputNumber>
+      <app-input-error
+        [formControlName]="angleFormControlName"
+      ></app-input-error>
     </div>
   </div>
 </ng-container>
