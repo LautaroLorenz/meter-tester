@@ -47,21 +47,6 @@ export class MetersComponent
   dropdownBrandOptions: Brand[] = [];
   dropdownConnectionOptions: Connection[] = [];
 
-  private readonly updateDropdownOptions = (): void => {
-    this.dropdownActiveConstantUnitOptions = this._relations[
-      ActiveConstantUnitDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownReactiveConstantUnitOptions = this._relations[
-      ReactiveConstantUnitDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownBrandOptions = this._relations[
-      BrandDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownConnectionOptions = this._relations[
-      ConnectionDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-  };
-
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
@@ -109,6 +94,65 @@ export class MetersComponent
       relations: MeterDbTableContext.foreignTables.map((ft) => ft.tableName),
     });
   }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
+
+  deleteMeters(ids: string[] = []) {
+    this.dbService
+      .deleteTableElements$(MeterDbTableContext.tableName, ids)
+      .pipe(
+        first(),
+        filter(
+          (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
+        ),
+        tap(() => {
+          this.dbService.getTable(MeterDbTableContext.tableName);
+          this.messagesService.success('Eliminado correctamente');
+        })
+      )
+      .subscribe({
+        error: () =>
+          this.messagesService.error(
+            'Verifique que ningun elemento este en uso antes de eliminar'
+          ),
+      });
+  }
+
+  setFormValues(meter: Meter) {
+    this.form.reset();
+    this.form.patchValue(meter);
+  }
+
+  saveMeter() {
+    if (!this.form.valid) {
+      return;
+    }
+
+    const meter: Meter = this.form.getRawValue();
+    if (this.form.get('id')?.value) {
+      this.editMeter(meter);
+    } else {
+      this.createMeter(meter);
+    }
+  }
+
+  private readonly updateDropdownOptions = (): void => {
+    this.dropdownActiveConstantUnitOptions = this._relations[
+      ActiveConstantUnitDbTableContext.tableName
+    ].sort((a, b) => a.name.localeCompare(b.name));
+    this.dropdownReactiveConstantUnitOptions = this._relations[
+      ReactiveConstantUnitDbTableContext.tableName
+    ].sort((a, b) => a.name.localeCompare(b.name));
+    this.dropdownBrandOptions = this._relations[
+      BrandDbTableContext.tableName
+    ].sort((a, b) => a.name.localeCompare(b.name));
+    this.dropdownConnectionOptions = this._relations[
+      ConnectionDbTableContext.tableName
+    ].sort((a, b) => a.name.localeCompare(b.name));
+  };
 
   private initFormValueChangeListeners(): void {
     this.form
@@ -162,49 +206,5 @@ export class MetersComponent
         error: () =>
           this.messagesService.error('No se pudo editar el elemento'),
       });
-  }
-
-  deleteMeters(ids: string[] = []) {
-    this.dbService
-      .deleteTableElements$(MeterDbTableContext.tableName, ids)
-      .pipe(
-        first(),
-        filter(
-          (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
-        ),
-        tap(() => {
-          this.dbService.getTable(MeterDbTableContext.tableName);
-          this.messagesService.success('Eliminado correctamente');
-        })
-      )
-      .subscribe({
-        error: () =>
-          this.messagesService.error(
-            'Verifique que ningun elemento este en uso antes de eliminar'
-          ),
-      });
-  }
-
-  setFormValues(meter: Meter) {
-    this.form.reset();
-    this.form.patchValue(meter);
-  }
-
-  saveMeter() {
-    if (!this.form.valid) {
-      return;
-    }
-
-    const meter: Meter = this.form.getRawValue();
-    if (this.form.get('id')?.value) {
-      this.editMeter(meter);
-    } else {
-      this.createMeter(meter);
-    }
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
   }
 }
