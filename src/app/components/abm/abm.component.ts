@@ -15,7 +15,6 @@ import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmColum } from './models/abm.model';
-import { MessagesService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-abm',
@@ -51,8 +50,7 @@ export class AbmComponent
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
-    private readonly confirmationService: ConfirmationService,
-    private readonly messagesService: MessagesService
+    private readonly confirmationService: ConfirmationService
   ) {
     this.search = new FormControl('');
     this.initFormValueChangeListeners();
