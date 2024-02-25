@@ -30,8 +30,8 @@ export default {
           return { ...row };
         });
       }
-      for await (const relation of relations) {
-        relationsMap[relation] = await knex(relation);
+      for await (const relationTableName of relations) {
+        relationsMap[relationTableName] = await knex(relationTableName);
       }
       reply('get-table-reply', {
         tableNameReply: tableName,

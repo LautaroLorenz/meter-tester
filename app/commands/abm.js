@@ -50,8 +50,8 @@ exports.default = {
                     _c = relations_1_1.value;
                     _d = false;
                     try {
-                        const relation = _c;
-                        relationsMap[relation] = yield knex(relation);
+                        const relationTableName = _c;
+                        relationsMap[relationTableName] = yield knex(relationTableName);
                     }
                     finally {
                         _d = true;
