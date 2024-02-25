@@ -1,7 +1,7 @@
 export enum PageUrlName {
   root = '/',
   availableTest = 'ensayos-disponibles',
-  historyAndReports = 'historial-y-reportes',
+  history = 'historial',
   meters = 'medidores',
   brands = 'marcas',
   users = 'usuarios',

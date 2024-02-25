@@ -23,10 +23,10 @@ export class MenuComponent implements OnInit {
             label: 'Ensayos',
             routerLink: '/'.concat(PageUrlName.availableTest),
           },
-          // {
-          //   label: 'Historial y reportes',
-          //   routerLink: '/'.concat(PageUrlName.historyAndReports),
-          // },
+          {
+            label: 'Historial',
+            routerLink: '/'.concat(PageUrlName.history),
+          },
         ],
       },
       {

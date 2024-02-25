@@ -17,11 +17,10 @@ export class TabMenuTestComponent {
         label: 'Ensayos',
         routerLink: '/'.concat(PageUrlName.availableTest),
       },
-      // {
-      //   label: 'Historial y reportes',
-      //   icon: PrimeIcons.BOOK,
-      //   routerLink: '/'.concat(PageUrlName.historyAndReports),
-      // },
+      {
+        label: 'Historial',
+        routerLink: '/'.concat(PageUrlName.history),
+      },
     ];
   }
 }
