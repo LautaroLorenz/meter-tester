@@ -1,7 +1,5 @@
 NICE TO HAVE
 - Validar al crear el template que los pasos tengan los formularios válidos, con un feedback visual como la row en rojo.
-
-COMPONENTES
 - implementar drag y drop para ordenar los pasos
 
 CORE
@@ -10,6 +8,8 @@ CORE
 
 FEATURES:
 - login
+  - ABM de usuarios
+  - Roles de usuarios con permisos.
 - backup
 - estadísticas
 - ejecución
