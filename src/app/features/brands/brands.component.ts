@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
 import {
   Brand,
@@ -17,7 +16,6 @@ import { AbmPage } from '../../models/core/abm-page.model';
 })
 export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   readonly title: string = 'Administración de marcas';
-  readonly haderIcon = PrimeIcons.BOOKMARK;
   readonly cols = BrandTableColumns;
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;

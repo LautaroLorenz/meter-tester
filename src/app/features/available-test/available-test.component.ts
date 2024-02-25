@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
 import { AbmPage } from '../../models/core/abm-page.model';
 import {
@@ -18,8 +17,7 @@ export class AvailableTestComponent
   extends AbmPage<EssayTemplate>
   implements OnInit
 {
-  readonly title: string = 'Administración de ensayos disponibles';
-  readonly haderIcon = PrimeIcons.BRIEFCASE;
+  readonly title: string = 'Administración de ensayos';
   readonly cols = EssayTemplateTableColumns;
   readonly essayTemplates$: Observable<EssayTemplate[]>;
 

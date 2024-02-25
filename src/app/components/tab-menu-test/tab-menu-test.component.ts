@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MenuItem, PrimeIcons } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { PageUrlName } from '../menu/models/page-name.model';
 
 @Component({
@@ -14,8 +14,7 @@ export class TabMenuTestComponent {
   constructor() {
     this.items = [
       {
-        label: 'Ensayos disponibles',
-        icon: PrimeIcons.BRIEFCASE,
+        label: 'Ensayos',
         routerLink: '/'.concat(PageUrlName.availableTest),
       },
       // {

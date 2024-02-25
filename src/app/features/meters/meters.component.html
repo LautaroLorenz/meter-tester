@@ -1,4 +1,4 @@
-<app-page-title [title]="title" [headerIcon]="haderIcon"></app-page-title>
+<app-page-title [title]="title"></app-page-title>
 <ng-container *ngIf="meters$ | async as meters">
   <app-abm
     [dataset]="meters"

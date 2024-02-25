@@ -5,7 +5,6 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { PrimeIcons } from 'primeng/api';
 
 @Component({
   selector: 'app-page-title',
@@ -15,7 +14,6 @@ import { PrimeIcons } from 'primeng/api';
 })
 export class PageTitleComponent {
   @Input() title = '';
-  @Input() headerIcon: PrimeIcons | null = null;
   @Input() showBack = false;
 
   @Output() backEvent = new EventEmitter<boolean>();
