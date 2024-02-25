@@ -4,6 +4,10 @@ NICE TO HAVE
 
 CORE
 - ABM con paginado para el historial de ejecuciones
+  - testear:
+    - paginado
+    - búsqueda
+    - ordenamiento
 - Contraseña en la base de datos para que no se pueda acceder
 
 FEATURES:
