@@ -42,27 +42,9 @@
   [value]="dataset"
   [paginator]="paginator"
   [rows]="rows"
-  [(selection)]="selected"
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <ng-container *ngIf="selectable">
-        <th class="w-3rem p-0 m-0 text-center">
-          <p-menu
-            #menu
-            appendTo="body"
-            [model]="checkboxColumnMenuItems"
-            [popup]="true"
-          ></p-menu>
-          <button
-            pButton
-            icon="pi pi-list"
-            class="p-button-text w-full"
-            (click)="menu.toggle($event)"
-          ></button>
-        </th>
-      </ng-container>
-
       <th
         *ngFor="let col of columns"
         [pSortableColumn]="col.field"
@@ -83,13 +65,7 @@
     let-columns="columns"
     let-rowIndex="rowIndex"
   >
-    <tr>
-      <ng-container *ngIf="selectable">
-        <td class="text-center">
-          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
-        </td>
-      </ng-container>
-      
+    <tr>      
       <ng-container *ngFor="let col of columns">
         <td class="{{ col.styleClass }}">
           {{ col.prefix }}{{ rowData | dotStringAsObject : col.field
