@@ -26,43 +26,79 @@ export class ContrastTestBuildFormComponent extends StepBuildFormComponent<Contr
         phaseL1: fb.nonNullable.group({
           voltage: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
           ],
           current: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
           ],
           anglePhi: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
           ],
         }),
         phaseL2: fb.nonNullable.group({
           voltage: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
           ],
           current: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
           ],
           anglePhi: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
           ],
         }),
         phaseL3: fb.nonNullable.group({
           voltage: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
           ],
           current: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
           ],
           anglePhi: [
             undefined,
-            [Validators.required.bind(this), Validators.min(0)],
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
           ],
         }),
         maxAllowedError: [

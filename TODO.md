@@ -6,9 +6,7 @@ COMPONENTES
 
 CORE
 - ABM con paginado para el historial de ejecuciones
-
-VALIDACIONES
-- Grupo de fases (consulta con Nico) (actualizar todos los steps forms con los valores y el componente fase)
+- Contraseña en la base de datos para que no se pueda acceder
 
 FEATURES:
 - login
