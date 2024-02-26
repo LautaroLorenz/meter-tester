@@ -17,10 +17,10 @@ export class TabMenuTestComponent {
         label: 'Ensayos',
         routerLink: '/'.concat(PageUrlName.availableTest),
       },
-      {
-        label: 'Historial',
-        routerLink: '/'.concat(PageUrlName.history),
-      },
+      // {
+      //   label: 'Historial',
+      //   routerLink: '/'.concat(PageUrlName.history),
+      // },
     ];
   }
 }
