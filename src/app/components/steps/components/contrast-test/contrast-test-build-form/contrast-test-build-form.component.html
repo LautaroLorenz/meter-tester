@@ -1,12 +1,12 @@
 <fom novalidate [formGroup]="form">
-  <div class="flex flex-column gap-4">
-    <div class="formgrid grid">
-      <div class="field col col-6">
-        <label for="name">Nombre</label>
-        <input type="text" pInputText id="name" formControlName="name" />
-      </div>
+  <ng-container formGroupName="form_control_raw">
+    <div class="flex flex-column gap-4">
+      <div class="formgrid grid">
+        <div class="field col col-6">
+          <label for="name">Nombre</label>
+          <input type="text" pInputText id="name" formControlName="name" />
+        </div>
 
-      <ng-container formGroupName="form_control_raw">
         <div class="field col col-6">
           <label for="meterConstant" class="mb-2"
             >Constante del medidor<span class="ml-1 text-red-300">*</span>
@@ -20,10 +20,8 @@
           ></p-selectButton>
           <app-input-error formControlName="meterConstant"></app-input-error>
         </div>
-      </ng-container>
-    </div>
+      </div>
 
-    <ng-container formGroupName="form_control_raw">
       <div class="formgrid grid">
         <div class="field col col-6">
           <label for="maxAllowedError" class="mb-2"
@@ -104,6 +102,6 @@
           ></app-phase-form-group>
         </div>
       </div>
-    </ng-container>
-  </div>
+    </div>
+  </ng-container>
 </fom>

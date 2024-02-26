@@ -4,6 +4,7 @@ import { MeterConstant } from '../../../../models/business/constants/meter-const
 import { Phase } from '../../../../models/business/interafces/phase.model';
 
 export interface ContrastTestFormControlRaw {
+  name: string;
   meterConstant: MeterConstant;
   phaseL1: Phase;
   phaseL2: Phase;

@@ -17,11 +17,11 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
   override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
     return fb.nonNullable.group({
       id: undefined,
-      name: undefined,
       order: undefined,
       essay_template_id: undefined,
       step_id: [undefined, Validators.required.bind(this)],
       form_control_raw: fb.nonNullable.group({
+        name: undefined,
         meterConstant: [undefined, Validators.required.bind(this)],
         phaseL1: fb.nonNullable.group({
           voltage: [

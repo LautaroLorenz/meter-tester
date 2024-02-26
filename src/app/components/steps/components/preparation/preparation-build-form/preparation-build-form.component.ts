@@ -62,7 +62,6 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
     return fb.nonNullable.group({
       id: undefined,
-      name: undefined,
       order: undefined,
       essay_template_id: undefined,
       step_id: undefined,

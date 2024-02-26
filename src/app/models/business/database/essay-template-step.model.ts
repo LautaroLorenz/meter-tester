@@ -8,7 +8,6 @@ import { Step, StepDbTableContext } from './step.model';
 
 export interface EssayTemplateStep extends DbForeignKey {
   id: number;
-  name: string;
   order: number;
   essay_template_id: number;
   step_id: number;
@@ -48,7 +47,7 @@ export const EssayTemplateStepTableColumns: AbmColum[] = [
     sortable: false,
   },
   {
-    field: 'name',
+    field: 'form_control_raw.name',
     header: 'Nombre',
     sortable: false,
   },

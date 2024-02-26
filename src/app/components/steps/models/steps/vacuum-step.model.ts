@@ -4,6 +4,7 @@ import { MeterConstant } from '../../../../models/business/constants/meter-const
 import { Phase } from '../../../../models/business/interafces/phase.model';
 
 export interface VacuumTestFormControlRaw {
+  name: string;
   meterConstant: MeterConstant;
   phaseL1: Pick<Phase, 'voltage'>;
   phaseL2: Pick<Phase, 'voltage'>;
