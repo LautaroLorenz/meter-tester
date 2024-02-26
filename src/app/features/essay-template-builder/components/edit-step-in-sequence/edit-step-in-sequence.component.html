@@ -1,11 +1,20 @@
 <p-dialog
   [(visible)]="dialogOpened"
   [style]="{ minWidth: '800px', width: '80vw', maxWidth: '1000px', }"
-  header="Detalle"
   [modal]="true"
   styleClass="p-fluid"
   (onHide)="dialogHide.emit()"
 >
+  <ng-template pTemplate="header">
+    <ng-container *ngIf="!!essayTemplateStep">
+      <div class="flex flex-row gap-2 align-items-center">
+        <span class="p-dialog-title">Ajustar parámetros</span>
+        <span>-</span>
+        <span class="text-xl text-700">{{ essayTemplateStep.foreign.step?.name }}</span>
+      </div>
+    </ng-container>
+  </ng-template>
+
   <ng-template pTemplate="content">
     <ng-container *ngIf="!!essayTemplateStep && dialogOpened">
       <ng-container [ngSwitch]="essayTemplateStep.step_id">
