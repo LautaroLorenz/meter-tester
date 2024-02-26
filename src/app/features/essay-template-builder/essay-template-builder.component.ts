@@ -183,9 +183,8 @@ export class EssayTemplateBuilderComponent
     const foreignTablesFiltered = foreignTables.filter(
       (ft) => ft.tableName !== essayTemplateTableName
     );
-    const foreignTableNames = foreignTablesFiltered.map((ft) => ft.tableName);
     const getTableOptions = {
-      relations: foreignTableNames,
+      relations: foreignTablesFiltered,
       conditions: [
         {
           kind: WhereKind.where,
@@ -204,7 +203,7 @@ export class EssayTemplateBuilderComponent
 
   private requestToolsTables(): void {
     this.dbServiceSteps.getTable(StepDbTableContext.tableName, {
-      relations: StepDbTableContext.foreignTables.map((ft) => ft.tableName),
+      relations: StepDbTableContext.foreignTables,
     });
   }
 

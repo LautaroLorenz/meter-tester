@@ -1,12 +1,78 @@
 import { ipcMain } from 'electron';
+import { ForeignTable } from '../../src/app/models/core/database.model';
+
+function getForeignTableNameByProp(
+  relations: ForeignTable[],
+  property: string
+): string {
+  const relation = relations.find(
+    ({ propertyName }: ForeignTable) => propertyName === property
+  );
+  return relation?.tableName ?? '';
+}
 
 export default {
   register: (knex: any) => {
     ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
-      const { tableName, relations, conditions, rawProperties } =
-        dbTableConnection;
+      const {
+        tableName,
+        relations,
+        conditions,
+        rawProperties,
+        lazyLoadEvent,
+        globalFilterColumns,
+      } = dbTableConnection;
       const relationsMap: any = {};
-      const queryBuilder = knex(tableName).orderBy('id', 'desc');
+      const queryBuilder = knex(tableName).select(`${tableName}.*`);
+
+      if (lazyLoadEvent) {
+        if (!!lazyLoadEvent.sortField) {
+          const sortOrder = lazyLoadEvent.sortOrder > 0 ? 'desc' : 'asc';
+          if (lazyLoadEvent.sortField.includes('foreign')) {
+            const foreignSortFieldParts = lazyLoadEvent.sortField.split('.');
+            const foreignSortFieldPropertyName = foreignSortFieldParts[1];
+            const foreignTableName = getForeignTableNameByProp(
+              relations,
+              foreignSortFieldPropertyName
+            );
+            const foreignTableColumn = foreignSortFieldParts[2];
+            queryBuilder.orderBy(
+              `${foreignTableName}.${foreignTableColumn}`,
+              sortOrder
+            );
+          } else {
+            queryBuilder.orderBy(lazyLoadEvent.sortField, sortOrder);
+          }
+        } else {
+          queryBuilder.orderBy('id', 'desc');
+        }
+
+        if (!!lazyLoadEvent.globalFilter) {
+          const columns: string[] = globalFilterColumns.map(
+            (filterColumn: string) => {
+              if (filterColumn.includes('foreign')) {
+                const foreignFieldParts = filterColumn.split('.');
+                const foreignFieldPropertyName = foreignFieldParts[1];
+                const foreignTableName = getForeignTableNameByProp(
+                  relations,
+                  foreignFieldPropertyName
+                );
+                const foreignTableColumn = foreignFieldParts[2];
+                return `${foreignTableName}.${foreignTableColumn}`;
+              } else {
+                return `${tableName}.${filterColumn}`;
+              }
+            }
+          );
+
+          queryBuilder.andWhereRaw(
+            `CONCAT(${columns.join(',')}) COLLATE utf8_general_ci LIKE ?`,
+            [`%${lazyLoadEvent.globalFilter}%`]
+          );
+        }
+      } else {
+        queryBuilder.orderBy('id', 'desc');
+      }
 
       for (const condition of conditions) {
         const { kind, columnName, operator, value } = condition;
@@ -21,7 +87,29 @@ export default {
         }
       }
 
+      for (let i = 0; i < relations?.length; i++) {
+        const relation: ForeignTable = relations[i];
+        queryBuilder.join(
+          relation.tableName,
+          `${tableName}.${relation.propertyName}_id`,
+          `${relation.tableName}.id`
+        );
+      }
+
+      const totalRecordsQueryBuilder = queryBuilder.clone();
+      if (lazyLoadEvent) {
+        if (!!lazyLoadEvent.rows) {
+          queryBuilder.limit(lazyLoadEvent.rows);
+        }
+        if (!!lazyLoadEvent.first) {
+          queryBuilder.offset(lazyLoadEvent.first);
+        }
+      }
       let rows = await queryBuilder;
+      const { totalRecords } = (
+        await totalRecordsQueryBuilder.count('*', { as: 'totalRecords' })
+      )[0];
+
       if (rawProperties.length > 0) {
         rows = rows.map((row: any) => {
           rawProperties.forEach((rawProperty: string) => {
@@ -30,13 +118,15 @@ export default {
           return { ...row };
         });
       }
-      for await (const relationTableName of relations) {
+      for await (const relation of relations) {
+        const relationTableName = relation.tableName;
         relationsMap[relationTableName] = await knex(relationTableName);
       }
       reply('get-table-reply', {
         tableNameReply: tableName,
         rows,
         relations: relationsMap,
+        totalRecords,
       });
     });
 

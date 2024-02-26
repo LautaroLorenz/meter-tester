@@ -6,6 +6,7 @@ export interface RequestTableResponse<T> {
   tableNameReply: string;
   rows: T[];
   relations: TableRelationsMap;
+  totalRecords: number;
 }
 
 export interface DbForeignKey {
@@ -25,7 +26,7 @@ export interface DbTableContext {
 export interface ForeignTable {
   tableName: TableName;
   foreignKey: string;
-  properyName: string;
+  propertyName: string;
 }
 
 export enum WhereKind {

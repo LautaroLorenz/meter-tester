@@ -17,13 +17,54 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+function getForeignTableNameByProp(relations, property) {
+    var _a;
+    const relation = relations.find(({ propertyName }) => propertyName === property);
+    return (_a = relation === null || relation === void 0 ? void 0 : relation.tableName) !== null && _a !== void 0 ? _a : '';
+}
 exports.default = {
     register: (knex) => {
         electron_1.ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, e_1, _b, _c;
-            const { tableName, relations, conditions, rawProperties } = dbTableConnection;
+            const { tableName, relations, conditions, rawProperties, lazyLoadEvent, globalFilterColumns, } = dbTableConnection;
             const relationsMap = {};
-            const queryBuilder = knex(tableName).orderBy('id', 'desc');
+            const queryBuilder = knex(tableName).select(`${tableName}.*`);
+            if (lazyLoadEvent) {
+                if (!!lazyLoadEvent.sortField) {
+                    const sortOrder = lazyLoadEvent.sortOrder > 0 ? 'desc' : 'asc';
+                    if (lazyLoadEvent.sortField.includes('foreign')) {
+                        const foreignSortFieldParts = lazyLoadEvent.sortField.split('.');
+                        const foreignSortFieldPropertyName = foreignSortFieldParts[1];
+                        const foreignTableName = getForeignTableNameByProp(relations, foreignSortFieldPropertyName);
+                        const foreignTableColumn = foreignSortFieldParts[2];
+                        queryBuilder.orderBy(`${foreignTableName}.${foreignTableColumn}`, sortOrder);
+                    }
+                    else {
+                        queryBuilder.orderBy(lazyLoadEvent.sortField, sortOrder);
+                    }
+                }
+                else {
+                    queryBuilder.orderBy('id', 'desc');
+                }
+                if (!!lazyLoadEvent.globalFilter) {
+                    const columns = globalFilterColumns.map((filterColumn) => {
+                        if (filterColumn.includes('foreign')) {
+                            const foreignFieldParts = filterColumn.split('.');
+                            const foreignFieldPropertyName = foreignFieldParts[1];
+                            const foreignTableName = getForeignTableNameByProp(relations, foreignFieldPropertyName);
+                            const foreignTableColumn = foreignFieldParts[2];
+                            return `${foreignTableName}.${foreignTableColumn}`;
+                        }
+                        else {
+                            return `${tableName}.${filterColumn}`;
+                        }
+                    });
+                    queryBuilder.andWhereRaw(`CONCAT(${columns.join(',')}) COLLATE utf8_general_ci LIKE ?`, [`%${lazyLoadEvent.globalFilter}%`]);
+                }
+            }
+            else {
+                queryBuilder.orderBy('id', 'desc');
+            }
             for (const condition of conditions) {
                 const { kind, columnName, operator, value } = condition;
                 if (kind === 'where') {
@@ -36,7 +77,21 @@ exports.default = {
                     queryBuilder.orWhere(columnName, operator, value);
                 }
             }
+            for (let i = 0; i < (relations === null || relations === void 0 ? void 0 : relations.length); i++) {
+                const relation = relations[i];
+                queryBuilder.join(relation.tableName, `${tableName}.${relation.propertyName}_id`, `${relation.tableName}.id`);
+            }
+            const totalRecordsQueryBuilder = queryBuilder.clone();
+            if (lazyLoadEvent) {
+                if (!!lazyLoadEvent.rows) {
+                    queryBuilder.limit(lazyLoadEvent.rows);
+                }
+                if (!!lazyLoadEvent.first) {
+                    queryBuilder.offset(lazyLoadEvent.first);
+                }
+            }
             let rows = yield queryBuilder;
+            const { totalRecords } = (yield totalRecordsQueryBuilder.count('*', { as: 'totalRecords' }))[0];
             if (rawProperties.length > 0) {
                 rows = rows.map((row) => {
                     rawProperties.forEach((rawProperty) => {
@@ -50,7 +105,8 @@ exports.default = {
                     _c = relations_1_1.value;
                     _d = false;
                     try {
-                        const relationTableName = _c;
+                        const relation = _c;
+                        const relationTableName = relation.tableName;
                         relationsMap[relationTableName] = yield knex(relationTableName);
                     }
                     finally {
@@ -69,6 +125,7 @@ exports.default = {
                 tableNameReply: tableName,
                 rows,
                 relations: relationsMap,
+                totalRecords,
             });
         }));
         electron_1.ipcMain.handle('get-table-row', (_, { tableName, id }) => __awaiter(void 0, void 0, void 0, function* () {

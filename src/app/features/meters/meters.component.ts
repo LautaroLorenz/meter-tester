@@ -26,6 +26,7 @@ import {
   Connection,
   ConnectionDbTableContext,
 } from '../../models/business/database/connection.model';
+import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 
 @Component({
   templateUrl: './meters.component.html',
@@ -99,9 +100,7 @@ export class MetersComponent
   }
 
   ngOnInit(): void {
-    this.dbService.getTable(MeterDbTableContext.tableName, {
-      relations: MeterDbTableContext.foreignTables.map((ft) => ft.tableName),
-    });
+    this.refreshTable();
   }
 
   ngOnDestroy() {
@@ -118,7 +117,7 @@ export class MetersComponent
           (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
         ),
         tap(() => {
-          this.dbService.getTable(MeterDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Eliminado correctamente');
         })
       )
@@ -146,6 +145,14 @@ export class MetersComponent
     } else {
       this.createMeter(meter);
     }
+  }
+
+  override refreshTable(): void {
+    this.dbService.getTable(MeterDbTableContext.tableName, {
+      relations: MeterDbTableContext.foreignTables,
+      lazyLoadEvent: this.lazyLoadEvent,
+      globalFilterColumns: GlobalFilterManager.transform(MeterTableColumns),
+    });
   }
 
   private readonly updateDropdownOptions = (): void => {
@@ -192,7 +199,7 @@ export class MetersComponent
       .pipe(
         first(),
         tap(() => {
-          this.dbService.getTable(MeterDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Agregado correctamente');
         })
       )
@@ -207,7 +214,7 @@ export class MetersComponent
       .pipe(
         first(),
         tap(() => {
-          this.dbService.getTable(MeterDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Editado correctamente');
         })
       )

@@ -2,9 +2,12 @@ import { map, Observable, tap } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
 import { DbTableContext, TableRelationsMap } from './database.model';
 import { RelationsManager } from './relations-manager.model';
+import { LazyLoadEvent } from 'primeng/api';
 
-export class AbmPage<T> {
+export abstract class AbmPage<T> {
+  protected totalRecords = 0;
   protected _relations: TableRelationsMap = {};
+  protected lazyLoadEvent: LazyLoadEvent = {};
   private readonly _dbService: DatabaseService<T>;
   private readonly _dbTableConnection: DbTableContext;
 
@@ -20,6 +23,7 @@ export class AbmPage<T> {
     // FIXME
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this._dbService.getTableReply$(tableName).pipe(
+      tap(({ totalRecords }) => (this.totalRecords = totalRecords)),
       tap(({ relations }) => this._setRelations(relations)),
       map(({ rows }) =>
         // FIXME
@@ -33,7 +37,14 @@ export class AbmPage<T> {
     );
   }
 
+  protected lazyLoad(lazyLoadEvent: LazyLoadEvent): void {
+    this.lazyLoadEvent = lazyLoadEvent;
+    this.refreshTable();
+  }
+
   private _setRelations(relations: TableRelationsMap): void {
     this._relations = { ...this._relations, ...relations };
   }
+
+  abstract refreshTable(): void;
 }

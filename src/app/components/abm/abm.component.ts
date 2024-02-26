@@ -11,7 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent, MenuItem, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmColum } from './models/abm.model';
@@ -26,6 +26,7 @@ export class AbmComponent
   implements OnChanges, OnDestroy
 {
   @Input() dataset: any[] = [];
+  @Input() totalRecords = 0;
   @Input() columns: AbmColum[] = [];
   @Input() paginator = true;
   @Input() detailFormValid = false;
@@ -38,6 +39,7 @@ export class AbmComponent
   @Output() deleteEvent = new EventEmitter<string[]>();
   @Output() saveDetailEvent = new EventEmitter<any>();
   @Output() openDetailEvent = new EventEmitter<any>();
+  @Output() lazyLoad = new EventEmitter<LazyLoadEvent>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
 

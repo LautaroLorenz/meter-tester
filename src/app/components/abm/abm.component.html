@@ -42,6 +42,9 @@
   [value]="dataset"
   [paginator]="paginator"
   [rows]="rows"
+  [lazy]="true"
+  (onLazyLoad)="lazyLoad.emit($any($event))"
+  [totalRecords]="totalRecords"
 >
   <ng-template pTemplate="header" let-columns>
     <tr>

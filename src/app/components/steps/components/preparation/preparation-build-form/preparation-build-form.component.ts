@@ -96,7 +96,7 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
   override requestToolsTables(): void {
     this.dbServiceMeters.getTable(MeterDbTableContext.tableName, {
-      relations: MeterDbTableContext.foreignTables.map((ft) => ft.tableName),
+      relations: MeterDbTableContext.foreignTables,
     });
   }
 

@@ -8,6 +8,7 @@ import {
 } from '../../models/business/database/essay-template.model';
 import { MessagesService } from '../../services/messages.service';
 import { DatabaseService } from '../../services/database.service';
+import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 
 @Component({
   templateUrl: './available-test.component.html',
@@ -32,7 +33,7 @@ export class AvailableTestComponent
   }
 
   ngOnInit(): void {
-    this.dbService.getTable(EssayTemplateDbTableContext.tableName);
+    this.refreshTable();
   }
 
   deleteEssayTemplates(ids: string[] = []) {
@@ -44,7 +45,7 @@ export class AvailableTestComponent
           (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
         ),
         tap(() => {
-          this.dbService.getTable(EssayTemplateDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Eliminado correctamente');
         })
       )
@@ -54,5 +55,15 @@ export class AvailableTestComponent
             'Verifique que ningun elemento este en uso antes de eliminar'
           ),
       });
+  }
+
+  override refreshTable(): void {
+    this.dbService.getTable(EssayTemplateDbTableContext.tableName, {
+      relations: EssayTemplateDbTableContext.foreignTables,
+      lazyLoadEvent: this.lazyLoadEvent,
+      globalFilterColumns: GlobalFilterManager.transform(
+        EssayTemplateTableColumns
+      ),
+    });
   }
 }

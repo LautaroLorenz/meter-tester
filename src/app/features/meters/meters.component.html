@@ -2,12 +2,14 @@
 <ng-container *ngIf="meters$ | async as meters">
   <app-abm
     [dataset]="meters"
+    [totalRecords]="totalRecords"
     [columns]="cols"
     [detailFormValid]="form.valid"
     [abmDetailTemplate]="abmDetailTemplate"
     (deleteEvent)="deleteMeters($event)"
     (openDetailEvent)="setFormValues($event)"
     (saveDetailEvent)="saveMeter()"
+    (lazyLoad)="lazyLoad($event)"
   >
     <ng-template #abmDetailTemplate>
       <form novalidate [formGroup]="form" class="w-30rem">

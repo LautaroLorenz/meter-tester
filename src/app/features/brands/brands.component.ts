@@ -9,6 +9,7 @@ import {
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
 import { AbmPage } from '../../models/core/abm-page.model';
+import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 
 @Component({
   templateUrl: './brands.component.html',
@@ -35,9 +36,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dbService.getTable(BrandDbTableContext.tableName, {
-      relations: BrandDbTableContext.foreignTables.map((ft) => ft.tableName),
-    });
+    this.refreshTable();
   }
 
   deleteBrands(ids: string[] = []) {
@@ -49,7 +48,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
           (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
         ),
         tap(() => {
-          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Eliminado correctamente');
         })
       )
@@ -79,6 +78,14 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
     }
   }
 
+  override refreshTable(): void {
+    this.dbService.getTable(BrandDbTableContext.tableName, {
+      relations: BrandDbTableContext.foreignTables,
+      lazyLoadEvent: this.lazyLoadEvent,
+      globalFilterColumns: GlobalFilterManager.transform(BrandTableColumns),
+    });
+  }
+
   private readonly updateDropdownOptions = (): void => {};
 
   private createBrand(brand: Brand) {
@@ -87,7 +94,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       .pipe(
         first(),
         tap(() => {
-          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Agregado correctamente');
         })
       )
@@ -102,7 +109,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       .pipe(
         first(),
         tap(() => {
-          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.refreshTable();
           this.messagesService.success('Editado correctamente');
         })
       )

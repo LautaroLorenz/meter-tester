@@ -26,12 +26,12 @@ export const EssayTemplateStepDbTableContext: DbTableContext = {
     {
       tableName: EssayTemplateDbTableContext.tableName,
       foreignKey: 'essay_template_id',
-      properyName: 'essayTemplate',
+      propertyName: 'essayTemplate',
     },
     {
       tableName: StepDbTableContext.tableName,
       foreignKey: 'step_id',
-      properyName: 'step',
+      propertyName: 'step',
     },
   ],
 };

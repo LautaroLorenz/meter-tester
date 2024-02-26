@@ -38,25 +38,26 @@ export const MeterDbTableContext: DbTableContext = {
     {
       tableName: ConnectionDbTableContext.tableName,
       foreignKey: 'connection_id',
-      properyName: 'connection',
+      propertyName: 'connection',
     },
     {
       tableName: BrandDbTableContext.tableName,
       foreignKey: 'brand_id',
-      properyName: 'brand',
+      propertyName: 'brand',
     },
     {
       tableName: ActiveConstantUnitDbTableContext.tableName,
       foreignKey: 'activeConstantUnit_id',
-      properyName: 'activeConstantUnit',
+      propertyName: 'activeConstantUnit',
     },
     {
       tableName: ReactiveConstantUnitDbTableContext.tableName,
       foreignKey: 'reactiveConstantUnit_id',
-      properyName: 'reactiveConstantUnit',
+      propertyName: 'reactiveConstantUnit',
     },
   ],
 };
+
 
 export const MeterTableColumns: AbmColum[] = [
   {

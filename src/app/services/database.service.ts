@@ -12,10 +12,12 @@ import {
 } from 'rxjs';
 import { IpcService } from './ipc.service';
 import {
+  ForeignTable,
   RequestTableResponse,
   TableName,
   Where,
 } from '../models/core/database.model';
+import { LazyLoadEvent } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -33,20 +35,36 @@ export class DatabaseService<T> {
   getTable(
     tableName: TableName,
     options: {
-      relations?: TableName[];
+      relations?: ForeignTable[];
       conditions?: Where[];
+      lazyLoadEvent?: LazyLoadEvent;
+      globalFilterColumns?: string[];
     } = {
       relations: [],
       conditions: [],
+      lazyLoadEvent: {},
+      globalFilterColumns: []
     },
     rawProperties: string[] = []
   ): void {
-    this._getDatabaseTable(
+    console.log(options.lazyLoadEvent);
+    const { first, rows, sortField, sortOrder, globalFilter } =
+      options.lazyLoadEvent ?? {};
+    const lazyLoadEvent: LazyLoadEvent = {
+      first,
+      rows,
+      sortField,
+      sortOrder,
+      globalFilter,
+    };
+    this.ipcService.send('get-table', {
       tableName,
-      options.relations,
-      options.conditions,
-      rawProperties
-    );
+      relations: options.relations ?? [],
+      conditions: options.conditions ?? [],
+      globalFilterColumns: options.globalFilterColumns ?? [],
+      lazyLoadEvent,
+      rawProperties,
+    });
   }
 
   getTableReply$(tableName: string): Observable<RequestTableResponse<T>> {
@@ -98,20 +116,6 @@ export class DatabaseService<T> {
     response: RequestTableResponse<T>
   ) => {
     this._getTableReply$.next(response);
-  };
-
-  private readonly _getDatabaseTable = (
-    tableName: TableName,
-    relations: TableName[] = [],
-    conditions: Where[] = [],
-    rawProperties: string[] = []
-  ): void => {
-    this.ipcService.send('get-table', {
-      tableName,
-      relations,
-      conditions,
-      rawProperties,
-    });
   };
 
   private readonly _getTableDataAsObservable = (

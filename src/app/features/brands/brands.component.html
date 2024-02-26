@@ -2,12 +2,14 @@
 <ng-container *ngIf="brands$ | async as brands">
   <app-abm
     [dataset]="brands"
+    [totalRecords]="totalRecords"
     [columns]="cols"
     [detailFormValid]="form.valid"
     [abmDetailTemplate]="abmDetailTemplate"
     (deleteEvent)="deleteBrands($event)"
     (openDetailEvent)="setFormValues($event)"
     (saveDetailEvent)="saveBrand()"
+    (lazyLoad)="lazyLoad($event)"
   >
     <ng-template #abmDetailTemplate>
       <form novalidate [formGroup]="form">
