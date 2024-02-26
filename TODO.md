@@ -1,6 +1,7 @@
 NICE TO HAVE
 - Validar al crear el template que los pasos tengan los formularios válidos, con un feedback visual como la row en rojo.
 - implementar drag y drop para ordenar los pasos
+- Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
 
 CORE
 - Contraseña en la base de datos para que no se pueda acceder
