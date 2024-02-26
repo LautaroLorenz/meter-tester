@@ -11,5 +11,14 @@ FEATURES:
   - Roles de usuarios con permisos.
 - backup
 - estadísticas
-- ejecución
+- ejecución 
 - historial
+
+EJECUCIÓN:
+- Pasos:
+  - Preparación
+  - Verificación de parámetros
+  - Ejecución:
+    - (agregar los pasos de ajuste de fotocélulas y mostrar en que momentos van a ser requeridos sobre el timeline)
+  - Agregar al historial (indicar el ID de reporte).
+  - Reporte
