@@ -45,9 +45,9 @@ import { RelationsManager } from '../../models/core/relations-manager.model';
 import {
   EssayTemplateForm,
   EssayTemplateFormGroup,
-} from '../../models/business/forms/essay-template-form.model';
+} from '../../models/business/interafces/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
-import { essayTemplateValidator } from '../../models/business/forms/essay-template-form-validator.model';
+import { essayTemplateValidator } from '../../models/business/interafces/essay-template-form-validator.model';
 import { Steps } from '../../models/business/enums/steps.model';
 
 @Component({
