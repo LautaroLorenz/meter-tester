@@ -1,16 +1,10 @@
-<p-button
-  label="Agregar paso"
-  icon="pi pi-plus"
-  [outlined]="true"
-  (click)="openDialog()"
-></p-button>
-
 <p-dialog
   [style]="{ minWidth: '450px' }"
   header="Seleccione un paso"
   [modal]="true"
   styleClass="p-fluid"
   [(visible)]="dialogOpened"
+  (onHide)="dialogOpenedChange.emit(false)"
 >
   <ng-container *ngFor="let step of userSelectableStepOptions">
     <div class="flex mb-2">

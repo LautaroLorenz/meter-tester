@@ -57,13 +57,14 @@ import { Steps } from '../../models/business/enums/steps.model';
 export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
+  addStepToSequenceDialogOpened = false;
   selectedEssayTemplateStep: Partial<EssayTemplateStep> | undefined;
+  steps: Step[] | undefined;
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
   readonly form: FormGroup;
   readonly saveButtonMenuItems: MenuItem[] = [];
-  readonly steps$: Observable<Step[]>;
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -79,7 +80,6 @@ export class EssayTemplateBuilderComponent
     private readonly confirmationService: ConfirmationService
   ) {
     this.form = this.buildForm();
-    this.steps$ = this.getSteps$();
     this.saveButtonMenuItems = this.getSaveButtonMenuItems();
     this.id$ = this.getId$();
   }
@@ -343,6 +343,22 @@ export class EssayTemplateBuilderComponent
     this.dbServiceSteps.getTable(StepDbTableContext.tableName, {
       relations: StepDbTableContext.foreignTables,
     });
+
+    this.dbServiceSteps
+      .getTableReply$(StepDbTableContext.tableName)
+      .pipe(
+        takeUntil(this.destroyed$),
+        map((response) =>
+          RelationsManager.mergeRelationsIntoRows<Step>(
+            response.rows,
+            response.relations,
+            StepDbTableContext.foreignTables
+          )
+        ),
+        tap((response) => (this.steps = response)),
+        tap((response) => this.addDefaultEssayTemplateStepsControl(response))
+      )
+      .subscribe();
   }
 
   private buildForm(): FormGroup {
@@ -361,21 +377,6 @@ export class EssayTemplateBuilderComponent
       },
       { validators: essayTemplateValidator() }
     );
-  }
-
-  private getSteps$(): Observable<Step[]> {
-    return this.dbServiceSteps
-      .getTableReply$(StepDbTableContext.tableName)
-      .pipe(
-        map((response) =>
-          RelationsManager.mergeRelationsIntoRows<Step>(
-            response.rows,
-            response.relations,
-            StepDbTableContext.foreignTables
-          )
-        ),
-        tap((response) => this.addDefaultEssayTemplateStepsControl(response))
-      );
   }
 
   private getId$(): Observable<number> {

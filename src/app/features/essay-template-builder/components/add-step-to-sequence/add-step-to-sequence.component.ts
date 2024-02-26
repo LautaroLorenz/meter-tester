@@ -17,10 +17,11 @@ import { Step } from '../../../../models/business/database/step.model';
 })
 export class AddStepToSequenceComponent implements OnChanges {
   @Input() stepOptions!: Step[];
+  @Input() dialogOpened = false;
 
+  @Output() dialogOpenedChange = new EventEmitter<boolean>();
   @Output() selectedStep = new EventEmitter<Step>();
 
-  dialogOpened = false;
   userSelectableStepOptions!: Step[];
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -29,10 +30,6 @@ export class AddStepToSequenceComponent implements OnChanges {
         changes.stepOptions.currentValue as Step[]
       );
     }
-  }
-
-  openDialog(): void {
-    this.dialogOpened = true;
   }
 
   stepSelected(step: Step): void {

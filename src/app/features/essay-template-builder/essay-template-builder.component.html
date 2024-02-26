@@ -33,7 +33,9 @@
         </div>
       </div>
 
-      <div class="flex flex-row align-items-center justify-content-end col col-9 gap-3">
+      <div
+        class="flex flex-row align-items-center justify-content-end col col-9 gap-3"
+      >
         <ng-container *ngIf="preparationStep">
           <p-button
             [outlined]="true"
@@ -45,11 +47,13 @@
           ></p-button>
         </ng-container>
 
-        <ng-container *ngIf="steps$ | async as steps">
-          <app-add-step-to-sequence
-            [stepOptions]="steps"
-            (selectedStep)="addEssayTemplateStepControlByStep($event)"
-          ></app-add-step-to-sequence>
+        <ng-container *ngIf="steps">
+          <p-button
+            label="Agregar paso"
+            icon="pi pi-plus"
+            [outlined]="true"
+            (click)="addStepToSequenceDialogOpened = true"
+          ></p-button>
         </ng-container>
       </div>
     </div>
@@ -63,6 +67,14 @@
     (deleteStep)="deleteEssayTemplateStepControl($event)"
   ></app-steps-sequence-table>
 </form>
+
+<ng-container *ngIf="steps">
+  <app-add-step-to-sequence
+    [(dialogOpened)]="addStepToSequenceDialogOpened"
+    [stepOptions]="steps"
+    (selectedStep)="addEssayTemplateStepControlByStep($event)"
+  ></app-add-step-to-sequence>
+</ng-container>
 
 <app-edit-step-in-sequence
   [essayTemplateStep]="selectedEssayTemplateStep"
