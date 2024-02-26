@@ -43,7 +43,7 @@ const essayTemplateCreateOrEdit = (knex, essayTemplate, transaction) => __awaite
     }
     return essayTemplateCopy;
 });
-const formatEssayTemplateSteps = (essayTemplateSteps, essayTemplateId) => essayTemplateSteps.map((essayTemplateStep, index) => (Object.assign(Object.assign({}, essayTemplateStep), { order: index + 1, essay_template_id: essayTemplateId })));
+const formatEssayTemplateSteps = (essayTemplateSteps, essayTemplateId) => essayTemplateSteps.map((essayTemplateStep, index) => (Object.assign(Object.assign({}, essayTemplateStep), { essay_template_id: essayTemplateId })));
 const essayTemplateStepsUpdateExisting = (knex, essayTemplateSteps, transaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
     const essayTemplateStepsToUpdate = essayTemplateSteps.filter(({ id }) => id);

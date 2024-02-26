@@ -17,7 +17,7 @@ import { Steps } from '../../../../models/business/enums/steps.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditStepInSequenceComponent implements OnChanges {
-  @Input() essayTemplateStep: EssayTemplateStep | undefined;
+  @Input() essayTemplateStep: Partial<EssayTemplateStep> | undefined;
 
   @Output() dialogHide = new EventEmitter<void>();
   @Output() essayTemplateStepChange = new EventEmitter<

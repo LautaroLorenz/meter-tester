@@ -25,7 +25,6 @@ const formatEssayTemplateSteps = (
 ) =>
   essayTemplateSteps.map((essayTemplateStep: any, index: any) => ({
     ...essayTemplateStep,
-    order: index + 1,
     essay_template_id: essayTemplateId,
   }));
 

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -47,6 +48,7 @@ import {
 } from '../../models/business/forms/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
 import { essayTemplateValidator } from '../../models/business/forms/essay-template-form-validator.model';
+import { Steps } from '../../models/business/enums/steps.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -55,7 +57,7 @@ import { essayTemplateValidator } from '../../models/business/forms/essay-templa
 export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
-  savedEssayTemplateSteps: EssayTemplateStep[] | undefined;
+  selectedEssayTemplateStep: Partial<EssayTemplateStep> | undefined;
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
@@ -84,6 +86,24 @@ export class EssayTemplateBuilderComponent
 
   get saveButtonDisabled(): boolean {
     return !this.form.valid || this.form.pristine;
+  }
+
+  get stepsFormArray(): FormArray<FormControl<Partial<EssayTemplateStep>>> {
+    return this.form.get('essayTemplateSteps') as FormArray<
+      FormControl<Partial<EssayTemplateStep>>
+    >;
+  }
+
+  get stepsSequenceTable(): Partial<EssayTemplateStep>[] {
+    return (this.stepsFormArray?.value ?? []).filter(
+      ({ step_id }) => step_id !== Steps.Preparation
+    );
+  }
+
+  get preparationStep(): Partial<EssayTemplateStep> | undefined {
+    return (this.stepsFormArray?.value ?? []).find(
+      ({ step_id }) => step_id === Steps.Preparation
+    );
   }
 
   @HostListener('window:beforeunload')
@@ -122,6 +142,11 @@ export class EssayTemplateBuilderComponent
     this.requestToolsTables();
   }
 
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
+
   exit(): void {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   }
@@ -130,9 +155,123 @@ export class EssayTemplateBuilderComponent
     this.save$().subscribe();
   }
 
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+  deleteEssayTemplateStepControl(index: number): void {
+    this.confirmationService.confirm({
+      message: '¿Eliminar fila de la tabla?',
+      header: 'Confirmar borrado',
+      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+      defaultFocus: 'reject',
+      acceptButtonStyleClass: 'p-button-outlined',
+      accept: () => {
+        this.stepsFormArray.removeAt(index);
+        this.recalculateEssayTemplateStepsOrder();
+        this.stepsFormArray.markAsDirty();
+      },
+    });
+  }
+
+  moveDownByIndex(indexFrom: number): void {
+    if (indexFrom === null) {
+      return;
+    }
+    if (indexFrom === this.stepsFormArray.length - 1) {
+      return;
+    }
+    const indexTo = indexFrom + 1;
+    const temp = this.stepsFormArray.at(indexFrom);
+    this.stepsFormArray.removeAt(indexFrom);
+    this.stepsFormArray.insert(indexTo, temp);
+    this.recalculateEssayTemplateStepsOrder();
+    this.stepsFormArray.markAsDirty();
+  }
+
+  moveUpByIndex(indexFrom: number): void {
+    if (indexFrom === null) {
+      return;
+    }
+    if (indexFrom === 0) {
+      return;
+    }
+    const indexTo = indexFrom - 1;
+    const temp = this.stepsFormArray.at(indexFrom);
+    this.stepsFormArray.removeAt(indexFrom);
+    this.stepsFormArray.insert(indexTo, temp);
+    this.recalculateEssayTemplateStepsOrder();
+    this.stepsFormArray.markAsDirty();
+  }
+
+  saveEditedStepInSequenceChanges(
+    essayTemplateStep: Partial<EssayTemplateStep>
+  ): void {
+    if (!this.selectedEssayTemplateStep) {
+      return;
+    }
+    if (typeof this.selectedEssayTemplateStep.order !== 'number') {
+      return;
+    }
+    this.stepsFormArray
+      .at(this.selectedEssayTemplateStep.order)
+      .patchValue(essayTemplateStep);
+    this.stepsFormArray.markAsDirty();
+  }
+
+  addEssayTemplateStepControlByStep(
+    step: Step,
+    { markForCheck } = { markForCheck: true }
+  ): void {
+    const essayTemplateStep: Partial<EssayTemplateStep> = {
+      step_id: step.id,
+      foreign: {
+        step: { ...step },
+      },
+    };
+    this.addEssayTemplateStepControl(essayTemplateStep);
+
+    if (markForCheck) {
+      this.stepsFormArray.markAsDirty();
+    }
+  }
+
+  private addDefaultEssayTemplateStepsControl(steps: Step[]): void {
+    if (!steps) {
+      return;
+    }
+    if (this.stepsFormArray.length > 0) {
+      return;
+    }
+    const defaultEssayTemplateSteps = steps.filter((step) =>
+      [Steps.Preparation].includes(step.id)
+    );
+    defaultEssayTemplateSteps.forEach((step) =>
+      this.addEssayTemplateStepControlByStep(step, { markForCheck: false })
+    );
+  }
+
+  private addEssayTemplateStepControl(
+    essayTemplateStep: EssayTemplateStep | Partial<EssayTemplateStep>
+  ): void {
+    this.stepsFormArray.push(
+      this.fb.control(essayTemplateStep, { nonNullable: true })
+    );
+    this.recalculateEssayTemplateStepsOrder();
+  }
+
+  private recalculateEssayTemplateStepsOrder(): void {
+    this.stepsFormArray.controls.forEach((control, index) => {
+      control.setValue({
+        ...control.value,
+        order: index,
+      });
+    });
+  }
+
+  private addSavedEssayTemplateStepsControl(
+    essayTemplateSteps: EssayTemplateStep[]
+  ): void {
+    this.stepsFormArray.clear();
+    essayTemplateSteps.forEach((essayTemplateStep) =>
+      this.addEssayTemplateStepControl(essayTemplateStep)
+    );
   }
 
   private observeRoute(): void {
@@ -169,9 +308,8 @@ export class EssayTemplateBuilderComponent
         map((essayTemplateSteps) =>
           essayTemplateSteps.sort((a, b) => a.order - b.order)
         ),
-        tap(
-          (essayTemplateSteps) =>
-            (this.savedEssayTemplateSteps = essayTemplateSteps)
+        tap((essayTemplateSteps) =>
+          this.addSavedEssayTemplateStepsControl(essayTemplateSteps)
         )
       )
       .subscribe();
@@ -235,7 +373,8 @@ export class EssayTemplateBuilderComponent
             response.relations,
             StepDbTableContext.foreignTables
           )
-        )
+        ),
+        tap((response) => this.addDefaultEssayTemplateStepsControl(response))
       );
   }
 

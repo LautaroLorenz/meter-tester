@@ -25,21 +25,47 @@
     <div class="formgrid grid mx-3 mt-5">
       <div class="field col col-3">
         <div class="flex flex-column gap-2">
-          <label for="name"
-            >Nombre<span class="ml-1 text-red-300">*</span></label
-          >
+          <label for="name">
+            Nombre<span class="ml-1 text-red-300">*</span>
+          </label>
           <input pInputText id="name" formControlName="name" />
           <app-input-error formControlName="name"></app-input-error>
         </div>
       </div>
+
+      <div class="flex flex-row align-items-center justify-content-end col col-9 gap-3">
+        <ng-container *ngIf="preparationStep">
+          <p-button
+            [outlined]="true"
+            [rounded]="false"
+            icon="pi pi-file-edit"
+            label="Configurar preparación"
+            tooltipPosition="bottom"
+            (click)="selectedEssayTemplateStep = preparationStep"
+          ></p-button>
+        </ng-container>
+
+        <ng-container *ngIf="steps$ | async as steps">
+          <app-add-step-to-sequence
+            [stepOptions]="steps"
+            (selectedStep)="addEssayTemplateStepControlByStep($event)"
+          ></app-add-step-to-sequence>
+        </ng-container>
+      </div>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="steps$ | async as steps">
-    <app-steps-sequence-table
-      [inputFormArray]="form.get('essayTemplateSteps')"
-      [savedEssayTemplateSteps]="savedEssayTemplateSteps"
-      [stepOptions]="steps"
-    ></app-steps-sequence-table>
-  </ng-container>
+  <app-steps-sequence-table
+    [essayTemplateSteps]="stepsSequenceTable"
+    (moveDownStep)="moveDownByIndex($event)"
+    (moveUpStep)="moveUpByIndex($event)"
+    (editStep)="selectedEssayTemplateStep = $event"
+    (deleteStep)="deleteEssayTemplateStepControl($event)"
+  ></app-steps-sequence-table>
 </form>
+
+<app-edit-step-in-sequence
+  [essayTemplateStep]="selectedEssayTemplateStep"
+  (dialogHide)="selectedEssayTemplateStep = undefined"
+  (essayTemplateStepChange)="saveEditedStepInSequenceChanges($event)"
+></app-edit-step-in-sequence>

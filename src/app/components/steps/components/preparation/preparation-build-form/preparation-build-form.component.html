@@ -36,16 +36,6 @@
             </div>
 
             <div class="field col col-4">
-              <label for="serialNumber">Número de serie</label>
-              <input
-                type="text"
-                pInputText
-                id="serialNumber"
-                formControlName="serialNumber"
-              />
-            </div>
-
-            <div class="field col col-4">
               <label for="yearOfProduction">Año de fabricación</label>
               <p-dropdown
                 id="yearOfProduction"
@@ -57,6 +47,16 @@
                 [autoDisplayFirst]="false"
                 [showClear]="true"
               ></p-dropdown>
+            </div>
+
+            <div class="field col col-4">
+              <label for="serialNumber">Número de serie</label>
+              <input
+                type="text"
+                pInputText
+                id="serialNumber"
+                formControlName="serialNumber"
+              />
             </div>
           </ng-container>
         </div>
