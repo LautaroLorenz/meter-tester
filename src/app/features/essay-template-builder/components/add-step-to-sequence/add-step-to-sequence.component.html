@@ -16,13 +16,14 @@
   [(visible)]="dialogOpened"
 >
   <ng-container *ngFor="let step of userSelectableStepOptions">
-    <div class="flex flex-auto mb-2">
+    <div class="flex mb-2">
       <p-button
-        (click)="stepSelected(step)"
-        class="flex-auto"
+        class="flex flex-auto"
         [outlined]="true"
+        (click)="stepSelected(step)"
       >
-        {{ step.name }}
+        <i class="pi pi-plus"></i>
+        <span class="ml-2">{{ step.name }}</span>
       </p-button>
     </div>
   </ng-container>
