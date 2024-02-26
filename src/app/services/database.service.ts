@@ -47,7 +47,6 @@ export class DatabaseService<T> {
     },
     rawProperties: string[] = []
   ): void {
-    console.log(options.lazyLoadEvent);
     const { first, rows, sortField, sortOrder, globalFilter } =
       options.lazyLoadEvent ?? {};
     const lazyLoadEvent: LazyLoadEvent = {
