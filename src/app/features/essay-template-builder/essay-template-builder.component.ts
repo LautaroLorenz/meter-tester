@@ -285,7 +285,7 @@ export class EssayTemplateBuilderComponent
           this.save$()
             .pipe(
               tap(({ essayTemplate: { id } }) =>
-                this.navigationService.go(PageUrlName.executeEssay, {
+                this.navigationService.go(PageUrlName.runEssay, {
                   queryParams: { id },
                 })
               )

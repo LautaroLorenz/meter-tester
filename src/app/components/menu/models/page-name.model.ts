@@ -9,7 +9,7 @@ export enum PageUrlName {
   export = 'exportar',
   newEssayTemplate = 'nuevo-template-ensayo',
   editEssayTemplate = 'editar-template-ensayo',
-  executeEssay = 'ejecutar-ensayo',
+  runEssay = 'ejecutar-ensayo',
   seeReport = 'ver-reporte',
   dashboard = 'estadisticas',
   terminal = 'terminal',
