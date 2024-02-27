@@ -2,7 +2,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrandsComponent } from './brands/brands.component';
-import { PageUrlName } from '../components/menu/models/page-name.model';
+import { PageUrlName } from '../models/business/enums/page-name.model';
 import { MetersComponent } from './meters/meters.component';
 import { AvailableTestComponent } from './available-test/available-test.component';
 import { PendingChangesGuard } from '../guards/peding-changes.guard';

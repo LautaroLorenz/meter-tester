@@ -4,8 +4,8 @@ import {
   DecimalPipe,
   // DecimalPipe
 } from '@angular/common';
-import { DotStringAsObjectPipe } from './dot-string-as-object.pipe';
-import { CastAbstractControlToFormGroupPipe } from './cast-abstract-control-to-form-group.pipe';
+import { DotStringAsObjectPipe } from './core/dot-string-as-object.pipe';
+import { CastAbstractControlToFormGroupPipe } from './core/cast-abstract-control-to-form-group.pipe';
 // import { ExecutionStatusPipe } from './execution-status.pipe';
 // import { DeviceErrorCode } from './device-error-code.pipe';
 

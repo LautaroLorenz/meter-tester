@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { PageUrlName } from './models/page-name.model';
+import { PageUrlName } from '../../models/business/enums/page-name.model';
 
 @Component({
   selector: 'app-menu',

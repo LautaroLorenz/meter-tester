@@ -1,4 +1,4 @@
-import { AbmColum } from '../../../components/abm/models/abm.model';
+import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 
 export interface Brand extends DbForeignKey {

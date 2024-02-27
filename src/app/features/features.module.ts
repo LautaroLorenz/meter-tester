@@ -11,7 +11,7 @@ import { MetersComponent } from './meters/meters.component';
 import { AvailableTestComponent } from './available-test/available-test.component';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { PendingChangesGuard } from '../guards/peding-changes.guard';
-import { DirectivesModule } from '../directives/directives.model';
+import { DirectivesModule } from '../directives/directives.module';
 import { StepsSequenceTableComponent } from './essay-template-builder/components/steps-sequence-table/steps-sequence-table.component';
 import { AddStepToSequenceComponent } from './essay-template-builder/components/add-step-to-sequence/add-step-to-sequence.component';
 import { EditStepInSequenceComponent } from './essay-template-builder/components/edit-step-in-sequence/edit-step-in-sequence.component';

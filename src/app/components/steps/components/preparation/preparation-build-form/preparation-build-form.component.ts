@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { StepBuildFormComponent } from '../../../models/step-build-form-component.model';
-import { PreparationStep } from '../../../models/steps/preparation-step.model';
+import { StepBuildFormComponent } from '../../../../../models/business/class/step-build-form-component.model';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';
 import { APP_CONFIG } from '../../../../../../environments/environment';
@@ -14,6 +13,7 @@ import { RelationsManager } from '../../../../../models/core/relations-manager.m
 import { Stand } from '../../../../../models/business/interafces/stand.model';
 import { YearOfProductionConstants } from '../../../../../models/business/constants/year-of-production-constant.model';
 import { DecimalPipe } from '@angular/common';
+import { PreparationStep } from '../../../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-preparation-build-form',

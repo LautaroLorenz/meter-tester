@@ -11,10 +11,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ConfirmationService, LazyLoadEvent, MenuItem, PrimeIcons } from 'primeng/api';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  PrimeIcons,
+} from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
-import { AbmColum } from './models/abm.model';
+import { AbmColum } from '../../models/core/abm.model';
 
 @Component({
   selector: 'app-abm',
@@ -22,9 +27,7 @@ import { AbmColum } from './models/abm.model';
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AbmComponent
-  implements OnChanges, OnDestroy
-{
+export class AbmComponent implements OnChanges, OnDestroy {
   @Input() dataset: any[] = [];
   @Input() totalRecords = 0;
   @Input() columns: AbmColum[] = [];
@@ -51,9 +54,7 @@ export class AbmComponent
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
-  constructor(
-    private readonly confirmationService: ConfirmationService
-  ) {
+  constructor(private readonly confirmationService: ConfirmationService) {
     this.search = new FormControl('');
     this.initFormValueChangeListeners();
   }

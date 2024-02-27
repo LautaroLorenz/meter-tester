@@ -1,4 +1,4 @@
-import { AbmColum } from '../../components/abm/models/abm.model';
+import { AbmColum } from './abm.model';
 
 export class GlobalFilterManager {
   static transform(abmColumns: AbmColum[]): string[] {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { PageUrlName } from '../menu/models/page-name.model';
+import { PageUrlName } from '../../models/business/enums/page-name.model';
 
 @Component({
   selector: 'app-tab-menu-test',

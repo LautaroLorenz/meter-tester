@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { PageUrlName } from '../components/menu/models/page-name.model';
+import { PageUrlName } from '../models/business/enums/page-name.model';
 
 @Injectable({
   providedIn: 'root',

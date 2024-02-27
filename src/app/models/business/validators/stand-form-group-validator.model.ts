@@ -1,10 +1,10 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
-import { Stand } from '../../../../models/business/interafces/stand.model';
+import { AbstractFormGroup } from '../../core/abstract-form-group.model';
+import { Stand } from '../interafces/stand.model';
 import {
   ErrorCodes,
   concatErrorByCode,
-} from '../../../../models/business/constants/error-codes-constant.model';
+} from '../constants/error-codes-constant.model';
 
 const isActive = (standFormGroup: AbstractFormGroup<Stand>): boolean => {
   if (standFormGroup.get('isActive')?.value === true) {

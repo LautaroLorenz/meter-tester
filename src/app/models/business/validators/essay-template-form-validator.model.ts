@@ -4,7 +4,7 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { EssayTemplateFormGroup } from './essay-template-form.model';
+import { EssayTemplateFormGroup } from '../interafces/essay-template-form.model';
 import { EssayTemplate } from '../database/essay-template.model';
 import {
   ErrorCodes,

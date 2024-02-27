@@ -1,4 +1,4 @@
-import { AbmColum } from '../../../components/abm/models/abm.model';
+import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Brand, BrandDbTableContext } from './brand.model';
 import {
@@ -57,7 +57,6 @@ export const MeterDbTableContext: DbTableContext = {
     },
   ],
 };
-
 
 export const MeterTableColumns: AbmColum[] = [
   {

@@ -39,7 +39,7 @@ import {
   EssayTemplateStepDbTableContext,
 } from '../../models/business/database/essay-template-step.model';
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
-import { PageUrlName } from '../../components/menu/models/page-name.model';
+import { PageUrlName } from '../../models/business/enums/page-name.model';
 import { EssayService } from '../../services/essay.service';
 import { RelationsManager } from '../../models/core/relations-manager.model';
 import {
@@ -47,7 +47,7 @@ import {
   EssayTemplateFormGroup,
 } from '../../models/business/interafces/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
-import { essayTemplateValidator } from '../../models/business/interafces/essay-template-form-validator.model';
+import { essayTemplateValidator } from '../../models/business/validators/essay-template-form-validator.model';
 import { Steps } from '../../models/business/enums/steps.model';
 
 @Component({
