@@ -8,13 +8,14 @@ import { Steps } from '../enums/steps.model';
 import { FormBuilder } from '@angular/forms';
 
 export class BuilderByStepId {
+  private static initialized = false;
+
   // step builders
   private static readonly PreparationFormBuilder = new PreparationFormBuilder();
   private static readonly VacuumTestFormBuilder = new VacuumTestFormBuilder();
   private static readonly ContrastTestFormBuilder =
     new ContrastTestFormBuilder();
   private static readonly BootTestFormBuilder = new BootTestFormBuilder();
-  private static initialized = false;
 
   static build<T extends EssayTemplateStep>(
     fb: FormBuilder,
