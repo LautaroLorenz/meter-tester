@@ -5,6 +5,8 @@ import { Phase } from '../../../../models/business/interafces/phase.model';
 import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
+import { EssayStep } from '../essay-step.model';
+import { StandResult } from '../stand-result.model';
 
 export interface BootTestFormControlRaw {
   name: string;
@@ -21,6 +23,15 @@ export interface BootTestStep extends EssayTemplateStep {
   step_id: Steps.BootTest;
   form_control_raw: BootTestFormControlRaw;
 }
+
+export interface BootTestStandResult extends StandResult {
+  measuredPulses: number;
+}
+
+export type BootTestEssayStep = BootTestStep &
+  EssayStep & {
+    standResults: BootTestStandResult[];
+  };
 
 export class BootTestFormBuilder extends AbstractStepFormBuilder {
   override build<T extends EssayTemplateStep>(

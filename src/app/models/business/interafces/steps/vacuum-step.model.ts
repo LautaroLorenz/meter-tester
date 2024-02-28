@@ -5,6 +5,8 @@ import { Phase } from '../../../../models/business/interafces/phase.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
+import { StandResult } from '../stand-result.model';
+import { EssayStep } from '../essay-step.model';
 
 export interface VacuumTestFormControlRaw {
   name: string;
@@ -20,6 +22,15 @@ export interface VacuumTestStep extends EssayTemplateStep {
   step_id: Steps.VacuumTest;
   form_control_raw: VacuumTestFormControlRaw;
 }
+
+export interface VacuumTestStandResult extends StandResult {
+  measuredPulses: number;
+}
+
+export type VacuumTestEssayStep = VacuumTestStep &
+  EssayStep & {
+    standResults: VacuumTestStandResult[];
+  };
 
 export class VacuumTestFormBuilder extends AbstractStepFormBuilder {
   build<T extends EssayTemplateStep>(
