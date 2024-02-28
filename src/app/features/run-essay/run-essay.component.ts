@@ -187,13 +187,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
             essayTemplateSteps
           )
         ),
-        // TODO
-        tap(() =>
-          console.log(
-            (this.runEssayForm.get('essaySteps') as FormArray).controls
-          )
-        ),
-        tap(() => console.log(this.runEssayForm.valid))
         // TODO agregar los pasos de ajuste de fotocelulas
         // TODO inicializar los results que no aplican
 
