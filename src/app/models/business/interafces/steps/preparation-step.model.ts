@@ -17,7 +17,8 @@ export interface PreparationStep extends EssayTemplateStep {
 
 // export type PreparationEssayStep = PreparationStep & EssayStep;
 
-export type PreparationEssayStep = PreparationStep & Pick<EssayStep, 'verifiedStatus'>;
+export type PreparationEssayStep = PreparationStep &
+  Pick<EssayStep, 'verifiedStatus'>;
 
 export class PreparationFormBuilder extends AbstractStepFormBuilder<
   PreparationStep,
@@ -25,28 +26,15 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
 > {
   build(fb: FormBuilder): PreparationFormBuilder {
     this.fb = fb;
-    // generate stand array based on APP_CONFIG variable
-    const StandsGroupArray: AbstractFormGroup<Stand>[] = Array(
-      APP_CONFIG.standsQuantiy
-    )
-      .fill(undefined)
-      .map(
-        () =>
-          fb.nonNullable.group({
-            name: undefined,
-            isActive: true,
-            meterId: undefined,
-            serialNumber: undefined,
-            yearOfProduction: undefined,
-          }) as AbstractFormGroup<Stand>
-      );
 
     this.form = fb.nonNullable.group({
       id: undefined,
       order: undefined,
       essay_template_id: undefined,
       step_id: undefined,
-      form_control_raw: fb.nonNullable.array(StandsGroupArray),
+      form_control_raw: fb.nonNullable.array(
+        this.buildStandsArray(APP_CONFIG.standsQuantiy)
+      ),
       foreign: undefined,
     }) as AbstractFormGroup<PreparationStep>;
 
@@ -64,5 +52,21 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
     }) as AbstractFormGroup<PreparationEssayStep>;
 
     return this;
+  }
+
+  // generate stand array based on APP_CONFIG variable
+  private buildStandsArray(standsQuantiy: number): AbstractFormGroup<Stand>[] {
+    return Array(standsQuantiy)
+      .fill(undefined)
+      .map(
+        () =>
+          this.fb.nonNullable.group({
+            name: undefined,
+            isActive: true,
+            meterId: undefined,
+            serialNumber: undefined,
+            yearOfProduction: undefined,
+          }) as AbstractFormGroup<Stand>
+      );
   }
 }

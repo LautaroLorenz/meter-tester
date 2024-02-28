@@ -9,6 +9,8 @@ import { StandResult } from '../stand-result.model';
 import { EssayStep } from '../essay-step.model';
 import { VerifiedStatus } from '../../enums/verified-status.model';
 import { ExecutedStatus } from '../../enums/executed-status.model';
+import { APP_CONFIG } from '../../../../../environments/environment';
+import { ResultStatus } from '../../enums/result-status.model';
 
 export interface VacuumTestFormControlRaw {
   name: string;
@@ -110,9 +112,27 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
       ...typedForm.controls,
       verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
       executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
-      standResults: this.fb.nonNullable.array([]),
+      standResults: this.fb.nonNullable.array(
+        this.buildStandResultsArray(APP_CONFIG.standsQuantiy)
+      ),
     }) as AbstractFormGroup<VacuumTestEssayStep>;
 
     return this;
+  }
+
+  // generate stand results array based on APP_CONFIG variable
+  private buildStandResultsArray(
+    standsQuantiy: number
+  ): AbstractFormGroup<VacuumTestStandResult>[] {
+    return Array(standsQuantiy)
+      .fill(undefined)
+      .map(
+        (_, index) =>
+          this.fb.nonNullable.group({
+            standIndex: index,
+            measuredPulses: undefined,
+            resultStatus: ResultStatus.Unknown,
+          }) as AbstractFormGroup<VacuumTestStandResult>
+      );
   }
 }
