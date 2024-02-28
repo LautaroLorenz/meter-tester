@@ -154,8 +154,8 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<
   ): ContrastTestFormBuilder {
     this.form = this.fb.nonNullable.group({
       ...this.form.controls,
-      verifiedStatus: VerifiedStatus.Pending,
-      executedStatus: ExecutedStatus.Pending,
+      verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
+      executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
       standResults: this.fb.nonNullable.array([]),
     }) as unknown as AbstractFormGroup<ContrastTestEssayStep>;
 

@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
 import { Steps } from '../../../../models/business/enums/steps.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
@@ -56,7 +56,7 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
   ): PreparationFormBuilder {
     this.form = this.fb.nonNullable.group({
       ...this.form.controls,
-      verifiedStatus: VerifiedStatus.Pending,
+      verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
     }) as unknown as AbstractFormGroup<PreparationEssayStep>;
 
     return this;
