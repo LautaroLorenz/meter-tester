@@ -7,7 +7,6 @@ import {
   BootTestFormBuilder,
   BootTestStep,
 } from '../../../../../models/business/interafces/steps/boot-test-step.model';
-import { Steps } from '../../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-boot-test-build-form',
@@ -19,6 +18,7 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
   readonly MeterConstants = MeterConstants;
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
-    return new BootTestFormBuilder().build(fb, Steps.BootTest);
+    return new BootTestFormBuilder().build(fb)
+      .form as AbstractFormGroup<BootTestStep>;
   }
 }

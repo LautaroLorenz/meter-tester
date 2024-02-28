@@ -5,6 +5,8 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
+import { EssayStep } from '../essay-step.model';
+import { VerifiedStatus } from '../../enums/verified-status.model';
 
 export type PreparationFormControlRaw = Stand[];
 
@@ -13,15 +15,14 @@ export interface PreparationStep extends EssayTemplateStep {
   form_control_raw: PreparationFormControlRaw;
 }
 
-export class PreparationFormBuilder extends AbstractStepFormBuilder {
-  build<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    stepType: Steps
-  ): AbstractFormGroup<T> {
-    if (stepType !== Steps.Preparation) {
-      return this.nextBuilder.build(fb, stepType);
-    }
+export type PreparationEssayStep = PreparationStep & EssayStep;
 
+export class PreparationFormBuilder extends AbstractStepFormBuilder<
+  PreparationStep,
+  PreparationEssayStep
+> {
+  build(fb: FormBuilder): PreparationFormBuilder {
+    this.fb = fb;
     // generate stand array based on APP_CONFIG variable
     const StandsGroupArray: AbstractFormGroup<Stand>[] = Array(
       APP_CONFIG.standsQuantiy
@@ -38,13 +39,26 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder {
           }) as AbstractFormGroup<Stand>
       );
 
-    return fb.nonNullable.group({
+    this.form = fb.nonNullable.group({
       id: undefined,
       order: undefined,
       essay_template_id: undefined,
       step_id: undefined,
       form_control_raw: fb.nonNullable.array(StandsGroupArray),
       foreign: undefined,
-    }) as AbstractFormGroup<PreparationStep> as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<PreparationStep>;
+
+    return this;
+  }
+
+  override withExecutionProps(
+    this: PreparationFormBuilder
+  ): PreparationFormBuilder {
+    this.form = this.fb.nonNullable.group({
+      ...this.form.controls,
+      verifiedStatus: VerifiedStatus.Pending,
+    }) as unknown as AbstractFormGroup<PreparationEssayStep>;
+
+    return this;
   }
 }

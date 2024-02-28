@@ -188,7 +188,12 @@ export class RunEssayComponent implements OnInit, OnDestroy {
           )
         ),
         // TODO
-        tap(() => console.log((this.runEssayForm.get('essaySteps') as FormArray).controls ))
+        tap(() =>
+          console.log(
+            (this.runEssayForm.get('essaySteps') as FormArray).controls
+          )
+        ),
+        tap(() => console.log(this.runEssayForm.valid))
 
         //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
         //   tap(() => this.initExecution()),

@@ -7,6 +7,8 @@ import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 import { StandResult } from '../stand-result.model';
 import { EssayStep } from '../essay-step.model';
+import { VerifiedStatus } from '../../enums/verified-status.model';
+import { ExecutedStatus } from '../../enums/executed-status.model';
 
 export interface VacuumTestFormControlRaw {
   name: string;
@@ -32,16 +34,13 @@ export type VacuumTestEssayStep = VacuumTestStep &
     standResults: VacuumTestStandResult[];
   };
 
-export class VacuumTestFormBuilder extends AbstractStepFormBuilder {
-  build<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    stepType: Steps
-  ): AbstractFormGroup<T> {
-    if (stepType !== Steps.VacuumTest) {
-      return this.nextBuilder.build(fb, stepType);
-    }
-
-    return fb.nonNullable.group({
+export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
+  VacuumTestStep,
+  VacuumTestEssayStep
+> {
+  build(fb: FormBuilder): VacuumTestFormBuilder {
+    this.fb = fb;
+    this.form = fb.nonNullable.group({
       id: undefined,
       order: undefined,
       essay_template_id: undefined,
@@ -97,6 +96,21 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder {
         ],
       }),
       foreign: undefined,
-    }) as AbstractFormGroup<VacuumTestStep> as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<VacuumTestStep>;
+
+    return this;
+  }
+
+  override withExecutionProps(
+    this: VacuumTestFormBuilder
+  ): VacuumTestFormBuilder {
+    this.form = this.fb.nonNullable.group({
+      ...this.form.controls,
+      verifiedStatus: VerifiedStatus.Pending,
+      executedStatus: ExecutedStatus.Pending,
+      standResults: this.fb.nonNullable.array([]),
+    }) as unknown as AbstractFormGroup<VacuumTestEssayStep>;
+
+    return this;
   }
 }

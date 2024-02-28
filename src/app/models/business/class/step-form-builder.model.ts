@@ -1,26 +1,31 @@
 import { FormBuilder } from '@angular/forms';
-import { Steps } from '../enums/steps.model';
 import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 import { EssayTemplateStep } from '../database/essay-template-step.model';
+import { EssayStep } from '../interafces/essay-step.model';
 
-export interface StepFormBuilder {
-  setNext(handler: StepFormBuilder): StepFormBuilder;
-  build<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    stepType: Steps
-  ): AbstractFormGroup<T>;
+export interface StepFormBuilder<
+  T extends EssayTemplateStep,
+  K extends EssayStep
+> {
+  form: AbstractFormGroup<T> | AbstractFormGroup<K>;
+  fb: FormBuilder;
+
+  build(fb: FormBuilder): StepFormBuilder<T, K>;
+
+  withExecutionProps(
+    this: StepFormBuilder<T, K>
+  ): StepFormBuilder<T, K>;
 }
 
-export abstract class AbstractStepFormBuilder implements StepFormBuilder {
-  protected nextBuilder!: StepFormBuilder;
-
-  setNext(handler: StepFormBuilder): StepFormBuilder {
-    this.nextBuilder = handler;
-    return handler;
-  }
-
-  abstract build<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    stepType: Steps
-  ): AbstractFormGroup<T>;
+export abstract class AbstractStepFormBuilder<
+  T extends EssayTemplateStep,
+  K extends EssayStep
+> implements StepFormBuilder<T, K>
+{
+  form!: AbstractFormGroup<T> | AbstractFormGroup<K>;
+  fb!: FormBuilder;
+  abstract build(fb: FormBuilder): StepFormBuilder<T, K>;
+  abstract withExecutionProps(
+    this: StepFormBuilder<T, K>
+  ): StepFormBuilder<T, K>;
 }

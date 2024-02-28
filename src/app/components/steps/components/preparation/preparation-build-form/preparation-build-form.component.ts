@@ -16,7 +16,6 @@ import {
   PreparationFormBuilder,
   PreparationStep,
 } from '../../../../../models/business/interafces/steps/preparation-step.model';
-import { Steps } from '../../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-preparation-build-form',
@@ -47,7 +46,8 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
   }
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<PreparationStep> {
-    return new PreparationFormBuilder().build(fb, Steps.Preparation);
+    return new PreparationFormBuilder().build(fb)
+      .form as AbstractFormGroup<PreparationStep>;
   }
 
   override observeTables(): void {

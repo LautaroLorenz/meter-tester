@@ -7,7 +7,6 @@ import {
   VacuumTestFormBuilder,
   VacuumTestStep,
 } from '../../../../../models/business/interafces/steps/vacuum-step.model';
-import { Steps } from '../../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-vacuum-test-build-form',
@@ -19,6 +18,7 @@ export class VacuumTestBuildFormComponent extends StepBuildFormComponent<VacuumT
   readonly MeterConstants = MeterConstants;
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<VacuumTestStep> {
-    return new VacuumTestFormBuilder().build(fb, Steps.VacuumTest);
+    return new VacuumTestFormBuilder().build(fb)
+      .form as AbstractFormGroup<VacuumTestStep>;
   }
 }

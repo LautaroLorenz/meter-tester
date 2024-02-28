@@ -5,6 +5,6 @@ import { StandResult } from './stand-result.model';
 
 export interface EssayStep extends EssayTemplateStep {
   verifiedStatus: VerifiedStatus;
-  executedStatus: ExecutedStatus;
-  standResults: StandResult[];
+  executedStatus?: ExecutedStatus;
+  standResults?: StandResult[];
 }

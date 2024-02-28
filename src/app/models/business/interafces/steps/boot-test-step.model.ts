@@ -7,6 +7,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 import { EssayStep } from '../essay-step.model';
 import { StandResult } from '../stand-result.model';
+import { VerifiedStatus } from '../../enums/verified-status.model';
+import { ExecutedStatus } from '../../enums/executed-status.model';
 
 export interface BootTestFormControlRaw {
   name: string;
@@ -33,16 +35,13 @@ export type BootTestEssayStep = BootTestStep &
     standResults: BootTestStandResult[];
   };
 
-export class BootTestFormBuilder extends AbstractStepFormBuilder {
-  override build<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    stepType: Steps
-  ): AbstractFormGroup<T> {
-    if (stepType !== Steps.BootTest) {
-      return this.nextBuilder.build(fb, stepType);
-    }
-
-    return fb.nonNullable.group({
+export class BootTestFormBuilder extends AbstractStepFormBuilder<
+  BootTestStep,
+  BootTestEssayStep
+> {
+  override build(fb: FormBuilder): BootTestFormBuilder {
+    this.fb = fb;
+    this.form = fb.nonNullable.group({
       id: undefined,
       order: undefined,
       essay_template_id: undefined,
@@ -154,6 +153,19 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder {
         ],
       }),
       foreign: undefined,
-    }) as AbstractFormGroup<BootTestStep> as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<BootTestStep>;
+
+    return this;
+  }
+
+  override withExecutionProps(this: BootTestFormBuilder): BootTestFormBuilder {
+    this.form = this.fb.nonNullable.group({
+      ...this.form.controls,
+      verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
+      executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
+      standResults: this.fb.nonNullable.array([]),
+    }) as unknown as AbstractFormGroup<BootTestEssayStep>;
+
+    return this;
   }
 }

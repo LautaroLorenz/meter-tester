@@ -7,7 +7,6 @@ import {
   ContrastTestFormBuilder,
   ContrastTestStep,
 } from '../../../../../models/business/interafces/steps/contrast-test-step.model';
-import { Steps } from '../../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-contrast-test-build-form',
@@ -19,6 +18,7 @@ export class ContrastTestBuildFormComponent extends StepBuildFormComponent<Contr
   readonly MeterConstants = MeterConstants;
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<ContrastTestStep> {
-    return new ContrastTestFormBuilder().build(fb, Steps.ContrastTest);
+    return new ContrastTestFormBuilder().build(fb)
+      .form as AbstractFormGroup<ContrastTestStep>;
   }
 }
