@@ -6,58 +6,75 @@ import { BuilderByStepId } from './step-builder-by-step-id.model';
 import { ExecutedStatus } from '../enums/executed-status.model';
 
 export class StepsBuilder {
-  private formArray!: FormArray<FormGroup>;
-  private steps!: EssayTemplateStep[];
-
   constructor(private fb: FormBuilder) {}
 
   buildTemplateSteps<T extends EssayTemplateStep>(
-    formArray: FormArray,
-    steps: EssayTemplateStep[]
-  ): StepsBuilder {
-    this.formArray = formArray;
-    this.steps = steps;
-
+    formArray: FormArray<AbstractFormGroup<T>>,
+    steps: T[]
+  ): void {
+    formArray.clear();
     steps.forEach((templateStep) => {
-      const templateStepForm = BuilderByStepId.build(
-        this.fb,
-        templateStep.step_id
-      );
-      templateStepForm.patchValue(templateStep);
-      formArray.push(templateStepForm as AbstractFormGroup<T>);
+      this.buildTemplateStep(formArray, templateStep);
     });
-
-    return this;
   }
 
-  withVerifiedStatus(): StepsBuilder {
-    this.formArray.controls.forEach((formGroup: FormGroup) => {
-      formGroup.addControl(
-        'verifiedStatus',
-        this.fb.nonNullable.control(VerifiedStatus.Pending)
-      );
-    });
-
-    return this;
+  buildTemplateStep<T extends EssayTemplateStep>(
+    formArray: FormArray<AbstractFormGroup<T>>,
+    templateStep: T
+  ): void {
+    const templateStepForm: AbstractFormGroup<EssayTemplateStep> =
+      BuilderByStepId.build(this.fb, templateStep.step_id);
+    templateStepForm.patchValue(templateStep);
+    formArray.push(templateStepForm as AbstractFormGroup<T>);
   }
 
-  withExecutedStatus(): StepsBuilder {
-    this.formArray.controls.forEach((formGroup: FormGroup) => {
-      formGroup.addControl(
-        'executedStatus',
-        this.fb.nonNullable.control(ExecutedStatus.Pending)
-      );
-    });
+  // buildEssaySteps<T extends EssayTemplateStep>(
+  //   formArray: FormArray,
+  //   steps: EssayTemplateStep[]
+  // ): StepsBuilder {
+  //   this.formArray = formArray;
+  //   this.steps = steps;
 
-    return this;
-  }
+  //   steps.forEach((templateStep) => {
+  //     const templateStepForm = BuilderByStepId.build(
+  //       this.fb,
+  //       templateStep.step_id
+  //     );
+  //     templateStepForm.patchValue(templateStep);
+  //     formArray.push(templateStepForm as AbstractFormGroup<T>);
+  //   });
 
-  // TODO se tiene que crear un objeto con resultados para cada stand.
-  withStandResults(): StepsBuilder {
-    this.formArray.controls.forEach((formGroup: FormGroup) => {
-      formGroup.addControl('standResults', this.fb.nonNullable.array([]));
-    });
+  //   return this;
+  // }
 
-    return this;
-  }
+  // withVerifiedStatus(): StepsBuilder {
+  //   this.formArray.controls.forEach((formGroup: FormGroup) => {
+  //     formGroup.addControl(
+  //       'verifiedStatus',
+  //       this.fb.nonNullable.control(VerifiedStatus.Pending)
+  //     );
+  //   });
+
+  //   return this;
+  // }
+
+  // withExecutedStatus(): StepsBuilder {
+  //   this.formArray.controls.forEach((formGroup: FormGroup) => {
+  //     formGroup.addControl(
+  //       'executedStatus',
+  //       this.fb.nonNullable.control(ExecutedStatus.Pending)
+  //     );
+  //   });
+
+  //   return this;
+  // }
+
+  // // TODO se tiene que crear un objeto con resultados para cada stand.
+  // withStandResults(): StepsBuilder {
+  //   this.formArray.controls.forEach((formGroup: FormGroup) => {
+  //     formGroup.addControl('standResults', this.fb.nonNullable.array([]));
+  //   });
+
+  //   return this;
+  // }
 }

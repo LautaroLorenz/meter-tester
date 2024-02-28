@@ -1,13 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import {
@@ -49,6 +42,8 @@ import {
 import { NavigationService } from '../../services/navigation.service';
 import { essayTemplateValidator } from '../../models/business/validators/essay-template-form-validator.model';
 import { Steps } from '../../models/business/enums/steps.model';
+import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
+import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -58,7 +53,7 @@ export class EssayTemplateBuilderComponent
   implements OnInit, OnDestroy, ComponentCanDeactivate
 {
   addStepToSequenceDialogOpened = false;
-  selectedEssayTemplateStep: Partial<EssayTemplateStep> | undefined;
+  selectedEssayTemplateStep: EssayTemplateStep | undefined;
   steps: Step[] | undefined;
 
   readonly title: string = 'Ensayo';
@@ -66,6 +61,7 @@ export class EssayTemplateBuilderComponent
   readonly form: FormGroup;
   readonly saveButtonMenuItems: MenuItem[] = [];
 
+  private readonly stepsBuilder: StepsBuilder;
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
@@ -82,28 +78,29 @@ export class EssayTemplateBuilderComponent
     this.form = this.buildForm();
     this.saveButtonMenuItems = this.getSaveButtonMenuItems();
     this.id$ = this.getId$();
+    this.stepsBuilder = new StepsBuilder(fb);
   }
 
   get saveButtonDisabled(): boolean {
     return !this.form.valid || this.form.pristine;
   }
 
-  get stepsFormArray(): FormArray<FormControl<Partial<EssayTemplateStep>>> {
+  get stepsFormArray(): FormArray<AbstractFormGroup<EssayTemplateStep>> {
     return this.form.get('essayTemplateSteps') as FormArray<
-      FormControl<Partial<EssayTemplateStep>>
+      AbstractFormGroup<EssayTemplateStep>
     >;
   }
 
-  get stepsSequenceTable(): Partial<EssayTemplateStep>[] {
-    return (this.stepsFormArray?.value ?? []).filter(
-      ({ step_id }) => step_id !== Steps.Preparation
-    );
+  get stepsSequenceTable(): EssayTemplateStep[] {
+    return (this.stepsFormArray?.controls ?? [])
+      .filter(({ value: { step_id } }) => step_id !== Steps.Preparation)
+      .map(({ value }) => value) as EssayTemplateStep[];
   }
 
-  get preparationStep(): Partial<EssayTemplateStep> | undefined {
-    return (this.stepsFormArray?.value ?? []).find(
-      ({ step_id }) => step_id === Steps.Preparation
-    );
+  get preparationStep(): EssayTemplateStep | undefined {
+    return (this.stepsFormArray?.controls ?? [])
+      .find(({ value: { step_id } }) => step_id === Steps.Preparation)
+      ?.getRawValue() as EssayTemplateStep;
   }
 
   @HostListener('window:beforeunload')
@@ -225,7 +222,7 @@ export class EssayTemplateBuilderComponent
         step: { ...step },
       },
     };
-    this.addEssayTemplateStepControl(essayTemplateStep);
+    this.addEssayTemplateStepControl(essayTemplateStep as EssayTemplateStep);
 
     if (markForCheck) {
       this.stepsFormArray.markAsDirty();
@@ -248,30 +245,16 @@ export class EssayTemplateBuilderComponent
   }
 
   private addEssayTemplateStepControl(
-    essayTemplateStep: EssayTemplateStep | Partial<EssayTemplateStep>
+    essayTemplateStep: EssayTemplateStep
   ): void {
-    this.stepsFormArray.push(
-      this.fb.control(essayTemplateStep, { nonNullable: true })
-    );
+    this.stepsBuilder.buildTemplateStep(this.stepsFormArray, essayTemplateStep);
     this.recalculateEssayTemplateStepsOrder();
   }
 
   private recalculateEssayTemplateStepsOrder(): void {
-    this.stepsFormArray.controls.forEach((control, index) => {
-      control.setValue({
-        ...control.value,
-        order: index,
-      });
+    this.stepsFormArray.controls.forEach((stepControls, index) => {
+      stepControls.get('order')?.setValue(index);
     });
-  }
-
-  private addSavedEssayTemplateStepsControl(
-    essayTemplateSteps: EssayTemplateStep[]
-  ): void {
-    this.stepsFormArray.clear();
-    essayTemplateSteps.forEach((essayTemplateStep) =>
-      this.addEssayTemplateStepControl(essayTemplateStep)
-    );
   }
 
   private observeRoute(): void {
@@ -309,7 +292,10 @@ export class EssayTemplateBuilderComponent
           essayTemplateSteps.sort((a, b) => a.order - b.order)
         ),
         tap((essayTemplateSteps) =>
-          this.addSavedEssayTemplateStepsControl(essayTemplateSteps)
+          this.stepsBuilder.buildTemplateSteps(
+            this.stepsFormArray,
+            essayTemplateSteps
+          )
         )
       )
       .subscribe();
@@ -371,9 +357,9 @@ export class EssayTemplateBuilderComponent
             validators: Validators.required.bind(this),
           }),
         }),
-        essayTemplateSteps: this.fb.array<
-          FormControl<Partial<EssayTemplateStep>>
-        >([]),
+        essayTemplateSteps: this.fb.array<AbstractFormGroup<EssayTemplateStep>>(
+          []
+        ),
       },
       { validators: essayTemplateValidator() }
     );
@@ -381,8 +367,8 @@ export class EssayTemplateBuilderComponent
 
   private getId$(): Observable<number> {
     return this.route.queryParams.pipe(
-      filter(({ id }) => id),
-      map(({ id }) => id)
+      filter(({ id }) => !!id),
+      map(({ id }) => id as number)
     );
   }
 
@@ -395,7 +381,10 @@ export class EssayTemplateBuilderComponent
       filter((valid) => valid),
       map(() => this.form.getRawValue()),
       switchMap(({ essayTemplate, essayTemplateSteps }) =>
-        this.essayService.saveEssayTemplate$(essayTemplate, essayTemplateSteps)
+        this.essayService.saveEssayTemplate$(
+          essayTemplate as EssayTemplate,
+          essayTemplateSteps as EssayTemplateStep[]
+        )
       ),
       tap((savedFormValue) => {
         this.messagesService.success('Guardado correctamente');
@@ -403,7 +392,7 @@ export class EssayTemplateBuilderComponent
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
-        return throwError(() => new Error(e));
+        return throwError(() => new Error(e as string));
       })
     );
   }

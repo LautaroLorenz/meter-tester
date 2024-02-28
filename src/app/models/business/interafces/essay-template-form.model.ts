@@ -1,5 +1,6 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { EssayTemplateStep } from '../database/essay-template-step.model';
+import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 
 export interface EssayTemplateForm {
   id: FormControl<number | undefined>;
@@ -8,5 +9,5 @@ export interface EssayTemplateForm {
 
 export interface EssayTemplateFormGroup {
   essayTemplate: FormGroup<EssayTemplateForm>;
-  essayTemplateSteps: FormArray<FormControl<Partial<EssayTemplateStep>>>;
+  essayTemplateSteps: FormArray<AbstractFormGroup<EssayTemplateStep>>;
 }

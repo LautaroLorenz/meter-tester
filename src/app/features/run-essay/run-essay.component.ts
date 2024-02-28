@@ -49,8 +49,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   readonly id$: Observable<number>;
   readonly runEssayForm: RunEssayForm;
 
-  // stepBuilders: StepBuilder[] = [];
-
   private readonly formatDate = inject(FormatDatePipe);
   private readonly onDestroy = new Subject<void>();
   private readonly stepsBuilder: StepsBuilder;
@@ -133,13 +131,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   // }
 
   private getId$(): Observable<number> {
-    // TODO
-    //   this.id$ = this.route.queryParams.pipe(
-    //     filter(({ id }) => id),
-    //     map(({ id }) => id),
-    //     tap(() => executionDirectorService.resetState()),
-    //   );
-
     return this.route.queryParams.pipe(
       filter(({ id }) => !!id),
       map(({ id }) => id as number)
@@ -188,18 +179,19 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         map((essayTemplateStep) =>
           essayTemplateStep.sort((a, b) => a.order - b.order)
         ),
-        tap((essayTemplateSteps) =>
-          this.stepsBuilder
-            .buildTemplateSteps(
-              this.runEssayForm.get('essaySteps') as FormArray<
-                AbstractFormGroup<EssayStep>
-              >,
-              essayTemplateSteps
-            )
-            .withVerifiedStatus()
-            .withExecutedStatus()
-            .withStandResults()
-        )
+        // tap((essayTemplateSteps) =>
+        //   this.stepsBuilder.buildTemplateSteps(
+        //     this.runEssayForm.get('essayTemplateSteps') as FormArray<
+        //       AbstractFormGroup<EssayTemplateStep>
+        //     >,
+        //     essayTemplateSteps
+        //   )
+        // ),
+        // tap(() => console.log(this.runEssayForm))
+        // .withVerifiedStatus()
+        // .withExecutedStatus()
+        // .withStandResults()
+
         // TODO
         //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
         //   tap(() => this.initExecution()),

@@ -17,7 +17,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepsSequenceTableComponent {
-  @Input() essayTemplateSteps!: Partial<EssayTemplateStep>[];
+  @Input() essayTemplateSteps!: EssayTemplateStep[];
 
   @Output() moveDownStep = new EventEmitter<number>();
   @Output() moveUpStep = new EventEmitter<number>();
