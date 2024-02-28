@@ -1,12 +1,9 @@
-import { AbstractControl, FormArray, FormBuilder, FormControl } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { EssayTemplateStep } from '../database/essay-template-step.model';
 import { BootTestFormBuilder } from '../interafces/steps/boot-test-step.model';
 import { ContrastTestFormBuilder } from '../interafces/steps/contrast-test-step.model';
 import { PreparationFormBuilder } from '../interafces/steps/preparation-step.model';
-import {
-  VacuumTestFormBuilder,
-  VacuumTestStep,
-} from '../interafces/steps/vacuum-step.model';
+import { VacuumTestFormBuilder } from '../interafces/steps/vacuum-step.model';
 import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 import { EssayVerifiedStep } from '../interafces/essay-verified-step.model';
 import { VerifiedStatus } from '../enums/verified-status.model';
@@ -28,7 +25,7 @@ export class StepsBuilder {
     formArray: FormArray<AbstractFormGroup<T>>,
     steps: EssayTemplateStep[],
     fb: FormBuilder
-  ): FormArray<AbstractFormGroup<T>> {
+  ): StepsBuilder {
     steps.forEach((templateStep) => {
       const templateStepForm = this.PreparationFormBuilder.build(
         fb,
@@ -37,20 +34,21 @@ export class StepsBuilder {
       templateStepForm.patchValue(templateStep);
       formArray.push(templateStepForm as AbstractFormGroup<T>);
     });
-    return formArray;
+
+    return this;
   }
 
-  // withVerifiedStatus<T extends EssayTemplateStep>(
-  //   this: FormArray<AbstractFormGroup<T>>,
-  //   fb: FormBuilder
-  // ): FormArray<AbstractFormGroup<VacuumTestStep & EssayVerifiedStep>> {
-  //   // this.controls.forEach((formGroup) => {
-  //   //   formGroup.addControl(
-  //   //     'verifiedStatus',
-  //   //     fb.nonNullable.control(VerifiedStatus.Pending) as FormControl<VerifiedStatus>
-  //   //   );
-  //   // });
+  withVerifiedStatus<T extends EssayVerifiedStep>(
+    formArray: FormArray<AbstractFormGroup<T>>,
+    fb: FormBuilder
+  ): StepsBuilder {
+    formArray.controls.forEach((formGroup: FormGroup) => {
+      formGroup.addControl(
+        'verifiedStatus',
+        fb.nonNullable.control(VerifiedStatus.Pending)
+      );
+    });
 
-  //   // return this;
-  // }
+    return this;
+  }
 }

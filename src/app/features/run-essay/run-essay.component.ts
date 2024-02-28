@@ -35,6 +35,8 @@ import {
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { RelationsManager } from '../../models/core/relations-manager.model';
 import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
+import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
+import { EssayVerifiedStep } from '../../models/business/interafces/essay-verified-step.model';
 
 @Component({
   selector: 'app-run-essay',
@@ -187,18 +189,29 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         ),
         tap((essayTemplateSteps) =>
           this.stepsBuilder.buildTemplateStepsFormArray(
-            this.runEssayForm.get('essayTemplateSteps') as FormArray,
+            this.runEssayForm.get('essayTemplateSteps') as FormArray<
+              AbstractFormGroup<EssayTemplateStep>
+            >,
             essayTemplateSteps,
             this.fb
           )
+        ),
+        tap((essayTemplateSteps) =>
+          this.stepsBuilder
+            .buildTemplateStepsFormArray(
+              this.runEssayForm.get('essayVerifiedSteps') as FormArray<
+                AbstractFormGroup<EssayVerifiedStep>
+              >,
+              essayTemplateSteps,
+              this.fb
+            )
+            .withVerifiedStatus(
+              this.runEssayForm.get('essayVerifiedSteps') as FormArray<
+                AbstractFormGroup<EssayVerifiedStep>
+              >,
+              this.fb
+            )
         )
-        // tap((essayTemplateSteps) =>
-        //   StepsBuilder.buildVerifiedStepsFormArray(
-        //     this.fb,
-        //     this.runEssayForm.get('essayVerifiedSteps'),
-        //     essayTemplateSteps
-        //   )
-        // ),
         // TODO
         //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
         //   tap(() => this.initExecution()),
