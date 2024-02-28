@@ -22,7 +22,7 @@ export interface VacuumTestStep extends EssayTemplateStep {
 }
 
 export class VacuumTestFormBuilder extends AbstractStepFormBuilder {
-  build<T extends VacuumTestStep>(
+  build<T extends EssayTemplateStep>(
     fb: FormBuilder,
     stepType: Steps
   ): AbstractFormGroup<T> {
@@ -86,6 +86,6 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder {
         ],
       }),
       foreign: undefined,
-    }) as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<VacuumTestStep> as AbstractFormGroup<T>;
   }
 }

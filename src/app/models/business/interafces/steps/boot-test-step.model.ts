@@ -23,7 +23,7 @@ export interface BootTestStep extends EssayTemplateStep {
 }
 
 export class BootTestFormBuilder extends AbstractStepFormBuilder {
-  override build<T extends BootTestStep>(
+  override build<T extends EssayTemplateStep>(
     fb: FormBuilder,
     stepType: Steps
   ): AbstractFormGroup<T> {
@@ -143,6 +143,6 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder {
         ],
       }),
       foreign: undefined,
-    }) as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<BootTestStep> as AbstractFormGroup<T>;
   }
 }

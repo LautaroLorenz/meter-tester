@@ -22,7 +22,7 @@ export interface ContrastTestStep extends EssayTemplateStep {
 }
 
 export class ContrastTestFormBuilder extends AbstractStepFormBuilder {
-  build<T extends ContrastTestStep>(
+  build<T extends EssayTemplateStep>(
     fb: FormBuilder,
     stepType: Steps
   ): AbstractFormGroup<T> {
@@ -134,6 +134,6 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder {
         ],
       }),
       foreign: undefined,
-    }) as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<ContrastTestStep> as AbstractFormGroup<T>;
   }
 }

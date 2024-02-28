@@ -14,7 +14,7 @@ export interface PreparationStep extends EssayTemplateStep {
 }
 
 export class PreparationFormBuilder extends AbstractStepFormBuilder {
-  build<T extends PreparationStep>(
+  build<T extends EssayTemplateStep>(
     fb: FormBuilder,
     stepType: Steps
   ): AbstractFormGroup<T> {
@@ -45,6 +45,6 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder {
       step_id: undefined,
       form_control_raw: fb.nonNullable.array(StandsGroupArray),
       foreign: undefined,
-    }) as AbstractFormGroup<T>;
+    }) as AbstractFormGroup<PreparationStep> as AbstractFormGroup<T>;
   }
 }
