@@ -5,7 +5,7 @@ import { EssayStep } from '../interafces/essay-step.model';
 
 export interface StepFormBuilder<
   T extends EssayTemplateStep,
-  K extends EssayStep
+  K extends Partial<EssayStep>
 > {
   form: AbstractFormGroup<T> | AbstractFormGroup<K>;
   fb: FormBuilder;
@@ -19,7 +19,7 @@ export interface StepFormBuilder<
 
 export abstract class AbstractStepFormBuilder<
   T extends EssayTemplateStep,
-  K extends EssayStep
+  K extends Partial<EssayStep>
 > implements StepFormBuilder<T, K>
 {
   form!: AbstractFormGroup<T> | AbstractFormGroup<K>;

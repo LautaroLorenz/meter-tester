@@ -152,12 +152,14 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<
   override withExecutionProps(
     this: ContrastTestFormBuilder
   ): ContrastTestFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<ContrastTestStep>;
+
     this.form = this.fb.nonNullable.group({
-      ...this.form.controls,
+      ...typedForm.controls,
       verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
       executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
       standResults: this.fb.nonNullable.array([]),
-    }) as unknown as AbstractFormGroup<ContrastTestEssayStep>;
+    }) as AbstractFormGroup<ContrastTestEssayStep>;
 
     return this;
   }

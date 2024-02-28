@@ -15,7 +15,9 @@ export interface PreparationStep extends EssayTemplateStep {
   form_control_raw: PreparationFormControlRaw;
 }
 
-export type PreparationEssayStep = PreparationStep & EssayStep;
+// export type PreparationEssayStep = PreparationStep & EssayStep;
+
+export type PreparationEssayStep = PreparationStep & Pick<EssayStep, 'verifiedStatus'>;
 
 export class PreparationFormBuilder extends AbstractStepFormBuilder<
   PreparationStep,
@@ -54,10 +56,12 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
   override withExecutionProps(
     this: PreparationFormBuilder
   ): PreparationFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<PreparationStep>;
+
     this.form = this.fb.nonNullable.group({
-      ...this.form.controls,
+      ...typedForm.controls,
       verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
-    }) as unknown as AbstractFormGroup<PreparationEssayStep>;
+    }) as AbstractFormGroup<PreparationEssayStep>;
 
     return this;
   }

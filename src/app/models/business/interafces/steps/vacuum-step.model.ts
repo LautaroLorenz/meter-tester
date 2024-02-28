@@ -104,12 +104,14 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
   override withExecutionProps(
     this: VacuumTestFormBuilder
   ): VacuumTestFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
+
     this.form = this.fb.nonNullable.group({
-      ...this.form.controls,
+      ...typedForm.controls,
       verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
       executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
       standResults: this.fb.nonNullable.array([]),
-    }) as unknown as AbstractFormGroup<VacuumTestEssayStep>;
+    }) as AbstractFormGroup<VacuumTestEssayStep>;
 
     return this;
   }

@@ -159,12 +159,14 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<
   }
 
   override withExecutionProps(this: BootTestFormBuilder): BootTestFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<BootTestStep>;
+
     this.form = this.fb.nonNullable.group({
-      ...this.form.controls,
+      ...typedForm.controls,
       verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
       executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
       standResults: this.fb.nonNullable.array([]),
-    }) as unknown as AbstractFormGroup<BootTestEssayStep>;
+    }) as AbstractFormGroup<BootTestEssayStep>;
 
     return this;
   }
