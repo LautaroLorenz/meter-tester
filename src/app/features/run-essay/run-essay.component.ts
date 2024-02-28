@@ -179,20 +179,17 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         map((essayTemplateStep) =>
           essayTemplateStep.sort((a, b) => a.order - b.order)
         ),
-        // tap((essayTemplateSteps) =>
-        //   this.stepsBuilder.buildTemplateSteps(
-        //     this.runEssayForm.get('essayTemplateSteps') as FormArray<
-        //       AbstractFormGroup<EssayTemplateStep>
-        //     >,
-        //     essayTemplateSteps
-        //   )
-        // ),
-        // tap(() => console.log(this.runEssayForm))
-        // .withVerifiedStatus()
-        // .withExecutedStatus()
-        // .withStandResults()
-
+        tap((essayTemplateSteps) =>
+          this.stepsBuilder.buildEssaySteps(
+            this.runEssayForm.get('essaySteps') as FormArray<
+              AbstractFormGroup<EssayStep>
+            >,
+            essayTemplateSteps
+          )
+        ),
         // TODO
+        tap(() => console.log((this.runEssayForm.get('essaySteps') as FormArray).controls ))
+
         //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
         //   tap(() => this.initExecution()),
         // ).subscribe();
