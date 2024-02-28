@@ -16,10 +16,11 @@ FEATURES:
 - historial
 
 EJECUCIÓN:
+- crear las interfaces para Results
 - Pasos:
-  - Preparación
   - Verificación de parámetros
   - Ejecución:
     - (agregar los pasos de ajuste de fotocélulas y mostrar en que momentos van a ser requeridos sobre el timeline)
+  - Inidicar la endDate
   - Agregar al historial (indicar el ID de reporte).
   - Reporte

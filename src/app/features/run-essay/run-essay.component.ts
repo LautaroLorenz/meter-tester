@@ -36,7 +36,7 @@ import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { RelationsManager } from '../../models/core/relations-manager.model';
 import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
 import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
-import { EssayVerifiedStep } from '../../models/business/interafces/essay-verified-step.model';
+import { EssayStep } from '../../models/business/interafces/essay-step.model';
 
 @Component({
   selector: 'app-run-essay',
@@ -53,7 +53,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
 
   private readonly formatDate = inject(FormatDatePipe);
   private readonly onDestroy = new Subject<void>();
-  private readonly stepsBuilder = new StepsBuilder();
+  private readonly stepsBuilder: StepsBuilder;
 
   // get stepControls(): FormArray<FormControl> {
   //   return (this.form.get('essayTemplateSteps') as FormArray);
@@ -82,6 +82,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   ) {
     this.id$ = this.getId$();
     this.runEssayForm = this.buildForm();
+    this.stepsBuilder = new StepsBuilder(fb);
   }
 
   // private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
@@ -163,7 +164,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
             startDate: this.formatDate.transform(
               new Date(),
               FormatDateMode.fromClientToDatabase
-            ) as string, // TODO: setear la endDate
+            ) as string,
           })
         ),
         tap(({ id }) => this.requestTableEssayTemplateSteps(id))
@@ -188,29 +189,16 @@ export class RunEssayComponent implements OnInit, OnDestroy {
           essayTemplateStep.sort((a, b) => a.order - b.order)
         ),
         tap((essayTemplateSteps) =>
-          this.stepsBuilder.buildTemplateStepsFormArray(
-            this.runEssayForm.get('essayTemplateSteps') as FormArray<
-              AbstractFormGroup<EssayTemplateStep>
-            >,
-            essayTemplateSteps,
-            this.fb
-          )
-        ),
-        tap((essayTemplateSteps) =>
           this.stepsBuilder
-            .buildTemplateStepsFormArray(
-              this.runEssayForm.get('essayVerifiedSteps') as FormArray<
-                AbstractFormGroup<EssayVerifiedStep>
+            .buildTemplateSteps(
+              this.runEssayForm.get('essaySteps') as FormArray<
+                AbstractFormGroup<EssayStep>
               >,
-              essayTemplateSteps,
-              this.fb
+              essayTemplateSteps
             )
-            .withVerifiedStatus(
-              this.runEssayForm.get('essayVerifiedSteps') as FormArray<
-                AbstractFormGroup<EssayVerifiedStep>
-              >,
-              this.fb
-            )
+            .withVerifiedStatus()
+            .withExecutedStatus()
+            .withStandResults()
         )
         // TODO
         //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
@@ -252,9 +240,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
       essayTemplateId: undefined,
       startDate: undefined,
       endDate: undefined,
-      essayTemplateSteps: this.fb.array([]),
-      essayVerifiedSteps: this.fb.array([]),
-      essayExecutedSteps: this.fb.array([]),
+      essaySteps: this.fb.array([]),
     }) as RunEssayForm;
   }
 }

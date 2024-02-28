@@ -1,34 +1,26 @@
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { EssayTemplateStep } from '../database/essay-template-step.model';
-import { BootTestFormBuilder } from '../interafces/steps/boot-test-step.model';
-import { ContrastTestFormBuilder } from '../interafces/steps/contrast-test-step.model';
-import { PreparationFormBuilder } from '../interafces/steps/preparation-step.model';
-import { VacuumTestFormBuilder } from '../interafces/steps/vacuum-step.model';
 import { AbstractFormGroup } from '../../core/abstract-form-group.model';
-import { EssayVerifiedStep } from '../interafces/essay-verified-step.model';
 import { VerifiedStatus } from '../enums/verified-status.model';
+import { BuilderByStepId } from './step-builder-by-step-id.model';
+import { ExecutedStatus } from '../enums/executed-status.model';
 
 export class StepsBuilder {
-  // step builders
-  private readonly PreparationFormBuilder = new PreparationFormBuilder();
-  private readonly VacuumTestFormBuilder = new VacuumTestFormBuilder();
-  private readonly ContrastTestFormBuilder = new ContrastTestFormBuilder();
-  private readonly BootTestFormBuilder = new BootTestFormBuilder();
+  private formArray!: FormArray<FormGroup>;
+  private steps!: EssayTemplateStep[];
 
-  constructor() {
-    this.PreparationFormBuilder.setNext(this.VacuumTestFormBuilder)
-      .setNext(this.ContrastTestFormBuilder)
-      .setNext(this.BootTestFormBuilder);
-  }
+  constructor(private fb: FormBuilder) {}
 
-  buildTemplateStepsFormArray<T extends EssayTemplateStep>(
-    formArray: FormArray<AbstractFormGroup<T>>,
-    steps: EssayTemplateStep[],
-    fb: FormBuilder
+  buildTemplateSteps<T extends EssayTemplateStep>(
+    formArray: FormArray,
+    steps: EssayTemplateStep[]
   ): StepsBuilder {
+    this.formArray = formArray;
+    this.steps = steps;
+
     steps.forEach((templateStep) => {
-      const templateStepForm = this.PreparationFormBuilder.build(
-        fb,
+      const templateStepForm = BuilderByStepId.build(
+        this.fb,
         templateStep.step_id
       );
       templateStepForm.patchValue(templateStep);
@@ -38,15 +30,32 @@ export class StepsBuilder {
     return this;
   }
 
-  withVerifiedStatus<T extends EssayVerifiedStep>(
-    formArray: FormArray<AbstractFormGroup<T>>,
-    fb: FormBuilder
-  ): StepsBuilder {
-    formArray.controls.forEach((formGroup: FormGroup) => {
+  withVerifiedStatus(): StepsBuilder {
+    this.formArray.controls.forEach((formGroup: FormGroup) => {
       formGroup.addControl(
         'verifiedStatus',
-        fb.nonNullable.control(VerifiedStatus.Pending)
+        this.fb.nonNullable.control(VerifiedStatus.Pending)
       );
+    });
+
+    return this;
+  }
+
+  withExecutedStatus(): StepsBuilder {
+    this.formArray.controls.forEach((formGroup: FormGroup) => {
+      formGroup.addControl(
+        'executedStatus',
+        this.fb.nonNullable.control(ExecutedStatus.Pending)
+      );
+    });
+
+    return this;
+  }
+
+  // TODO se tiene que crear un objeto con resultados para cada stand.
+  withStandResults(): StepsBuilder {
+    this.formArray.controls.forEach((formGroup: FormGroup) => {
+      formGroup.addControl('standResults', this.fb.nonNullable.array([]));
     });
 
     return this;
