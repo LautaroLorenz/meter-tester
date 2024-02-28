@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { StepBuildFormComponent } from '../../../../../models/business/class/step-build-form-component.model';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../../../../../models/core/abstract-form-group.model';
-import { APP_CONFIG } from '../../../../../../environments/environment';
 import { DatabaseService } from '../../../../../services/database.service';
 import {
   Meter,
@@ -13,7 +12,11 @@ import { RelationsManager } from '../../../../../models/core/relations-manager.m
 import { Stand } from '../../../../../models/business/interafces/stand.model';
 import { YearOfProductionConstants } from '../../../../../models/business/constants/year-of-production-constant.model';
 import { DecimalPipe } from '@angular/common';
-import { PreparationStep } from '../../../../../models/business/interafces/steps/preparation-step.model';
+import {
+  PreparationFormBuilder,
+  PreparationStep,
+} from '../../../../../models/business/interafces/steps/preparation-step.model';
+import { Steps } from '../../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-preparation-build-form',
@@ -44,30 +47,7 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
   }
 
   override buildForm(fb: FormBuilder): AbstractFormGroup<PreparationStep> {
-    // generate stand array based on APP_CONFIG variable
-    const StandsGroupArray: AbstractFormGroup<Stand>[] = Array(
-      APP_CONFIG.standsQuantiy
-    )
-      .fill(undefined)
-      .map(
-        () =>
-          fb.nonNullable.group({
-            name: undefined,
-            isActive: true,
-            meterId: undefined,
-            serialNumber: undefined,
-            yearOfProduction: undefined,
-          }) as AbstractFormGroup<Stand>
-      );
-
-    return fb.nonNullable.group({
-      id: undefined,
-      order: undefined,
-      essay_template_id: undefined,
-      step_id: undefined,
-      form_control_raw: fb.nonNullable.array(StandsGroupArray),
-      foreign: undefined,
-    }) as AbstractFormGroup<PreparationStep>;
+    return new PreparationFormBuilder().build(fb, Steps.Preparation);
   }
 
   override observeTables(): void {

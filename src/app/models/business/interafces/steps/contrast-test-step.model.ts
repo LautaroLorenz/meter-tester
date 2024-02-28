@@ -2,6 +2,9 @@ import { EssayTemplateStep } from '../../../../models/business/database/essay-te
 import { Steps } from '../../../../models/business/enums/steps.model';
 import { MeterConstant } from '../../../../models/business/constants/meter-constant.model';
 import { Phase } from '../../../../models/business/interafces/phase.model';
+import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
+import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 
 export interface ContrastTestFormControlRaw {
   name: string;
@@ -16,4 +19,121 @@ export interface ContrastTestFormControlRaw {
 export interface ContrastTestStep extends EssayTemplateStep {
   step_id: Steps.ContrastTest;
   form_control_raw: ContrastTestFormControlRaw;
+}
+
+export class ContrastTestFormBuilder extends AbstractStepFormBuilder {
+  build<T extends ContrastTestStep>(
+    fb: FormBuilder,
+    stepType: Steps
+  ): AbstractFormGroup<T> {
+    if (stepType !== Steps.ContrastTest) {
+      return this.nextBuilder.build(fb, stepType);
+    }
+
+    return fb.nonNullable.group({
+      id: undefined,
+      order: undefined,
+      essay_template_id: undefined,
+      step_id: [undefined, Validators.required.bind(this)],
+      form_control_raw: fb.nonNullable.group({
+        name: undefined,
+        meterConstant: [undefined, Validators.required.bind(this)],
+        phaseL1: fb.nonNullable.group({
+          voltage: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
+          ],
+          current: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
+          ],
+          anglePhi: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
+          ],
+        }),
+        phaseL2: fb.nonNullable.group({
+          voltage: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
+          ],
+          current: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
+          ],
+          anglePhi: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
+          ],
+        }),
+        phaseL3: fb.nonNullable.group({
+          voltage: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(500),
+            ],
+          ],
+          current: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(200),
+            ],
+          ],
+          anglePhi: [
+            undefined,
+            [
+              Validators.required.bind(this),
+              Validators.min(0),
+              Validators.max(359.9),
+            ],
+          ],
+        }),
+        maxAllowedError: [
+          undefined,
+          [
+            Validators.required.bind(this),
+            Validators.min(0),
+            Validators.max(99.99),
+          ],
+        ],
+        meterPulses: [
+          undefined,
+          [
+            Validators.required.bind(this),
+            Validators.min(0),
+            Validators.max(999),
+          ],
+        ],
+      }),
+      foreign: undefined,
+    }) as AbstractFormGroup<T>;
+  }
 }
