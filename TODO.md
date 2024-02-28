@@ -21,7 +21,8 @@ EJECUCIÓN:
   - Verificación de parámetros
     - Poner un warning si hay stands activos sin data para el reporte
   - Ejecución:
-    - (agregar los pasos de ajuste de fotocélulas y mostrar en que momentos van a ser requeridos sobre el timeline)
+    - Initicializar arrays de resultados
+    - Agregar ajuste de fotocelulas
   - Inidicar la endDate
   - Agregar al historial (indicar el ID de reporte).
   - Reporte
