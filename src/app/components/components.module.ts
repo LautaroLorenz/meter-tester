@@ -18,6 +18,7 @@ import { InputErrorComponent } from './input-error/input-error.component';
 import { AddStepToSequenceComponent } from './steps/add-step-to-sequence/add-step-to-sequence.component';
 import { StepsSequenceTableComponent } from './steps/steps-sequence-table/steps-sequence-table.component';
 import { EditStepInSequenceComponent } from './steps/edit-step-in-sequence/edit-step-in-sequence.component';
+import { MajorStepTimelineComponent } from './run/major-step-timeline/major-step-timeline.component';
 
 // TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
@@ -65,7 +66,8 @@ const AppComponents = [
   InputErrorComponent,
   AddStepToSequenceComponent,
   StepsSequenceTableComponent,
-  EditStepInSequenceComponent
+  EditStepInSequenceComponent,
+  MajorStepTimelineComponent,
 ];
 
 @NgModule({

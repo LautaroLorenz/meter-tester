@@ -1,7 +1,9 @@
 <ng-container *ngIf="runEssayForm.valueChanges | async as runEssay">
   <app-page-title [title]="title" [showBack]="true" (backEvent)="exit()">
     <ng-container toolbar-left>
-      <div class="text-xl text-700 ml-3">{{ runEssayForm.get("essayName")?.value }}</div>
+      <div class="text-xl text-700 ml-3">
+        {{ runEssayForm.get("essayName")?.value }}
+      </div>
     </ng-container>
     <!-- <ng-container toolbar-right>
     <ng-container *ngIf="(executionStatus$ | async) as executionStatus">
@@ -37,15 +39,17 @@
 
   <div class="grid grid-nogutter">
     <div class="col col-2">
-      
+      <p-card> 
+        <app-major-step-timeline></app-major-step-timeline>
+      </p-card>
     </div>
+
     <div class="col col-10">
       <pre>
         {{ runEssay | json }}
       </pre>
     </div>
   </div>
-
 
   <!-- <app-fill-available-space class="flex justify-content-evenly">
 
