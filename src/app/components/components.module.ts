@@ -9,11 +9,11 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { MenuComponent } from './menu/menu.component';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
-import { BootTestBuildFormComponent } from './steps/components/boot-test/boot-test-build-form/boot-test-build-form.component';
+import { BootTestBuildFormComponent } from './steps/boot-test/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
-import { PreparationBuildFormComponent } from './steps/components/preparation/preparation-build-form/preparation-build-form.component';
-import { ContrastTestBuildFormComponent } from './steps/components/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
-import { VacuumTestBuildFormComponent } from './steps/components/vacuum-test/vacuum-test-build-form/vacuum-test-build-form.component';
+import { PreparationBuildFormComponent } from './steps/preparation/preparation-build-form/preparation-build-form.component';
+import { ContrastTestBuildFormComponent } from './steps/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
+import { VacuumTestBuildFormComponent } from './steps/vacuum-test/vacuum-test-build-form/vacuum-test-build-form.component';
 import { InputErrorComponent } from './input-error/input-error.component';
 
 // TODO revisar que no quede ninguno sin agregar
