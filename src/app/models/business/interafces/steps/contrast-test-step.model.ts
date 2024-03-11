@@ -40,7 +40,7 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<
   ContrastTestStep,
   ContrastTestEssayStep
 > {
-  build(fb: FormBuilder): ContrastTestFormBuilder {
+  override build(fb: FormBuilder): ContrastTestFormBuilder {
     this.fb = fb;
     this.form = fb.nonNullable.group({
       id: undefined,

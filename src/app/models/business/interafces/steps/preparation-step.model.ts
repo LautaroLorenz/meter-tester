@@ -24,7 +24,7 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
   PreparationStep,
   PreparationEssayStep
 > {
-  build(fb: FormBuilder): PreparationFormBuilder {
+  override build(fb: FormBuilder): PreparationFormBuilder {
     this.fb = fb;
 
     this.form = fb.nonNullable.group({

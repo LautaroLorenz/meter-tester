@@ -40,7 +40,7 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
   VacuumTestStep,
   VacuumTestEssayStep
 > {
-  build(fb: FormBuilder): VacuumTestFormBuilder {
+  override build(fb: FormBuilder): VacuumTestFormBuilder {
     this.fb = fb;
     this.form = fb.nonNullable.group({
       id: undefined,
