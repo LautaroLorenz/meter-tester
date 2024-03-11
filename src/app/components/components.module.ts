@@ -15,6 +15,9 @@ import { PreparationBuildFormComponent } from './steps/preparation/preparation-b
 import { ContrastTestBuildFormComponent } from './steps/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
 import { VacuumTestBuildFormComponent } from './steps/vacuum-test/vacuum-test-build-form/vacuum-test-build-form.component';
 import { InputErrorComponent } from './input-error/input-error.component';
+import { AddStepToSequenceComponent } from './steps/add-step-to-sequence/add-step-to-sequence.component';
+import { StepsSequenceTableComponent } from './steps/steps-sequence-table/steps-sequence-table.component';
+import { EditStepInSequenceComponent } from './steps/edit-step-in-sequence/edit-step-in-sequence.component';
 
 // TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
@@ -60,6 +63,9 @@ const AppComponents = [
   ContrastTestBuildFormComponent,
   VacuumTestBuildFormComponent,
   InputErrorComponent,
+  AddStepToSequenceComponent,
+  StepsSequenceTableComponent,
+  EditStepInSequenceComponent
 ];
 
 @NgModule({
