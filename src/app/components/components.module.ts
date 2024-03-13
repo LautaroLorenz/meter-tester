@@ -18,13 +18,13 @@ import { InputErrorComponent } from './input-error/input-error.component';
 import { AddStepToSequenceComponent } from './steps/add-step-to-sequence/add-step-to-sequence.component';
 import { StepsSequenceTableComponent } from './steps/steps-sequence-table/steps-sequence-table.component';
 import { EditStepInSequenceComponent } from './steps/edit-step-in-sequence/edit-step-in-sequence.component';
-import { MajorStepTimelineComponent } from './run/major-step-timeline/major-step-timeline.component';
-import { MajorStepTimelineItemComponent } from './run/major-step-timeline-item/major-step-timeline-item.component';
-import { MajorStepSwitchComponent } from './run/major-step-switch/major-step-switch.component';
-import { VerificationMajorStepComponent } from './run/verification-major-step/verification-major-step.component';
-import { PreparationMajorStepComponent } from './run/preparation-major-step/preparation-major-step.component';
-import { ExecutionMajorStepComponent } from './run/execution-major-step/execution-major-step.component';
-import { ReportMajorStepComponent } from './run/report-major-step/report-major-step.component';
+import { MajorStepTimelineComponent } from './major-steps/major-step-timeline/major-step-timeline.component';
+import { MajorStepTimelineItemComponent } from './major-steps/major-step-timeline-item/major-step-timeline-item.component';
+import { MajorStepSwitchComponent } from './major-steps/major-step-switch/major-step-switch.component';
+import { VerificationMajorStepComponent } from './major-steps/verification-major-step/verification-major-step.component';
+import { PreparationMajorStepComponent } from './major-steps/preparation-major-step/preparation-major-step.component';
+import { ExecutionMajorStepComponent } from './major-steps/execution-major-step/execution-major-step.component';
+import { ReportMajorStepComponent } from './major-steps/report-major-step/report-major-step.component';
 
 const AppComponents = [
   PageTitleComponent,
