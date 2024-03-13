@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MajorSteps } from '../models/business/enums/major-steps.model';
 import { StepStatus } from '../models/business/enums/step-status.model';
 import { RunEssayForm } from '../models/business/interafces/run-essay.model';
-import { MajorStepsStatus } from '../models/business/class/major-steps-status.model';
+import { MajorStepsDirector } from '../models/business/class/major-steps.model';
 import { EssayStep } from '../models/business/interafces/essay-step.model';
 import { StepsBuilder } from '../models/business/class/steps-form-array-builder.model';
 import { FormArray, FormBuilder } from '@angular/forms';
@@ -29,7 +29,7 @@ export class RunEssayService {
   }
 
   reset(): void {
-    this.marjorStepStatus = MajorStepsStatus.get(
+    this.marjorStepStatus = MajorStepsDirector.getStatus(
       this.runEssayForm.getRawValue().essaySteps as EssayStep[]
     );
   }
