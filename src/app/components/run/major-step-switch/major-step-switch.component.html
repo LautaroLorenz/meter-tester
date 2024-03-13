@@ -1,3 +1,17 @@
-<ng-container *ngIf="currentMajorStep">
-  {{ currentMajorStep }}
+<ng-container [ngSwitch]="currentMajorStep">
+  <ng-container *ngSwitchCase="MajorSteps.Verification">
+    <app-verification-major-step></app-verification-major-step>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="MajorSteps.Preparation">
+    <app-preparation-major-step></app-preparation-major-step>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="MajorSteps.Execution">
+    <app-execution-major-step></app-execution-major-step>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="MajorSteps.Report">
+    <app-report-major-step></app-report-major-step>
+  </ng-container>
 </ng-container>

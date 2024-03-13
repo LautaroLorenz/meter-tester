@@ -19,6 +19,8 @@ export class MajorStepSwitchComponent implements OnChanges {
 
   currentMajorStep!: MajorSteps | undefined;
 
+  readonly MajorSteps = MajorSteps;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.marjorStepStatus.currentValue) {
       this.currentMajorStep = this.getCurrentMajorStep(
