@@ -1,0 +1,53 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem;
+
+  .step-index {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    line-height: 2.25rem;
+    border-radius: 50%;
+  }
+
+  .step-name {
+    color: var(--text-color-secondary);
+  }
+
+  &.current {
+    border-radius: var(--border-radius);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--primary-color);
+    font-weight: 500;
+
+    .step-index {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .step-name {
+      color: var(--text-color-primary);
+    }
+  }
+
+  &.done {
+    .step-index {
+      background-color: var(--green-300);
+      color: #ffffff;
+    }
+  }
+
+  &.pending {
+    .step-index {
+      background-color: var(--surface-200);
+      color: var(--surface-500);
+    }
+  }
+}

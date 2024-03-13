@@ -1,5 +1,5 @@
 export enum MajorSteps {
-  AdjustParams = 'AdjustParams',
+  Verification = 'Verification',
   Preparation = 'Preparation',
   Execution = 'Execution',
   Report = 'Report',

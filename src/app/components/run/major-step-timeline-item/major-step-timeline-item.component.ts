@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { MajorStepsMap } from '../../../models/business/constants/major-steps-constant.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
-import { StepStatusColorMap } from '../../../models/business/constants/step-status-color-constant.model';
 
 @Component({
   selector: 'app-major-step-timeline-item',
@@ -16,5 +15,16 @@ export class MajorStepTimelineItemComponent {
   @Input() status!: StepStatus;
 
   readonly MajorStepsMap = MajorStepsMap;
-  readonly StepStatusColorMap = StepStatusColorMap;
+
+  get isCurrent(): boolean {
+    return this.status === StepStatus.Current;
+  }
+
+  get isDone(): boolean {
+    return this.status === StepStatus.Done;
+  }
+
+  get isPending(): boolean {
+    return this.status === StepStatus.Pending;
+  }
 }
