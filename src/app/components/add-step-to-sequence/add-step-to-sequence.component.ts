@@ -7,7 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { Step } from '../../../models/business/database/step.model';
+import { Step } from '../../models/business/database/step.model';
 
 @Component({
   selector: 'app-add-step-to-sequence',

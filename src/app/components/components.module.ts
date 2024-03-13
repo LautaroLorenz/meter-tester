@@ -15,11 +15,11 @@ import { PreparationBuildFormComponent } from './steps/preparation/preparation-b
 import { ContrastTestBuildFormComponent } from './steps/contrast-test/contrast-test-build-form/contrast-test-build-form.component';
 import { VacuumTestBuildFormComponent } from './steps/vacuum-test/vacuum-test-build-form/vacuum-test-build-form.component';
 import { InputErrorComponent } from './input-error/input-error.component';
-import { AddStepToSequenceComponent } from './steps/add-step-to-sequence/add-step-to-sequence.component';
-import { StepsSequenceTableComponent } from './steps/steps-sequence-table/steps-sequence-table.component';
-import { EditStepInSequenceComponent } from './steps/edit-step-in-sequence/edit-step-in-sequence.component';
-import { MajorStepTimelineComponent } from './major-steps/major-step-timeline/major-step-timeline.component';
-import { MajorStepTimelineItemComponent } from './major-steps/major-step-timeline-item/major-step-timeline-item.component';
+import { AddStepToSequenceComponent } from './add-step-to-sequence/add-step-to-sequence.component';
+import { StepsSequenceTableComponent } from './steps-sequence-table/steps-sequence-table.component';
+import { EditStepInSequenceComponent } from './edit-step-in-sequence/edit-step-in-sequence.component';
+import { MajorStepTimelineComponent } from './major-step-timeline/major-step-timeline.component';
+import { MajorStepTimelineItemComponent } from './major-step-timeline-item/major-step-timeline-item.component';
 import { MajorStepSwitchComponent } from './major-steps/major-step-switch/major-step-switch.component';
 import { VerificationMajorStepComponent } from './major-steps/verification-major-step/verification-major-step.component';
 import { PreparationMajorStepComponent } from './major-steps/preparation-major-step/preparation-major-step.component';

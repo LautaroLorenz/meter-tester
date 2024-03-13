@@ -8,7 +8,7 @@ import {
 import {
   EssayTemplateStep,
   EssayTemplateStepTableColumns,
-} from '../../../models/business/database/essay-template-step.model';
+} from '../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-steps-sequence-table',
