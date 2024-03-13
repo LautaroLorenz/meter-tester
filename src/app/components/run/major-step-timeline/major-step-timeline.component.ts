@@ -10,9 +10,8 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MajorStepTimelineComponent {
-  @Input() currentMajorStepIndex!: number;
+  @Input() marjorStepStatus!: Record<MajorSteps, StepStatus>;
   @Input() essaySteps!: EssayStep[];
 
   readonly MajorSteps = MajorSteps;
-  readonly StepStatus = StepStatus;
 }

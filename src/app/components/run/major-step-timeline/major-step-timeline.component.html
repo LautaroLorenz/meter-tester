@@ -1,25 +1,25 @@
-<div class="flex flex-column">
+<div *ngIf="marjorStepStatus" class="flex flex-column">
   <app-major-step-timeline-item
     index="1"
     [majorStep]="MajorSteps.Verification"
-    [status]="StepStatus.Done"
+    [status]="marjorStepStatus[MajorSteps.Verification]"
   ></app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="2"
     [majorStep]="MajorSteps.Preparation"
-    [status]="StepStatus.Current"
+    [status]="marjorStepStatus[MajorSteps.Preparation]"
   ></app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="3"
     [majorStep]="MajorSteps.Execution"
-    [status]="StepStatus.Pending"
+    [status]="marjorStepStatus[MajorSteps.Execution]"
   ></app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="4"
     [majorStep]="MajorSteps.Report"
-    [status]="StepStatus.Pending"
+    [status]="marjorStepStatus[MajorSteps.Report]"
   ></app-major-step-timeline-item>
 </div>

@@ -41,7 +41,7 @@
     <div class="col col-2">
       <p-card styleClass="border-noround shadow-1">
         <app-major-step-timeline
-          [currentMajorStepIndex]="runEssayService.currentMajorStepIndex"
+          [marjorStepStatus]="runEssayService.marjorStepStatus"
           [essaySteps]="runEssayForm.get('essaySteps')?.getRawValue()"
         ></app-major-step-timeline>
       </p-card>

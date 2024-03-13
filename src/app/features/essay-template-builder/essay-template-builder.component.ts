@@ -61,7 +61,6 @@ export class EssayTemplateBuilderComponent
   readonly form: FormGroup;
   readonly saveButtonMenuItems: MenuItem[] = [];
 
-  private readonly stepsBuilder: StepsBuilder;
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
@@ -78,7 +77,6 @@ export class EssayTemplateBuilderComponent
     this.form = this.buildForm();
     this.saveButtonMenuItems = this.getSaveButtonMenuItems();
     this.id$ = this.getId$();
-    this.stepsBuilder = new StepsBuilder(fb);
   }
 
   get saveButtonDisabled(): boolean {
@@ -247,7 +245,11 @@ export class EssayTemplateBuilderComponent
   private addEssayTemplateStepControl(
     essayTemplateStep: EssayTemplateStep
   ): void {
-    this.stepsBuilder.buildTemplateStep(this.stepsFormArray, essayTemplateStep);
+    StepsBuilder.buildTemplateStep(
+      this.fb,
+      this.stepsFormArray,
+      essayTemplateStep
+    );
     this.recalculateEssayTemplateStepsOrder();
   }
 
@@ -292,7 +294,8 @@ export class EssayTemplateBuilderComponent
           essayTemplateSteps.sort((a, b) => a.order - b.order)
         ),
         tap((essayTemplateSteps) =>
-          this.stepsBuilder.buildTemplateSteps(
+          StepsBuilder.buildTemplateSteps(
+            this.fb,
             this.stepsFormArray,
             essayTemplateSteps
           )

@@ -27,16 +27,13 @@ import {
   EssayTemplateStepDbTableContext,
 } from '../../models/business/database/essay-template-step.model';
 import { RunEssayForm } from '../../models/business/interafces/run-essay.model';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import {
   FormatDateMode,
   FormatDatePipe,
 } from '../../pipes/core/fomat-date.pipe';
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { RelationsManager } from '../../models/core/relations-manager.model';
-import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
-import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
-import { EssayStep } from '../../models/business/interafces/essay-step.model';
 import { RunEssayService } from '../../services/run-essay.service';
 
 @Component({
@@ -52,7 +49,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
 
   private readonly formatDate = inject(FormatDatePipe);
   private readonly onDestroy = new Subject<void>();
-  private readonly stepsBuilder: StepsBuilder;
 
   // get stepControls(): FormArray<FormControl> {
   //   return (this.form.get('essayTemplateSteps') as FormArray);
@@ -82,7 +78,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   ) {
     this.id$ = this.getId$();
     this.runEssayForm = this.buildForm();
-    this.stepsBuilder = new StepsBuilder(fb);
   }
 
   // private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
@@ -173,13 +168,9 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         map((essayTemplateStep) =>
           essayTemplateStep.sort((a, b) => a.order - b.order)
         ),
+        tap(() => (this.runEssayService.runEssayForm = this.runEssayForm)),
         tap((essayTemplateSteps) =>
-          this.stepsBuilder.buildEssaySteps(
-            this.runEssayForm.get('essaySteps') as FormArray<
-              AbstractFormGroup<EssayStep>
-            >,
-            essayTemplateSteps
-          )
+          this.runEssayService.buildSteps(essayTemplateSteps)
         ),
         tap(() => this.runEssayService.reset())
       )

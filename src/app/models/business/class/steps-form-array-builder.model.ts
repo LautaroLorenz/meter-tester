@@ -10,51 +10,53 @@ import { StepFormBuilder } from './step-form-builder.model';
 import { Steps } from '../enums/steps.model';
 
 export class StepsBuilder {
-  private builder!: StepFormBuilder<EssayTemplateStep, EssayStep>;
+  private static builder: StepFormBuilder<EssayTemplateStep, EssayStep>;
 
-  constructor(private fb: FormBuilder) {}
-
-  buildTemplateSteps<T extends EssayTemplateStep>(
+  static buildTemplateSteps<T extends EssayTemplateStep>(
+    fb: FormBuilder,
     formArray: FormArray<AbstractFormGroup<T>>,
     steps: T[]
   ): void {
     formArray.clear();
     steps.forEach((templateStep) =>
-      this.buildTemplateStep(formArray, templateStep)
+      this.buildTemplateStep(fb, formArray, templateStep)
     );
   }
 
-  buildTemplateStep<T extends EssayTemplateStep>(
+  static buildTemplateStep<T extends EssayTemplateStep>(
+    fb: FormBuilder,
     formArray: FormArray<AbstractFormGroup<T>>,
     templateStep: T
   ): void {
     this.setBuilder(templateStep.step_id);
-    this.builder.build(this.fb);
+    this.builder.build(fb);
     this.builder.form.patchValue(templateStep);
     formArray.push(this.builder.form as AbstractFormGroup<T>);
   }
 
-  buildEssaySteps<T extends EssayStep, K extends EssayTemplateStep>(
+  static buildEssaySteps<T extends EssayStep, K extends EssayTemplateStep>(
+    fb: FormBuilder,
     formArray: FormArray<AbstractFormGroup<T>>,
     steps: K[]
   ): void {
     formArray.clear();
     steps.forEach((templateStep) =>
-      this.buildEssayStep(formArray, templateStep)
+      this.buildEssayStep(fb, formArray, templateStep)
     );
   }
 
-  buildEssayStep<T extends EssayStep, K extends EssayTemplateStep>(
+  static buildEssayStep<T extends EssayStep, K extends EssayTemplateStep>(
+    fb: FormBuilder,
     formArray: FormArray<AbstractFormGroup<T>>,
     templateStep: K
   ): void {
     this.setBuilder(templateStep.step_id);
-    this.builder.build(this.fb).withExecutionProps();
+    this.builder.build(fb).withExecutionProps();
     this.builder.form.patchValue(templateStep);
     formArray.push(this.builder.form as AbstractFormGroup<T>);
   }
 
-  private setBuilder(stepType: Steps): void {
+  private static setBuilder(stepType: Steps): void {
     let builderAny: any;
     switch (stepType) {
       case Steps.Preparation:
