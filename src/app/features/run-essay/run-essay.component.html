@@ -5,36 +5,6 @@
         {{ runEssayForm.get("essayName")?.value }}
       </div>
     </ng-container>
-    <!-- <ng-container toolbar-right>
-    <ng-container *ngIf="(executionStatus$ | async) as executionStatus">
-      <div class="mr-3">
-        <ng-container [ngSwitch]="executionStatus">
-          <ng-container *ngSwitchCase="'IN_PROGRESS'">
-            <ng-container *ngIf="activeAction$ | async as activeAction">
-              <p-button
-                label="Confirmar"
-                icon="pi pi-check"
-                styleClass="p-button-primary"
-                [disabled]="activeAction?.form?.invalid || false"
-                [ngClass]="{
-              'pointer-events-none': activeAction?.form?.invalid || false
-            }"
-                (click)="executeNext()"
-              ></p-button>
-            </ng-container>
-          </ng-container>
-          <ng-container *ngSwitchCase="'COMPLETED'">
-            <p-button
-              label="Ir al historial"
-              icon="pi pi-check"
-              styleClass="p-button-success"
-              (click)="goToHistory()"
-            ></p-button>
-          </ng-container>
-        </ng-container>
-      </div>
-    </ng-container>
-  </ng-container> -->
   </app-page-title>
 
   <div class="grid grid-nogutter">
@@ -48,48 +18,9 @@
     </div>
 
     <div class="col col-10">
-      <pre>
-        {{ runEssay | json }}
-      </pre>
+      <app-major-step-switch
+        [marjorStepStatus]="runEssayService.marjorStepStatus"
+      ></app-major-step-switch>
     </div>
   </div>
-
-  <!-- <app-fill-available-space class="flex justify-content-evenly">
-
-  <div class="flex flex-column pt-4 pl-3 w-4">
-    <ng-container *ngIf="stepBuilders.length; else noStepsTemplate">
-      <app-step-execution-status-list
-        [steps]="stepBuilders"
-        [activeStepIndex]="activeStepIndex$ | async"
-        [activeActionIndex]="activeActionIndex$ | async"
-      >
-      </app-step-execution-status-list>
-    </ng-container>
-    <ng-template #noStepsTemplate>
-      <p-message
-        severity="warn"
-        text="Primero debe modificar el template agregando pasos para ejecutar."
-      ></p-message>
-    </ng-template>
-  </div>
-
-  <p-divider layout="vertical"></p-divider>
-
-  <div class="flex flex-column w-8 overflow-auto py-3 mb-4 pr-3">
-    <ng-container *ngIf="activeAction$ | async as activeAction">
-      <app-action-switch-list [actions]="[activeAction]">
-      </app-action-switch-list>
-    </ng-container>
-
-    <ng-container *ngIf="(executionStatus$ | async) === 'COMPLETED'">
-      <div class="h-30rem flex justify-content-center align-items-center">
-        <p-message
-          severity="success"
-          text="Ensayo completado correctamente, ya puede salir."
-        ></p-message>
-      </div>
-    </ng-container>
-  </div>
-
-</app-fill-available-space> -->
 </ng-container>

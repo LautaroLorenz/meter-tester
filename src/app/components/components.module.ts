@@ -20,6 +20,7 @@ import { StepsSequenceTableComponent } from './steps/steps-sequence-table/steps-
 import { EditStepInSequenceComponent } from './steps/edit-step-in-sequence/edit-step-in-sequence.component';
 import { MajorStepTimelineComponent } from './run/major-step-timeline/major-step-timeline.component';
 import { MajorStepTimelineItemComponent } from './run/major-step-timeline-item/major-step-timeline-item.component';
+import { MajorStepSwitchComponent } from './run/major-step-switch/major-step-switch.component';
 
 // TODO revisar que no quede ninguno sin agregar
 // import { DirectivesModule } from '../directives/directives.module';
@@ -70,6 +71,7 @@ const AppComponents = [
   EditStepInSequenceComponent,
   MajorStepTimelineComponent,
   MajorStepTimelineItemComponent,
+  MajorStepSwitchComponent,
 ];
 
 @NgModule({

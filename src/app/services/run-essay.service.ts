@@ -29,6 +29,7 @@ export class RunEssayService {
   }
 
   reset(): void {
+    // TODO resetear los resultados y los stados de los pasos
     this.marjorStepStatus = MajorStepsDirector.getStatus(
       this.runEssayForm.getRawValue().essaySteps as EssayStep[]
     );
