@@ -7,10 +7,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 import { EssayStep } from '../essay-step.model';
 import { StandResult } from '../stand-result.model';
-import { VerifiedStatus } from '../../enums/verified-status.model';
-import { ExecutedStatus } from '../../enums/executed-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { ResultStatus } from '../../enums/result-status.model';
+import { StepStatus } from '../../enums/step-status.model';
 
 export interface BootTestFormControlRaw {
   name: string;
@@ -165,8 +164,8 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<
 
     this.form = this.fb.nonNullable.group({
       ...typedForm.controls,
-      verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
-      executedStatus: [ExecutedStatus.Pending, Validators.required.bind(this)],
+      verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
+      executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
       standResults: this.fb.nonNullable.array(
         this.buildStandResultsArray(APP_CONFIG.standsQuantiy)
       ),

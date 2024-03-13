@@ -37,6 +37,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { TerminalModule } from 'primeng/terminal';
 import { NgModule } from '@angular/core';
 import { ListboxModule } from 'primeng/listbox';
+import { BadgeModule } from 'primeng/badge';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -75,6 +76,7 @@ const PrimeNgModules = [
   FileUploadModule,
   TerminalModule,
   ListboxModule,
+  BadgeModule
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

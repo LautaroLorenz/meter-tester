@@ -6,7 +6,7 @@ import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 import { EssayStep } from '../essay-step.model';
-import { VerifiedStatus } from '../../enums/verified-status.model';
+import { StepStatus } from '../../enums/step-status.model';
 
 export type PreparationFormControlRaw = Stand[];
 
@@ -48,7 +48,7 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
 
     this.form = this.fb.nonNullable.group({
       ...typedForm.controls,
-      verifiedStatus: [VerifiedStatus.Pending, Validators.required.bind(this)],
+      verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
     }) as AbstractFormGroup<PreparationEssayStep>;
 
     return this;

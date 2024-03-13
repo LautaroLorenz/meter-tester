@@ -1,1 +1,25 @@
-<p>major-step-timeline works!</p>
+<div class="flex flex-column gap-3">
+  <app-major-step-timeline-item
+    index="1"
+    [majorStep]="MajorSteps.AdjustParams"
+    [status]="StepStatus.Done"
+  ></app-major-step-timeline-item>
+
+  <app-major-step-timeline-item
+    index="2"
+    [majorStep]="MajorSteps.Preparation"
+    [status]="StepStatus.Current"
+  ></app-major-step-timeline-item>
+
+  <app-major-step-timeline-item
+    index="3"
+    [majorStep]="MajorSteps.Execution"
+    [status]="StepStatus.Pending"
+  ></app-major-step-timeline-item>
+
+  <app-major-step-timeline-item
+    index="4"
+    [majorStep]="MajorSteps.Report"
+    [status]="StepStatus.Pending"
+  ></app-major-step-timeline-item>
+</div>

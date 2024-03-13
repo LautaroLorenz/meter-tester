@@ -37,6 +37,7 @@ import { RelationsManager } from '../../models/core/relations-manager.model';
 import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
 import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
 import { EssayStep } from '../../models/business/interafces/essay-step.model';
+import { RunEssayService } from '../../services/run-essay.service';
 
 @Component({
   selector: 'app-run-essay',
@@ -76,7 +77,8 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     //   private readonly executionDirectorService: ExecutionDirector,
     //   private readonly staticsService: StaticsService,
-    private readonly navigationService: NavigationService
+    private readonly navigationService: NavigationService,
+    public readonly runEssayService: RunEssayService
   ) {
     this.id$ = this.getId$();
     this.runEssayForm = this.buildForm();
@@ -91,14 +93,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   //     newStep.form.patchValue(essayTemplateStep.actions_raw_data);
   //     this.stepBuilders.push(newStep);
   //   });
-  // }
-
-  // TODO setear los valores de los steps, iniciar la ejecución en el paso de verificación.
-  // private initExecution(): void {
-  //   this.executionDirectorService.reportName = this.form.get('essayTemplate')?.value.name;
-  //   this.executionDirectorService.steps = this.stepBuilders;
-  //   this.executionDirectorService.prepareStepsToExecute();
-  //   this.executionDirectorService.executeNext();
   // }
 
   ngOnInit(): void {
@@ -187,15 +181,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
             essayTemplateSteps
           )
         ),
-        // TODO agregar los pasos de ajuste de fotocelulas
-        // TODO inicializar los results que no aplican
-
-        //   tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
-        //   tap(() => this.initExecution()),
-        // ).subscribe();
-        // this.executionStatus$.pipe(
-        //   takeUntil(this.destroyed$),
-        //   filter(status => status === 'COMPLETED'),
+        tap(() => this.runEssayService.reset())
       )
       .subscribe();
   }

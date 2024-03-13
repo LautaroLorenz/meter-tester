@@ -1,10 +1,9 @@
 import { EssayTemplateStep } from '../database/essay-template-step.model';
-import { ExecutedStatus } from '../enums/executed-status.model';
-import { VerifiedStatus } from '../enums/verified-status.model';
+import { StepStatus } from '../enums/step-status.model';
 import { StandResult } from './stand-result.model';
 
 export interface EssayStep extends EssayTemplateStep {
-  verifiedStatus: VerifiedStatus;
-  executedStatus: ExecutedStatus;
+  verifiedStatus: StepStatus;
+  executedStatus: StepStatus;
   standResults: StandResult[];
 }
