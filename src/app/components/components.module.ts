@@ -7,7 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MenuComponent } from './menu/menu.component';
-import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 import { BootTestBuildFormComponent } from './steps/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
@@ -33,7 +32,6 @@ const AppComponents = [
   AbmComponent,
   ConfirmDialogComponent,
   MenuComponent,
-  TabMenuTestComponent,
   ValidatorMessagesComponent,
   BootTestBuildFormComponent,
   PhaseFormGroupComponent,
