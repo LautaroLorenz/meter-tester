@@ -54,7 +54,8 @@ export class VerificationMajorStepComponent implements OnChanges {
   verifyStep(essayStep: EssayStep): void {
     this.runEssayService
       .getEssayStep(essayStep.id)
-      .controls.verifiedStatus.setValue(StepStatus.Done as unknown as never);
+      .get('verifiedStatus')
+      ?.setValue(StepStatus.Done);
   }
 
   continue(): void {
