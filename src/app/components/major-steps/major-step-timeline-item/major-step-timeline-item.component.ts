@@ -18,7 +18,7 @@ export class MajorStepTimelineItemComponent {
   @Input() index!: string;
   @Input() majorStep!: MajorSteps;
   @Input() status!: StepStatus;
-  @Input() contentTemplate: TemplateRef<any> | undefined;
+  @Input() bodyTemplate: TemplateRef<any> | undefined;
 
   readonly MajorStepsMap = MajorStepsMap;
 

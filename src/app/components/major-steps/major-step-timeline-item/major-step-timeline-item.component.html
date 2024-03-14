@@ -3,7 +3,9 @@
   [ngClass]="{
     current: isCurrent,
     done: isDone,
-    pending: isPending
+    pending: isPending,
+    'head-border-top': !!bodyTemplate,
+    'head-border-all': !bodyTemplate
   }"
 >
   <div class="step-index">
@@ -17,3 +19,9 @@
 
   <span class="step-name text-sm">{{ MajorStepsMap[majorStep] }}</span>
 </div>
+
+<ng-container *ngIf="bodyTemplate && isCurrent">
+  <div class="body">
+    <ng-container *ngTemplateOutlet="bodyTemplate"></ng-container>
+  </div>
+</ng-container>

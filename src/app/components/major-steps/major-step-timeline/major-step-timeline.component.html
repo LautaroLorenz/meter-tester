@@ -3,23 +3,31 @@
     index="1"
     [majorStep]="MajorSteps.Verification"
     [status]="marjorStepStatus[MajorSteps.Verification]"
-  ></app-major-step-timeline-item>
+    [bodyTemplate]="bodyTemplate"
+  >
+    <ng-template #bodyTemplate> 
+      
+    </ng-template>
+  </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="2"
     [majorStep]="MajorSteps.Preparation"
     [status]="marjorStepStatus[MajorSteps.Preparation]"
-  ></app-major-step-timeline-item>
+  >
+  </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="3"
     [majorStep]="MajorSteps.Execution"
     [status]="marjorStepStatus[MajorSteps.Execution]"
-  ></app-major-step-timeline-item>
+  >
+  </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="4"
     [majorStep]="MajorSteps.Report"
     [status]="marjorStepStatus[MajorSteps.Report]"
-  ></app-major-step-timeline-item>
+  >
+  </app-major-step-timeline-item>
 </div>
