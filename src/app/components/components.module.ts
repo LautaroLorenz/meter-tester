@@ -25,6 +25,7 @@ import { VerificationMajorStepComponent } from './major-steps/verification-major
 import { PreparationMajorStepComponent } from './major-steps/preparation-major-step/preparation-major-step.component';
 import { ExecutionMajorStepComponent } from './major-steps/execution-major-step/execution-major-step.component';
 import { ReportMajorStepComponent } from './major-steps/report-major-step/report-major-step.component';
+import { StepTimelineComponent } from './step-timeline/step-timeline.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -49,6 +50,7 @@ const AppComponents = [
   PreparationMajorStepComponent,
   ExecutionMajorStepComponent,
   ReportMajorStepComponent,
+  StepTimelineComponent,
 ];
 
 @NgModule({
