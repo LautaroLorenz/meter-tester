@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { MajorSteps } from '../../../models/business/enums/major-steps.model';
-import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { EssayStep } from '../../models/business/interafces/essay-step.model';
+import { MajorSteps } from '../../models/business/enums/major-steps.model';
+import { StepStatus } from '../../models/business/enums/step-status.model';
 
 @Component({
   selector: 'app-major-step-timeline',
