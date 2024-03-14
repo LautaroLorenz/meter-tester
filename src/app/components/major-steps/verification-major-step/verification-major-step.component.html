@@ -4,7 +4,15 @@
     [actionsTemplate]="actionsTemplate"
   >
     <ng-template #actionsTemplate let-element="element">
-      <!-- TODO boton para verificar -->
+      <button
+        pButton
+        class="p-button-outlined"
+        [disabled]="element.verifiedStatus === StepStatus.Done"
+        (click)="setSelectedStep(element)"
+      >
+        <i class="pi pi-file-edit"></i>
+        <span class="ml-2">Ajustar parámetros</span>
+      </button>
     </ng-template>
   </app-steps-sequence-table>
 </div>
@@ -14,7 +22,7 @@
     icon="pi pi-check"
     [outlined]="true"
     [disabled]="isVerificationDone"
-    (click)="verifyAll()"
+    (click)="markVerifiedAll()"
   ></p-button>
 
   <p-button
@@ -24,3 +32,14 @@
     (click)="continue()"
   ></p-button>
 </div>
+
+<!-- TODO dentro del díalog se podría implementar un "switch" de los steps para build y un switch
+          distinto para lo que es construir los steps para verificación. (acá se resuelve la prop nombre como requerida)
+-->
+<!-- TODO La propiedad nombre debe ser requerida -->
+<!-- TODO El componente debe permitir "Verficar" aunque no se hagan cambios -->
+<app-edit-step-in-sequence
+  [essayTemplateStep]="selectedEssayStep"
+  (dialogHide)="selectedEssayStep = undefined"
+  (essayTemplateStepChange)="saveEditedStepInSequenceChanges($event)"
+></app-edit-step-in-sequence>

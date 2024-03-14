@@ -21,6 +21,9 @@ export class VerificationMajorStepComponent implements OnChanges {
   @Input() essaySteps!: EssayStep[];
 
   verificationSteps!: EssayStep[];
+  selectedEssayStep: EssayStep | undefined;
+
+  readonly StepStatus = StepStatus;
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
@@ -44,14 +47,35 @@ export class VerificationMajorStepComponent implements OnChanges {
     }
   }
 
-  verifyAll(): void {
+  setSelectedStep(essayStep: EssayStep): void {
+    console.log('selected');
+    this.selectedEssayStep = essayStep;
+  }
+
+  saveEditedStepInSequenceChanges(essayStep: Partial<EssayStep>): void {
+    // TODO guardar las modificaiones de las props y marcar como verificado.
+    // if (!this.selectedEssayTemplateStep) {
+    //   return;
+    // }
+    // if (typeof this.selectedEssayTemplateStep.order !== 'number') {
+    //   return;
+    // }
+    // this.stepsFormArray
+    //   .at(this.selectedEssayTemplateStep.order)
+    //   .patchValue(essayTemplateStep);
+    // this.stepsFormArray.markAsDirty();
+  }
+
+  markVerifiedAll(): void {
     if (this.isVerificationDone) {
       return;
     }
-    this.verificationSteps.forEach((essayStep) => this.verifyStep(essayStep));
+    this.verificationSteps.forEach((essayStep) =>
+      this.markVerifiedStep(essayStep)
+    );
   }
 
-  verifyStep(essayStep: EssayStep): void {
+  markVerifiedStep(essayStep: EssayStep): void {
     this.runEssayService
       .getEssayStep(essayStep.id)
       .get('verifiedStatus')
