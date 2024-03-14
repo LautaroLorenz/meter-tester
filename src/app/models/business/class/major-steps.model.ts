@@ -28,7 +28,9 @@ export class MajorStepsDirector {
     }
   }
 
-  static getMajorStepStatusMap(essaySteps: EssayStep[]): Record<MajorSteps, StepStatus> {
+  static getMajorStepStatusMap(
+    essaySteps: EssayStep[]
+  ): Record<MajorSteps, StepStatus> {
     const isVerificationDone: boolean = this.stepsByMajorStep(
       essaySteps,
       MajorSteps.Verification

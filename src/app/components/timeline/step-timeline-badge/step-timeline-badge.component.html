@@ -1,1 +1,23 @@
-<p>step-timeline-badge works!</p>
+<div
+  class="badge"
+  [ngClass]="{
+    pending: isPending,
+    current: isCurrent,
+    done: isDone
+  }"
+  [ngStyle]="{
+    'font-size': sizeConfig.fontSize,
+    'min-width':  sizeConfig.size,
+    'height': sizeConfig.size,
+    'line-height': sizeConfig.size,
+  }"
+>
+  <ng-container *ngIf="!isDone; else doneTmp">
+    <ng-container *ngIf="index !== undefined">
+      <span class="badge-index">{{ index }}</span>
+    </ng-container>
+  </ng-container>
+  <ng-template #doneTmp>
+    <i class="pi pi-check"></i>
+  </ng-template>
+</div>

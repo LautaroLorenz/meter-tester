@@ -1,4 +1,4 @@
-<div *ngIf="majorStepStatusMap" class="flex flex-column">
+<div *ngIf="majorStepStatusMap" class="flex flex-column gap-3">
   <app-major-step-timeline-item
     index="1"
     [majorStep]="MajorSteps.Verification"
@@ -6,7 +6,11 @@
     [bodyTemplate]="bodyTemplate"
   >
     <ng-template #bodyTemplate>
-      <app-step-timeline [essaySteps]="verificationSteps"></app-step-timeline>
+      <app-step-timeline
+        [withIndex]="false"
+        [essaySteps]="verificationSteps"
+        statusProp="verifiedStatus"
+      ></app-step-timeline>
     </ng-template>
   </app-major-step-timeline-item>
 
@@ -21,7 +25,15 @@
     index="3"
     [majorStep]="MajorSteps.Execution"
     [status]="majorStepStatusMap[MajorSteps.Execution]"
+    [bodyTemplate]="bodyTemplate"
   >
+    <ng-template #bodyTemplate>
+      <app-step-timeline
+        [withIndex]="true"
+        [essaySteps]="executionSteps"
+        statusProp="executedStatus"
+      ></app-step-timeline>
+    </ng-template>
   </app-major-step-timeline-item>
 
   <app-major-step-timeline-item

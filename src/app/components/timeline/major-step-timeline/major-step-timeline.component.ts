@@ -23,6 +23,7 @@ export class MajorStepTimelineComponent implements OnChanges {
   readonly MajorSteps = MajorSteps;
 
   verificationSteps!: EssayStep[];
+  executionSteps!: EssayStep[];
   preparationStep!: EssayStep;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -30,6 +31,14 @@ export class MajorStepTimelineComponent implements OnChanges {
       this.verificationSteps = MajorStepsDirector.stepsByMajorStep(
         changes.essaySteps.currentValue as EssayStep[],
         MajorSteps.Verification
+      );
+      this.preparationStep = MajorStepsDirector.stepsByMajorStep(
+        changes.essaySteps.currentValue as EssayStep[],
+        MajorSteps.Preparation
+      )?.[0];
+      this.executionSteps = MajorStepsDirector.stepsByMajorStep(
+        changes.essaySteps.currentValue as EssayStep[],
+        MajorSteps.Execution
       );
     }
   }

@@ -8,5 +8,7 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepTimelineComponent {
+  @Input() withIndex!: boolean;
   @Input() essaySteps!: EssayStep[];
+  @Input() statusProp!: keyof EssayStep;
 }

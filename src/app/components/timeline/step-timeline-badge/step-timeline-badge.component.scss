@@ -1,0 +1,21 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  &.current {
+    background-color: var(--primary-color);
+    color: #ffffff;
+  }
+
+  &.done {
+    background-color: var(--green-300);
+    color: #ffffff;
+  }
+
+  &.pending {
+    background-color: var(--surface-200);
+    color: var(--surface-500);
+  }
+}

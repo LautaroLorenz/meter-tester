@@ -1,6 +1,13 @@
-<div class="flex flex-column gap-1">
-  <div *ngFor="let essayStep of essaySteps">
-    <!-- TODO timeline icon -->
+<div class="flex flex-column gap-3">
+  <div
+    *ngFor="let essayStep of essaySteps; let index = index"
+    class="flex gap-2 align-items-center"
+  >
+    <app-step-timeline-badge
+      [index]="withIndex ? index + 1 : undefined"
+      [status]="essayStep[statusProp]"
+      size="small"
+    ></app-step-timeline-badge>
     <span class="text-xs">{{ essayStep.form_control_raw?.name }}</span>
   </div>
 </div>

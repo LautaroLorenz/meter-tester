@@ -8,15 +8,11 @@
     'head-border-all': !bodyTemplate
   }"
 >
-  <div class="step-index">
-    <ng-container *ngIf="!isDone; else doneTmp">
-      <span class="step-index-text">{{ index }}</span>
-    </ng-container>
-    <ng-template #doneTmp>
-      <i class="pi pi-check"></i>
-    </ng-template>
-  </div>
-
+  <app-step-timeline-badge
+    [index]="index"
+    [status]="status"
+    size="large"
+  ></app-step-timeline-badge>
   <span class="step-name text-sm">{{ MajorStepsMap[majorStep] }}</span>
 </div>
 
