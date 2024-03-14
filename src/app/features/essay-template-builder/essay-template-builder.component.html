@@ -61,11 +61,55 @@
 
   <app-steps-sequence-table
     [essayTemplateSteps]="stepsSequenceTable"
-    (moveDownStep)="moveDownByIndex($event)"
-    (moveUpStep)="moveUpByIndex($event)"
-    (editStep)="selectedEssayTemplateStep = $event"
-    (deleteStep)="deleteEssayTemplateStepControl($event)"
-  ></app-steps-sequence-table>
+    [actionsTemplate]="actionsTemplate"
+  >
+    <ng-template #actionsTemplate let-element="element">
+      <p-button
+        icon="pi pi-arrow-down"
+        [outlined]="true"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Bajar orden de ejecución"
+        tooltipPosition="bottom"
+        [showDelay]="1250"
+        [disabled]="element.order === stepsSequenceTable.length"
+        [tooltipDisabled]="element.order === stepsSequenceTable.length"
+        (click)="moveDownByIndex(element.order)"
+      ></p-button>
+
+      <p-button
+        icon="pi pi-arrow-up"
+        [outlined]="true"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Subir orden de ejecución"
+        tooltipPosition="bottom"
+        [showDelay]="1250"
+        [disabled]="element.order === 1"
+        [tooltipDisabled]="element.order === 1"
+        (click)="moveUpByIndex(element.order)"
+      ></p-button>
+
+      <button
+        pButton
+        pRipple
+        icon="pi pi-file-edit"
+        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+        pTooltip="Ajustar parámetros"
+        tooltipPosition="bottom"
+        (click)="selectedEssayTemplateStep = element"
+      ></button>
+
+      <button
+        pButton
+        pRipple
+        icon="pi pi-trash"
+        class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+        pTooltip="Remover paso"
+        (click)="deleteEssayTemplateStepControl(element.order)"
+      ></button>
+    </ng-template>
+  </app-steps-sequence-table>
 </form>
 
 <ng-container *ngIf="steps">

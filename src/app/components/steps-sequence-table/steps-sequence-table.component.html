@@ -7,55 +7,10 @@
   [deleteButton]="false"
   actionColumnStyleClass="w-16rem"
 >
-  <ng-template
-    #tableColumnButtonsTemplate
-    let-element="element"
-  >
-    <p-button
-      icon="pi pi-arrow-down"
-      [outlined]="true"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Bajar orden de ejecución"
-      tooltipPosition="bottom"
-      [showDelay]="1250"
-      [disabled]="element.order === essayTemplateSteps.length"
-      [tooltipDisabled]="element.order === essayTemplateSteps.length"
-      (click)="moveDownStep.emit(element.order)"
-    ></p-button>
-
-    <p-button
-      icon="pi pi-arrow-up"
-      [outlined]="true"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Subir orden de ejecución"
-      tooltipPosition="bottom"
-      [showDelay]="1250"
-      [disabled]="element.order === 1"
-      [tooltipDisabled]="element.order === 1"
-      (click)="moveUpStep.emit(element.order)"
-    ></p-button>
-
-    <button
-      pButton
-      pRipple
-      icon="pi pi-file-edit"
-      class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-      pTooltip="Ajustar parámetros"
-      tooltipPosition="bottom"
-      (click)="
-        editStep.emit(element)
-      "
-    ></button>
-
-    <button
-      pButton
-      pRipple
-      icon="pi pi-trash"
-      class="p-button-outlined p-button-rounded p-button-text p-button-danger"
-      pTooltip="Remover paso"
-      (click)="deleteStep.emit(element.order)"
-    ></button>
+  <ng-template #tableColumnButtonsTemplate let-element="element">
+    <ng-container
+      [ngTemplateOutlet]="actionsTemplate"
+      [ngTemplateOutletContext]="{ element }"
+    ></ng-container>
   </ng-template>
 </app-abm>

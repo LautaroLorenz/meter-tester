@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="currentMajorStep">
   <ng-container *ngSwitchCase="MajorSteps.Verification">
-    <app-verification-major-step></app-verification-major-step>
+    <app-verification-major-step [essaySteps]="essaySteps"></app-verification-major-step>
   </ng-container>
 
   <ng-container *ngSwitchCase="MajorSteps.Preparation">

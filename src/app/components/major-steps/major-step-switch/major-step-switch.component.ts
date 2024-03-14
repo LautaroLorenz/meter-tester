@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 
 @Component({
   selector: 'app-major-step-switch',
@@ -16,13 +17,14 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
 })
 export class MajorStepSwitchComponent implements OnChanges {
   @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus>;
+  @Input() essaySteps!: EssayStep[];
 
   currentMajorStep!: MajorSteps | undefined;
 
   readonly MajorSteps = MajorSteps;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.majorStepStatusMap.currentValue) {
+    if (changes.majorStepStatusMap?.currentValue) {
       this.currentMajorStep = this.getCurrentMajorStep(
         changes.majorStepStatusMap.currentValue as Record<
           MajorSteps,

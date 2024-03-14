@@ -18,6 +18,11 @@
     </ng-container>
   </ng-container>
   <ng-template #doneTmp>
-    <i class="pi pi-check"></i>
+    <i
+      class="pi pi-check"
+      [ngStyle]="{
+        'font-size': sizeConfig.fontSize
+      }"
+    ></i>
   </ng-template>
 </div>

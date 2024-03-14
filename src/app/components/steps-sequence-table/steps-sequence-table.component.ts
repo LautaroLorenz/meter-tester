@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
-  Output,
+  TemplateRef,
 } from '@angular/core';
 import {
   EssayTemplateStep,
@@ -18,11 +17,7 @@ import {
 })
 export class StepsSequenceTableComponent {
   @Input() essayTemplateSteps!: EssayTemplateStep[];
-
-  @Output() moveDownStep = new EventEmitter<number>();
-  @Output() moveUpStep = new EventEmitter<number>();
-  @Output() editStep = new EventEmitter<EssayTemplateStep>();
-  @Output() deleteStep = new EventEmitter<number>();
+  @Input() actionsTemplate!: TemplateRef<any>;
 
   readonly EssayTemplateStepTableColumns = EssayTemplateStepTableColumns;
 }

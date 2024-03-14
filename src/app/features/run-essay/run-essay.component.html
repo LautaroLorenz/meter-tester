@@ -20,6 +20,7 @@
     <div class="col col-10">
       <app-major-step-switch
         [majorStepStatusMap]="runEssayService.majorStepStatusMap"
+        [essaySteps]="runEssayForm.get('essaySteps')?.getRawValue()"
       ></app-major-step-switch>
     </div>
   </div>

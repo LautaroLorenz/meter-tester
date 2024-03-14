@@ -56,11 +56,7 @@ export class RunEssayService {
         !essayStep.form_control_raw.name &&
         essayStep.foreign.step?.name
       ) {
-        const stepIndex = essaySteps?.findIndex(
-          ({ id }) => essayStep.id === id
-        );
-        this.essaySteps
-          .at(stepIndex)
+        this.getEssayStep(essayStep.id)
           .get('form_control_raw.name')
           ?.setValue(essayStep.foreign.step.name);
       }
@@ -72,5 +68,12 @@ export class RunEssayService {
     this.majorStepStatusMap = MajorStepsDirector.getMajorStepStatusMap(
       this.runEssayForm.getRawValue().essaySteps as EssayStep[]
     );
+  }
+
+  getEssayStep(essayStepId: number): AbstractFormGroup<EssayStep> {
+    const essaySteps = this.runEssayForm.getRawValue()
+      .essaySteps as EssayStep[];
+    const stepIndex = essaySteps?.findIndex(({ id }) => essayStepId === id);
+    return this.essaySteps.at(stepIndex);
   }
 }

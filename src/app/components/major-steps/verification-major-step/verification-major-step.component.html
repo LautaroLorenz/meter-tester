@@ -1,1 +1,26 @@
-<p>verification-major-step works!</p>
+<div class="px-4 pt-6">
+  <app-steps-sequence-table
+    [essayTemplateSteps]="verificationSteps"
+    [actionsTemplate]="actionsTemplate"
+  >
+    <ng-template #actionsTemplate let-element="element">
+      <!-- TODO boton para verificar -->
+    </ng-template>
+  </app-steps-sequence-table>
+</div>
+<div class="flex justify-content-end pr-6 mt-4 gap-3">
+  <p-button
+    label="Verificar todos"
+    icon="pi pi-check"
+    [outlined]="true"
+    [disabled]="isVerificationDone"
+    (click)="verifyAll()"
+  ></p-button>
+
+  <p-button
+    label="Continuar"
+    [outlined]="false"
+    [disabled]="!isVerificationDone"
+    (click)="continue()"
+  ></p-button>
+</div>
