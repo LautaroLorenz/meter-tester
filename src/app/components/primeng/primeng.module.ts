@@ -39,6 +39,7 @@ import { NgModule } from '@angular/core';
 import { ListboxModule } from 'primeng/listbox';
 import { BadgeModule } from 'primeng/badge';
 import { AccordionModule } from 'primeng/accordion';
+import { TimelineModule } from 'primeng/timeline';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -78,7 +79,8 @@ const PrimeNgModules = [
   TerminalModule,
   ListboxModule,
   BadgeModule,
-  AccordionModule
+  AccordionModule,
+  TimelineModule,
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

@@ -4,36 +4,64 @@ import { Steps } from '../enums/steps.model';
 import { EssayStep } from '../interafces/essay-step.model';
 
 export class MajorStepsDirector {
-  static getStatus(essaySteps: EssayStep[]): Record<MajorSteps, StepStatus> {
-    const isVerificationDone: boolean = essaySteps.every(
-      ({ verifiedStatus, step_id }) =>
-        verifiedStatus === StepStatus.Done && step_id !== Steps.Preparation
-    );
+  static stepsByMajorStep(
+    essaySteps: EssayStep[],
+    majorStep: MajorSteps
+  ): EssayStep[] {
+    switch (majorStep) {
+      case MajorSteps.Verification:
+        return essaySteps.filter(
+          (essayStep) =>
+            'verifiedStatus' in essayStep &&
+            essayStep.step_id !== Steps.Preparation
+        );
+      case MajorSteps.Preparation:
+        return essaySteps.filter(
+          (essayStep) =>
+            'verifiedStatus' in essayStep &&
+            essayStep.step_id === Steps.Preparation
+        );
+      case MajorSteps.Execution:
+        return essaySteps.filter((essayStep) => 'executedStatus' in essayStep);
+      case MajorSteps.Report:
+        return essaySteps;
+    }
+  }
 
-    const isPreparationDone: boolean = essaySteps.every(
-      ({ verifiedStatus, step_id }) =>
-        verifiedStatus === StepStatus.Done && step_id === Steps.Preparation
-    );
+  static getMajorStepStatusMap(essaySteps: EssayStep[]): Record<MajorSteps, StepStatus> {
+    const isVerificationDone: boolean = this.stepsByMajorStep(
+      essaySteps,
+      MajorSteps.Verification
+    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
 
-    const isExecutedDone: boolean = essaySteps.every(
-      ({ executedStatus }) => executedStatus === StepStatus.Done
-    );
+    const isPreparationDone: boolean = this.stepsByMajorStep(
+      essaySteps,
+      MajorSteps.Preparation
+    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
+
+    const isExecutedDone: boolean = this.stepsByMajorStep(
+      essaySteps,
+      MajorSteps.Execution
+    ).every(({ executedStatus }) => executedStatus === StepStatus.Done);
 
     return {
-      [MajorSteps.Verification]: this.getStepStatus(true, isVerificationDone),
-      [MajorSteps.Preparation]: this.getStepStatus(
+      [MajorSteps.Verification]: this.getMajorStepStatus(
+        true,
+        isVerificationDone
+      ),
+      [MajorSteps.Preparation]: this.getMajorStepStatus(
         isVerificationDone,
         isPreparationDone
       ),
-      [MajorSteps.Execution]: this.getStepStatus(
+      [MajorSteps.Execution]: this.getMajorStepStatus(
         isPreparationDone,
         isExecutedDone
       ),
-      [MajorSteps.Report]: this.getStepStatus(isExecutedDone, false),
+      [MajorSteps.Report]: this.getMajorStepStatus(isExecutedDone, false),
     };
   }
 
-  private static getStepStatus(
+  private static getMajorStepStatus(
     isPreviousStepDone: boolean,
     isDone: boolean
   ): StepStatus {

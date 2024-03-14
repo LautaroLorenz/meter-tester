@@ -13,10 +13,23 @@ import { EssayTemplateStep } from '../models/business/database/essay-template-st
   providedIn: 'root',
 })
 export class RunEssayService {
-  marjorStepStatus!: Record<MajorSteps, StepStatus>;
-  runEssayForm!: RunEssayForm;
+  majorStepStatusMap!: Record<MajorSteps, StepStatus>;
+
+  private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;
+  private _runEssayForm!: RunEssayForm;
 
   constructor(private readonly fb: FormBuilder) {}
+
+  get runEssayForm(): RunEssayForm {
+    return this._runEssayForm;
+  }
+
+  set runEssayForm(value: RunEssayForm) {
+    this.essaySteps = value.get('essaySteps') as FormArray<
+      AbstractFormGroup<EssayStep>
+    >;
+    this._runEssayForm = value;
+  }
 
   buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
     StepsBuilder.buildEssaySteps(
@@ -28,9 +41,35 @@ export class RunEssayService {
     );
   }
 
+  inferOptionalStepsProps(): void {
+    const essaySteps = this.runEssayForm.getRawValue()
+      .essaySteps as EssayStep[];
+    const verificationSteps = MajorStepsDirector.stepsByMajorStep(
+      essaySteps,
+      MajorSteps.Verification
+    );
+
+    // verificar si todos los steps tienen name y si no tienen asignarles uno.
+    verificationSteps.forEach((essayStep) => {
+      if (
+        'name' in essayStep.form_control_raw &&
+        !essayStep.form_control_raw.name &&
+        essayStep.foreign.step?.name
+      ) {
+        const stepIndex = essaySteps?.findIndex(
+          ({ id }) => essayStep.id === id
+        );
+        this.essaySteps
+          .at(stepIndex)
+          .get('form_control_raw.name')
+          ?.setValue(essayStep.foreign.step.name);
+      }
+    });
+  }
+
   reset(): void {
     // TODO resetear los resultados y los stados de los pasos
-    this.marjorStepStatus = MajorStepsDirector.getStatus(
+    this.majorStepStatusMap = MajorStepsDirector.getMajorStepStatusMap(
       this.runEssayForm.getRawValue().essaySteps as EssayStep[]
     );
   }

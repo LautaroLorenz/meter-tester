@@ -11,7 +11,7 @@
     <div class="col col-2">
       <p-card styleClass="border-noround shadow-1">
         <app-major-step-timeline
-          [marjorStepStatus]="runEssayService.marjorStepStatus"
+          [majorStepStatusMap]="runEssayService.majorStepStatusMap"
           [essaySteps]="runEssayForm.get('essaySteps')?.getRawValue()"
         ></app-major-step-timeline>
       </p-card>
@@ -19,7 +19,7 @@
 
     <div class="col col-10">
       <app-major-step-switch
-        [marjorStepStatus]="runEssayService.marjorStepStatus"
+        [majorStepStatusMap]="runEssayService.majorStepStatusMap"
       ></app-major-step-switch>
     </div>
   </div>

@@ -18,14 +18,15 @@ import { InputErrorComponent } from './input-error/input-error.component';
 import { AddStepToSequenceComponent } from './add-step-to-sequence/add-step-to-sequence.component';
 import { StepsSequenceTableComponent } from './steps-sequence-table/steps-sequence-table.component';
 import { EditStepInSequenceComponent } from './edit-step-in-sequence/edit-step-in-sequence.component';
-import { MajorStepTimelineComponent } from './major-step-timeline/major-step-timeline.component';
-import { MajorStepTimelineItemComponent } from './major-step-timeline-item/major-step-timeline-item.component';
+import { MajorStepTimelineComponent } from './timeline/major-step-timeline/major-step-timeline.component';
+import { MajorStepTimelineItemComponent } from './timeline/major-step-timeline-item/major-step-timeline-item.component';
 import { MajorStepSwitchComponent } from './major-steps/major-step-switch/major-step-switch.component';
 import { VerificationMajorStepComponent } from './major-steps/verification-major-step/verification-major-step.component';
 import { PreparationMajorStepComponent } from './major-steps/preparation-major-step/preparation-major-step.component';
 import { ExecutionMajorStepComponent } from './major-steps/execution-major-step/execution-major-step.component';
 import { ReportMajorStepComponent } from './major-steps/report-major-step/report-major-step.component';
-import { StepTimelineComponent } from './step-timeline/step-timeline.component';
+import { StepTimelineComponent } from './timeline/step-timeline/step-timeline.component';
+import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-timeline-badge.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -51,6 +52,7 @@ const AppComponents = [
   ExecutionMajorStepComponent,
   ReportMajorStepComponent,
   StepTimelineComponent,
+  StepTimelineBadgeComponent,
 ];
 
 @NgModule({

@@ -1,33 +1,33 @@
-<div *ngIf="marjorStepStatus" class="flex flex-column">
+<div *ngIf="majorStepStatusMap" class="flex flex-column">
   <app-major-step-timeline-item
     index="1"
     [majorStep]="MajorSteps.Verification"
-    [status]="marjorStepStatus[MajorSteps.Verification]"
+    [status]="majorStepStatusMap[MajorSteps.Verification]"
     [bodyTemplate]="bodyTemplate"
   >
-    <ng-template #bodyTemplate> 
-      <app-step-timeline></app-step-timeline>
+    <ng-template #bodyTemplate>
+      <app-step-timeline [essaySteps]="verificationSteps"></app-step-timeline>
     </ng-template>
   </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="2"
     [majorStep]="MajorSteps.Preparation"
-    [status]="marjorStepStatus[MajorSteps.Preparation]"
+    [status]="majorStepStatusMap[MajorSteps.Preparation]"
   >
   </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="3"
     [majorStep]="MajorSteps.Execution"
-    [status]="marjorStepStatus[MajorSteps.Execution]"
+    [status]="majorStepStatusMap[MajorSteps.Execution]"
   >
   </app-major-step-timeline-item>
 
   <app-major-step-timeline-item
     index="4"
     [majorStep]="MajorSteps.Report"
-    [status]="marjorStepStatus[MajorSteps.Report]"
+    [status]="majorStepStatusMap[MajorSteps.Report]"
   >
   </app-major-step-timeline-item>
 </div>

@@ -172,6 +172,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         tap((essayTemplateSteps) =>
           this.runEssayService.buildSteps(essayTemplateSteps)
         ),
+        tap(() => this.runEssayService.inferOptionalStepsProps()),
         tap(() => this.runEssayService.reset()),
         // TODO
         tap(() => console.log(this.runEssayForm.getRawValue().essaySteps))

@@ -4,9 +4,9 @@ import {
   Input,
   TemplateRef,
 } from '@angular/core';
-import { StepStatus } from '../../models/business/enums/step-status.model';
-import { MajorStepsMap } from '../../models/business/constants/major-steps-constant.model';
-import { MajorSteps } from '../../models/business/enums/major-steps.model';
+import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { MajorStepsMap } from '../../../models/business/constants/major-steps-constant.model';
+import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 
 @Component({
   selector: 'app-major-step-timeline-item',

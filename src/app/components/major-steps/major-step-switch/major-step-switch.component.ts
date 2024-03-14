@@ -15,25 +15,28 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MajorStepSwitchComponent implements OnChanges {
-  @Input() marjorStepStatus!: Record<MajorSteps, StepStatus>;
+  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus>;
 
   currentMajorStep!: MajorSteps | undefined;
 
   readonly MajorSteps = MajorSteps;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.marjorStepStatus.currentValue) {
+    if (changes.majorStepStatusMap.currentValue) {
       this.currentMajorStep = this.getCurrentMajorStep(
-        changes.marjorStepStatus.currentValue as Record<MajorSteps, StepStatus>
+        changes.majorStepStatusMap.currentValue as Record<
+          MajorSteps,
+          StepStatus
+        >
       );
     }
   }
 
   private getCurrentMajorStep(
-    marjorStepStatus: Record<MajorSteps, StepStatus>
+    majorStepStatusMap: Record<MajorSteps, StepStatus>
   ): MajorSteps {
     const [currentMajorStep] =
-      Object.entries(marjorStepStatus).find(
+      Object.entries(majorStepStatusMap).find(
         ([, stepStatus]) => stepStatus === StepStatus.Current
       ) || [];
     return currentMajorStep as MajorSteps;
