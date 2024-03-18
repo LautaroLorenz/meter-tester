@@ -119,6 +119,16 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
     return this;
   }
 
+  override withVerificationProps(
+    this: VacuumTestFormBuilder
+  ): VacuumTestFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
+    typedForm
+      .get('form_control_raw.name')
+      ?.setValidators(Validators.required.bind(this));
+    return this;
+  }
+
   // generate stand results array based on APP_CONFIG variable
   private buildStandResultsArray(
     standsQuantiy: number

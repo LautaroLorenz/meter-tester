@@ -21,4 +21,11 @@ export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestS
     return new BootTestFormBuilder().build(fb)
       .form as AbstractFormGroup<BootTestStep>;
   }
+
+  override buildVerificationForm(
+    fb: FormBuilder
+  ): AbstractFormGroup<BootTestStep> {
+    return new BootTestFormBuilder().build(fb).withVerificationProps()
+      .form as AbstractFormGroup<BootTestStep>;
+  }
 }

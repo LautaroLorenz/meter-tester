@@ -54,6 +54,12 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
     return this;
   }
 
+  override withVerificationProps(
+    this: PreparationFormBuilder
+  ): PreparationFormBuilder {
+    return this;
+  }
+
   // generate stand array based on APP_CONFIG variable
   private buildStandsArray(standsQuantiy: number): AbstractFormGroup<Stand>[] {
     return Array(standsQuantiy)

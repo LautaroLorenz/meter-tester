@@ -21,6 +21,7 @@
     <ng-container *ngIf="!!initialValue && dialogOpened">
       <app-step-switch
         [essayTemplateStep]="initialValue"
+        [isVerification]="true"
         (formValidChange)="this.formValid = $event"
         (formValueChange)="onStepValueChange($event)"
       ></app-step-switch>

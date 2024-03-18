@@ -21,4 +21,11 @@ export class ContrastTestBuildFormComponent extends StepBuildFormComponent<Contr
     return new ContrastTestFormBuilder().build(fb)
       .form as AbstractFormGroup<ContrastTestStep>;
   }
+
+  override buildVerificationForm(
+    fb: FormBuilder
+  ): AbstractFormGroup<ContrastTestStep> {
+    return new ContrastTestFormBuilder().build(fb).withVerificationProps()
+      .form as AbstractFormGroup<ContrastTestStep>;
+  }
 }

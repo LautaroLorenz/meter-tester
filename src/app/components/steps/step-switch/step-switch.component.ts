@@ -16,6 +16,7 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
 })
 export class StepSwitchComponent {
   @Input() essayTemplateStep!: EssayTemplateStep;
+  @Input() isVerification!: boolean;
 
   @Output() formValidChange = new EventEmitter<boolean>();
   @Output() formValueChange = new EventEmitter<EssayTemplateStep>();

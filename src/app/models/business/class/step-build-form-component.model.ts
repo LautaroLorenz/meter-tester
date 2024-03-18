@@ -21,19 +21,21 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   implements OnInit, OnDestroy
 {
   @Input() essayTemplateStep!: T;
+  @Input() isVerification!: boolean;
 
   @Output() formValidChange = new EventEmitter<boolean>();
   @Output() formValueChange = new EventEmitter<T>();
 
-  readonly form: FormGroup;
+  form!: FormGroup;
   readonly onDestroy = new Subject<void>();
   readonly fb = inject(FormBuilder);
 
-  constructor() {
-    this.form = this.buildForm(this.fb);
-  }
-
   ngOnInit(): void {
+    if(this.isVerification) {
+      this.form = this.buildVerificationForm(this.fb);
+    } else {
+      this.form = this.buildForm(this.fb);
+    }
     this.patchInitValue();
     this.observeForm();
     this.observeTables();
@@ -83,4 +85,6 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   }
 
   abstract buildForm(fb: FormBuilder): AbstractFormGroup<T>;
+
+  abstract buildVerificationForm(fb: FormBuilder): AbstractFormGroup<T>;
 }

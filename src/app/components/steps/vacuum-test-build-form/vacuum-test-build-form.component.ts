@@ -21,4 +21,11 @@ export class VacuumTestBuildFormComponent extends StepBuildFormComponent<VacuumT
     return new VacuumTestFormBuilder().build(fb)
       .form as AbstractFormGroup<VacuumTestStep>;
   }
+
+  override buildVerificationForm(
+    fb: FormBuilder
+  ): AbstractFormGroup<VacuumTestStep> {
+    return new VacuumTestFormBuilder().build(fb).withVerificationProps()
+      .form as AbstractFormGroup<VacuumTestStep>;
+  }
 }

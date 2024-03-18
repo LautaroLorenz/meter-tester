@@ -33,11 +33,6 @@
   ></p-button>
 </div>
 
-<!-- TODO dentro del díalog se podría implementar un "switch" de los steps para build y un switch
-          distinto para lo que es construir los steps para verificación. (acá se resuelve la prop nombre como requerida)
--->
-<!-- TODO La propiedad nombre debe ser requerida -->
-<!-- TODO El componente debe permitir "Verficar" aunque no se hagan cambios -->
 <app-verify-step-in-sequence
   [initialValue]="selectedEssayStep"
   (valueChange)="saveVerifiedStepInSequenceChanges($event)"

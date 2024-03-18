@@ -50,6 +50,13 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
       .form as AbstractFormGroup<PreparationStep>;
   }
 
+  override buildVerificationForm(
+    fb: FormBuilder
+  ): AbstractFormGroup<PreparationStep> {
+    return new PreparationFormBuilder().build(fb).withVerificationProps()
+      .form as AbstractFormGroup<PreparationStep>;
+  }
+
   override observeTables(): void {
     this.meters$ = this.dbServiceMeters
       .getTableReply$(MeterDbTableContext.tableName)

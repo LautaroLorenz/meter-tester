@@ -12,9 +12,9 @@ export interface StepFormBuilder<
 
   build(fb: FormBuilder): StepFormBuilder<T, K>;
 
-  withExecutionProps(
-    this: StepFormBuilder<T, K>
-  ): StepFormBuilder<T, K>;
+  withExecutionProps(this: StepFormBuilder<T, K>): StepFormBuilder<T, K>;
+
+  withVerificationProps(this: StepFormBuilder<T, K>): StepFormBuilder<T, K>;
 }
 
 export abstract class AbstractStepFormBuilder<
@@ -26,6 +26,9 @@ export abstract class AbstractStepFormBuilder<
   fb!: FormBuilder;
   abstract build(fb: FormBuilder): StepFormBuilder<T, K>;
   abstract withExecutionProps(
+    this: StepFormBuilder<T, K>
+  ): StepFormBuilder<T, K>;
+  abstract withVerificationProps(
     this: StepFormBuilder<T, K>
   ): StepFormBuilder<T, K>;
 }

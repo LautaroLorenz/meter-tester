@@ -3,7 +3,13 @@
     <div class="flex flex-column gap-4">
       <div class="formgrid grid">
         <div class="field col col-6">
-          <label for="name">Nombre</label>
+          <label for="name"
+            >Nombre<span
+              *ngIf="!!form.get('form_control_raw.name')?.validator"
+              class="ml-1 text-red-300"
+              >*</span
+            >
+          </label>
           <input type="text" pInputText id="name" formControlName="name" />
         </div>
 

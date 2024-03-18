@@ -174,6 +174,16 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<
     return this;
   }
 
+  override withVerificationProps(
+    this: BootTestFormBuilder
+  ): BootTestFormBuilder {
+    const typedForm = this.form as AbstractFormGroup<BootTestStep>;
+    typedForm
+      .get('form_control_raw.name')
+      ?.setValidators(Validators.required.bind(this));
+    return this;
+  }
+
   // generate stand results array based on APP_CONFIG variable
   private buildStandResultsArray(
     standsQuantiy: number
