@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
@@ -17,7 +18,9 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
   styleUrls: ['./verification-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VerificationMajorStepComponent implements OnChanges {
+export class VerificationMajorStepComponent
+  implements OnChanges, AfterViewInit
+{
   @Input() essaySteps!: EssayStep[];
 
   verificationSteps!: EssayStep[];
@@ -49,6 +52,16 @@ export class VerificationMajorStepComponent implements OnChanges {
         MajorSteps.Verification
       );
     }
+  }
+
+  // TODO remover
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.markVerifiedAll();
+      setTimeout(() => {
+        this.continue();
+      }, 100);
+    }, 100);
   }
 
   setSelectedStep(essayStep: EssayStep): void {

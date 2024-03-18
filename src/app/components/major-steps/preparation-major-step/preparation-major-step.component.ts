@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
@@ -18,7 +19,7 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
   styleUrls: ['./preparation-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreparationMajorStepComponent implements OnChanges {
+export class PreparationMajorStepComponent implements OnChanges, AfterViewInit {
   @Input() essaySteps!: EssayStep[];
 
   preparationStep!: EssayStep;
@@ -49,6 +50,13 @@ export class PreparationMajorStepComponent implements OnChanges {
         MajorSteps.Preparation
       )[0];
     }
+  }
+
+  // TODO remover
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.continue();
+    }, 100);
   }
 
   onFormValueChange(essayTemplateStep: EssayTemplateStep): void {

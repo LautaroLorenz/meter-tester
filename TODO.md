@@ -12,7 +12,7 @@ FEATURES:
   - Roles de usuarios con permisos.
 - backup
 - estadísticas
-- ejecución 
+- ejecución
 - historial
 
 EJECUCIÓN:

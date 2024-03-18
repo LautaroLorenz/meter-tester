@@ -8,11 +8,11 @@ import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MenuComponent } from './menu/menu.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
-import { BootTestBuildFormComponent } from './steps/boot-test-build-form/boot-test-build-form.component';
+import { BootTestBuildFormComponent } from './build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
-import { PreparationBuildFormComponent } from './steps/preparation-build-form/preparation-build-form.component';
-import { ContrastTestBuildFormComponent } from './steps/contrast-test-build-form/contrast-test-build-form.component';
-import { VacuumTestBuildFormComponent } from './steps/vacuum-test-build-form/vacuum-test-build-form.component';
+import { PreparationBuildFormComponent } from './build-steps/preparation-build-form/preparation-build-form.component';
+import { ContrastTestBuildFormComponent } from './build-steps/contrast-test-build-form/contrast-test-build-form.component';
+import { VacuumTestBuildFormComponent } from './build-steps/vacuum-test-build-form/vacuum-test-build-form.component';
 import { InputErrorComponent } from './input-error/input-error.component';
 import { AddStepToSequenceComponent } from './add-step-to-sequence/add-step-to-sequence.component';
 import { StepsSequenceTableComponent } from './steps-sequence-table/steps-sequence-table.component';
@@ -27,7 +27,7 @@ import { ReportMajorStepComponent } from './major-steps/report-major-step/report
 import { StepTimelineComponent } from './timeline/step-timeline/step-timeline.component';
 import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-timeline-badge.component';
 import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-step-in-sequence.component';
-import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
+import { StepSwitchComponent } from './build-steps/step-switch/step-switch.component';
 
 const AppComponents = [
   PageTitleComponent,
