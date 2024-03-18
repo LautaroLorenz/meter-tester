@@ -1,5 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
+import { MajorSteps } from '../../../models/business/enums/major-steps.model';
+import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { RunEssayService } from '../../../services/run-essay.service';
 
 @Component({
   selector: 'app-preparation-major-step',
@@ -7,6 +17,48 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
   styleUrls: ['./preparation-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreparationMajorStepComponent {
+export class PreparationMajorStepComponent implements OnChanges {
   @Input() essaySteps!: EssayStep[];
+
+  preparationStep!: EssayStep;
+
+  readonly StepStatus = StepStatus;
+
+  constructor(private readonly runEssayService: RunEssayService) {}
+
+  get isPreparationDone(): boolean {
+    if (!this.essaySteps) {
+      return false;
+    }
+
+    return MajorStepsDirector.stepsByMajorStep(
+      this.essaySteps,
+      MajorSteps.Preparation
+    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
+  }
+
+  get isRunEssayFormValid(): boolean {
+    return this.runEssayService.runEssayForm.valid;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.essaySteps?.currentValue) {
+      this.preparationStep = MajorStepsDirector.stepsByMajorStep(
+        changes.essaySteps.currentValue as EssayStep[],
+        MajorSteps.Preparation
+      )[0];
+    }
+  }
+
+  markVerifiedStep(essayStep: EssayStep): void {
+    this.runEssayService
+      .getEssayStep(essayStep.id)
+      .get('verifiedStatus')
+      ?.setValue(StepStatus.Done);
+  }
+
+  continue(): void {
+    this.markVerifiedStep(this.preparationStep);
+    this.runEssayService.nextMajorStep();
+  }
 }
