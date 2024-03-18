@@ -10,6 +10,7 @@ import { StandResult } from '../stand-result.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { ResultStatus } from '../../enums/result-status.model';
 import { StepStatus } from '../../enums/step-status.model';
+import { PhotocellAdjustmentStatus } from '../../enums/photocell-adjustment-status.model';
 
 export interface BootTestFormControlRaw {
   name: string;
@@ -166,6 +167,10 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<
       ...typedForm.controls,
       verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
       executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
+      photocellAdjustmentStatus: [
+        PhotocellAdjustmentStatus.Unknown,
+        Validators.required.bind(this),
+      ],
       standResults: this.fb.nonNullable.array(
         this.buildStandResultsArray(APP_CONFIG.standsQuantiy)
       ),

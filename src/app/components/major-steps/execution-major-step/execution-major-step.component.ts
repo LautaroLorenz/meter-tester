@@ -20,14 +20,13 @@ export class ExecutionMajorStepComponent implements OnChanges {
 
   executionSteps!: EssayStep[];
 
-  // TODO: en el runEssayService se debe inicializar la propiedad, ajuste de fotocelulas.
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.essaySteps?.currentValue) {
       this.executionSteps = MajorStepsDirector.stepsByMajorStep(
         changes.essaySteps.currentValue as EssayStep[],
         MajorSteps.Execution
       );
+      // TODO: ver todo lo que hay que hacer inicializar en el run service
     }
   }
 }

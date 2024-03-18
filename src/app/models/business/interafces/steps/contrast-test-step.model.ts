@@ -10,6 +10,7 @@ import { EssayStep } from '../essay-step.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { ResultStatus } from '../../enums/result-status.model';
 import { StepStatus } from '../../enums/step-status.model';
+import { PhotocellAdjustmentStatus } from '../../enums/photocell-adjustment-status.model';
 
 export interface ContrastTestFormControlRaw {
   name: string;
@@ -159,6 +160,10 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<
       ...typedForm.controls,
       verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
       executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
+      photocellAdjustmentStatus: [
+        PhotocellAdjustmentStatus.Unknown,
+        Validators.required.bind(this),
+      ],
       standResults: this.fb.nonNullable.array(
         this.buildStandResultsArray(APP_CONFIG.standsQuantiy)
       ),

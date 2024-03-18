@@ -81,7 +81,10 @@ export class RunEssayService {
   }
 
   nextMajorStep(): void {
-    // TODO: antes de inicializar la ejecución se debe inicializar la propiedad, ajuste de fotocelulas de cada step
+    // TODO: antes de inicializar la ejecución se debe inicializar la propiedad:
+    // ajuste de fotocelulas: con NotApply o Pending
+    // standResults: con NotApply para aquellos que estan inactivos
+    // se podria crear una class "ExecutionDirector"
     this.majorStepStatusMap$.next(
       MajorStepsDirector.getMajorStepStatusMap(
         this.runEssayForm.getRawValue().essaySteps as EssayStep[]
