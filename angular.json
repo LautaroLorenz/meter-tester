@@ -43,7 +43,11 @@
               "path": "./angular.webpack.js",
               "replaceDuplicatePlugins": true
             },
-            "allowedCommonJsDependencies": ["rxjs", "rxjs/operators"]
+            "allowedCommonJsDependencies": [
+              "rxjs",
+              "rxjs/operators",
+              "dot-object"
+            ]
           },
           "configurations": {
             "dev": {

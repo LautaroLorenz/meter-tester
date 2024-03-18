@@ -51,7 +51,7 @@ export class VerificationMajorStepComponent implements OnChanges {
     this.selectedEssayStep = essayStep;
   }
 
-  saveEditedStepInSequenceChanges(essayStep: EssayStep): void {
+  saveVerifiedStepInSequenceChanges(essayStep: EssayStep): void {
     if (!this.selectedEssayStep) {
       return;
     }

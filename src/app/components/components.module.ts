@@ -27,6 +27,7 @@ import { ReportMajorStepComponent } from './major-steps/report-major-step/report
 import { StepTimelineComponent } from './timeline/step-timeline/step-timeline.component';
 import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-timeline-badge.component';
 import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-step-in-sequence.component';
+import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -52,7 +53,8 @@ const AppComponents = [
   ReportMajorStepComponent,
   StepTimelineComponent,
   StepTimelineBadgeComponent,
-  VerifyStepInSequenceComponent
+  VerifyStepInSequenceComponent,
+  StepSwitchComponent,
 ];
 
 @NgModule({

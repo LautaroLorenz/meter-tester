@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { EssayTemplateStep } from '../../models/business/database/essay-template-step.model';
-import { Steps } from '../../models/business/enums/steps.model';
 import { EditDialogComponent } from '../../models/core/edit-dialog.model';
 
 @Component({
@@ -9,6 +8,4 @@ import { EditDialogComponent } from '../../models/core/edit-dialog.model';
   styleUrls: ['./edit-step-in-sequence.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditStepInSequenceComponent extends EditDialogComponent<EssayTemplateStep> {
-  readonly Steps = Steps;
-}
+export class EditStepInSequenceComponent extends EditDialogComponent<EssayTemplateStep> {}

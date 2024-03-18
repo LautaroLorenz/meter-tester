@@ -11,7 +11,7 @@
         (click)="setSelectedStep(element)"
       >
         <i class="pi pi-file-edit"></i>
-        <span class="ml-2">Ajustar parámetros</span>
+        <span class="ml-2">Verificar parámetros</span>
       </button>
     </ng-template>
   </app-steps-sequence-table>
@@ -38,9 +38,8 @@
 -->
 <!-- TODO La propiedad nombre debe ser requerida -->
 <!-- TODO El componente debe permitir "Verficar" aunque no se hagan cambios -->
-<!-- <app-edit-step-in-sequence
-  [essayTemplateStep]="selectedEssayStep"
+<app-verify-step-in-sequence
+  [initialValue]="selectedEssayStep"
+  (valueChange)="saveVerifiedStepInSequenceChanges($event)"
   (dialogHide)="selectedEssayStep = undefined"
-  (essayTemplateStepChange)="saveEditedStepInSequenceChanges($event)"
-></app-edit-step-in-sequence> -->
-<app-verify-step-in-sequence></app-verify-step-in-sequence>
+></app-verify-step-in-sequence>
