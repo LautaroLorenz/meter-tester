@@ -6,21 +6,21 @@
   (onHide)="dialogHide.emit()"
 >
   <ng-template pTemplate="header">
-    <ng-container *ngIf="!!essayTemplateStep">
+    <ng-container *ngIf="!!initialValue">
       <div class="flex flex-row gap-2 align-items-center">
         <span class="p-dialog-title">Ajustar parámetros</span>
         <span>-</span>
-        <span class="text-xl text-700">{{ essayTemplateStep.foreign.step?.name }}</span>
+        <span class="text-xl text-700">{{ initialValue.foreign.step?.name }}</span>
       </div>
     </ng-container>
   </ng-template>
 
   <ng-template pTemplate="content">
-    <ng-container *ngIf="!!essayTemplateStep && dialogOpened">
-      <ng-container [ngSwitch]="essayTemplateStep.step_id">
+    <ng-container *ngIf="!!initialValue && dialogOpened">
+      <ng-container [ngSwitch]="initialValue.step_id">
         <ng-container *ngSwitchCase="Steps.Preparation">
           <app-preparation-build-form
-            [essayTemplateStep]="essayTemplateStep"
+            [essayTemplateStep]="initialValue"
             (formValidChange)="formValid = $event"
             (formValueChange)="formValue = $event"
           ></app-preparation-build-form>
@@ -28,7 +28,7 @@
 
         <ng-container *ngSwitchCase="Steps.BootTest">
           <app-boot-test-build-form
-            [essayTemplateStep]="essayTemplateStep"
+            [essayTemplateStep]="initialValue"
             (formValidChange)="formValid = $event"
             (formValueChange)="formValue = $event"
           ></app-boot-test-build-form>
@@ -36,7 +36,7 @@
 
         <ng-container *ngSwitchCase="Steps.VacuumTest">
           <app-vacuum-test-build-form
-            [essayTemplateStep]="essayTemplateStep"
+            [essayTemplateStep]="initialValue"
             (formValidChange)="formValid = $event"
             (formValueChange)="formValue = $event"
           ></app-vacuum-test-build-form>
@@ -44,7 +44,7 @@
 
         <ng-container *ngSwitchCase="Steps.ContrastTest">
           <app-contrast-test-build-form
-            [essayTemplateStep]="essayTemplateStep"
+            [essayTemplateStep]="initialValue"
             (formValidChange)="formValid = $event"
             (formValueChange)="formValue = $event"
           ></app-contrast-test-build-form>

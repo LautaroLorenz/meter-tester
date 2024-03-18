@@ -10,7 +10,6 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
 import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-verification-major-step',
@@ -52,7 +51,7 @@ export class VerificationMajorStepComponent implements OnChanges {
     this.selectedEssayStep = essayStep;
   }
 
-  saveEditedStepInSequenceChanges(essayStep: EssayTemplateStep): void {
+  saveEditedStepInSequenceChanges(essayStep: EssayStep): void {
     if (!this.selectedEssayStep) {
       return;
     }
@@ -62,7 +61,7 @@ export class VerificationMajorStepComponent implements OnChanges {
     this.runEssayService
       .getEssayStep(essayStep.id)
       ?.patchValue(essayStep);
-    this.markVerifiedStep(essayStep as EssayStep);
+    this.markVerifiedStep(essayStep);
   }
 
   markVerifiedAll(): void {
