@@ -12,7 +12,9 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="MajorSteps.Execution">
-    <app-execution-major-step></app-execution-major-step>
+    <app-execution-major-step
+      [essaySteps]="essaySteps"
+    ></app-execution-major-step>
   </ng-container>
 
   <ng-container *ngSwitchCase="MajorSteps.Report">

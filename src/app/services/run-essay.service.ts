@@ -81,6 +81,7 @@ export class RunEssayService {
   }
 
   nextMajorStep(): void {
+    // TODO: antes de inicializar la ejecución se debe inicializar la propiedad, ajuste de fotocelulas de cada step
     this.majorStepStatusMap$.next(
       MajorStepsDirector.getMajorStepStatusMap(
         this.runEssayForm.getRawValue().essaySteps as EssayStep[]

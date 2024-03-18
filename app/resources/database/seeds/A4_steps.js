@@ -11,26 +11,16 @@ exports.seed = async function (knex) {
     },
     {
       id: 2,
-      name: "Ajuste de fotocélulas",
-      userSelectableOnCreateEssayTemplate: false,
-    },
-    {
-      id: 3,
-      name: "Reporte",
-      userSelectableOnCreateEssayTemplate: false,
-    },
-    {
-      id: 4,
       name: "Prueba de vacío",
       userSelectableOnCreateEssayTemplate: true,
     },
     {
-      id: 5,
+      id: 3,
       name: "Prueba de constraste",
       userSelectableOnCreateEssayTemplate: true,
     },
     {
-      id: 6,
+      id: 4,
       name: "Prueba de arranque",
       userSelectableOnCreateEssayTemplate: true,
     }
