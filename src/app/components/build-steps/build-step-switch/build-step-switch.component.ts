@@ -9,12 +9,12 @@ import { Steps } from '../../../models/business/enums/steps.model';
 import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 
 @Component({
-  selector: 'app-step-switch',
-  templateUrl: './step-switch.component.html',
-  styleUrls: ['./step-switch.component.scss'],
+  selector: 'app-build-step-switch',
+  templateUrl: './build-step-switch.component.html',
+  styleUrls: ['./build-step-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StepSwitchComponent {
+export class BuildStepSwitchComponent {
   @Input() essayTemplateStep: EssayTemplateStep | undefined;
   @Input() isVerification!: boolean;
 

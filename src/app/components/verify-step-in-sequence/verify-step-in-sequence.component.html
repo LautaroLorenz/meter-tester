@@ -19,12 +19,12 @@
 
   <ng-template pTemplate="content">
     <ng-container *ngIf="!!initialValue && dialogOpened">
-      <app-step-switch
+      <app-build-step-switch
         [essayTemplateStep]="initialValue"
         [isVerification]="true"
         (formValidChange)="this.formValid = $event"
         (formValueChange)="onStepValueChange($event)"
-      ></app-step-switch>
+      ></app-build-step-switch>
     </ng-container>
   </ng-template>
 
