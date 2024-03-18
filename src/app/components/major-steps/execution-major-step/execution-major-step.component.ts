@@ -10,6 +10,7 @@ import { MajorStepsDirector } from '../../../models/business/class/major-steps-d
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { ExecutionStepsDirector } from '../../../models/business/class/execution-steps-director.model';
 import { RunEssayService } from '../../../services/run-essay.service';
+import { StepStatus } from '../../../models/business/enums/step-status.model';
 
 @Component({
   selector: 'app-execution-major-step',
@@ -37,9 +38,9 @@ export class ExecutionMajorStepComponent implements OnChanges {
       )[0];
 
       if (changes.essaySteps.firstChange) {
-        setTimeout(() =>
-          this.initExecutionsProps(this.executionSteps, this.preparationStep)
-        );
+        setTimeout(() => {
+          this.initExecutionsProps(this.executionSteps, this.preparationStep);
+        });
       }
     }
   }
@@ -49,6 +50,13 @@ export class ExecutionMajorStepComponent implements OnChanges {
     preparationStep: EssayStep
   ): void {
     essaySteps.forEach((essayStep, index) => {
+      // estado de la ejecución
+      this.runEssayService
+        .getEssayStep(essayStep.id)
+        .get('executedStatus')
+        ?.setValue(index === 0 ? StepStatus.Current : StepStatus.Pending);
+
+      // estado del ajuste de fotocélulas
       const photocellAdjustmentStatus =
         ExecutionStepsDirector.getInitialPhotocellAdjustmentStatus(
           essaySteps,
@@ -59,6 +67,7 @@ export class ExecutionMajorStepComponent implements OnChanges {
         .get('photocellAdjustmentStatus')
         ?.setValue(photocellAdjustmentStatus);
 
+      // estado del resultado de los stands activos
       essayStep.standResults.forEach((_, standIndex) => {
         const standResultStatus =
           ExecutionStepsDirector.getInitialStandResultStatus(

@@ -74,9 +74,9 @@ export class RunEssayService {
   }
 
   getEssayStep(essayStepId: number): AbstractFormGroup<EssayStep> {
-    const essaySteps = this.runEssayForm.getRawValue()
+    const essayStepsRaw = this.runEssayForm.getRawValue()
       .essaySteps as EssayStep[];
-    const stepIndex = essaySteps?.findIndex(({ id }) => essayStepId === id);
+    const stepIndex = essayStepsRaw?.findIndex(({ id }) => essayStepId === id);
     return this.essaySteps.at(stepIndex);
   }
 
