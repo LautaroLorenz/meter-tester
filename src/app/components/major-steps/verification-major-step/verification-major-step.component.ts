@@ -10,6 +10,7 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
 import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-verification-major-step',
@@ -48,22 +49,20 @@ export class VerificationMajorStepComponent implements OnChanges {
   }
 
   setSelectedStep(essayStep: EssayStep): void {
-    console.log('selected');
     this.selectedEssayStep = essayStep;
   }
 
-  saveEditedStepInSequenceChanges(essayStep: Partial<EssayStep>): void {
-    // TODO guardar las modificaiones de las props y marcar como verificado.
-    // if (!this.selectedEssayTemplateStep) {
-    //   return;
-    // }
-    // if (typeof this.selectedEssayTemplateStep.order !== 'number') {
-    //   return;
-    // }
-    // this.stepsFormArray
-    //   .at(this.selectedEssayTemplateStep.order)
-    //   .patchValue(essayTemplateStep);
-    // this.stepsFormArray.markAsDirty();
+  saveEditedStepInSequenceChanges(essayStep: EssayTemplateStep): void {
+    if (!this.selectedEssayStep) {
+      return;
+    }
+    if (typeof this.selectedEssayStep.order !== 'number') {
+      return;
+    }
+    this.runEssayService
+      .getEssayStep(essayStep.id)
+      ?.patchValue(essayStep);
+    this.markVerifiedStep(essayStep as EssayStep);
   }
 
   markVerifiedAll(): void {
@@ -87,5 +86,6 @@ export class VerificationMajorStepComponent implements OnChanges {
       return;
     }
     // TODO
+    console.log(this.runEssayService.runEssayForm.getRawValue());
   }
 }

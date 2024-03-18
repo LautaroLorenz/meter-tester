@@ -20,7 +20,7 @@ import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   implements OnInit, OnDestroy
 {
-  @Input() essayTemplateStep!: Partial<T>;
+  @Input() essayTemplateStep!: T;
 
   @Output() formValidChange = new EventEmitter<boolean>();
   @Output() formValueChange = new EventEmitter<T>();

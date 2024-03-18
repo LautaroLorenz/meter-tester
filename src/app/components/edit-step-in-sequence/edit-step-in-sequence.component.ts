@@ -17,16 +17,14 @@ import { Steps } from '../../models/business/enums/steps.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditStepInSequenceComponent implements OnChanges {
-  @Input() essayTemplateStep: Partial<EssayTemplateStep> | undefined;
+  @Input() essayTemplateStep: EssayTemplateStep | undefined;
 
   @Output() dialogHide = new EventEmitter<void>();
-  @Output() essayTemplateStepChange = new EventEmitter<
-    Partial<EssayTemplateStep>
-  >();
+  @Output() essayTemplateStepChange = new EventEmitter<EssayTemplateStep>();
 
   dialogOpened = false;
   formValid = false;
-  formValue: Partial<EssayTemplateStep> | undefined;
+  formValue: EssayTemplateStep | undefined;
 
   readonly Steps = Steps;
 
