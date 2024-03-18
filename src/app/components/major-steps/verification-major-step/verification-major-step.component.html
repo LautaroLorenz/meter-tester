@@ -21,14 +21,14 @@
     label="Verificar todos"
     icon="pi pi-check"
     [outlined]="true"
-    [disabled]="isVerificationDone"
+    [disabled]="isVerificationDone || !isRunEssayFormValid"
     (click)="markVerifiedAll()"
   ></p-button>
 
   <p-button
     label="Continuar"
     [outlined]="false"
-    [disabled]="!isVerificationDone"
+    [disabled]="!isVerificationDone || !isRunEssayFormValid"
     (click)="continue()"
   ></p-button>
 </div>

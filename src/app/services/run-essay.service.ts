@@ -76,4 +76,10 @@ export class RunEssayService {
     const stepIndex = essaySteps?.findIndex(({ id }) => essayStepId === id);
     return this.essaySteps.at(stepIndex);
   }
+
+  nextMajorStep(): void {
+    this.majorStepStatusMap = MajorStepsDirector.getMajorStepStatusMap(
+      this.runEssayForm.getRawValue().essaySteps as EssayStep[]
+    );
+  }
 }

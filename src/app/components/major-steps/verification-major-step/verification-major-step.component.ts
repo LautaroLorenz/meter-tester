@@ -38,6 +38,10 @@ export class VerificationMajorStepComponent implements OnChanges {
     ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
   }
 
+  get isRunEssayFormValid(): boolean {
+    return this.runEssayService.runEssayForm.valid;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.essaySteps?.currentValue) {
       this.verificationSteps = MajorStepsDirector.stepsByMajorStep(
@@ -58,9 +62,7 @@ export class VerificationMajorStepComponent implements OnChanges {
     if (typeof this.selectedEssayStep.order !== 'number') {
       return;
     }
-    this.runEssayService
-      .getEssayStep(essayStep.id)
-      ?.patchValue(essayStep);
+    this.runEssayService.getEssayStep(essayStep.id)?.patchValue(essayStep);
     this.markVerifiedStep(essayStep);
   }
 
@@ -84,7 +86,6 @@ export class VerificationMajorStepComponent implements OnChanges {
     if (!this.isVerificationDone) {
       return;
     }
-    // TODO
-    console.log(this.runEssayService.runEssayForm.getRawValue());
+    this.runEssayService.nextMajorStep();
   }
 }
