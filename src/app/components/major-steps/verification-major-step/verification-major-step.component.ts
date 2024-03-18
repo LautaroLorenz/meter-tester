@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 
@@ -51,6 +51,10 @@ export class VerificationMajorStepComponent
         changes.essaySteps.currentValue as EssayStep[],
         MajorSteps.Verification
       );
+
+      if (changes.essaySteps.firstChange) {
+        setTimeout(() => this.initVerificationProps(this.verificationSteps));
+      }
     }
   }
 
@@ -76,7 +80,7 @@ export class VerificationMajorStepComponent
       return;
     }
     this.runEssayService.getEssayStep(essayStep.id)?.patchValue(essayStep);
-    this.markVerifiedStep(essayStep);
+    this.markVerifiedStep(essayStep, StepStatus.Done);
   }
 
   markVerifiedAll(): void {
@@ -84,15 +88,15 @@ export class VerificationMajorStepComponent
       return;
     }
     this.verificationSteps.forEach((essayStep) =>
-      this.markVerifiedStep(essayStep)
+      this.markVerifiedStep(essayStep, StepStatus.Done)
     );
   }
 
-  markVerifiedStep(essayStep: EssayStep): void {
+  markVerifiedStep(essayStep: EssayStep, status: StepStatus): void {
     this.runEssayService
       .getEssayStep(essayStep.id)
       .get('verifiedStatus')
-      ?.setValue(StepStatus.Done);
+      ?.setValue(status);
   }
 
   continue(): void {
@@ -100,5 +104,11 @@ export class VerificationMajorStepComponent
       return;
     }
     this.runEssayService.nextMajorStep();
+  }
+
+  private initVerificationProps(essaySteps: EssayStep[]): void {
+    essaySteps.forEach((essayStep) =>
+      this.markVerifiedStep(essayStep, StepStatus.Pending)
+    );
   }
 }

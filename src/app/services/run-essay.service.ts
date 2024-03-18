@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { MajorSteps } from '../models/business/enums/major-steps.model';
 import { StepStatus } from '../models/business/enums/step-status.model';
 import { RunEssayForm } from '../models/business/interafces/run-essay.model';
-import { MajorStepsDirector } from '../models/business/class/major-steps.model';
+import { MajorStepsDirector } from '../models/business/class/major-steps-director.model';
 import { EssayStep } from '../models/business/interafces/essay-step.model';
 import { StepsBuilder } from '../models/business/class/steps-form-array-builder.model';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../models/core/abstract-form-group.model';
 import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
 import { BehaviorSubject } from 'rxjs';
+import { StandResult } from '../models/business/interafces/stand-result.model';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +66,6 @@ export class RunEssayService {
   }
 
   reset(): void {
-    // TODO resetear los resultados y los stados de los pasos
     this.majorStepStatusMap$ = new BehaviorSubject(
       MajorStepsDirector.getMajorStepStatusMap(
         this.runEssayForm.getRawValue().essaySteps as EssayStep[]
@@ -80,11 +80,17 @@ export class RunEssayService {
     return this.essaySteps.at(stepIndex);
   }
 
+  getEssayStandResult(
+    essayStepId: number,
+    standIndex: number
+  ): AbstractFormGroup<StandResult> {
+    const essayStep = this.getEssayStep(essayStepId);
+    return (essayStep.get('standResults') as FormArray).at(
+      standIndex
+    ) as AbstractFormGroup<StandResult>;
+  }
+
   nextMajorStep(): void {
-    // TODO: antes de inicializar la ejecución se debe inicializar la propiedad:
-    // ajuste de fotocelulas: con NotApply o Pending
-    // standResults: con NotApply para aquellos que estan inactivos
-    // se podria crear una class "ExecutionDirector"
     this.majorStepStatusMap$.next(
       MajorStepsDirector.getMajorStepStatusMap(
         this.runEssayForm.getRawValue().essaySteps as EssayStep[]

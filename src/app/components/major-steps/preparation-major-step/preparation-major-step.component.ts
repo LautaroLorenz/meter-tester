@@ -7,7 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { RunEssayService } from '../../../services/run-essay.service';
@@ -49,6 +49,10 @@ export class PreparationMajorStepComponent implements OnChanges, AfterViewInit {
         changes.essaySteps.currentValue as EssayStep[],
         MajorSteps.Preparation
       )[0];
+
+      if (changes.essaySteps.firstChange) {
+        setTimeout(() => this.initPreparationProps(this.preparationStep));
+      }
     }
   }
 
@@ -75,5 +79,12 @@ export class PreparationMajorStepComponent implements OnChanges, AfterViewInit {
   continue(): void {
     this.markVerifiedStep(this.preparationStep);
     this.runEssayService.nextMajorStep();
+  }
+
+  private initPreparationProps(essayStep: EssayStep): void {
+    this.runEssayService
+      .getEssayStep(essayStep.id)
+      .get('verifiedStatus')
+      ?.setValue(StepStatus.Pending);
   }
 }

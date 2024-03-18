@@ -8,7 +8,7 @@ import {
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps.model';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 
 @Component({
   selector: 'app-major-step-timeline',
