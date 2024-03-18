@@ -3,9 +3,9 @@
     index="1"
     [majorStep]="MajorSteps.Verification"
     [status]="majorStepStatusMap[MajorSteps.Verification]"
-    [bodyTemplate]="bodyTemplate"
+    [bodyTemplate]="verifiedStatusBodyTemplate"
   >
-    <ng-template #bodyTemplate>
+    <ng-template #verifiedStatusBodyTemplate>
       <app-step-timeline
         [withIndex]="false"
         [essaySteps]="verificationSteps"
@@ -25,9 +25,9 @@
     index="3"
     [majorStep]="MajorSteps.Execution"
     [status]="majorStepStatusMap[MajorSteps.Execution]"
-    [bodyTemplate]="bodyTemplate"
+    [bodyTemplate]="executedStatusBodyTemplate"
   >
-    <ng-template #bodyTemplate>
+    <ng-template #executedStatusBodyTemplate>
       <app-step-timeline
         [withIndex]="true"
         [essaySteps]="executionSteps"
