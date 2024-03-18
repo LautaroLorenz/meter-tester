@@ -17,7 +17,7 @@ import { MajorStepsDirector } from '../../../models/business/class/major-steps.m
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MajorStepTimelineComponent implements OnChanges {
-  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus>;
+  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus> | null;
   @Input() essaySteps!: EssayStep[];
 
   readonly MajorSteps = MajorSteps;

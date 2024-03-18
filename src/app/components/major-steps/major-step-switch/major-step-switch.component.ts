@@ -16,7 +16,7 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MajorStepSwitchComponent implements OnChanges {
-  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus>;
+  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus> | null;
   @Input() essaySteps!: EssayStep[];
 
   currentMajorStep!: MajorSteps | undefined;

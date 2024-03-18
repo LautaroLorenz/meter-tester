@@ -8,12 +8,13 @@ import { StepsBuilder } from '../models/business/class/steps-form-array-builder.
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../models/core/abstract-form-group.model';
 import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RunEssayService {
-  majorStepStatusMap!: Record<MajorSteps, StepStatus>;
+  majorStepStatusMap$!: BehaviorSubject<Record<MajorSteps, StepStatus>>;
 
   private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;
   private _runEssayForm!: RunEssayForm;
@@ -65,8 +66,10 @@ export class RunEssayService {
 
   reset(): void {
     // TODO resetear los resultados y los stados de los pasos
-    this.majorStepStatusMap = MajorStepsDirector.getMajorStepStatusMap(
-      this.runEssayForm.getRawValue().essaySteps as EssayStep[]
+    this.majorStepStatusMap$ = new BehaviorSubject(
+      MajorStepsDirector.getMajorStepStatusMap(
+        this.runEssayForm.getRawValue().essaySteps as EssayStep[]
+      )
     );
   }
 
@@ -78,8 +81,10 @@ export class RunEssayService {
   }
 
   nextMajorStep(): void {
-    this.majorStepStatusMap = MajorStepsDirector.getMajorStepStatusMap(
-      this.runEssayForm.getRawValue().essaySteps as EssayStep[]
+    this.majorStepStatusMap$.next(
+      MajorStepsDirector.getMajorStepStatusMap(
+        this.runEssayForm.getRawValue().essaySteps as EssayStep[]
+      )
     );
   }
 }
