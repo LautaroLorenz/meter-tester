@@ -10,6 +10,7 @@ import { MajorStepsDirector } from '../../../models/business/class/major-steps.m
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { RunEssayService } from '../../../services/run-essay.service';
+import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 
 @Component({
   selector: 'app-preparation-major-step',
@@ -48,6 +49,12 @@ export class PreparationMajorStepComponent implements OnChanges {
         MajorSteps.Preparation
       )[0];
     }
+  }
+
+  onFormValueChange(essayTemplateStep: EssayTemplateStep): void {
+    this.runEssayService
+      .getEssayStep(essayTemplateStep.id)
+      ?.patchValue(essayTemplateStep as EssayStep);
   }
 
   markVerifiedStep(essayStep: EssayStep): void {

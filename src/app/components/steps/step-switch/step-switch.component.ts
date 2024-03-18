@@ -15,7 +15,7 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepSwitchComponent {
-  @Input() essayTemplateStep!: EssayTemplateStep;
+  @Input() essayTemplateStep: EssayTemplateStep | undefined;
   @Input() isVerification!: boolean;
 
   @Output() formValidChange = new EventEmitter<boolean>();

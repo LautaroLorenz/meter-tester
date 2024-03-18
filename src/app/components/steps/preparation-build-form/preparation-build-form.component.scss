@@ -3,8 +3,15 @@
 :host ::ng-deep {
   .p-fieldset {
     .field {
+      display: flex;
+      flex-direction: column;
+
       label {
         color: var(--surface-400);
+      }
+
+      .p-dropdown {
+        width: 100%;
       }
     }
   }

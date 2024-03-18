@@ -1,6 +1,16 @@
-<p-button
-  label="Continuar"
-  [outlined]="false"
-  [disabled]="isPreparationDone && isRunEssayFormValid"
-  (click)="continue()"
-></p-button>
+<div class="px-6 pt-6">
+  <app-step-switch
+    [essayTemplateStep]="preparationStep"
+    [isVerification]="false"
+    (formValueChange)="onFormValueChange($event)"
+  ></app-step-switch>
+</div>
+
+<div class="flex justify-content-end pr-6 mt-4 mb-8 gap-3">
+  <p-button
+    label="Continuar"
+    [outlined]="false"
+    [disabled]="isPreparationDone && isRunEssayFormValid"
+    (click)="continue()"
+  ></p-button>
+</div>
