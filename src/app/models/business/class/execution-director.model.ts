@@ -3,7 +3,7 @@ import { ResultStatus } from '../enums/result-status.model';
 import { EssayStep } from '../interafces/essay-step.model';
 import { PreparationStep } from '../interafces/steps/preparation-step.model';
 
-export class ExecutionStepsDirector {
+export class ExecutionDirector {
   static getInitialStandResultStatus(
     preparatonStep: PreparationStep,
     standIndex: number

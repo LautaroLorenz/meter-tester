@@ -28,6 +28,7 @@ import { StepTimelineComponent } from './timeline/step-timeline/step-timeline.co
 import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-timeline-badge.component';
 import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-step-in-sequence.component';
 import { BuildStepSwitchComponent } from './build-steps/build-step-switch/build-step-switch.component';
+import { RunStepSwitchComponent } from './run-steps/run-step-switch/run-step-switch.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -55,6 +56,7 @@ const AppComponents = [
   StepTimelineBadgeComponent,
   VerifyStepInSequenceComponent,
   BuildStepSwitchComponent,
+  RunStepSwitchComponent,
 ];
 
 @NgModule({
