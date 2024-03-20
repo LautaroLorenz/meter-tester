@@ -1,17 +1,10 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
-import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
+import { Observable, take, tap } from 'rxjs';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 
 @Component({
   selector: 'app-preparation-major-step',
@@ -19,48 +12,26 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
   styleUrls: ['./preparation-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreparationMajorStepComponent implements OnChanges, AfterViewInit {
-  @Input() essaySteps!: EssayStep[];
-
-  preparationStep!: EssayStep;
+export class PreparationMajorStepComponent {
+  preparationStep: EssayStep | undefined;
+  isPreparationDone = false;
 
   readonly StepStatus = StepStatus;
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
-  get isPreparationDone(): boolean {
-    if (!this.essaySteps) {
-      return false;
-    }
-
-    return MajorStepsDirector.stepsByMajorStep(
-      this.essaySteps,
-      MajorSteps.Preparation
-    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
-  }
-
   get isRunEssayFormValid(): boolean {
     return this.runEssayService.runEssayForm.valid;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.essaySteps?.currentValue) {
-      this.preparationStep = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Preparation
-      )[0];
+  get preparationStep$(): Observable<EssayStep> {
+    return this.runEssayService.preparationStep$.pipe(
+      tap((preparationStep) => (this.preparationStep = preparationStep)),
 
-      if (changes.essaySteps.firstChange) {
-        setTimeout(() => this.initPreparationProps(this.preparationStep));
-      }
-    }
-  }
-
-  // TODO remover
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.continue();
-    }, 100);
+      // TODO descomentar para no hacer skip del paso
+      take(1),
+      tap(() => this.skip())
+    );
   }
 
   onFormValueChange(essayTemplateStep: EssayTemplateStep): void {
@@ -74,17 +45,25 @@ export class PreparationMajorStepComponent implements OnChanges, AfterViewInit {
       .getEssayStep(essayStep.id)
       .get('verifiedStatus')
       ?.setValue(StepStatus.Done);
+
+    this.isPreparationDone = MajorStepsDirector.checkMajorStepStatus(
+      this.preparationStep || [],
+      StepStatus.Done,
+      'verifiedStatus'
+    );
   }
 
   continue(): void {
+    if (!this.preparationStep) {
+      return;
+    }
     this.markVerifiedStep(this.preparationStep);
     this.runEssayService.nextMajorStep();
   }
 
-  private initPreparationProps(essayStep: EssayStep): void {
-    this.runEssayService
-      .getEssayStep(essayStep.id)
-      .get('verifiedStatus')
-      ?.setValue(StepStatus.Pending);
+  private skip(): void {
+    setTimeout(() => {
+      this.continue();
+    });
   }
 }

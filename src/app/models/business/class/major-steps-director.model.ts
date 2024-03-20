@@ -28,23 +28,62 @@ export class MajorStepsDirector {
     }
   }
 
+  static checkMajorStepStatus(
+    steps: EssayStep[] | EssayStep,
+    status: StepStatus,
+    prop: keyof EssayStep
+  ): boolean {
+    if (Array.isArray(steps)) {
+      return steps.every((step) => step[prop] === status);
+    }
+
+    return steps[prop] === status;
+  }
+
   static getMajorStepStatusMap(
     essaySteps: EssayStep[]
   ): Record<MajorSteps, StepStatus> {
-    const isVerificationDone: boolean = this.stepsByMajorStep(
+    if (!essaySteps || essaySteps.length === 0) {
+      return {
+        [MajorSteps.Verification]: StepStatus.Pending,
+        [MajorSteps.Preparation]: StepStatus.Pending,
+        [MajorSteps.Execution]: StepStatus.Pending,
+        [MajorSteps.Report]: StepStatus.Pending,
+      };
+    }
+
+    const verificationSteps = this.stepsByMajorStep(
       essaySteps,
       MajorSteps.Verification
-    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
+    );
 
-    const isPreparationDone: boolean = this.stepsByMajorStep(
+    const preparationSteps = this.stepsByMajorStep(
       essaySteps,
       MajorSteps.Preparation
-    ).every(({ verifiedStatus }) => verifiedStatus === StepStatus.Done);
+    );
 
-    const isExecutedDone: boolean = this.stepsByMajorStep(
+    const executionSteps = this.stepsByMajorStep(
       essaySteps,
-      MajorSteps.Execution
-    ).every(({ executedStatus }) => executedStatus === StepStatus.Done);
+      MajorSteps.Preparation
+    );
+
+    const isVerificationDone: boolean = this.checkMajorStepStatus(
+      verificationSteps,
+      StepStatus.Done,
+      'verifiedStatus'
+    );
+
+    const isPreparationDone: boolean = this.checkMajorStepStatus(
+      preparationSteps,
+      StepStatus.Done,
+      'verifiedStatus'
+    );
+
+    const isExecutedDone: boolean = this.checkMajorStepStatus(
+      executionSteps,
+      StepStatus.Done,
+      'executedStatus'
+    );
 
     return {
       [MajorSteps.Verification]: this.getMajorStepStatus(

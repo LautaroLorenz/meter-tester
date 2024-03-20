@@ -1,16 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
-import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { ExecutionDirector } from '../../../models/business/class/execution-director.model';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
+import { Observable, forkJoin, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-execution-major-step',
@@ -18,35 +11,34 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
   styleUrls: ['./execution-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExecutionMajorStepComponent implements OnChanges {
-  @Input() essaySteps!: EssayStep[];
-
-  executionSteps!: EssayStep[];
-  preparationStep!: EssayStep;
-  // TODO currentStep: EssayStep | undefined;
+export class ExecutionMajorStepComponent implements OnInit {
+  executionSteps: EssayStep[] | undefined;
+  preparationStep: EssayStep | undefined;
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.essaySteps?.currentValue) {
-      this.executionSteps = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Execution
-      );
-      this.preparationStep = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Preparation
-      )[0];
-
-      if (changes.essaySteps.firstChange) {
-        setTimeout(() => {
-          this.initExecutionsProps(this.executionSteps, this.preparationStep);
-          // TODO this.currentStep = ExecutionDirector
-        });
-      }
-    }
+  get executionSteps$(): Observable<EssayStep[]> {
+    return this.runEssayService.executionSteps$.pipe(
+      tap((executionSteps) => (this.executionSteps = executionSteps))
+    );
   }
 
+  get preparationStep$(): Observable<EssayStep> {
+    return this.runEssayService.preparationStep$.pipe(
+      tap((preparationStep) => (this.preparationStep = preparationStep))
+    );
+  }
+
+  ngOnInit(): void {
+    forkJoin({
+      executionSteps: this.executionSteps$.pipe(take(1)),
+      preparationStep: this.preparationStep$.pipe(take(1)),
+    }).subscribe(({ executionSteps, preparationStep }) => {
+      this.initExecutionsProps(executionSteps, preparationStep);
+    });
+  }
+
+  // TODO hacer un merge de ambos steps para la inicialización
   private initExecutionsProps(
     essaySteps: EssayStep[],
     preparationStep: EssayStep
@@ -71,14 +63,13 @@ export class ExecutionMajorStepComponent implements OnChanges {
 
       // estado del resultado de los stands activos
       essayStep.standResults.forEach((_, standIndex) => {
-        const standResultStatus =
-          ExecutionDirector.getInitialStandResultStatus(
-            preparationStep,
-            standIndex
-          );
+        const standResultStatus = ExecutionDirector.getInitialStandResultStatus(
+          preparationStep,
+          standIndex
+        );
 
         this.runEssayService
-          .getEssayStandResult(essayStep.id, standIndex)
+          .getStandResult(essayStep.id, standIndex)
           .get('resultStatus')
           ?.setValue(standResultStatus);
       });

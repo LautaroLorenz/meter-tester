@@ -10,18 +10,12 @@
   <div class="grid grid-nogutter">
     <div class="col col-2">
       <p-card styleClass="steps-container border-noround shadow-1">
-        <app-major-step-timeline
-          [majorStepStatusMap]="runEssayService.majorStepStatusMap$ | async"
-          [essaySteps]="runEssayForm.get('essaySteps')?.getRawValue()"
-        ></app-major-step-timeline>
+        <app-major-step-timeline></app-major-step-timeline>
       </p-card>
     </div>
 
     <div class="col col-10">
-      <app-major-step-switch
-        [majorStepStatusMap]="runEssayService.majorStepStatusMap$ | async"
-        [essaySteps]="runEssayForm.get('essaySteps')?.getRawValue()"
-      ></app-major-step-switch>
+      <app-major-step-switch></app-major-step-switch>
     </div>
   </div>
 </ng-container>

@@ -12,7 +12,6 @@ import { EssayTemplateStep } from '../../models/business/database/essay-template
 export class VerifyStepInSequenceComponent extends EditDialogComponent<EssayStep> {
   override afterSuperChanges(): void {
     this.formValue = this.initialValue;
-    this.formValid = true;
   }
 
   onStepValueChange(value: EssayTemplateStep): void {

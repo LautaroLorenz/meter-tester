@@ -1,21 +1,24 @@
-<div class="px-4 pt-6">
-  <app-steps-sequence-table
-    [essayTemplateSteps]="verificationSteps"
-    [actionsTemplate]="actionsTemplate"
-  >
-    <ng-template #actionsTemplate let-element="element">
-      <button
-        pButton
-        class="p-button-outlined"
-        [disabled]="element.verifiedStatus === StepStatus.Done"
-        (click)="setSelectedStep(element)"
-      >
-        <i class="pi pi-file-edit"></i>
-        <span class="ml-2">Verificar parámetros</span>
-      </button>
-    </ng-template>
-  </app-steps-sequence-table>
-</div>
+<ng-container *ngIf="verificationSteps$ | async as verificationSteps">
+  <div class="px-4 pt-6">
+    <app-steps-sequence-table
+      [essayTemplateSteps]="verificationSteps"
+      [actionsTemplate]="actionsTemplate"
+    >
+      <ng-template #actionsTemplate let-element="element">
+        <button
+          pButton
+          class="p-button-outlined"
+          [disabled]="element.verifiedStatus === StepStatus.Done"
+          (click)="setSelectedStep(element)"
+        >
+          <i class="pi pi-file-edit"></i>
+          <span class="ml-2">Verificar parámetros</span>
+        </button>
+      </ng-template>
+    </app-steps-sequence-table>
+  </div>
+</ng-container>
+
 <div class="flex justify-content-end pr-6 mt-4 mb-8 gap-3">
   <p-button
     label="Verificar todos"

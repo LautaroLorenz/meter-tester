@@ -1,10 +1,12 @@
-<div class="px-6 pt-6">
-  <app-build-step-switch
-    [essayTemplateStep]="preparationStep"
-    [isVerification]="false"
-    (formValueChange)="onFormValueChange($event)"
-  ></app-build-step-switch>
-</div>
+<ng-container *ngIf="preparationStep$ | async as preparationStep">
+  <div class="px-6 pt-6">
+    <app-build-step-switch
+      [essayTemplateStep]="preparationStep"
+      [isVerification]="false"
+      (formValueChange)="onFormValueChange($event)"
+    ></app-build-step-switch>
+  </div>
+</ng-container>
 
 <div class="flex justify-content-end pr-6 mt-4 mb-8 gap-3">
   <p-button

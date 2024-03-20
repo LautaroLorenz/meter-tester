@@ -1,45 +1,51 @@
-<div *ngIf="majorStepStatusMap" class="flex flex-column gap-3">
-  <app-major-step-timeline-item
-    index="1"
-    [majorStep]="MajorSteps.Verification"
-    [status]="majorStepStatusMap[MajorSteps.Verification]"
-    [bodyTemplate]="verifiedStatusBodyTemplate"
-  >
-    <ng-template #verifiedStatusBodyTemplate>
-      <app-step-timeline
-        [withIndex]="false"
-        [essaySteps]="verificationSteps"
-        statusProp="verifiedStatus"
-      ></app-step-timeline>
-    </ng-template>
-  </app-major-step-timeline-item>
+<ng-container *ngIf="majorStepStatusMap$ | async as majorStepStatusMap">
+  <div class="flex flex-column gap-3">
+    <app-major-step-timeline-item
+      index="1"
+      [majorStep]="MajorSteps.Verification"
+      [status]="majorStepStatusMap[MajorSteps.Verification]"
+      [bodyTemplate]="verifiedStatusBodyTemplate"
+    >
+      <ng-template #verifiedStatusBodyTemplate>
+        <ng-container *ngIf="verificationSteps$ | async as verificationSteps">
+          <app-step-timeline
+            [withIndex]="false"
+            [essaySteps]="verificationSteps"
+            statusProp="verifiedStatus"
+          ></app-step-timeline>
+        </ng-container>
+      </ng-template>
+    </app-major-step-timeline-item>
 
-  <app-major-step-timeline-item
-    index="2"
-    [majorStep]="MajorSteps.Preparation"
-    [status]="majorStepStatusMap[MajorSteps.Preparation]"
-  >
-  </app-major-step-timeline-item>
+    <app-major-step-timeline-item
+      index="2"
+      [majorStep]="MajorSteps.Preparation"
+      [status]="majorStepStatusMap[MajorSteps.Preparation]"
+    >
+    </app-major-step-timeline-item>
 
-  <app-major-step-timeline-item
-    index="3"
-    [majorStep]="MajorSteps.Execution"
-    [status]="majorStepStatusMap[MajorSteps.Execution]"
-    [bodyTemplate]="executedStatusBodyTemplate"
-  >
-    <ng-template #executedStatusBodyTemplate>
-      <app-step-timeline
-        [withIndex]="true"
-        [essaySteps]="executionSteps"
-        statusProp="executedStatus"
-      ></app-step-timeline>
-    </ng-template>
-  </app-major-step-timeline-item>
+    <app-major-step-timeline-item
+      index="3"
+      [majorStep]="MajorSteps.Execution"
+      [status]="majorStepStatusMap[MajorSteps.Execution]"
+      [bodyTemplate]="executedStatusBodyTemplate"
+    >
+      <ng-template #executedStatusBodyTemplate>
+        <ng-container *ngIf="executionSteps$ | async as executionSteps">
+          <app-step-timeline
+            [withIndex]="true"
+            [essaySteps]="executionSteps"
+            statusProp="executedStatus"
+          ></app-step-timeline>
+        </ng-container>
+      </ng-template>
+    </app-major-step-timeline-item>
 
-  <app-major-step-timeline-item
-    index="4"
-    [majorStep]="MajorSteps.Report"
-    [status]="majorStepStatusMap[MajorSteps.Report]"
-  >
-  </app-major-step-timeline-item>
-</div>
+    <app-major-step-timeline-item
+      index="4"
+      [majorStep]="MajorSteps.Report"
+      [status]="majorStepStatusMap[MajorSteps.Report]"
+    >
+    </app-major-step-timeline-item>
+  </div>
+</ng-container>

@@ -1,23 +1,19 @@
-<ng-container [ngSwitch]="currentMajorStep">
-  <ng-container *ngSwitchCase="MajorSteps.Verification">
+<ng-container *ngIf="majorStepStatusMap$ | async as majorStepStatusMap">
+  <ng-container [ngSwitch]="getCurrentMajorStep(majorStepStatusMap)">
     <app-verification-major-step
-      [essaySteps]="essaySteps"
+      *ngSwitchCase="MajorSteps.Verification"
     ></app-verification-major-step>
-  </ng-container>
 
-  <ng-container *ngSwitchCase="MajorSteps.Preparation">
     <app-preparation-major-step
-      [essaySteps]="essaySteps"
+      *ngSwitchCase="MajorSteps.Preparation"
     ></app-preparation-major-step>
-  </ng-container>
 
-  <ng-container *ngSwitchCase="MajorSteps.Execution">
     <app-execution-major-step
-      [essaySteps]="essaySteps"
+      *ngSwitchCase="MajorSteps.Execution"
     ></app-execution-major-step>
-  </ng-container>
 
-  <ng-container *ngSwitchCase="MajorSteps.Report">
-    <app-report-major-step></app-report-major-step>
+    <app-report-major-step
+      *ngSwitchCase="MajorSteps.Report"
+    ></app-report-major-step>
   </ng-container>
 </ng-container>

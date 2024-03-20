@@ -1,13 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { EssayStep } from '../../../models/business/interafces/essay-step.model';
+import { RunEssayService } from '../../../services/run-essay.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-major-step-switch',
@@ -15,26 +10,16 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
   styleUrls: ['./major-step-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MajorStepSwitchComponent implements OnChanges {
-  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus> | null;
-  @Input() essaySteps!: EssayStep[];
-
-  currentMajorStep!: MajorSteps | undefined;
-
+export class MajorStepSwitchComponent {
   readonly MajorSteps = MajorSteps;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.majorStepStatusMap?.currentValue) {
-      this.currentMajorStep = this.getCurrentMajorStep(
-        changes.majorStepStatusMap.currentValue as Record<
-          MajorSteps,
-          StepStatus
-        >
-      );
-    }
+  constructor(private readonly runEssayService: RunEssayService) {}
+
+  get majorStepStatusMap$(): Observable<Record<MajorSteps, StepStatus>> {
+    return this.runEssayService.majorStepStatusMap$;
   }
 
-  private getCurrentMajorStep(
+  getCurrentMajorStep(
     majorStepStatusMap: Record<MajorSteps, StepStatus>
   ): MajorSteps {
     const [currentMajorStep] =

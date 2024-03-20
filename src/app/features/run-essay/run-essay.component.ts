@@ -78,6 +78,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   ) {
     this.id$ = this.getId$();
     this.runEssayForm = this.buildForm();
+    this.runEssayService.runEssayForm = this.runEssayForm;
   }
 
   // private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
@@ -91,6 +92,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   // }
 
   ngOnInit(): void {
+    this.runEssayService.reset();
     this.observeRoute();
     this.observeTables();
   }
@@ -168,12 +170,12 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         map((essayTemplateStep) =>
           essayTemplateStep.sort((a, b) => a.order - b.order)
         ),
-        tap(() => (this.runEssayService.runEssayForm = this.runEssayForm)),
         tap((essayTemplateSteps) =>
           this.runEssayService.buildSteps(essayTemplateSteps)
         ),
-        tap(() => this.runEssayService.inferOptionalStepsProps()),
-        tap(() => this.runEssayService.reset())
+        tap(() => {
+          this.runEssayService.inferOptionalStepsProps();
+        })
       )
       .subscribe();
   }

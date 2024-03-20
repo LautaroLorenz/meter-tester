@@ -1,14 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
+import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-major-step-timeline',
@@ -16,30 +11,20 @@ import { MajorStepsDirector } from '../../../models/business/class/major-steps-d
   styleUrls: ['./major-step-timeline.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MajorStepTimelineComponent implements OnChanges {
-  @Input() majorStepStatusMap!: Record<MajorSteps, StepStatus> | null;
-  @Input() essaySteps!: EssayStep[];
-
+export class MajorStepTimelineComponent {
   readonly MajorSteps = MajorSteps;
 
-  verificationSteps!: EssayStep[];
-  executionSteps!: EssayStep[];
-  preparationStep!: EssayStep;
+  constructor(private readonly runEssayService: RunEssayService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.essaySteps) {
-      this.verificationSteps = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Verification
-      );
-      this.preparationStep = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Preparation
-      )?.[0];
-      this.executionSteps = MajorStepsDirector.stepsByMajorStep(
-        changes.essaySteps.currentValue as EssayStep[],
-        MajorSteps.Execution
-      );
-    }
+  get majorStepStatusMap$(): Observable<Record<MajorSteps, StepStatus>> {
+    return this.runEssayService.majorStepStatusMap$;
+  }
+
+  get verificationSteps$(): Observable<EssayStep[]> {
+    return this.runEssayService.verificationSteps$;
+  }
+
+  get executionSteps$(): Observable<EssayStep[]> {
+    return this.runEssayService.executionSteps$;
   }
 }

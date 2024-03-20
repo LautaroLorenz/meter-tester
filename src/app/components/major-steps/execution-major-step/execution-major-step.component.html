@@ -2,10 +2,12 @@
 <!-- TODO mostrar el status del current step en el timeline -->
 <!-- TODO ejecutar el current step -->
 <!-- TODO permitir la simulación de resultados -->
-<div class="px-6 pt-6">
-  
-  <app-run-step-switch></app-run-step-switch>
-  <pre>
-    {{ executionSteps | json }}
-  </pre>
-</div>
+
+<ng-container *ngIf="executionSteps$ | async as executionSteps">
+  <div class="px-6 pt-6">
+    <app-run-step-switch></app-run-step-switch>
+    <pre>
+      {{ executionSteps | json }}
+    </pre>
+  </div>
+</ng-container>

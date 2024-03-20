@@ -31,7 +31,7 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
   readonly fb = inject(FormBuilder);
 
   ngOnInit(): void {
-    if(this.isVerification) {
+    if (this.isVerification) {
       this.form = this.buildVerificationForm(this.fb);
     } else {
       this.form = this.buildForm(this.fb);
@@ -81,6 +81,10 @@ export abstract class StepBuildFormComponent<T extends EssayTemplateStep>
       )
       .subscribe();
 
+    if (this.isVerification) {
+      // para poder "verificar", sin cambiar ningún valor, siempre y cuando el form sea válido
+      this.form.updateValueAndValidity();
+    }
     this.afterSuperObserveForm();
   }
 
