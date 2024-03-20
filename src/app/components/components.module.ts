@@ -30,6 +30,7 @@ import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-
 import { BuildStepSwitchComponent } from './build-steps/build-step-switch/build-step-switch.component';
 import { RunStepSwitchComponent } from './run-steps/run-step-switch/run-step-switch.component';
 import { PhotocellAdjusmentRequestComponent } from './photocell-adjusment-request/photocell-adjusment-request.component';
+import { VacuumTestRunComponent } from './run-steps/vacuum-test-run/vacuum-test-run.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -59,6 +60,7 @@ const AppComponents = [
   BuildStepSwitchComponent,
   RunStepSwitchComponent,
   PhotocellAdjusmentRequestComponent,
+  VacuumTestRunComponent,
 ];
 
 @NgModule({
