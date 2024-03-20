@@ -3,6 +3,7 @@ NICE TO HAVE
 - implementar drag y drop para ordenar los pasos
 - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
 - Verificación y preparación podrian ser opcionales.
+- El componente de paso activo, podria tener una opción collapsed (sin textos y con tooltips)
 
 CORE
 - Contraseña en la base de datos para que no se pueda acceder

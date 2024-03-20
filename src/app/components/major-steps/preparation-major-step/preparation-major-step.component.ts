@@ -28,9 +28,9 @@ export class PreparationMajorStepComponent {
     return this.runEssayService.preparationStep$.pipe(
       tap((preparationStep) => (this.preparationStep = preparationStep)),
 
-      // // TODO descomentar para no hacer skip del paso
-      // take(1),
-      // tap(() => this.skip())
+      // TODO descomentar para no hacer skip del paso
+      take(1),
+      tap(() => this.skip())
     );
   }
 

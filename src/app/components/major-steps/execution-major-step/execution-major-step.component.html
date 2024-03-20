@@ -5,9 +5,10 @@
 
 <div class="px-6 pt-6">
   <ng-container *ngIf="currentStep$ | async as currentStep">
-    <app-run-step-switch></app-run-step-switch>
+    <!-- <app-run-step-switch></app-run-step-switch> -->
     <pre>
       current: {{ currentStep.form_control_raw.name }}
+      photocell adjustment status: {{ currentStep.photocellAdjustmentStatus }}
     </pre>
   </ng-container>
 
