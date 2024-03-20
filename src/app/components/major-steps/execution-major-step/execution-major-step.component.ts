@@ -14,6 +14,7 @@ import { Observable, forkJoin, take, tap } from 'rxjs';
 export class ExecutionMajorStepComponent implements OnInit {
   executionSteps: EssayStep[] | undefined;
   preparationStep: EssayStep | undefined;
+  currentStep: EssayStep | undefined;
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
@@ -29,16 +30,33 @@ export class ExecutionMajorStepComponent implements OnInit {
     );
   }
 
+  get currentStep$(): Observable<EssayStep | undefined> {
+    return this.runEssayService.currentStep$.pipe(
+      tap((currentStep) => (this.currentStep = currentStep))
+    );
+  }
+
   ngOnInit(): void {
     forkJoin({
       executionSteps: this.executionSteps$.pipe(take(1)),
       preparationStep: this.preparationStep$.pipe(take(1)),
     }).subscribe(({ executionSteps, preparationStep }) => {
       this.initExecutionsProps(executionSteps, preparationStep);
+      this.start();
     });
   }
 
-  // TODO hacer un merge de ambos steps para la inicialización
+  private start(): void {
+    if (!this.executionSteps?.length) {
+      return;
+    }
+
+    this.runEssayService
+      .getEssayStep(this.executionSteps[0].id)
+      .get('executedStatus')
+      ?.setValue(StepStatus.Current);
+  }
+
   private initExecutionsProps(
     essaySteps: EssayStep[],
     preparationStep: EssayStep
@@ -48,7 +66,7 @@ export class ExecutionMajorStepComponent implements OnInit {
       this.runEssayService
         .getEssayStep(essayStep.id)
         .get('executedStatus')
-        ?.setValue(index === 0 ? StepStatus.Current : StepStatus.Pending);
+        ?.setValue(StepStatus.Pending);
 
       // estado del ajuste de fotocélulas
       const photocellAdjustmentStatus =

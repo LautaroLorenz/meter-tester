@@ -11,7 +11,7 @@ import { StepsBuilder } from '../models/business/class/steps-form-array-builder.
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../models/core/abstract-form-group.model';
 import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
-import { Observable, ReplaySubject, map, take, tap } from 'rxjs';
+import { Observable, ReplaySubject, filter, map, take, tap } from 'rxjs';
 import { StandResult } from '../models/business/interafces/stand-result.model';
 
 @Injectable({
@@ -54,6 +54,20 @@ export class RunEssayService {
       map(({ essaySteps }) =>
         MajorStepsDirector.stepsByMajorStep(essaySteps, MajorSteps.Execution)
       )
+    );
+  }
+
+  get currentStep$(): Observable<EssayStep | undefined> {
+    return this.runEssay$.pipe(
+      map(({ essaySteps }) =>
+        MajorStepsDirector.stepsByMajorStep(essaySteps, MajorSteps.Execution)
+      ),
+      map((essaySteps) =>
+        essaySteps.find(
+          ({ executedStatus }) => executedStatus === StepStatus.Current
+        )
+      ),
+      filter((currentStep) => currentStep !== undefined)
     );
   }
 

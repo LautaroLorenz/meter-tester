@@ -3,11 +3,17 @@
 <!-- TODO ejecutar el current step -->
 <!-- TODO permitir la simulación de resultados -->
 
-<ng-container *ngIf="executionSteps$ | async as executionSteps">
-  <div class="px-6 pt-6">
+<div class="px-6 pt-6">
+  <ng-container *ngIf="currentStep$ | async as currentStep">
     <app-run-step-switch></app-run-step-switch>
+    <pre>
+      current: {{ currentStep.form_control_raw.name }}
+    </pre>
+  </ng-container>
+
+  <ng-container *ngIf="executionSteps$ | async as executionSteps">
     <pre>
       {{ executionSteps | json }}
     </pre>
-  </div>
-</ng-container>
+  </ng-container>
+</div>
