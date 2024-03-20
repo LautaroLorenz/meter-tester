@@ -4,6 +4,7 @@ import { ExecutionDirector } from '../../../models/business/class/execution-dire
 import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { Observable, forkJoin, take, tap } from 'rxjs';
+import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 
 @Component({
   selector: 'app-execution-major-step',
@@ -15,6 +16,8 @@ export class ExecutionMajorStepComponent implements OnInit {
   executionSteps: EssayStep[] | undefined;
   preparationStep: EssayStep | undefined;
   currentStep: EssayStep | undefined;
+
+  readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
@@ -44,6 +47,13 @@ export class ExecutionMajorStepComponent implements OnInit {
       this.initExecutionsProps(executionSteps, preparationStep);
       this.start();
     });
+  }
+
+  photocellAdjustmentDone(stepId: number): void {
+    this.runEssayService
+      .getEssayStep(stepId)
+      .get('photocellAdjustmentStatus')
+      ?.setValue(PhotocellAdjustmentStatus.Done);
   }
 
   private start(): void {

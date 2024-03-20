@@ -29,6 +29,7 @@ import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-
 import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-step-in-sequence.component';
 import { BuildStepSwitchComponent } from './build-steps/build-step-switch/build-step-switch.component';
 import { RunStepSwitchComponent } from './run-steps/run-step-switch/run-step-switch.component';
+import { PhotocellAdjusmentRequestComponent } from './photocell-adjusment-request/photocell-adjusment-request.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -57,6 +58,7 @@ const AppComponents = [
   VerifyStepInSequenceComponent,
   BuildStepSwitchComponent,
   RunStepSwitchComponent,
+  PhotocellAdjusmentRequestComponent,
 ];
 
 @NgModule({

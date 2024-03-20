@@ -23,8 +23,6 @@ EJECUCIÓN:
   - Verificación de parámetros
     - Poner un warning si hay stands activos sin data para el reporte
   - Ejecución:
-    - Initicializar arrays de resultados
-    - Agregar ajuste de fotocelulas
     - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface
   - Inidicar la endDate
   - Agregar al historial (indicar el ID de reporte).

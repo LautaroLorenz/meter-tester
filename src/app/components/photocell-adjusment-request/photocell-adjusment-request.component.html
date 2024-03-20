@@ -1,0 +1,13 @@
+<p-card header="Ajustar fotocélulas">
+  <p class="m-0">
+    Ajuste las fotocélulas para ensayo de energía <strong>{{ meterConstantName }}</strong>
+  </p>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Fotocélulas ajustadas"
+      icon="pi pi-wrench"
+      [outlined]="true"
+      (click)="adjustmentDone.emit()"
+    ></p-button>
+  </ng-template>
+</p-card>

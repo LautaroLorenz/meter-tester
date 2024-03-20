@@ -1,20 +1,34 @@
-<!-- TODO Si el ajuste de fotocelulas esta pendiente, solicitar el ajuste de fotocelulas -->
-<!-- TODO mostrar el status del current step en el timeline -->
 <!-- TODO ejecutar el current step -->
 <!-- TODO permitir la simulación de resultados -->
 
 <div class="px-6 pt-6">
   <ng-container *ngIf="currentStep$ | async as currentStep">
-    <!-- <app-run-step-switch></app-run-step-switch> -->
-    <pre>
-      current: {{ currentStep.form_control_raw.name }}
-      photocell adjustment status: {{ currentStep.photocellAdjustmentStatus }}
-    </pre>
-  </ng-container>
+    <ng-container
+      *ngIf="
+        currentStep.photocellAdjustmentStatus ===
+          PhotocellAdjustmentStatus.Pending;
+        else runStepTemplate
+      "
+    >
+      <app-photocell-adjusment-request
+        [meterConstant]="currentStep.form_control_raw.meterConstant"
+        (adjustmentDone)="photocellAdjustmentDone(currentStep.id)"
+      ></app-photocell-adjusment-request>
+    </ng-container>
 
-  <ng-container *ngIf="executionSteps$ | async as executionSteps">
-    <pre>
-      {{ executionSteps | json }}
-    </pre>
+    <ng-template #runStepTemplate>
+      <app-run-step-switch></app-run-step-switch>
+    </ng-template>
   </ng-container>
 </div>
+
+<!-- TODO eliminar -->
+<br />
+<br />
+<br />
+<br />
+<ng-container *ngIf="executionSteps$ | async as executionSteps">
+  <pre>
+    {{ executionSteps | json }}
+  </pre>
+</ng-container>
