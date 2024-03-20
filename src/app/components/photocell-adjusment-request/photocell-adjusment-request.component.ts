@@ -6,7 +6,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { MeterConstants } from '../../models/business/constants/meter-constant.model';
 import { APP_CONFIG } from '../../../environments/environment';
 
 @Component({
@@ -19,13 +18,6 @@ export class PhotocellAdjusmentRequestComponent implements OnInit {
   @Input() meterConstant!: number;
 
   @Output() adjustmentDone = new EventEmitter<void>();
-
-  readonly MeterConstants = MeterConstants;
-
-  get meterConstantName(): string | undefined {
-    return this.MeterConstants.find(({ id }) => id === this.meterConstant)
-      ?.name;
-  }
 
   ngOnInit(): void {
     this.skip();
