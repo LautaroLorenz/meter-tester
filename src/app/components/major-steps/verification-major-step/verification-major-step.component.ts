@@ -28,9 +28,9 @@ export class VerificationMajorStepComponent {
     return this.runEssayService.verificationSteps$.pipe(
       tap((verificationSteps) => (this.verificationSteps = verificationSteps)),
 
-      // TODO descomentar para no hacer skip del paso
-      take(1),
-      tap(() => this.skip())
+      // // TODO descomentar para no hacer skip del paso
+      // take(1),
+      // tap(() => this.skip())
     );
   }
 
