@@ -1,13 +1,14 @@
+<!-- Parámetros del paso -->
 <p-panel [toggleable]="true">
   <ng-template pTemplate="header">
     <div class="flex gap-2 align-items-center">
       <ng-container *ngIf="showCompleteName">
-        <span class="font-semibold text-xl text-color-secondary">
+        <span class="font-semibold text-lg text-color-secondary">
           {{ currentStep.foreign.step?.name }}
         </span>
         <span>-</span>
       </ng-container>
-      <span class="font-semibold text-xl">
+      <span class="font-semibold text-lg">
         {{ currentStep.form_control_raw.name }}
       </span>
     </div>
@@ -64,7 +65,36 @@
   </div>
 </p-panel>
 
-<!-- TODO temporizador -->
+<!-- TODO 1. ajustar generador -->
+<!-- TODO 2. inicializa el calculador -->
+<!-- TODO 3. inicializa el temporizador -->
+<!-- TODO 4. inicializa el patrón, consulta valores y refresca
+  El patrón es solo visual, se muestra lo que mide en pantalla.
+  puede tener un start/stop que se activa desde el padre.
+  en el ondestroy llama a stop
+-->
+<!-- TODO 5. inicializa el calculador, consulta resultados y refresca
+  El calculador devuelve un output cada vez que recibe un resultado.
+  puede tener un start/stop que se activa desde el padre.
+  en el ondestroy llama a stop
+-->
+
+<!-- Temporizador -->
+<div class="mt-4">
+  <p-card>
+    <ng-template pTemplate="header">
+      <p class="text-base pt-3 px-3 m-0">Temporizador</p>
+    </ng-template>
+
+    <div class="-my-4">
+      <app-count-timer
+        #countTimer
+        [durationSeconds]="currentStep.form_control_raw.durationSeconds"
+        (finishCount)="timerStop()"
+      ></app-count-timer>
+    </div>
+  </p-card>
+</div>
 
 <!-- TODO
     hacer un componente para mostrar resultados de medidores durante las pruebas 

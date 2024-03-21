@@ -1,0 +1,11 @@
+<ng-container *ngIf="{ seconds: this.countdownDown$ | async } as countdown">
+  <div class="flex w-full flex-column">
+    <div class="flex flex-row justify-content-between mb-1">
+      <span>0 [s]</span>
+      <span>{{ this.durationSeconds }} [s]</span>
+    </div>
+    <p-progressBar
+      [value]="$any(percentage | number : '1.2-2')"
+    ></p-progressBar>
+  </div>
+</ng-container>
