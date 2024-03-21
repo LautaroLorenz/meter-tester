@@ -10,8 +10,13 @@ import { ACK } from '../../../models/business/types/device-ack.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent extends MachineDeviceComponent {
+  // TODO por output emite los resultados
+
   setActiveStandsAndTestType$(): Observable<ACK> {
     // TODO en caso de error cambiar el device status;
+    // TODO mientras esta en status "working" seporta por output los resultados leidos;
     return of();
   }
+
+  // TODO en caso de onDestroy apagar se puede hacer en MachineDeviceComponent.
 }
