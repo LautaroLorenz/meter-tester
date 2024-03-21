@@ -50,6 +50,7 @@ export class VacuumTestRunComponent implements OnChanges, AfterViewInit {
     this.countTimer.start();
   }
 
+  // TODO: esta logica junto con los parametros se pueden mover a un componente para mostrar tambien en el historial
   private getShowCompleteName(currentStep: VacuumTestStep): boolean {
     return currentStep.foreign.step?.name !== currentStep.form_control_raw.name;
   }
