@@ -36,6 +36,7 @@ import { VacuumTestParamsComponent } from './step-params/vacuum-test-params/vacu
 import { ManualGeneratorComponent } from './machine/manual-generator/manual-generator.component';
 import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 import { CalculatorComponent } from './machine/calculator/calculator.component';
+import { DeviceStatusComponent } from './machine/device-status/device-status.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -71,6 +72,7 @@ const AppComponents = [
   ManualGeneratorComponent,
   AwaitUserConfirmComponent,
   CalculatorComponent,
+  DeviceStatusComponent,
 ];
 
 @NgModule({

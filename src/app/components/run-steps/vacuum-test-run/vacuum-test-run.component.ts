@@ -20,18 +20,25 @@ export class VacuumTestRunComponent {
   manualGeneratorAdjusted(): void {
     // TODO: aca se inializa el "loop" si el usuario toca en repetir paso.
     // FIXME no inicializar el timer acá
-    this.startTimer();
+    this.startTest();
   }
 
   timerStop(): void {
-    // TODO mostrar resultados
+    // TODO se llegó al fin del temporizador
     // this.runEssayService
     //   .getEssayStep(this.currentStep.id)
     //   .get('executedStatus')
     //   ?.setValue(StepStatus.Done);
   }
 
-  private startTimer(): void {
-    this.countTimer.start();
+  private startTest(): void {
+    // this.countTimer.start();
+    // TODO check status de todos los componentes (calculador y patrón)
+
+  }
+
+  // podria ser un forkJoin del check de todos
+  private checkMachineDeviceStatus(): void {
+    // TODO revisar el status de los componentes
   }
 }

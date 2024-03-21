@@ -2,7 +2,6 @@
 <app-vacuum-test-params [currentStep]="currentStep"></app-vacuum-test-params>
 
 <!-- 1. Ajustar generador manual
-  El generador sabe si esta inicializado en el OnInit
   Por output avisa cuando fue inicializado
 -->
 <div class="mt-4">
@@ -11,11 +10,23 @@
   ></app-manual-generator>
 </div>
 
-<!-- TODO 2. re-inicializa el calculador 
+<!-- 2. re-inicializa el calculador 
   - Por output avisa cuando esta inicializado para poder empezar el temporizador
   - La prueba reinicia desde este punto.
 -->
-<!-- TODO 3. inicializa el temporizador -->
+<div class="mt-4">
+  <app-calculator #calculator></app-calculator>
+</div>
+
+<!-- 3. inicializa el temporizador -->
+<div class="mt-4">
+  <app-count-timer
+    #countTimer
+    [durationSeconds]="currentStep.form_control_raw.durationSeconds"
+    (finishCount)="timerStop()"
+  ></app-count-timer>
+</div>
+
 <!-- TODO 4. inicializa el patrón, consulta valores y refresca
   El patrón es solo visual, se muestra lo que mide en pantalla.
   Puede tener un start/stop que se activa desde el padre.
@@ -26,15 +37,6 @@
   Puede tener un start/stop que se activa desde el padre.
   En el ondestroy llama a stop
 -->
-
-<!-- Temporizador -->
-<div class="mt-4">
-  <app-count-timer
-    #countTimer
-    [durationSeconds]="currentStep.form_control_raw.durationSeconds"
-    (finishCount)="timerStop()"
-  ></app-count-timer>
-</div>
 
 <!-- TODO
     hacer un componente para mostrar resultados de medidores durante las pruebas 
