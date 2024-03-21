@@ -32,6 +32,7 @@ import { RunStepSwitchComponent } from './run-steps/run-step-switch/run-step-swi
 import { PhotocellAdjusmentRequestComponent } from './photocell-adjusment-request/photocell-adjusment-request.component';
 import { VacuumTestRunComponent } from './run-steps/vacuum-test-run/vacuum-test-run.component';
 import { CountTimerComponent } from './count-timer/count-timer.component';
+import { VacuumTestParamsComponent } from './step-params/vacuum-test-params/vacuum-test-params.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -63,6 +64,7 @@ const AppComponents = [
   PhotocellAdjusmentRequestComponent,
   VacuumTestRunComponent,
   CountTimerComponent,
+  VacuumTestParamsComponent,
 ];
 
 @NgModule({

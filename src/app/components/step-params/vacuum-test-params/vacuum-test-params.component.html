@@ -1,0 +1,65 @@
+<p-panel [toggleable]="true">
+    <ng-template pTemplate="header">
+      <div class="flex gap-2 align-items-center">
+        <ng-container *ngIf="showCompleteName">
+          <span class="font-semibold text-lg text-color-secondary">
+            {{ currentStep.foreign.step?.name }}
+          </span>
+          <span>-</span>
+        </ng-container>
+        <span class="font-semibold text-lg">
+          {{ currentStep.form_control_raw.name }}
+        </span>
+      </div>
+    </ng-template>
+  
+    <div class="grid">
+      <div class="col-12">
+        <div class="grid">
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">Fase L1 - Tensión U1 [V]</label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.phaseL1.voltage }}
+            </span>
+          </div>
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">Fase L2 - Tensión U2 [V]</label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.phaseL2.voltage }}
+            </span>
+          </div>
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">Fase L3 - Tensión U3 [V]</label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.phaseL3.voltage }}
+            </span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-12">
+        <div class="grid">
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">Constante del medidor</label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.meterConstant | meterConstant }}
+            </span>
+          </div>
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">
+              Cant. de impulsos máx. permitida
+            </label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.maxAllowedPulses }}
+            </span>
+          </div>
+          <div class="flex flex-column col-12 md:col-4">
+            <label class="text-color-secondary">Tiempo de ejecución [s]</label>
+            <span class="text-color">
+              {{ currentStep.form_control_raw.durationSeconds }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-panel>

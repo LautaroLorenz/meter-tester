@@ -3,13 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnChanges,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { VacuumTestStep } from '../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
-import { RunEssayService } from '../../../services/run-essay.service';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -17,21 +14,9 @@ import { RunEssayService } from '../../../services/run-essay.service';
   styleUrls: ['./vacuum-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestRunComponent implements OnChanges, AfterViewInit {
+export class VacuumTestRunComponent implements AfterViewInit {
   @Input() currentStep!: VacuumTestStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
-
-  showCompleteName!: boolean;
-
-  constructor(private readonly runEssayService: RunEssayService) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.currentStep) {
-      this.showCompleteName = this.getShowCompleteName(
-        changes.currentStep.currentValue as VacuumTestStep
-      );
-    }
-  }
 
   ngAfterViewInit(): void {
     // TODO remover
@@ -48,10 +33,5 @@ export class VacuumTestRunComponent implements OnChanges, AfterViewInit {
 
   private startTimer(): void {
     this.countTimer.start();
-  }
-
-  // TODO: esta logica junto con los parametros se pueden mover a un componente para mostrar tambien en el historial
-  private getShowCompleteName(currentStep: VacuumTestStep): boolean {
-    return currentStep.foreign.step?.name !== currentStep.form_control_raw.name;
   }
 }
