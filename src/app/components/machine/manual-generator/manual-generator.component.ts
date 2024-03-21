@@ -25,6 +25,6 @@ export class ManualGeneratorComponent implements OnInit {
       return;
     }
 
-    // setTimeout(() => this.adjustmentDone.emit());
+    setTimeout(() => this.adjustmentDone.emit());
   }
 }
