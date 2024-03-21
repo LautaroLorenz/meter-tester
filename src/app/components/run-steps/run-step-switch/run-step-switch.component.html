@@ -1,1 +1,14 @@
-<p>run-step-switch works!</p>
+<ng-container [ngSwitch]="currentStep.step_id">
+  <app-vacuum-test-run
+    *ngSwitchCase="Steps.VacuumTest"
+    [currentStep]="currentStep"
+  ></app-vacuum-test-run>
+</ng-container>
+
+<br />
+<br />
+<br />
+<br />
+<pre>
+    {{ currentStep | json }}
+</pre>
