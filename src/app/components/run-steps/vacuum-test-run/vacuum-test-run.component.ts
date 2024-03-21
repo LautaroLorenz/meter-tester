@@ -17,11 +17,7 @@ export class VacuumTestRunComponent {
   @Input() currentStep!: VacuumTestStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
 
-  isManualGeneratorAdjusted = false;
-
   manualGeneratorAdjusted(): void {
-    this.isManualGeneratorAdjusted = true;
-
     // TODO: aca se inializa el "loop" si el usuario toca en repetir paso.
     // FIXME no inicializar el timer acá
     this.startTimer();

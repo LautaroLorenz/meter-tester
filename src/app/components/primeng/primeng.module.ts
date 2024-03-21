@@ -40,6 +40,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { BadgeModule } from 'primeng/badge';
 import { AccordionModule } from 'primeng/accordion';
 import { TimelineModule } from 'primeng/timeline';
+import { ChipModule } from 'primeng/chip';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -81,6 +82,7 @@ const PrimeNgModules = [
   BadgeModule,
   AccordionModule,
   TimelineModule,
+  ChipModule,
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

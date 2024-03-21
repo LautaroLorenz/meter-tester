@@ -5,7 +5,7 @@
   El generador sabe si esta inicializado en el OnInit
   Por output avisa cuando fue inicializado
 -->
-<div *ngIf="!isManualGeneratorAdjusted" class="mt-4">
+<div class="mt-4">
   <app-manual-generator
     (adjustmentDone)="manualGeneratorAdjusted()"
   ></app-manual-generator>

@@ -16,8 +16,20 @@ import { APP_CONFIG } from '../../../../environments/environment';
 export class ManualGeneratorComponent implements OnInit {
   @Output() adjustmentDone = new EventEmitter<void>();
 
+  adjusted = false;
+  removed = false;
+
   ngOnInit(): void {
     this.skip();
+  }
+
+  userAdjustmentDone(): void {
+    this.adjusted = true;
+    this.adjustmentDone.emit();
+  }
+
+  removePanel(): void {
+    this.removed = true;
   }
 
   private skip(): void {
@@ -25,6 +37,9 @@ export class ManualGeneratorComponent implements OnInit {
       return;
     }
 
-    setTimeout(() => this.adjustmentDone.emit());
+    setTimeout(() => {
+      this.userAdjustmentDone();
+      this.removePanel();
+    });
   }
 }

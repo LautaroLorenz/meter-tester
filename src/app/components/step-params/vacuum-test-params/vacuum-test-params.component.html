@@ -2,12 +2,15 @@
   <ng-template pTemplate="header">
     <div class="flex gap-2 align-items-center">
       <ng-container *ngIf="showCompleteName">
-        <span class="font-semibold text-lg text-color-secondary">
+        <span
+          class="p-panel-title text-color-secondary"
+          [ngStyle]="{ order: 1 }"
+        >
           {{ currentStep.foreign.step?.name }}
         </span>
-        <span>-</span>
+        <span [ngStyle]="{ order: 2 }">-</span>
       </ng-container>
-      <span class="font-semibold text-lg">
+      <span class="p-panel-title" [ngStyle]="{ order: 3 }">
         {{ currentStep.form_control_raw.name }}
       </span>
     </div>
