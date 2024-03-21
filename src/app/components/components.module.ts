@@ -34,6 +34,7 @@ import { VacuumTestRunComponent } from './run-steps/vacuum-test-run/vacuum-test-
 import { CountTimerComponent } from './count-timer/count-timer.component';
 import { VacuumTestParamsComponent } from './step-params/vacuum-test-params/vacuum-test-params.component';
 import { ManualGeneratorComponent } from './machine/manual-generator/manual-generator.component';
+import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -70,7 +71,7 @@ const AppComponents = [
 ];
 
 @NgModule({
-  declarations: [AppComponents],
+  declarations: [AppComponents, AwaitUserConfirmComponent],
   imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
   exports: [PrimeNgModule, AppComponents],
 })

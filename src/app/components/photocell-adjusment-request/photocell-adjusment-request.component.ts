@@ -20,7 +20,7 @@ export class PhotocellAdjusmentRequestComponent implements OnInit {
   @Output() adjustmentDone = new EventEmitter<void>();
 
   ngOnInit(): void {
-    this.skip();
+    // this.skip();
   }
 
   private skip(): void {

@@ -20,7 +20,7 @@ export class ManualGeneratorComponent implements OnInit {
   removed = false;
 
   ngOnInit(): void {
-    this.skip();
+    // this.skip();
   }
 
   userAdjustmentDone(): void {
