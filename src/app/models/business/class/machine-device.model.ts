@@ -1,10 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { DeviceStatus } from '../enums/device-status.model';
 import { Observable, of, take } from 'rxjs';
+import { DeviceService } from '../../../services/device.service';
 
 @Component({
   template: '',
@@ -12,6 +9,8 @@ import { Observable, of, take } from 'rxjs';
 })
 export class MachineDeviceComponent implements OnInit {
   deviceStatus: DeviceStatus = DeviceStatus.Unknown;
+
+  constructor(private readonly deviceService: DeviceService) {}
 
   ngOnInit(): void {
     this.checkDeviceStatus$().pipe(take(1)).subscribe();
@@ -26,5 +25,5 @@ export class MachineDeviceComponent implements OnInit {
   protected afterSuperOnInit(): void {}
 
   // TODO función para cambiar el device status en caso de error
-  // protected 
+  // protected
 }
