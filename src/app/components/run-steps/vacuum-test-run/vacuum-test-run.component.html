@@ -29,7 +29,12 @@
 
 <!-- Temporizador -->
 <div class="mt-4">
-  <p-card>
+  <app-count-timer
+    #countTimer
+    [durationSeconds]="currentStep.form_control_raw.durationSeconds"
+    (finishCount)="timerStop()"
+  ></app-count-timer>
+  <!-- <p-card>
     <ng-template pTemplate="header">
       <p class="text-base pt-3 px-3 m-0">
         Temporizador
@@ -46,7 +51,7 @@
         (finishCount)="timerStop()"
       ></app-count-timer>
     </div>
-  </p-card>
+  </p-card> -->
 </div>
 
 <!-- TODO

@@ -1,11 +1,48 @@
-<ng-container *ngIf="{ seconds: this.countdownDown$ | async } as countdown">
-  <div class="flex w-full flex-column">
-    <div class="flex flex-row justify-content-between mb-1">
-      <span>0 [s]</span>
-      <span>{{ this.durationSeconds }} [s]</span>
-    </div>
-    <p-progressBar
-      [value]="$any(percentage | number : '1.2-2')"
-    ></p-progressBar>
-  </div>
+<ng-container *ngIf="{ seconds: countdownDown$ | async } as countdown">
+  <p-panel #panel [toggleable]="true">
+    <ng-template pTemplate="header">
+      <div class="p-panel-title">
+        <div class="flex align-items-center gap-2">
+          <span class="p-panel-title" [ngStyle]="{ order: 1 }">
+            Temporizador
+          </span>
+          <span
+            [ngStyle]="{ order: 2 }"
+            class="p-panel-title text-500 font-normal"
+            >-</span
+          >
+          <span
+            [ngStyle]="{ order: 3 }"
+            class="p-panel-title text-500 font-normal"
+            >{{ timerStatus }}</span
+          >
+          <ng-container *ngIf="panel.collapsed">
+            <span
+              [ngStyle]="{ order: 4 }"
+              class="p-panel-title text-500 font-normal"
+              >-</span
+            >
+            <span
+              class="p-panel-title text-500 font-normal"
+              [ngStyle]="{ order: 5 }"
+            >
+              {{ currentSecond }} [s]
+            </span>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      <div class="flex w-full flex-column">
+        <div class="flex flex-row justify-content-between mb-1">
+          <span>0 [s]</span>
+          <span>{{ currentSecond }} [s]</span>
+        </div>
+        <p-progressBar
+          [value]="$any(percentage | number : '1.2-2')"
+        ></p-progressBar>
+      </div>
+    </ng-template>
+  </p-panel>
 </ng-container>
