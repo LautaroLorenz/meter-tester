@@ -13,4 +13,5 @@ export enum PageUrlName {
   seeReport = 'ver-reporte',
   dashboard = 'estadisticas',
   terminal = 'terminal',
+  virtualMachine = 'maquina-virtual',
 }

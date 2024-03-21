@@ -1,4 +1,6 @@
-<app-menu></app-menu>
+<ng-container *ngIf="!isVirtualMachinePage">
+  <app-menu></app-menu>
+</ng-container>
 <router-outlet></router-outlet>
 <app-confirm-dialog></app-confirm-dialog>
 <p-toast position="top-right"></p-toast>

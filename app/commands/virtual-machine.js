@@ -19,22 +19,21 @@ function closeWindow() {
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
-            if (window && !window.isDestroyed() && window.isFocusable()) {
-                window.focus();
+            if (window && !window.isDestroyed()) {
                 return;
             }
             window = new electron_1.BrowserWindow({
                 x: 0,
                 y: 0,
-                width: 800,
-                height: 600,
+                width: 1240,
+                height: 720,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
                 },
             });
             window.setMenuBarVisibility(false);
-            window.loadURL('http://localhost:4200');
+            window.loadURL('http://localhost:4200/maquina-virtual');
             return;
         }));
         electron_1.ipcMain.handle('close-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {

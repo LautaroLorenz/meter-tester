@@ -8,6 +8,7 @@ import { AvailableTestComponent } from './available-test/available-test.componen
 import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { RunEssayComponent } from './run-essay/run-essay.component';
+import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
     path: PageUrlName.runEssay,
     component: RunEssayComponent,
     // canDeactivate: [DevicesTurnOffGuard] // TODO
+  },
+  {
+    path: PageUrlName.virtualMachine,
+    component: VirtualMachineComponent,
   },
 ];
 

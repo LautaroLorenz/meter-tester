@@ -13,6 +13,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
 import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { DirectivesModule } from '../directives/directives.module';
 import { RunEssayComponent } from './run-essay/run-essay.component';
+import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { RunEssayComponent } from './run-essay/run-essay.component';
     AvailableTestComponent,
     EssayTemplateBuilderComponent,
     RunEssayComponent,
+    VirtualMachineComponent,
   ],
   imports: [
     CommonModule,
