@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
@@ -14,12 +13,14 @@ import { CountTimerComponent } from '../../count-timer/count-timer.component';
   styleUrls: ['./vacuum-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestRunComponent implements AfterViewInit {
+export class VacuumTestRunComponent {
   @Input() currentStep!: VacuumTestStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
 
-  ngAfterViewInit(): void {
-    // TODO remover
+  isManualGeneratorAdjusted = false;
+
+  manualGeneratorAdjusted(): void {
+    this.isManualGeneratorAdjusted = true;
     this.startTimer();
   }
 

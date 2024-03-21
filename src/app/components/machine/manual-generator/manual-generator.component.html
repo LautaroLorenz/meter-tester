@@ -1,0 +1,15 @@
+<p-card>
+  <p class="m-0 align-items-center flex gap-4">
+    <i class="pi pi-exclamation-triangle text-color-secondary" style="font-size: 1.3rem"></i>
+    Ajuste el generador manualmente, para poder continuar
+  </p>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Generador ajustado"
+      icon="pi pi-wrench"
+      [outlined]="true"
+      (click)="adjustmentDone.emit()"
+    ></p-button>
+  </ng-template>
+</p-card>

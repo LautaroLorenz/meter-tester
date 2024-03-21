@@ -1,10 +1,16 @@
 <!-- Parámetros del paso -->
 <app-vacuum-test-params [currentStep]="currentStep"></app-vacuum-test-params>
 
-<!-- TODO 1. Ajustar generador manual
+<!-- 1. Ajustar generador manual
   El generador sabe si esta inicializado en el OnInit
   Por output avisa cuando fue inicializado
 -->
+<div *ngIf="!isManualGeneratorAdjusted" class="mt-4">
+  <app-manual-generator
+    (adjustmentDone)="manualGeneratorAdjusted()"
+  ></app-manual-generator>
+</div>
+
 <!-- TODO 2. re-inicializa el calculador 
   - Por output avisa cuando esta inicializado para poder empezar el temporizador
   - La prueba reinicia desde este punto.
@@ -25,7 +31,12 @@
 <div class="mt-4">
   <p-card>
     <ng-template pTemplate="header">
-      <p class="text-base pt-3 px-3 m-0">Temporizador</p>
+      <p class="text-base pt-3 px-3 m-0">
+        Temporizador
+        <span class="text-sm">
+          [{{ countTimer.isRunning ? "Contando" : "Detenido" }}]
+        </span>
+      </p>
     </ng-template>
 
     <div class="-my-4">
