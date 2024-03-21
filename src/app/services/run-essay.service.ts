@@ -13,6 +13,7 @@ import { AbstractFormGroup } from '../models/core/abstract-form-group.model';
 import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
 import { Observable, ReplaySubject, filter, map, take, tap } from 'rxjs';
 import { StandResult } from '../models/business/interafces/stand-result.model';
+import { IpcService } from './ipc.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,10 @@ export class RunEssayService {
   private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;
   private _runEssayForm!: RunEssayForm;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly ipcService: IpcService
+  ) {
     this._majorStepStatusMap$ = new ReplaySubject(1);
     this._runEssay$ = new ReplaySubject(1);
   }
@@ -87,6 +91,14 @@ export class RunEssayService {
     this._runEssayForm.valueChanges.subscribe((runEssay) => {
       this._runEssay$.next(runEssay as RunEssay);
     });
+  }
+
+  openVirtualMachine(): Promise<void> {
+    return this.ipcService.invoke('open-virtual-machine') as Promise<void>;
+  }
+
+  closeVirtualMachine(): Promise<void> {
+    return this.ipcService.invoke('close-virtual-machine') as Promise<void>;
   }
 
   reset(): void {

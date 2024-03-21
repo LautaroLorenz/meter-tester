@@ -35,6 +35,7 @@ import {
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { RelationsManager } from '../../models/core/relations-manager.model';
 import { RunEssayService } from '../../services/run-essay.service';
+import { APP_CONFIG } from '../../../environments/environment';
 
 @Component({
   selector: 'app-run-essay',
@@ -92,12 +93,20 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   // }
 
   ngOnInit(): void {
+    if (APP_CONFIG.virtualMachine) {
+      void this.runEssayService.openVirtualMachine();
+    }
+
     this.runEssayService.reset();
     this.observeRoute();
     this.observeTables();
   }
 
   ngOnDestroy() {
+    if (APP_CONFIG.virtualMachine) {
+      void this.runEssayService.closeVirtualMachine();
+    }
+
     this.onDestroy.next();
     this.onDestroy.complete();
   }

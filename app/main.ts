@@ -5,11 +5,13 @@ import database from './resources/database/database';
 import knexFile from './resources/database/knexfile';
 import abm from './commands/abm';
 import essay from './commands/essay';
+import virtualMachine from './commands/virtual-machine';
 
 function registerIpc(knex: any) {
   knexFile.register();
   abm.register(knex);
   essay.register(knex);
+  virtualMachine.register();
 }
 
 let win: BrowserWindow | null = null;
@@ -62,6 +64,7 @@ function createWindow(): BrowserWindow {
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    virtualMachine.closeWindow();
     win = null;
   });
 
