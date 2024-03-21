@@ -3,4 +3,5 @@ export const APP_CONFIG = {
   environment: 'DEV',
   standsQuantiy: 10,
   skipSteps: true,
+  virtualMachine: true,
 };

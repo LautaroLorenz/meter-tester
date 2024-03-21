@@ -3,4 +3,5 @@ export const APP_CONFIG = {
   environment: 'LOCAL',
   standsQuantiy: 10,
   skipSteps: false,
+  virtualMachine: false,
 };
