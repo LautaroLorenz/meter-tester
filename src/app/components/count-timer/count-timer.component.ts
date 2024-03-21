@@ -29,15 +29,16 @@ export class CountTimerComponent implements OnDestroy, OnChanges {
     this.countdownDown$ = new BehaviorSubject(0);
   }
 
+  get currentSecond(): number {
+    return this.durationSeconds - this.countdownDown$.value;
+  }
+
   get percentage(): number {
-    return (
-      ((this.durationSeconds - this.countdownDown$.value) * 100) /
-      this.durationSeconds
-    );
+    return (this.currentSecond * 100) / this.durationSeconds;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.durationSeconds) {
+    if (changes.durationSeconds) {
       this.reset();
     }
   }
