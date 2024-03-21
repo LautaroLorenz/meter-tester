@@ -1,14 +1,13 @@
-<p-card header="Ajustar fotocélulas">
-  <p class="m-0">
+<app-await-user-confirm
+  headerText="Fotocélulas"
+  confirmButtonText="Fotocélulas ajustadas"
+  confirmButtonIcon="pi-wrench"
+  afterConfirmationChipText="Ajuste realizado"
+  afterConfirmationChipIcon="pi-check"
+  (userConfirm)="adjustmentDone.emit()"
+>
+  <p messageTemplate class="m-0">
     Ajuste las fotocélulas para ensayo de energía
     <strong>{{ meterConstant | meterConstant }}</strong>
   </p>
-  <ng-template pTemplate="footer">
-    <p-button
-      label="Fotocélulas ajustadas"
-      icon="pi pi-wrench"
-      [outlined]="true"
-      (click)="adjustmentDone.emit()"
-    ></p-button>
-  </ng-template>
-</p-card>
+</app-await-user-confirm>

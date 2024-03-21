@@ -6,8 +6,7 @@
     <ng-container
       *ngIf="
         currentStep.photocellAdjustmentStatus ===
-          PhotocellAdjustmentStatus.Pending;
-        else runStepTemplate
+        PhotocellAdjustmentStatus.Pending
       "
     >
       <app-photocell-adjusment-request
@@ -16,9 +15,14 @@
       ></app-photocell-adjusment-request>
     </ng-container>
 
-    <ng-template #runStepTemplate>
+    <ng-container
+      *ngIf="
+        currentStep.photocellAdjustmentStatus !==
+        PhotocellAdjustmentStatus.Pending
+      "
+    >
       <app-run-step-switch [currentStep]="currentStep"></app-run-step-switch>
-    </ng-template>
+    </ng-container>
   </ng-container>
 </div>
 

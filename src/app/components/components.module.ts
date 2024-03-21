@@ -68,10 +68,11 @@ const AppComponents = [
   CountTimerComponent,
   VacuumTestParamsComponent,
   ManualGeneratorComponent,
+  AwaitUserConfirmComponent,
 ];
 
 @NgModule({
-  declarations: [AppComponents, AwaitUserConfirmComponent],
+  declarations: [AppComponents],
   imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
   exports: [PrimeNgModule, AppComponents],
 })

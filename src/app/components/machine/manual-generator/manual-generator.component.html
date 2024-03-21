@@ -1,49 +1,12 @@
-<ng-container *ngIf="!adjusted; else adjustedTmp">
-  <p-panel header="Generador">
-    <ng-template pTemplate="body">
-      <p class="m-0 align-items-center flex gap-4">
-        <i
-          class="pi pi-exclamation-triangle text-color-secondary"
-          style="font-size: 1.5rem"
-        ></i>
-        Ajuste el generador manualmente, para poder continuar
-      </p>
-    </ng-template>
-    <ng-template pTemplate="footer">
-      <p-button
-        label="Generador ajustado"
-        icon="pi pi-wrench"
-        [outlined]="true"
-        (click)="userAdjustmentDone()"
-      ></p-button>
-    </ng-template>
-  </p-panel>
-</ng-container>
-
-<ng-template #adjustedTmp>
-  <ng-container *ngIf="!removed">
-    <p-panel>
-      <ng-template pTemplate="header">
-        <div
-          class="-my-2 flex align-items-center justify-content-between w-full"
-        >
-          <span class="p-panel-title">Generador</span>
-          <p-button
-            icon="pi pi-times"
-            [ngStyle]="{ order: 2 }"
-            styleClass="p-panel-header-icon"
-            (click)="removePanel()"
-          ></p-button>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="body">
-        <p-chip
-          icon="pi pi-check"
-          label="Ajuste realizado"
-          [removable]="true"
-          (onRemove)="removePanel()"
-        ></p-chip>
-      </ng-template>
-    </p-panel>
-  </ng-container>
-</ng-template>
+<app-await-user-confirm
+  headerText="Generador"
+  confirmButtonText="Generador ajustado"
+  confirmButtonIcon="pi-wrench"
+  afterConfirmationChipText="Ajuste realizado"
+  afterConfirmationChipIcon="pi-check"
+  (userConfirm)="adjustmentDone.emit()"
+>
+  <p messageTemplate class="m-0">
+    Ajuste el generador manualmente, para poder continuar
+  </p>
+</app-await-user-confirm>

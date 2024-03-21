@@ -1,1 +1,53 @@
-<p>await-user-confirm works!</p>
+<ng-container *ngIf="!confirmed; else confirmedTmp">
+  <p-panel>
+    <ng-template pTemplate="header">
+      <div class="-my-2 flex align-items-center justify-content-between w-full">
+        <span class="p-panel-title">{{ headerText }}</span>
+        <i
+          class="pi pi-exclamation-triangle text-color-secondary"
+          style="font-size: 1.5rem"
+          [ngStyle]="{ order: 2 }"
+        ></i>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <ng-content select="[messageTemplate]"></ng-content>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="confirmButtonText"
+        [icon]="'pi ' + confirmButtonIcon"
+        [outlined]="true"
+        (click)="onUserConfirm()"
+      ></p-button>
+    </ng-template>
+  </p-panel>
+</ng-container>
+
+<ng-template #confirmedTmp>
+  <ng-container *ngIf="!removed">
+    <p-panel>
+      <ng-template pTemplate="header">
+        <div
+          class="-my-2 flex align-items-center justify-content-between w-full"
+        >
+          <span class="p-panel-title">{{ headerText }}</span>
+          <p-button
+            icon="pi pi-times"
+            [ngStyle]="{ order: 2 }"
+            styleClass="p-panel-header-icon"
+            (click)="removePanel()"
+          ></p-button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="body">
+        <p-chip
+          [icon]="'pi ' + afterConfirmationChipIcon"
+          [label]="afterConfirmationChipText"
+          [removable]="true"
+          (onRemove)="removePanel()"
+        ></p-chip>
+      </ng-template>
+    </p-panel>
+  </ng-container>
+</ng-template>
