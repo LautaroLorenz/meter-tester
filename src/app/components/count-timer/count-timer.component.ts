@@ -54,18 +54,6 @@ export class CountTimerComponent implements OnDestroy, OnChanges {
     }
   }
 
-  get stopStatus(): string {
-    return this.currentSecond < this.durationSeconds
-      ? 'Detenido'
-      : 'Finalizado';
-  }
-
-  get collapsedStatus(): string {
-    return this.isRunning
-      ? `${this.currentSecond} [s]`
-      : `[${this.stopStatus}]`;
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.durationSeconds) {
       this.reset();
