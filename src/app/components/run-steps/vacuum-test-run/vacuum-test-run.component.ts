@@ -21,6 +21,9 @@ export class VacuumTestRunComponent {
 
   manualGeneratorAdjusted(): void {
     this.isManualGeneratorAdjusted = true;
+
+    // TODO: aca se inializa el "loop" si el usuario toca en repetir paso.
+    // FIXME no inicializar el timer acá
     this.startTimer();
   }
 
