@@ -1,1 +1,6 @@
-<p-panel header="Calculador"> </p-panel>
+<p-panel header="Calculador">
+  <ng-template pTemplate="body">
+    <input #input type="text" value="my-command" />
+    <button (click)="softwareWrite(input.value)">Enviar comando</button>
+  </ng-template>
+</p-panel>

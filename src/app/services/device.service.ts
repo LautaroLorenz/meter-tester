@@ -9,20 +9,25 @@ import { EssayTemplate } from '../models/business/database/essay-template.model'
   providedIn: 'root',
 })
 export class DeviceService {
-//   constructor(private readonly ipcService: IpcService) {}
+  constructor(private readonly ipcService: IpcService) {}
 
-//   saveEssayTemplate$(
-//     essayTemplate: EssayTemplate,
-//     essayTemplateSteps: EssayTemplateStep[]
-//   ): Observable<{
-//     essayTemplate: EssayTemplate;
-//     essayTemplateSteps: EssayTemplateStep[];
-//   }> {
-//     return from(
-//       this.ipcService.invoke('save-essay-template', {
-//         essayTemplate,
-//         essayTemplateSteps,
-//       })
-//     );
-//   }
+  softwareWrite(command: string): Observable<void> {
+    console.log('send', command);
+    return from(this.ipcService.invoke('software-write', { command }));
+  }
+
+  //   saveEssayTemplate$(
+  //     essayTemplate: EssayTemplate,
+  //     essayTemplateSteps: EssayTemplateStep[]
+  //   ): Observable<{
+  //     essayTemplate: EssayTemplate;
+  //     essayTemplateSteps: EssayTemplateStep[];
+  //   }> {
+  //     return from(
+  //       this.ipcService.invoke('save-essay-template', {
+  //         essayTemplate,
+  //         essayTemplateSteps,
+  //       })
+  //     );
+  //   }
 }

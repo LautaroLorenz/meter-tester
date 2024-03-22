@@ -5,18 +5,34 @@ import database from './resources/database/database';
 import knexFile from './resources/database/knexfile';
 import abm from './commands/abm';
 import essay from './commands/essay';
-import virtualMachine from './commands/virtual-machine';
+import virtualMachine from './virtual-machine/virtual-machine';
 
 function registerIpc(knex: any) {
   knexFile.register();
   abm.register(knex);
   essay.register(knex);
-  virtualMachine.register();
 }
 
 let win: BrowserWindow | null = null;
-const args = process.argv.slice(1),
-  serve = args.some((val) => val === '--serve');
+const args = process.argv.slice(1);
+const serve = args.some((val) => val === '--serve');
+const isDev =
+  args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
+let APP_CONFIG;
+
+// cuando estamos en el ambiente dev, podemos trabajar con el simulador
+if (isDev) {
+  import('../src/environments/environment.dev').then((environment) => {
+    APP_CONFIG = environment.APP_CONFIG;
+    if (APP_CONFIG.virtualMachine) {
+      virtualMachine.register();
+    } 
+  });
+} else {
+  import('../src/environments/environment.prod').then((environment) => {
+    APP_CONFIG = environment.APP_CONFIG;
+  });
+}
 
 function createWindow(): BrowserWindow {
   const size = screen.getPrimaryDisplay().workAreaSize;

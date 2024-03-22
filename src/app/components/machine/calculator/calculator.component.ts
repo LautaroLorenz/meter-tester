@@ -18,5 +18,10 @@ export class CalculatorComponent extends MachineDeviceComponent {
     return of();
   }
 
+  // FIXME
+  softwareWrite(command: string): void {
+    void this.deviceService.softwareWrite(command);
+  }
+
   // TODO en caso de onDestroy apagar se puede hacer en MachineDeviceComponent.
 }

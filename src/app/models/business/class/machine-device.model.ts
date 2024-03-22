@@ -10,7 +10,7 @@ import { DeviceService } from '../../../services/device.service';
 export class MachineDeviceComponent implements OnInit {
   deviceStatus: DeviceStatus = DeviceStatus.Unknown;
 
-  constructor(private readonly deviceService: DeviceService) {}
+  constructor(protected readonly deviceService: DeviceService) {}
 
   ngOnInit(): void {
     this.checkDeviceStatus$().pipe(take(1)).subscribe();
