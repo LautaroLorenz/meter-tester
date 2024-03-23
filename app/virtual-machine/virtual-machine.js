@@ -86,6 +86,9 @@ exports.default = {
     },
     closeWindow,
     setSoftwareWindow: (window) => {
+        if (!window) {
+            throw new Error('Error abriendo máquina virtual');
+        }
         softwareWindow = window;
     },
 };
