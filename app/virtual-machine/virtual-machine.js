@@ -59,6 +59,7 @@ exports.default = {
                 height: 720,
                 webPreferences: {
                     nodeIntegration: true,
+                    allowRunningInsecureContent: true,
                     contextIsolation: false,
                 },
                 alwaysOnTop: true,

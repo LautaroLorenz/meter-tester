@@ -56,6 +56,7 @@ export default {
         height: 720,
         webPreferences: {
           nodeIntegration: true,
+          allowRunningInsecureContent: true,
           contextIsolation: false,
         },
         alwaysOnTop: true,
@@ -83,6 +84,9 @@ export default {
   },
   closeWindow,
   setSoftwareWindow: (window: BrowserWindow | null) => {
+    if (!window) {
+      throw new Error('Error abriendo máquina virtual');
+    }
     softwareWindow = window;
   },
 };
