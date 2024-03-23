@@ -37,6 +37,7 @@ import { ManualGeneratorComponent } from './machine/manual-generator/manual-gene
 import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
+import { CommandHistoryComponent } from './virtual-machine/command-history/command-history.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -73,6 +74,7 @@ const AppComponents = [
   AwaitUserConfirmComponent,
   CalculatorComponent,
   DeviceStatusComponent,
+  CommandHistoryComponent,
 ];
 
 @NgModule({
