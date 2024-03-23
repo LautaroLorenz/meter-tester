@@ -43,8 +43,8 @@ export class MachineDeviceComponent implements OnInit, OnDestroy {
   private observeMachine(): void {
     this.deviceService.handleMachineToSoftware$
       .pipe(takeUntil(this.onDestroy))
-      .subscribe((response) => {
-        console.log('handle machine write', response);
+      .subscribe((command) => {
+        console.log(`software read [${command}]`);
       });
   }
 }

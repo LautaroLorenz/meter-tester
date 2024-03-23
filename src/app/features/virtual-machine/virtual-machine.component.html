@@ -1,22 +1,120 @@
-<!-- TODO responser inmediatamente, responder manualmente (slider) 
-  - inmediatamente: apenas llega el comando, se envia una respuesta.
-  - se debe tocar el botón enviar, para enviar la respuesta.
--->
+<form [formGroup]="configForm">
+  <p-panel header="Configuración" [toggleable]="true">
+    <ng-template pTemplate="content">
+      <div class="grid">
+        <div class="col col-6 flex flex-column gap-1">
+          <label class="text-base">Responder de forma</label>
+          <p-selectButton
+            [options]="VMResponseTypesConstant"
+            id="responseType"
+            formControlName="responseType"
+            optionValue="value"
+            optionLabel="label"
+          ></p-selectButton>
+          <div class="text-400 flex flex-row gap-2 align-items-center">
+            <i class="pi pi-info-circle"></i>
+            <span>{{
+              VMResponseTypesConstant[configForm.controls.responseType.value]
+                .helpText
+            }}</span>
+          </div>
+        </div>
 
-<!-- TODO delay de respuesta (toggle button) 
-  - sin delay
-  - delay fijo
-    - habilita un input number
-  - delay aleatorio entre un rango
-    - habilita dos input number
--->
+        <div class="col col-6 flex flex-column gap-1">
+          <label class="text-base">Refresco de comandos</label>
+          <p-selectButton
+            [options]="VMCommandRefreshTypeConstant"
+            id="commandRefreshType"
+            formControlName="commandRefreshType"
+            optionValue="value"
+            optionLabel="label"
+          ></p-selectButton>
+          <div class="text-400 flex flex-row gap-2 align-items-center">
+            <i class="pi pi-info-circle"></i>
+            <span>{{
+              VMCommandRefreshTypeConstant[
+                configForm.controls.commandRefreshType.value
+              ].helpText
+            }}</span>
+          </div>
+        </div>
 
-<!-- TODO regeneración de respuestas:
+        <div class="col col-6 flex flex-column gap-1">
+          <label class="text-base">Delay en responder</label>
+          <p-selectButton
+            [options]="VMDelayTypesConstant"
+            id="delayType"
+            formControlName="delayType"
+            optionValue="value"
+            optionLabel="label"
+          ></p-selectButton>
+          <div class="text-400 flex flex-row gap-2 align-items-center">
+            <i class="pi pi-info-circle"></i>
+            <span>{{
+              VMDelayTypesConstant[configForm.controls.delayType.value].helpText
+            }}</span>
+          </div>
+        </div>
+
+        <div class="col col-6 flex flex-column gap-1">
+          <label class="text-base">Delay valor [milisegundos]</label>
+          <div>
+            <ng-container [ngSwitch]="configForm.controls.delayType.value">
+              <ng-container *ngSwitchCase="VMDelayTypes.Off">
+                <p-inputNumber
+                  [disabled]="true"
+                  placeholder="0"
+                ></p-inputNumber>
+              </ng-container>
+              <ng-container *ngSwitchCase="VMDelayTypes.Fixed">
+                <p-inputNumber
+                  id="fixedDelay"
+                  formControlName="fixedDelay"
+                  autofocus
+                  [required]="true"
+                  [useGrouping]="false"
+                  [min]="0"
+                ></p-inputNumber>
+              </ng-container>
+              <ng-container *ngSwitchCase="VMDelayTypes.Range">
+                <div class="grid grid-nogutter">
+                  <div class="col col-6">
+                    <p-inputNumber
+                      class="flex w-full"
+                      id="minDelay"
+                      formControlName="minDelay"
+                      autofocus
+                      [required]="true"
+                      [useGrouping]="false"
+                      [min]="0"
+                    ></p-inputNumber>
+                  </div>
+                  <div class="col col-6">
+                    <p-inputNumber
+                      class="flex w-full"
+                      id="maxDelay"
+                      formControlName="maxDelay"
+                      autofocus
+                      [required]="true"
+                      [useGrouping]="false"
+                      [min]="0"
+                    ></p-inputNumber>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-panel>
+
+  <!-- TODO regeneración de respuestas:
     - generar valores aleatorios: Se genera una nueva nueva respuesta luego de enviar.
     - mantener valores: Luego de enviar los valores no cambian.
 -->
 
-<!-- TODO 
+  <!-- TODO 
   Tabla de gestión de los comandos, el boton enviar solo se habilita en el modo manual:
   - Dispositivo que envia
   - Botones:
@@ -24,15 +122,22 @@
   - [NTH]: inputs con rangos para los valores
 -->
 
-<!-- TODO input para comando libre -->
+  <!-- TODO input para comando libre -->
 
-<p-panel header="Calculador">
-  <ng-template pTemplate="body">
-    <input #input type="text" value="B|CAL|STW|ACK00000|Z|" />
-    <button (click)="virtualMachineWrite(input.value)">Enviar comando</button>
-  </ng-template>
-</p-panel>
+  <div class="mt-4">
+    <p-panel header="Calculador" [toggleable]="true">
+      <ng-template pTemplate="body">
+        <input #input type="text" value="B|CAL|STW|ACK00000|Z|" />
+        <button (click)="virtualMachineWrite(input.value)">
+          Enviar comando
+        </button>
+      </ng-template>
+    </p-panel>
+  </div>
+</form>
 
 <div class="mt-4">
-  <app-command-history #commandHistory></app-command-history>
+  <p-panel header="Historial de comandos" [toggleable]="true">
+    <app-command-history #commandHistory></app-command-history>
+  </p-panel>
 </div>

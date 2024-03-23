@@ -7,14 +7,14 @@ import { IpcService } from './ipc.service';
   providedIn: 'root',
 })
 export class DeviceService {
-  private readonly _onMachineToSoftware$: Subject<any[]>; // FIXME any[]
+  private readonly _onMachineToSoftware$: Subject<string>;
 
   constructor(private readonly ipcService: IpcService) {
     this._onMachineToSoftware$ = new Subject();
     this.observeUSB();
   }
 
-  get handleMachineToSoftware$(): Subject<any[]> {
+  get handleMachineToSoftware$(): Subject<string> {
     return this._onMachineToSoftware$;
   }
 
@@ -23,8 +23,8 @@ export class DeviceService {
   }
 
   private observeUSB(): void {
-    this.ipcService.on('on-data-usb', (...args: any[]) => {
-      this._onMachineToSoftware$.next(args);
+    this.ipcService.on('on-data-usb', (_: any, command: string) => {
+      this._onMachineToSoftware$.next(command);
     });
   }
 }

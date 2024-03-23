@@ -2,6 +2,17 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  CommandRefreshType,
+  VMDelayTypes,
+  VMResponseTypes,
+} from '../../models/business/interafces/virtual-machine.model';
+import {
+  VMCommandRefreshTypeConstant,
+  VMDelayTypesConstant,
+  VMResponseTypesConstant,
+} from '../../models/business/constants/virtual-machine-contant.model';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -10,10 +21,21 @@ import { CommandHistoryComponent } from '../../components/virtual-machine/comman
 export class VirtualMachineComponent implements OnInit, OnDestroy {
   @ViewChild('commandHistory', { static: true })
   commandHistory!: CommandHistoryComponent;
+  configForm: FormGroup;
+
+  readonly VMResponseTypesConstant = VMResponseTypesConstant;
+  readonly VMDelayTypesConstant = VMDelayTypesConstant;
+  readonly VMCommandRefreshTypeConstant = VMCommandRefreshTypeConstant;
+  readonly VMDelayTypes = VMDelayTypes;
 
   private onDestroy = new Subject<void>();
 
-  constructor(private readonly virtualMachineService: VirtualMachineService) {}
+  constructor(
+    private readonly virtualMachineService: VirtualMachineService,
+    private readonly fb: FormBuilder
+  ) {
+    this.configForm = this.buildConfigForm();
+  }
 
   ngOnInit(): void {
     this.observeSoftware();
@@ -35,5 +57,16 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       .subscribe((command) => {
         this.commandHistory.add(command);
       });
+  }
+
+  private buildConfigForm(): FormGroup {
+    return this.fb.group({
+      responseType: [VMResponseTypes.Automatic],
+      delayType: [VMDelayTypes.Range],
+      fixedDelay: [250],
+      minDelay: [50],
+      maxDelay: [500],
+      commandRefreshType: [CommandRefreshType.Refresh],
+    });
   }
 }
