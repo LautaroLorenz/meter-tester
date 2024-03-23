@@ -1,18 +1,23 @@
 import { BrowserWindow, ipcMain } from 'electron';
-import { MockBinding } from '@serialport/binding-mock';
+import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { DelimiterParser } from 'serialport';
 
-let window: BrowserWindow | null = null;
-let serialPort: SerialPortStream;
+let virtualMachineWindow: BrowserWindow | null = null;
+let softwareWindow: BrowserWindow | null = null;
+let serialPort: SerialPortStream<MockBindingInterface>;
 const parser = new DelimiterParser({
   delimiter: '\n',
   includeDelimiter: false,
 });
 
 function closeWindow(): void {
-  if (window && !window.isDestroyed() && window.isClosable()) {
-    window.close();
+  if (
+    virtualMachineWindow &&
+    !virtualMachineWindow.isDestroyed() &&
+    virtualMachineWindow.isClosable()
+  ) {
+    virtualMachineWindow.close();
     disconnect();
   }
 }
@@ -25,10 +30,10 @@ function connect(): void {
     baudRate: 14400,
   });
   parser.removeAllListeners();
+
+  // envio de comando puerto USB -> Sw
   parser.on('data', (data) => {
-    // TODO llega un dato por el puerto serial, esto sucede cuando virtual machine envia una respuesta mock al software.
-    // TODO data.toString('ascii')
-    console.log('parser.on data', data);
+    softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
   });
   serialPort.pipe(parser);
 }
@@ -41,10 +46,10 @@ function disconnect(): void {
 export default {
   register: () => {
     ipcMain.handle('open-virtual-machine', async () => {
-      if (window && !window.isDestroyed()) {
+      if (virtualMachineWindow && !virtualMachineWindow.isDestroyed()) {
         return;
       }
-      window = new BrowserWindow({
+      virtualMachineWindow = new BrowserWindow({
         x: 0,
         y: 0,
         width: 1240,
@@ -53,9 +58,10 @@ export default {
           nodeIntegration: true,
           contextIsolation: false,
         },
+        alwaysOnTop: true,
       });
-      window.setMenuBarVisibility(false);
-      window.loadURL('http://localhost:4200/maquina-virtual');
+      virtualMachineWindow.setMenuBarVisibility(false);
+      virtualMachineWindow.loadURL('http://localhost:4200/maquina-virtual');
       connect();
       return;
     });
@@ -63,11 +69,20 @@ export default {
       closeWindow();
       return;
     });
+
+    // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
+    ipcMain.handle('virtual-machine-write', async (_, { command }) => {
+      serialPort.port?.emitData(command);
+    });
+
+    // envió de comando Sw -> Máquina
     ipcMain.handle('software-write', async (_, { command }) => {
-      // TODO procesar el comando que el software intenta enviar a la máquina y generar una respuesta fake,
-      // TODO luego enviar una respuesta como si hubiera llegado a travez del USB conectado a la máquina.
-      window?.webContents.send('handle-software-write', command);
+      // redirección del comando a la máquina virtual
+      virtualMachineWindow?.webContents.send('handle-software-write', command);
     });
   },
   closeWindow,
+  setSoftwareWindow: (window: BrowserWindow | null) => {
+    softwareWindow = window;
+  },
 };

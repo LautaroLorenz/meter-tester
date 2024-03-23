@@ -12,15 +12,23 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   constructor(private readonly virtualMachineService: VirtualMachineService) {}
 
   ngOnInit(): void {
-    this.virtualMachineService.handleSoftwareToMachine$
-      .pipe(takeUntil(this.onDestroy))
-      .subscribe((response) => {
-        console.log('handle software write', response);
-      });
+    this.observeSoftware();
+  }
+
+  virtualMachineWrite(command: string): void {
+    void this.virtualMachineService.write(command + '\n');
   }
 
   ngOnDestroy(): void {
     this.onDestroy.next();
     this.onDestroy.complete();
+  }
+
+  private observeSoftware(): void {
+    this.virtualMachineService.handleSoftwareToMachine$
+      .pipe(takeUntil(this.onDestroy))
+      .subscribe((response) => {
+        console.log('handle software write', response);
+      });
   }
 }

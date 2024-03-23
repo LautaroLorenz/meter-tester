@@ -18,7 +18,7 @@ const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
 const isDev =
   args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
-let APP_CONFIG;
+let APP_CONFIG: any;
 
 // cuando estamos en el ambiente dev, podemos trabajar con el simulador
 if (isDev) {
@@ -59,6 +59,11 @@ function createWindow(): BrowserWindow {
     require('electron-reloader')(module);
     knex = database.connect({ isProduction: false });
     win.loadURL('http://localhost:4200');
+
+    if(APP_CONFIG.virtualMachine) {
+      virtualMachine.setSoftwareWindow(win);
+    }
+
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';

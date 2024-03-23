@@ -1,2 +1,13 @@
-<p>virtual-machine works!</p>
-hola mundo
+<!-- TODO responser automáticamente (slider) -->
+<!-- TODO delay off, delay fijo, delay aleatorio entre un rango (toggle button) -->
+<!-- TODO generar respuestas aleatorias vs respuestas fijas -->
+<!-- TODO en caso de manual: (todo esta disabled en automático)
+  ada comando tiene para generar respuesta aleatoria, un input fijo, y un botón enviar
+-->
+
+<p-panel header="Calculador">
+  <ng-template pTemplate="body">
+    <input #input type="text" value="my-response" />
+    <button (click)="virtualMachineWrite(input.value)">Enviar comando</button>
+  </ng-template>
+</p-panel>

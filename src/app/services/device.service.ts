@@ -1,33 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { IpcService } from './ipc.service';
-import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
-import { EssayTemplate } from '../models/business/database/essay-template.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DeviceService {
-  constructor(private readonly ipcService: IpcService) {}
+  private readonly _onMachineToSoftware$: Subject<any[]>; // FIXME any[]
 
-  softwareWrite(command: string): Observable<void> {
-    console.log('send', command);
+  constructor(private readonly ipcService: IpcService) {
+    this._onMachineToSoftware$ = new Subject();
+    this.observeUSB();
+  }
+
+  get handleMachineToSoftware$(): Subject<any[]> {
+    return this._onMachineToSoftware$;
+  }
+
+  write(command: string): Observable<void> {
     return from(this.ipcService.invoke('software-write', { command }));
   }
 
-  //   saveEssayTemplate$(
-  //     essayTemplate: EssayTemplate,
-  //     essayTemplateSteps: EssayTemplateStep[]
-  //   ): Observable<{
-  //     essayTemplate: EssayTemplate;
-  //     essayTemplateSteps: EssayTemplateStep[];
-  //   }> {
-  //     return from(
-  //       this.ipcService.invoke('save-essay-template', {
-  //         essayTemplate,
-  //         essayTemplateSteps,
-  //       })
-  //     );
-  //   }
+  private observeUSB(): void {
+    this.ipcService.on('on-data-usb', (...args: any[]) => {
+      this._onMachineToSoftware$.next(args);
+    });
+  }
 }

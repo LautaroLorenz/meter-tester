@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs';
 import { PageUrlName } from './models/business/enums/page-name.model';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly titleService: Title
   ) {
     this.translate.setDefaultLang('en');
   }
@@ -28,6 +30,9 @@ export class AppComponent implements OnInit {
       .subscribe((event) => {
         this.isVirtualMachinePage =
           (event as NavigationEnd).url === `/${PageUrlName.virtualMachine}`;
+        if (this.isVirtualMachinePage) {
+          this.titleService.setTitle('Máquina virtual');
+        }
       });
   }
 }

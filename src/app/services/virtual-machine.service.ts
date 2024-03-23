@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { IpcService } from './ipc.service';
 
 @Injectable({
@@ -17,10 +17,16 @@ export class VirtualMachineService {
     return this._onSoftwareToMachine$;
   }
 
+  write(command: string): Observable<void> {
+    return from(
+      this.ipcService.invoke('virtual-machine-write', {
+        command,
+      }) as Promise<void>
+    );
+  }
+
   private observe(): void {
-    console.log('register observe');
     this.ipcService.on('handle-software-write', (...args: any[]) => {
-      console.log('handle-software-write', args);
       this._onSoftwareToMachine$.next(args);
     });
   }
