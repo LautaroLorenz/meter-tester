@@ -1,12 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil } from 'rxjs';
+import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
   styleUrls: ['./virtual-machine.component.scss'],
 })
 export class VirtualMachineComponent implements OnInit, OnDestroy {
+  @ViewChild('commandHistory', { static: true })
+  commandHistory!: CommandHistoryComponent;
+
   private onDestroy = new Subject<void>();
 
   constructor(private readonly virtualMachineService: VirtualMachineService) {}
@@ -16,6 +20,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   }
 
   virtualMachineWrite(command: string): void {
+    this.commandHistory.add(command);
     void this.virtualMachineService.write(command + '\n');
   }
 
@@ -27,8 +32,8 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   private observeSoftware(): void {
     this.virtualMachineService.handleSoftwareToMachine$
       .pipe(takeUntil(this.onDestroy))
-      .subscribe((response) => {
-        console.log('handle software write', response);
+      .subscribe((command) => {
+        this.commandHistory.add(command);
       });
   }
 }

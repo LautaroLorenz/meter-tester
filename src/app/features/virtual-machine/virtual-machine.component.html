@@ -1,13 +1,38 @@
-<!-- TODO responser automáticamente (slider) -->
-<!-- TODO delay off, delay fijo, delay aleatorio entre un rango (toggle button) -->
-<!-- TODO generar respuestas aleatorias vs respuestas fijas -->
-<!-- TODO en caso de manual: (todo esta disabled en automático)
-  ada comando tiene para generar respuesta aleatoria, un input fijo, y un botón enviar
+<!-- TODO responser inmediatamente, responder manualmente (slider) 
+  - inmediatamente: apenas llega el comando, se envia una respuesta.
+  - se debe tocar el botón enviar, para enviar la respuesta.
 -->
+
+<!-- TODO delay de respuesta (toggle button) 
+  - sin delay
+  - delay fijo
+    - habilita un input number
+  - delay aleatorio entre un rango
+    - habilita dos input number
+-->
+
+<!-- TODO regeneración de respuestas:
+    - generar valores aleatorios: Se genera una nueva nueva respuesta luego de enviar.
+    - mantener valores: Luego de enviar los valores no cambian.
+-->
+
+<!-- TODO 
+  Tabla de gestión de los comandos, el boton enviar solo se habilita en el modo manual:
+  - Dispositivo que envia
+  - Botones:
+    - Generar nuevos valores (se habilita en timpo de envio manual)
+  - [NTH]: inputs con rangos para los valores
+-->
+
+<!-- TODO input para comando libre -->
 
 <p-panel header="Calculador">
   <ng-template pTemplate="body">
-    <input #input type="text" value="my-response" />
+    <input #input type="text" value="B|CAL|STW|ACK00000|Z|" />
     <button (click)="virtualMachineWrite(input.value)">Enviar comando</button>
   </ng-template>
 </p-panel>
+
+<div class="mt-4">
+  <app-command-history #commandHistory></app-command-history>
+</div>

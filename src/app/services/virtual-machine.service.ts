@@ -6,14 +6,14 @@ import { IpcService } from './ipc.service';
   providedIn: 'root',
 })
 export class VirtualMachineService {
-  private readonly _onSoftwareToMachine$: Subject<any[]>; // FIXME any[]
+  private readonly _onSoftwareToMachine$: Subject<string>;
 
   constructor(private readonly ipcService: IpcService) {
     this._onSoftwareToMachine$ = new Subject();
     this.observe();
   }
 
-  get handleSoftwareToMachine$(): Subject<any[]> {
+  get handleSoftwareToMachine$(): Subject<string> {
     return this._onSoftwareToMachine$;
   }
 
@@ -26,8 +26,8 @@ export class VirtualMachineService {
   }
 
   private observe(): void {
-    this.ipcService.on('handle-software-write', (...args: any[]) => {
-      this._onSoftwareToMachine$.next(args);
+    this.ipcService.on('handle-software-write', (_: any, command: string) => {
+      this._onSoftwareToMachine$.next(command);
     });
   }
 }
