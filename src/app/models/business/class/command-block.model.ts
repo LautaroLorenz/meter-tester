@@ -7,4 +7,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 })
 export abstract class CommandBlockComponent {
   abstract getCommandBlock(): string;
+  abstract refreshValue(): void;
 }

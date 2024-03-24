@@ -8,7 +8,8 @@ export const VMResponseTypesConstant = [
   {
     value: VMResponseTypes.Automatic,
     label: 'Automática',
-    helpText: 'Apenas llega un comando, se envía la respuesta',
+    helpText:
+      'Apenas llega un comando, se envía la respuesta, según el mapeo de comandos',
   },
   {
     value: VMResponseTypes.Manual,

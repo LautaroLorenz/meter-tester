@@ -128,10 +128,9 @@
     <p-panel header="Calculador" [toggleable]="true">
       <ng-template pTemplate="body">
         <app-command-line name="ACK" (send)="virtualMachineWrite($event)">
-          <app-command-fixed-block></app-command-fixed-block>
+          <app-command-fixed-block value="B|CAL|STW|"></app-command-fixed-block>
           <app-command-variable-block></app-command-variable-block>
-          <app-command-fixed-block></app-command-fixed-block>
-          <app-command-variable-block></app-command-variable-block>
+          <app-command-fixed-block value="|Z|x"></app-command-fixed-block>
         </app-command-line>
       </ng-template>
     </p-panel>

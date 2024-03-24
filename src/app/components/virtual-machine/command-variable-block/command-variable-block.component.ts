@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  forwardRef,
+} from '@angular/core';
 import { CommandBlockComponent } from '../../../models/business/class/command-block.model';
 
 @Component({
@@ -14,7 +19,15 @@ import { CommandBlockComponent } from '../../../models/business/class/command-bl
   ],
 })
 export class CommandVariableBlockComponent extends CommandBlockComponent {
-  getCommandBlock(): string {
-    return 'variable';
+  @Input() value!: string;
+
+  override refreshValue(): void {
+    // TODO
+  }
+
+  override getCommandBlock(): string {
+    // TODO
+
+    return this.value;
   }
 }

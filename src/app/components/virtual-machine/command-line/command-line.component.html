@@ -1,3 +1,20 @@
-{{ name }}
-<ng-content></ng-content>
-<button (click)="sendCommand()">Enviar</button>
+<div class="flex flex-row gap-1 align-items-center">
+  <label class="text-base text-600 font-bold"> {{ name }}: </label>
+  <div class="flex flex-row gap-2 align-items-center">
+    <div class="flex flex-row gap-0">
+      <ng-content></ng-content>
+    </div>
+    <p-button
+      label="Refrescar"
+      [outlined]="true"
+      (click)="refreshCommand()"
+      size="small"
+    ></p-button>
+    <p-button
+      label="Enviar"
+      [outlined]="true"
+      (click)="sendCommand()"
+      size="small"
+    ></p-button>
+  </div>
+</div>

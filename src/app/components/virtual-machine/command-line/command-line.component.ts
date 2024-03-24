@@ -23,11 +23,10 @@ export class CommandLineComponent {
   })
   commandBlocks!: QueryList<CommandBlockComponent>;
 
-  // TODO tiene blocks, cada block puede ser fijo o variable
-  // TODO bloque fijo
-
-  refreshVariableBlocksValues(): void {
-    // TODO regenera todos los valores de los bloques variables
+  refreshCommand(): void {
+    this.commandBlocks.forEach((commandBlock) => {
+      commandBlock.refreshValue();
+    });
   }
 
   sendCommand(): void {
