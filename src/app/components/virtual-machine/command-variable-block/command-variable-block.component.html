@@ -4,8 +4,83 @@
   size="small"
   severity="secondary"
   styleClass="p-0"
+  (click)="changeConfig()"
 ></p-button>
 
-<!-- TODO configuracion de la variación -->
-<!-- TODO tipo: puede ser rango aleatorio, incremental -->
-<!-- TODO Momento: Porcentaje de cambio 0% a 100%, donde 0 no cambia nunca y 100 cambia siempre -->
+<p-dialog
+  [(visible)]="configDialogOpen"
+  [style]="{ minWidth: '520px', maxWidth: '620px' }"
+  header="Configuración"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="grid flex gap-2">
+      <div class="col col-12">
+        <label class="text-base">Probabilidad de cambio</label>
+        <p-inputNumber
+          [(ngModel)]="$any(config).probabilityOfChange"
+          [min]="0"
+          [max]="100"
+          [required]="true"
+        ></p-inputNumber>
+        <div class="text-400 flex flex-row gap-2 align-items-center">
+          <i class="pi pi-info-circle"></i>
+          <span
+            >Cuando se presiona en refrescar el valor cambiará de acuerdo a la
+            probabilidad de cambio, si es menor a 100 en algunas ocaciones
+            podría no cambia aúnque pulse en refrescar</span
+          >
+        </div>
+      </div>
+
+      <div class="col col-6 flex flex-column gap-1">
+        <label class="text-base">Tipo</label>
+        <p-selectButton
+          class="col col-12"
+          [options]="CBVariableTypesConstant"
+          [(ngModel)]="config.type"
+          optionValue="value"
+          optionLabel="label"
+          [required]="true"
+        ></p-selectButton>
+        <div class="text-400 flex flex-row gap-2 align-items-center">
+          <i class="pi pi-info-circle"></i>
+          <span>{{ CBVariableTypesConstant[config.type].helpText }}</span>
+        </div>
+      </div>
+
+      <ng-container [ngSwitch]="config.type">
+        <ng-container *ngSwitchCase="CBVariableTypes.Incremental">
+          <div class="col col-12">
+            <label class="text-base">Incremento</label>
+            <p-inputNumber
+              [(ngModel)]="$any(config).incrementQuantity"
+              [min]="0"
+              [required]="true"
+            ></p-inputNumber>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="CBVariableTypes.Random">
+          <div class="col col-12">
+            <label class="text-base">Rango</label>
+            <div>
+              <p-inputNumber
+                class="col col-6"
+                [(ngModel)]="$any(config).minRandom"
+                [min]="0"
+                [required]="true"
+              ></p-inputNumber>
+              <p-inputNumber
+                class="col col-6"
+                [(ngModel)]="$any(config).maxRandom"
+                [min]="0"
+                [required]="true"
+              ></p-inputNumber>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,16 @@
+<p-panel header="Calculador" [toggleable]="true">
+  <ng-template pTemplate="body">
+    <app-command-line name="ACK" (send)="write.emit($event)">
+      <app-command-fixed-block value="B|CAL|STW|ACK"></app-command-fixed-block>
+      <app-command-variable-block
+        value="00000"
+        [config]="{
+          type: CBVariableTypes.Incremental,
+          probabilityOfChange: 100,
+          incrementQuantity: 1
+        }"
+      ></app-command-variable-block>
+      <app-command-fixed-block value="|Z|x"></app-command-fixed-block>
+    </app-command-line>
+  </ng-template>
+</p-panel>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PrimeNgModule } from './primeng/primeng.module';
 import { PageTitleComponent } from './page-title/page-title.component';
 import { AbmComponent } from './abm/abm.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MenuComponent } from './menu/menu.component';
@@ -41,6 +41,7 @@ import { CommandHistoryComponent } from './virtual-machine/command-history/comma
 import { CommandLineComponent } from './virtual-machine/command-line/command-line.component';
 import { CommandFixedBlockComponent } from './virtual-machine/command-fixed-block/command-fixed-block.component';
 import { CommandVariableBlockComponent } from './virtual-machine/command-variable-block/command-variable-block.component';
+import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/vm-calculator.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -81,11 +82,12 @@ const AppComponents = [
   CommandLineComponent,
   CommandFixedBlockComponent,
   CommandVariableBlockComponent,
+  VmCalculatorComponent,
 ];
 
 @NgModule({
   declarations: [AppComponents],
-  imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule],
+  imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule, FormsModule],
   exports: [PrimeNgModule, AppComponents],
 })
 export class ComponentsModule {}
