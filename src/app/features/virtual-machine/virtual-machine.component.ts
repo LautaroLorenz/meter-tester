@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
@@ -14,6 +21,7 @@ import {
   VMResponseTypes,
 } from '../../models/business/enums/virtual-machine-config.model';
 import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
+import { VMDeviceComponent } from '../../models/business/class/virtual-machine-device.model';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -24,6 +32,8 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   commandHistory!: CommandHistoryComponent;
   @ViewChild('commandMap', { static: true })
   commandMap!: CommandMapComponent;
+  @ViewChildren(VMDeviceComponent)
+  vmDevices!: QueryList<VMDeviceComponent>;
 
   configForm: FormGroup;
 
@@ -60,8 +70,12 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     this.virtualMachineService.handleSoftwareToMachine$
       .pipe(takeUntil(this.onDestroy))
       .subscribe((command) => {
-        // TODO revisar la configuración al recibir.
-        console.log(this.commandMap.get(command));
+        if (
+          this.configForm.getRawValue().responseType ===
+          VMResponseTypes.Automatic
+        ) {
+          this.sendAutomaticResponse(command);
+        }
         this.commandHistory.add(command);
       });
   }
@@ -75,5 +89,21 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       maxDelay: [500],
       commandRefreshType: [CommandRefreshType.Automatic],
     });
+  }
+
+  private sendAutomaticResponse(command: string): void {
+    const map = this.commandMap.get(command);
+    if (!map) {
+      return;
+    }
+    const device = this.vmDevices.find(({ device }) => device === map.device);
+    if (!device) {
+      return;
+    }
+    const responseCommand = device.getCommandByName(map.responseCommandName);
+    if (!responseCommand) {
+      return;
+    }
+    this.virtualMachineWrite(responseCommand);
   }
 }

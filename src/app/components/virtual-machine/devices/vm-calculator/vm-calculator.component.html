@@ -1,7 +1,7 @@
 <p-panel header="Calculador" [toggleable]="true">
   <ng-template pTemplate="body">
     <div class="flex flex-column gap-2">
-      <app-command-line name="ACK" (send)="write.emit($event)">
+      <app-command-line [name]="CalculatorCommands.ACK" (send)="write.emit($event)">
         <app-command-fixed-block
           value="B|CAL|STW|ACK"
         ></app-command-fixed-block>

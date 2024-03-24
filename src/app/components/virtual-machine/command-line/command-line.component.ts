@@ -8,6 +8,7 @@ import {
   QueryList,
 } from '@angular/core';
 import { CommandBlockComponent } from '../../../models/business/class/command-block.model';
+import { CommandsEnum } from '../../../models/business/enums/devices.model';
 
 @Component({
   selector: 'app-command-line',
@@ -16,7 +17,7 @@ import { CommandBlockComponent } from '../../../models/business/class/command-bl
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommandLineComponent {
-  @Input() name!: string;
+  @Input() name!: CommandsEnum;
   @Output() send = new EventEmitter<string>();
   @ContentChildren(CommandBlockComponent, {
     descendants: true,
@@ -30,12 +31,17 @@ export class CommandLineComponent {
   }
 
   sendCommand(): void {
+    const command = this.getCommand();
+    this.send.emit(command);
+  }
+
+  getCommand(): string {
     let command = '';
 
     this.commandBlocks.forEach((commandBlock) => {
       command = command.concat(commandBlock.getCommandBlock());
     });
 
-    this.send.emit(command);
+    return command;
   }
 }

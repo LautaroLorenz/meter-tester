@@ -23,7 +23,7 @@ export class CommandMapComponent {
     },
     {
       header: 'Responde comando',
-      field: 'commandResponse',
+      field: 'responseCommandName',
     },
   ];
 
@@ -31,7 +31,7 @@ export class CommandMapComponent {
     {
       device: Devices.CAL,
       commandRegex: 'B|STW|CAL',
-      commandResponse: CalculatorCommands.ACK,
+      responseCommandName: CalculatorCommands.ACK,
     },
   ];
 
