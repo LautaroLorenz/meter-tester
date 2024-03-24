@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  OnInit,
   forwardRef,
 } from '@angular/core';
 import { CommandBlockComponent } from '../../../models/business/class/command-block.model';
@@ -18,8 +19,17 @@ import { CommandBlockComponent } from '../../../models/business/class/command-bl
     },
   ],
 })
-export class CommandVariableBlockComponent extends CommandBlockComponent {
+export class CommandVariableBlockComponent
+  extends CommandBlockComponent
+  implements OnInit
+{
   @Input() value!: string;
+
+  variableValue!: string;
+
+  ngOnInit(): void {
+    this.variableValue = this.value;
+  }
 
   override refreshValue(): void {
     // TODO
