@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
-import { Observable, of } from 'rxjs';
-import { ACK } from '../../../models/business/types/device-ack.model';
+import { Devices } from '../../../models/business/enums/devices.model';
 
 @Component({
   selector: 'app-calculator',
@@ -10,18 +9,11 @@ import { ACK } from '../../../models/business/types/device-ack.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent extends MachineDeviceComponent {
-  // TODO por output emite los resultados
+  override readonly device = Devices.CAL;
 
-  setActiveStandsAndTestType$(): Observable<ACK> {
-    // TODO en caso de error cambiar el device status;
-    // TODO mientras esta en status "working" seporta por output los resultados leidos;
-    return of();
+  sendCommand(command: string): void {
+    this.deviceService
+      .write$(command)
+      .subscribe((response) => console.log(response));
   }
-
-  // FIXME
-  softwareWrite(command: string): void {
-    void this.deviceService.write(command);
-  }
-
-  // TODO en caso de onDestroy apagar se puede hacer en MachineDeviceComponent.
 }

@@ -2,6 +2,8 @@ import { BrowserWindow, ipcMain } from 'electron';
 import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { DelimiterParser } from 'serialport';
+import { Subject, filter, firstValueFrom, tap } from 'rxjs';
+import { CommandDirector } from '../../src/app/models/business/class/command-director.model';
 
 let virtualMachineWindow: BrowserWindow | null = null;
 let softwareWindow: BrowserWindow | null = null;
@@ -10,6 +12,7 @@ const parser = new DelimiterParser({
   delimiter: '\n',
   includeDelimiter: false,
 });
+const virtualMachineResponse$ = new Subject<string>();
 
 function closeWindow(): void {
   if (
@@ -33,7 +36,8 @@ function connect(): void {
 
   // envio de comando puerto USB -> Sw
   parser.on('data', (data) => {
-    softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
+    // TODO delete softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
+    virtualMachineResponse$.next(data.toString('ascii'));
   });
   serialPort.pipe(parser);
 }
@@ -80,6 +84,19 @@ export default {
     ipcMain.handle('software-write', async (_, { command }) => {
       // redirección del comando a la máquina virtual
       virtualMachineWindow?.webContents.send('handle-software-write', command);
+
+      const response = await firstValueFrom(
+        virtualMachineResponse$
+          .asObservable()
+          .pipe(
+            filter(
+              (responseCommand) =>
+                CommandDirector.getTo(command) ===
+                CommandDirector.getFrom(responseCommand)
+            )
+          )
+      );
+      return response;
     });
   },
   closeWindow,

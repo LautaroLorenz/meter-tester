@@ -13,6 +13,8 @@ const electron_1 = require("electron");
 const binding_mock_1 = require("@serialport/binding-mock");
 const stream_1 = require("@serialport/stream");
 const serialport_1 = require("serialport");
+const rxjs_1 = require("rxjs");
+const command_director_model_1 = require("../../src/app/models/business/class/command-director.model");
 let virtualMachineWindow = null;
 let softwareWindow = null;
 let serialPort;
@@ -20,6 +22,7 @@ const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
     includeDelimiter: false,
 });
+const virtualMachineResponse$ = new rxjs_1.Subject();
 function closeWindow() {
     if (virtualMachineWindow &&
         !virtualMachineWindow.isDestroyed() &&
@@ -38,7 +41,8 @@ function connect() {
     parser.removeAllListeners();
     // envio de comando puerto USB -> Sw
     parser.on('data', (data) => {
-        softwareWindow === null || softwareWindow === void 0 ? void 0 : softwareWindow.webContents.send('on-data-usb', data.toString('ascii'));
+        // TODO delete softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
+        virtualMachineResponse$.next(data.toString('ascii'));
     });
     serialPort.pipe(parser);
 }
@@ -82,6 +86,11 @@ exports.default = {
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             // redirección del comando a la máquina virtual
             virtualMachineWindow === null || virtualMachineWindow === void 0 ? void 0 : virtualMachineWindow.webContents.send('handle-software-write', command);
+            const response = yield (0, rxjs_1.firstValueFrom)(virtualMachineResponse$
+                .asObservable()
+                .pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
+                command_director_model_1.CommandDirector.getFrom(responseCommand))));
+            return response;
         }));
     },
     closeWindow,
