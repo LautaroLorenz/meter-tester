@@ -36,7 +36,6 @@ function connect(): void {
 
   // envio de comando puerto USB -> Sw
   parser.on('data', (data) => {
-    // TODO delete softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
     virtualMachineResponse$.next(data.toString('ascii'));
   });
   serialPort.pipe(parser);
