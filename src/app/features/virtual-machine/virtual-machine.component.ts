@@ -140,6 +140,10 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   }
 
   private refreshCommands(): void {
-    // TODO
+    this.vmDevices.forEach((vmDevice) =>
+      vmDevice.commandLines.forEach((commandLine) =>
+        commandLine.refreshCommand()
+      )
+    );
   }
 }
