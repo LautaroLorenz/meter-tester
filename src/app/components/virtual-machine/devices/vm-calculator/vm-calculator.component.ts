@@ -1,10 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Output,
-} from '@angular/core';
-import { CBVariableTypes } from '../../../../models/business/enums/command-variable-block-config.model';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { VMDeviceComponent } from '../../../../models/business/class/virtual-machine-device.model';
 
 @Component({
   selector: 'app-vm-calculator',
@@ -12,8 +7,4 @@ import { CBVariableTypes } from '../../../../models/business/enums/command-varia
   styleUrls: ['./vm-calculator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VmCalculatorComponent {
-  @Output() write = new EventEmitter<string>();
-
-  readonly CBVariableTypes = CBVariableTypes;
-}
+export class VmCalculatorComponent extends VMDeviceComponent {}
