@@ -18,15 +18,13 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template pTemplate="footer">
-      <div class="mt-3">
-        <p-button
-          [disabled]="!history.length"
-          label="limpiar"
-          [outlined]="true"
-          (onClick)="clear()"
-        ></p-button>
-      </div>
-    </ng-template>
   </p-table>
+  <div class="mt-3 mx-3">
+    <p-button
+      [disabled]="!history.length"
+      label="limpiar"
+      [outlined]="true"
+      (onClick)="clear()"
+    ></p-button>
+  </div>
 </ng-container>

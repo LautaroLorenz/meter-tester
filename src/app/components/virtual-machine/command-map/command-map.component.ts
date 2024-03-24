@@ -4,6 +4,7 @@ import {
   CalculatorCommands,
   Devices,
 } from '../../../models/business/enums/devices.model';
+import { CommandDirector } from '../../../models/business/class/command-director.model';
 
 @Component({
   selector: 'app-command-map',
@@ -36,6 +37,9 @@ export class CommandMapComponent {
   ];
 
   get(command: string): VMCommandMap | undefined {
-    return this.map.find(({ commandRegex }) => command.includes(commandRegex));
+    const deviceTo: Devices = CommandDirector.getTo(command);
+    return this.map
+      .filter(({ device }) => device === deviceTo)
+      .find(({ commandRegex }) => command.includes(commandRegex));
   }
 }
