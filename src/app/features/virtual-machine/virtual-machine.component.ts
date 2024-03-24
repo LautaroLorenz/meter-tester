@@ -70,13 +70,13 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     this.virtualMachineService.handleSoftwareToMachine$
       .pipe(takeUntil(this.onDestroy))
       .subscribe((command) => {
+        this.commandHistory.add(command);
         if (
           this.configForm.getRawValue().responseType ===
           VMResponseTypes.Automatic
         ) {
           this.sendAutomaticResponse(command);
         }
-        this.commandHistory.add(command);
       });
   }
 

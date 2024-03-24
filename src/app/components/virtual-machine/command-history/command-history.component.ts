@@ -54,4 +54,8 @@ export class CommandHistoryComponent {
       this.history$.next([commandHistory, ...this.history$.value]);
     });
   }
+
+  clear(): void {
+    this.history$.next([]);
+  }
 }
