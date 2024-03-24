@@ -2,7 +2,7 @@ import {
   CommandRefreshType,
   VMDelayTypes,
   VMResponseTypes,
-} from '../interafces/virtual-machine.model';
+} from '../enums/virtual-machine-config.model';
 
 export const VMResponseTypesConstant = [
   {

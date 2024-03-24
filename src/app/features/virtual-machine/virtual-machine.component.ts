@@ -4,15 +4,15 @@ import { Subject, takeUntil } from 'rxjs';
 import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
-  CommandRefreshType,
-  VMDelayTypes,
-  VMResponseTypes,
-} from '../../models/business/interafces/virtual-machine.model';
-import {
   VMCommandRefreshTypeConstant,
   VMDelayTypesConstant,
   VMResponseTypesConstant,
 } from '../../models/business/constants/virtual-machine-contant.model';
+import {
+  CommandRefreshType,
+  VMDelayTypes,
+  VMResponseTypes,
+} from '../../models/business/enums/virtual-machine-config.model';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
