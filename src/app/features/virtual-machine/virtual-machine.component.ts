@@ -42,6 +42,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   }
 
   virtualMachineWrite(command: string): void {
+    // TODO revisar la configuración antes de enviar.
     this.commandHistory.add(command);
     void this.virtualMachineService.write(command + '\n');
   }
@@ -55,6 +56,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     this.virtualMachineService.handleSoftwareToMachine$
       .pipe(takeUntil(this.onDestroy))
       .subscribe((command) => {
+        // TODO revisar la configuración al recibir.
         this.commandHistory.add(command);
       });
   }
