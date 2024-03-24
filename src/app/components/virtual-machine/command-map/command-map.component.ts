@@ -34,4 +34,8 @@ export class CommandMapComponent {
       commandResponse: CalculatorCommands.ACK,
     },
   ];
+
+  get(command: string): VMCommandMap | undefined {
+    return this.map.find(({ commandRegex }) => command.includes(commandRegex));
+  }
 }

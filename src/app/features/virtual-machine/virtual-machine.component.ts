@@ -13,6 +13,7 @@ import {
   VMDelayTypes,
   VMResponseTypes,
 } from '../../models/business/enums/virtual-machine-config.model';
+import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -21,6 +22,9 @@ import {
 export class VirtualMachineComponent implements OnInit, OnDestroy {
   @ViewChild('commandHistory', { static: true })
   commandHistory!: CommandHistoryComponent;
+  @ViewChild('commandMap', { static: true })
+  commandMap!: CommandMapComponent;
+
   configForm: FormGroup;
 
   readonly VMResponseTypesConstant = VMResponseTypesConstant;
@@ -57,6 +61,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy))
       .subscribe((command) => {
         // TODO revisar la configuración al recibir.
+        console.log(this.commandMap.get(command));
         this.commandHistory.add(command);
       });
   }
