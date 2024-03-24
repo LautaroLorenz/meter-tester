@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { VMDeviceComponent } from '../../../../models/business/class/virtual-machine-device.model';
+import { Devices } from '../../../../models/business/enums/devices.model';
 
 @Component({
   selector: 'app-vm-calculator',
@@ -7,4 +8,6 @@ import { VMDeviceComponent } from '../../../../models/business/class/virtual-mac
   styleUrls: ['./vm-calculator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VmCalculatorComponent extends VMDeviceComponent {}
+export class VmCalculatorComponent extends VMDeviceComponent {
+  override readonly device = Devices.CAL;
+}

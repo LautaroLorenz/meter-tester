@@ -42,6 +42,7 @@ import { CommandLineComponent } from './virtual-machine/command-line/command-lin
 import { CommandFixedBlockComponent } from './virtual-machine/command-fixed-block/command-fixed-block.component';
 import { CommandVariableBlockComponent } from './virtual-machine/command-variable-block/command-variable-block.component';
 import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/vm-calculator.component';
+import { CommandMapComponent } from './virtual-machine/command-map/command-map.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -83,11 +84,18 @@ const AppComponents = [
   CommandFixedBlockComponent,
   CommandVariableBlockComponent,
   VmCalculatorComponent,
+  CommandMapComponent,
 ];
 
 @NgModule({
   declarations: [AppComponents],
-  imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    PrimeNgModule,
+    PipesModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   exports: [PrimeNgModule, AppComponents],
 })
 export class ComponentsModule {}

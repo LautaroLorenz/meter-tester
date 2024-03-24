@@ -138,11 +138,7 @@
 </div>
 
 <div class="mt-4">
-  <!-- // TODO
-  // recorre el mapping para ver si hay un response mapeado
-  // getResponse(command: string): string | null
-  // 
-
-  // TODO
-  // mapping: tabla de regex con command line -->
+  <p-panel header="Mapeo de respuestas automáticas" [toggleable]="true">
+    <app-command-map #commandMap></app-command-map>
+  </p-panel>
 </div>
