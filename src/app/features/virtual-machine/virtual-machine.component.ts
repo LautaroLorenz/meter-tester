@@ -68,7 +68,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       fixedDelay: [250],
       minDelay: [50],
       maxDelay: [500],
-      commandRefreshType: [CommandRefreshType.Refresh],
+      commandRefreshType: [CommandRefreshType.Automatic],
     });
   }
 }

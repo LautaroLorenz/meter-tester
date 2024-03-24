@@ -14,7 +14,7 @@ export const VMResponseTypesConstant = [
   {
     value: VMResponseTypes.Manual,
     label: 'Manual',
-    helpText: 'La respuesta se envía al precionar en enviar',
+    helpText: 'La respuesta se envía al presionar en enviar',
   },
 ];
 
@@ -39,13 +39,13 @@ export const VMDelayTypesConstant = [
 
 export const VMCommandRefreshTypeConstant = [
   {
-    value: CommandRefreshType.Keep,
-    label: 'Mantener',
-    helpText: 'Luego de responder los valores se mantienen',
+    value: CommandRefreshType.Automatic,
+    label: 'Automático',
+    helpText: 'Luego de responder los valores se refrescan',
   },
   {
-    value: CommandRefreshType.Refresh,
-    label: 'Refrescar',
-    helpText: 'Luego de responder los valores cambian',
+    value: CommandRefreshType.Manual,
+    label: 'Manual',
+    helpText: 'Los valores cambian al presionar en refrescar',
   },
 ];

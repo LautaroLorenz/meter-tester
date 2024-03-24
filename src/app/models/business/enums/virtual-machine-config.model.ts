@@ -10,8 +10,8 @@ export enum VMDelayTypes {
 }
 
 export enum CommandRefreshType {
-  Keep,
-  Refresh,
+  Automatic,
+  Manual,
 }
 
 export interface NumberRange {
