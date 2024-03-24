@@ -10,6 +10,7 @@ import { CommandBlockComponent } from '../../../models/business/class/command-bl
 import { CommandVariableBlockConfigType } from '../../../models/business/interafces/comand-variable-block.model';
 import { CBVariableTypes } from '../../../models/business/enums/command-variable-block-config.model';
 import { CBVariableTypesConstant } from '../../../models/business/constants/command-block.model';
+import { Random } from '../../../models/core/random.model';
 
 @Component({
   selector: 'app-command-variable-block',
@@ -53,7 +54,7 @@ export class CommandVariableBlockComponent
   }
 
   override refreshValue(): void {
-    if (this.config.probabilityOfChange < this.getRandomValue(0, 100)) {
+    if (this.config.probabilityOfChange < Random.range(0, 100)) {
       return;
     }
     this.variableValue = this.getNewValue()
@@ -71,19 +72,12 @@ export class CommandVariableBlockComponent
       case CBVariableTypes.Incremental:
         return this.getIncremenetalValue(this.config.incrementQuantity);
       case CBVariableTypes.Random:
-        return this.getRandomValue(
-          this.config.minRandom,
-          this.config.maxRandom
-        );
+        return Random.range(this.config.minRandom, this.config.maxRandom);
     }
   }
 
   private getIncremenetalValue(incrementQuantity: number): number {
     const currentValue = Number(this.variableValue);
     return currentValue + incrementQuantity;
-  }
-
-  private getRandomValue(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

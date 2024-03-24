@@ -1,5 +1,6 @@
 import {
   Component,
+  NgZone,
   OnDestroy,
   OnInit,
   QueryList,
@@ -22,6 +23,7 @@ import {
 } from '../../models/business/enums/virtual-machine-config.model';
 import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
 import { VMDeviceComponent } from '../../models/business/class/virtual-machine-device.model';
+import { Random } from '../../models/core/random.model';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -41,12 +43,14 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   readonly VMDelayTypesConstant = VMDelayTypesConstant;
   readonly VMCommandRefreshTypeConstant = VMCommandRefreshTypeConstant;
   readonly VMDelayTypes = VMDelayTypes;
+  readonly VMResponseTypes = VMResponseTypes;
 
   private onDestroy = new Subject<void>();
 
   constructor(
     private readonly virtualMachineService: VirtualMachineService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly ngZone: NgZone
   ) {
     this.configForm = this.buildConfigForm();
   }
@@ -56,9 +60,19 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   }
 
   virtualMachineWrite(command: string): void {
-    // TODO revisar la configuración antes de enviar.
-    this.commandHistory.add(command);
-    void this.virtualMachineService.write(command + '\n');
+    const delay = this.getSendDelayByConfig();
+    setTimeout(() => {
+      this.ngZone.run(() => {
+        this.commandHistory.add(command);
+        void this.virtualMachineService.write(command + '\n');
+        if (
+          this.configForm.getRawValue().commandRefreshType ===
+          CommandRefreshType.Automatic
+        ) {
+          this.refreshCommands();
+        }
+      });
+    }, delay);
   }
 
   ngOnDestroy(): void {
@@ -105,5 +119,27 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       return;
     }
     this.virtualMachineWrite(responseCommand);
+  }
+
+  private getSendDelayByConfig(): number {
+    const { responseType, delayType, fixedDelay, minDelay, maxDelay } =
+      this.configForm.getRawValue();
+
+    if (responseType === VMResponseTypes.Manual) {
+      return 0;
+    }
+
+    switch (delayType as VMDelayTypes) {
+      case VMDelayTypes.Off:
+        return 0;
+      case VMDelayTypes.Fixed:
+        return fixedDelay as number;
+      case VMDelayTypes.Range:
+        return Random.range(minDelay as number, maxDelay as number);
+    }
+  }
+
+  private refreshCommands(): void {
+    // TODO
   }
 }

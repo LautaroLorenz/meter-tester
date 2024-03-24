@@ -39,72 +39,79 @@
           </div>
         </div>
 
-        <div class="col col-6 flex flex-column gap-1">
-          <label class="text-base">Delay en responder</label>
-          <p-selectButton
-            [options]="VMDelayTypesConstant"
-            id="delayType"
-            formControlName="delayType"
-            optionValue="value"
-            optionLabel="label"
-          ></p-selectButton>
-          <div class="text-400 flex flex-row gap-2 align-items-center">
-            <i class="pi pi-info-circle"></i>
-            <span>{{
-              VMDelayTypesConstant[configForm.controls.delayType.value].helpText
-            }}</span>
+        <ng-container
+          *ngIf="
+            configForm.controls.responseType.value === VMResponseTypes.Automatic
+          "
+        >
+          <div class="col col-6 flex flex-column gap-1">
+            <label class="text-base">Delay en responder</label>
+            <p-selectButton
+              [options]="VMDelayTypesConstant"
+              id="delayType"
+              formControlName="delayType"
+              optionValue="value"
+              optionLabel="label"
+            ></p-selectButton>
+            <div class="text-400 flex flex-row gap-2 align-items-center">
+              <i class="pi pi-info-circle"></i>
+              <span>{{
+                VMDelayTypesConstant[configForm.controls.delayType.value]
+                  .helpText
+              }}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="col col-6 flex flex-column gap-1">
-          <label class="text-base">Delay valor [milisegundos]</label>
-          <div>
-            <ng-container [ngSwitch]="configForm.controls.delayType.value">
-              <ng-container *ngSwitchCase="VMDelayTypes.Off">
-                <p-inputNumber
-                  [disabled]="true"
-                  placeholder="0"
-                ></p-inputNumber>
-              </ng-container>
-              <ng-container *ngSwitchCase="VMDelayTypes.Fixed">
-                <p-inputNumber
-                  id="fixedDelay"
-                  formControlName="fixedDelay"
-                  autofocus
-                  [required]="true"
-                  [useGrouping]="false"
-                  [min]="0"
-                ></p-inputNumber>
-              </ng-container>
-              <ng-container *ngSwitchCase="VMDelayTypes.Range">
-                <div class="grid grid-nogutter">
-                  <div class="col col-6">
-                    <p-inputNumber
-                      class="flex w-full"
-                      id="minDelay"
-                      formControlName="minDelay"
-                      autofocus
-                      [required]="true"
-                      [useGrouping]="false"
-                      [min]="0"
-                    ></p-inputNumber>
+          <div class="col col-6 flex flex-column gap-1">
+            <label class="text-base">Delay valor [milisegundos]</label>
+            <div>
+              <ng-container [ngSwitch]="configForm.controls.delayType.value">
+                <ng-container *ngSwitchCase="VMDelayTypes.Off">
+                  <p-inputNumber
+                    [disabled]="true"
+                    placeholder="0"
+                  ></p-inputNumber>
+                </ng-container>
+                <ng-container *ngSwitchCase="VMDelayTypes.Fixed">
+                  <p-inputNumber
+                    id="fixedDelay"
+                    formControlName="fixedDelay"
+                    autofocus
+                    [required]="true"
+                    [useGrouping]="false"
+                    [min]="0"
+                  ></p-inputNumber>
+                </ng-container>
+                <ng-container *ngSwitchCase="VMDelayTypes.Range">
+                  <div class="grid grid-nogutter">
+                    <div class="col col-6">
+                      <p-inputNumber
+                        class="flex w-full"
+                        id="minDelay"
+                        formControlName="minDelay"
+                        autofocus
+                        [required]="true"
+                        [useGrouping]="false"
+                        [min]="0"
+                      ></p-inputNumber>
+                    </div>
+                    <div class="col col-6">
+                      <p-inputNumber
+                        class="flex w-full"
+                        id="maxDelay"
+                        formControlName="maxDelay"
+                        autofocus
+                        [required]="true"
+                        [useGrouping]="false"
+                        [min]="0"
+                      ></p-inputNumber>
+                    </div>
                   </div>
-                  <div class="col col-6">
-                    <p-inputNumber
-                      class="flex w-full"
-                      id="maxDelay"
-                      formControlName="maxDelay"
-                      autofocus
-                      [required]="true"
-                      [useGrouping]="false"
-                      [min]="0"
-                    ></p-inputNumber>
-                  </div>
-                </div>
+                </ng-container>
               </ng-container>
-            </ng-container>
+            </div>
           </div>
-        </div>
+        </ng-container>
       </div>
     </ng-template>
   </p-panel>
