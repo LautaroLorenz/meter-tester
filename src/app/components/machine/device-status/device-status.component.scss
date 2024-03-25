@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  cursor: help;
+
+  p-badge {
+    .p-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 1.3rem;
+      height: 1.3rem;
+      line-height: 1.3rem;
+    }
+
+    &.no-severity {
+      .p-badge {
+        background-color: var(--surface-400);
+      }
+    }
+  }
+}

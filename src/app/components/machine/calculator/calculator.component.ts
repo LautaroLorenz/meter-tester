@@ -12,6 +12,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
   override readonly device = Devices.CAL;
 
   sendCommand(command: string): void {
+    // TODO <!-- B| PCS| CAL| TSxxxxxx| xxxxxxxxxx| xxxxxxxx| P01xxxxx| P02xxxxx| P03xxxxx| P04xxxxx| P05xxxxx| Z| x -->
     this.write$(command).subscribe((response) => console.log(response));
   }
 }

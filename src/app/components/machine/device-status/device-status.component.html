@@ -1,1 +1,12 @@
-<p>device-status works!</p>
+<div
+  class="flex align-items-center gap-2"
+  pTooltip="Estado de la conexión"
+  tooltipPosition="top"
+>
+  <p-badge
+    [severity]="severity"
+    [class.no-severity]="!severity"
+    value="&nbsp;"
+  ></p-badge>
+  <span class="text-color-secondary font-normal">{{ text }}</span>
+</div>

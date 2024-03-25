@@ -1,13 +1,17 @@
-<!-- TODO mostrar el device status en el panel header -->
-<p-panel header="Calculador">
+<p-panel>
+  <ng-template pTemplate="header">
+    <div
+      class="p-panel-title flex flex-row align-items-center justify-content-between flex-1"
+    >
+      <span>Calculador</span>
+      <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
+        <app-device-status [deviceStatus]="deviceStatus"></app-device-status>
+      </ng-container>
+    </div>
+  </ng-template>
+
   <ng-template pTemplate="body">
     <input #input type="text" value="B|STW|CAL|ACK00000|Z|" />
     <button (click)="sendCommand(input.value)">Enviar comando</button>
-
-    <div class="flex">
-      <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
-        {{ deviceStatus }}
-      </ng-container>
-    </div>
   </ng-template>
 </p-panel>

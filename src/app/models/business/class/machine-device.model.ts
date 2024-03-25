@@ -8,6 +8,7 @@ import {
   from,
   map,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { Devices } from '../enums/devices.model';
 import { IpcService } from '../../../services/ipc.service';
@@ -54,7 +55,12 @@ export abstract class MachineDeviceComponent implements OnDestroy {
         }
         return !!result;
       }),
-      map(({ result }) => result as string)
+      map(({ result }) => result as string),
+      tap(() => {
+        if (this.deviceStatus$.value === DeviceStatus.Unknown) {
+          this.deviceStatus$.next(DeviceStatus.Connected);
+        }
+      })
     );
   }
 }
