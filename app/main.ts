@@ -5,7 +5,7 @@ import database from './resources/database/database';
 import knexFile from './resources/database/knexfile';
 import abm from './commands/abm';
 import essay from './commands/essay';
-import virtualMachine from './virtual-machine/virtual-machine';
+import virtualMachine from './resources/virtual-machine/virtual-machine';
 
 function registerIpc(knex: any) {
   knexFile.register();
