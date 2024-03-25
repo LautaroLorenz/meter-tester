@@ -8,7 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, tap } from 'rxjs';
 import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -57,6 +57,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.observeSoftware();
+    this.observeConfig();
   }
 
   virtualMachineWrite(command: string): void {
@@ -145,5 +146,21 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
         commandLine.refreshCommand()
       )
     );
+  }
+
+  private observeConfig(): void {
+    this.configForm.valueChanges
+      .pipe(
+        takeUntil(this.onDestroy),
+        tap((value) =>
+          localStorage.setItem('virtual-machine-config', JSON.stringify(value))
+        )
+      )
+      .subscribe();
+
+    const savedConfig = localStorage.getItem('virtual-machine-config');
+    if (savedConfig) {
+      this.configForm.setValue(JSON.parse(savedConfig) as Record<string, any>);
+    }
   }
 }
