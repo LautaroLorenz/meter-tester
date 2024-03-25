@@ -21,7 +21,7 @@ const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
     includeDelimiter: false,
 });
-const virtualMachineResponse$ = new rxjs_1.Subject();
+const machineResponse$ = new rxjs_1.Subject();
 function closeWindow() {
     if (virtualMachineWindow &&
         !virtualMachineWindow.isDestroyed() &&
@@ -40,7 +40,7 @@ function connect() {
     parser.removeAllListeners();
     // envio de comando puerto USB -> Sw
     parser.on('data', (data) => {
-        virtualMachineResponse$.next(data.toString('ascii'));
+        machineResponse$.next(data.toString('ascii'));
     });
     serialPort.pipe(parser);
 }
@@ -62,7 +62,7 @@ exports.default = {
                 webPreferences: {
                     nodeIntegration: true,
                     allowRunningInsecureContent: true,
-                    contextIsolation: false,
+                    contextIsolation: false
                 },
                 alwaysOnTop: true,
             });
@@ -84,13 +84,21 @@ exports.default = {
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             // redirección del comando a la máquina virtual
             virtualMachineWindow === null || virtualMachineWindow === void 0 ? void 0 : virtualMachineWindow.webContents.send('handle-software-write', command);
-            const response = yield (0, rxjs_1.firstValueFrom)(virtualMachineResponse$
-                .asObservable()
-                .pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
-                command_director_model_1.CommandDirector.getFrom(responseCommand))));
-            return response;
+            try {
+                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
+                    command_director_model_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+                    first: 300,
+                    with: () => {
+                        throw new Error('Timeout');
+                    },
+                }), (0, rxjs_1.retry)(3)));
+                return { result: response };
+            }
+            catch (error) {
+                return { error };
+            }
         }));
     },
-    closeWindow
+    closeWindow,
 };
 //# sourceMappingURL=virtual-machine.js.map

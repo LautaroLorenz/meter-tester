@@ -1,6 +1,14 @@
+
+
 <p-panel header="Calculador">
   <ng-template pTemplate="body">
     <input #input type="text" value="B|STW|CAL|ACK00000|Z|" />
     <button (click)="sendCommand(input.value)">Enviar comando</button>
+
+    <div class="flex">
+      <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
+        {{ deviceStatus }}
+      </ng-container>
+    </div>
   </ng-template>
 </p-panel>

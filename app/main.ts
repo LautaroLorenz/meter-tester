@@ -47,6 +47,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
       contextIsolation: false,
+      devTools: serve
     },
   });
   win.setMenuBarVisibility(false);

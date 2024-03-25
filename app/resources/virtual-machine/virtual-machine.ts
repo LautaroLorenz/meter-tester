@@ -2,7 +2,14 @@ import { BrowserWindow, ipcMain } from 'electron';
 import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { DelimiterParser } from 'serialport';
-import { Subject, filter, firstValueFrom } from 'rxjs';
+import {
+  Subject,
+  filter,
+  firstValueFrom,
+  from,
+  retry,
+  timeout,
+} from 'rxjs';
 import { CommandDirector } from '../../../src/app/models/business/class/command-director.model';
 
 let virtualMachineWindow: BrowserWindow | null = null;
@@ -11,7 +18,7 @@ const parser = new DelimiterParser({
   delimiter: '\n',
   includeDelimiter: false,
 });
-const virtualMachineResponse$ = new Subject<string>();
+const machineResponse$ = new Subject<string>();
 
 function closeWindow(): void {
   if (
@@ -35,7 +42,7 @@ function connect(): void {
 
   // envio de comando puerto USB -> Sw
   parser.on('data', (data) => {
-    virtualMachineResponse$.next(data.toString('ascii'));
+    machineResponse$.next(data.toString('ascii'));
   });
   serialPort.pipe(parser);
 }
@@ -59,7 +66,7 @@ export default {
         webPreferences: {
           nodeIntegration: true,
           allowRunningInsecureContent: true,
-          contextIsolation: false,
+          contextIsolation: false
         },
         alwaysOnTop: true,
       });
@@ -83,19 +90,28 @@ export default {
       // redirección del comando a la máquina virtual
       virtualMachineWindow?.webContents.send('handle-software-write', command);
 
-      const response = await firstValueFrom(
-        virtualMachineResponse$
-          .asObservable()
-          .pipe(
+      try {
+        const response = await firstValueFrom(
+          from(machineResponse$).pipe(
             filter(
               (responseCommand) =>
                 CommandDirector.getTo(command) ===
                 CommandDirector.getFrom(responseCommand)
-            )
+            ),
+            timeout({
+              first: 300,
+              with: () => {
+                throw new Error('Timeout');
+              },
+            }),
+            retry(3)
           )
-      );
-      return response;
+        );
+        return { result: response };
+      } catch (error) {
+        return { error };
+      }
     });
   },
-  closeWindow
+  closeWindow,
 };
