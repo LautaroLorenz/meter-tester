@@ -24,6 +24,10 @@ export class CommandLineComponent {
   })
   commandBlocks!: QueryList<CommandBlockComponent>;
 
+  get hasVariableBlocks(): boolean {
+    return this.commandBlocks.some((block) => 'config' in block);
+  }
+
   refreshCommand(): void {
     this.commandBlocks.forEach((commandBlock) => {
       commandBlock.refreshValue();
