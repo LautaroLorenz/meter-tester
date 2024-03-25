@@ -8,6 +8,29 @@
         <app-command-fixed-block
           value="B|CAL|STW|ACK00000|Z|x"
         ></app-command-fixed-block>
+        <!-- <app-command-variable-block
+          index="1"
+          [device]="device"
+          [command]="CalculatorCommands.ACK"
+          value="00000"
+          [config]="{
+            type: CBVariableTypes.Random,
+            probabilityOfChange: 50,
+            minRandom: 1,
+            maxRandom: 2
+          }"
+        ></app-command-variable-block>
+        <app-command-variable-block
+          index="2"
+          [device]="device"
+          [command]="CalculatorCommands.ACK"
+          value="11111"
+          [config]="{
+            type: CBVariableTypes.Incremental,
+            probabilityOfChange: 100,
+            incrementQuantity: 2
+          }"
+        ></app-command-variable-block> -->
       </app-command-line>
     </div>
   </ng-template>

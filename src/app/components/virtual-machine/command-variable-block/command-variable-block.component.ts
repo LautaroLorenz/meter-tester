@@ -11,6 +11,10 @@ import { CommandVariableBlockConfigType } from '../../../models/business/interaf
 import { CBVariableTypes } from '../../../models/business/enums/command-variable-block-config.model';
 import { CBVariableTypesConstant } from '../../../models/business/constants/command-block.model';
 import { Random } from '../../../models/core/random.model';
+import {
+  CommandsEnum,
+  Devices,
+} from '../../../models/business/enums/devices.model';
 
 @Component({
   selector: 'app-command-variable-block',
@@ -28,11 +32,15 @@ export class CommandVariableBlockComponent
   extends CommandBlockComponent
   implements OnInit
 {
+  @Input() device!: Devices;
+  @Input() command!: CommandsEnum;
+  @Input() index!: string;
   @Input() value!: string;
   @Input() config!: CommandVariableBlockConfigType;
 
   variableValue!: string;
   configDialogOpen = false;
+  blockID!: string;
 
   readonly CBVariableTypes = CBVariableTypes;
   readonly CBVariableTypesConstant = CBVariableTypesConstant;
@@ -44,13 +52,23 @@ export class CommandVariableBlockComponent
   }
 
   ngOnInit(): void {
+    this.blockID = `${this.device}-${this.command}-${this.index}`;
     this.digitsQuantity = this.value.length;
     this.variableValue = this.value;
+
+    const savedConfig = localStorage.getItem(this.blockID);
+    if (savedConfig) {
+      this.config = JSON.parse(savedConfig);
+    }
   }
 
   changeConfig(): void {
     this.configDialogOpen = true;
     this.variableValue = this.value;
+  }
+
+  onDialoghide(): void {
+    localStorage.setItem(this.blockID, JSON.stringify(this.config));
   }
 
   override refreshValue(): void {
