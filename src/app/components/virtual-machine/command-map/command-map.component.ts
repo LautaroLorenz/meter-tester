@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { VMCommandMap } from '../../../models/business/interafces/vm-command-map.model';
-import {
-  CalculatorCommands,
-  Devices,
-} from '../../../models/business/enums/devices.model';
+import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
+import { CalculatorCommands, SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
 
 @Component({
   selector: 'app-command-map',
@@ -31,7 +29,12 @@ export class CommandMapComponent {
   map: VMCommandMap[] = [
     {
       device: Devices.CAL,
-      commandRegex: 'B|STW|CAL',
+      commandRegex: SoftwareCalculatorCommands.STOP,
+      responseCommandName: CalculatorCommands.ACK,
+    },
+    {
+      device: Devices.CAL,
+      commandRegex: SoftwareCalculatorCommands.START_VACUUM,
       responseCommandName: CalculatorCommands.ACK,
     },
   ];

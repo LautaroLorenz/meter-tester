@@ -48,6 +48,6 @@ export class AwaitUserConfirmComponent implements OnInit {
     setTimeout(() => {
       this.onUserConfirm();
       this.removePanel();
-    });
+    }, 250);
   }
 }

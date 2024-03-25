@@ -6,6 +6,9 @@ import {
 } from '@angular/core';
 import { VacuumTestStep } from '../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
+import { CalculatorComponent } from '../../machine/calculator/calculator.component';
+import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -16,10 +19,9 @@ import { CountTimerComponent } from '../../count-timer/count-timer.component';
 export class VacuumTestRunComponent {
   @Input() currentStep!: VacuumTestStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
+  @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
 
   manualGeneratorAdjusted(): void {
-    // TODO: aca se inializa el "loop" si el usuario toca en repetir paso.
-    // FIXME no inicializar el timer acá
     this.startTest();
   }
 
@@ -32,9 +34,14 @@ export class VacuumTestRunComponent {
   }
 
   private startTest(): void {
-    // this.countTimer.start();
-    // TODO check status de todos los componentes (calculador y patrón)
-
+    this.calculator
+      .stop$()
+      .pipe(
+        switchMap(() =>
+          this.calculator.start$(SoftwareCalculatorCommands.START_VACUUM)
+        )
+      )
+      .subscribe();
   }
 
   // podria ser un forkJoin del check de todos

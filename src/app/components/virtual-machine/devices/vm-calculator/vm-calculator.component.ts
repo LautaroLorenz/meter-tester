@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
 import { VMDeviceComponent } from '../../../../models/business/class/virtual-machine-device.model';
-import { CalculatorCommands, Devices } from '../../../../models/business/enums/devices.model';
+import { Devices } from '../../../../models/business/enums/devices.model';
+import { CalculatorCommands } from '../../../../models/business/enums/commands.model';
 
 @Component({
   selector: 'app-vm-calculator',

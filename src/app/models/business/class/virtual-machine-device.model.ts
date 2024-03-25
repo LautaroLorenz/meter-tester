@@ -7,8 +7,9 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { CBVariableTypes } from '../enums/command-variable-block-config.model';
-import { CommandsEnum, Devices } from '../enums/devices.model';
+import { Devices } from '../enums/devices.model';
 import { CommandLineComponent } from '../../../components/virtual-machine/command-line/command-line.component';
+import { CommandsEnum } from '../enums/commands.model';
 
 @Component({
   template: '',

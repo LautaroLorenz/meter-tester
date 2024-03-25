@@ -1,7 +1,8 @@
-import { CommandsEnum, Devices } from "../enums/devices.model";
+import { CommandsEnum } from '../enums/commands.model';
+import { Devices } from '../enums/devices.model';
 
 export interface VMCommandMap {
-    device: Devices,
-    commandRegex: string;
-    responseCommandName: CommandsEnum;
+  device: Devices;
+  commandRegex: string;
+  responseCommandName: CommandsEnum;
 }

@@ -11,10 +11,8 @@ import { CommandVariableBlockConfigType } from '../../../models/business/interaf
 import { CBVariableTypes } from '../../../models/business/enums/command-variable-block-config.model';
 import { CBVariableTypesConstant } from '../../../models/business/constants/command-block.model';
 import { Random } from '../../../models/core/random.model';
-import {
-  CommandsEnum,
-  Devices,
-} from '../../../models/business/enums/devices.model';
+import { Devices } from '../../../models/business/enums/devices.model';
+import { CommandsEnum } from '../../../models/business/enums/commands.model';
 
 @Component({
   selector: 'app-command-variable-block',

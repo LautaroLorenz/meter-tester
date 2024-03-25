@@ -4,9 +4,3 @@ export enum Devices {
   GEN = 'GEN',
   PAT = 'PAT',
 }
-
-export enum CalculatorCommands {
-  ACK = 'ACK',
-}
-
-export type CommandsEnum = CalculatorCommands;

@@ -16,4 +16,13 @@ export class CommandDirector {
   static getBlocks(command: string): string[] {
     return command.split(this.DIVIDER);
   }
+
+  static build(...blocks: string[]): string {
+    const commandBlocks: string[] = [this.CHAR_START, ...blocks, this.CHAR_END];
+    const commandBlocksText = commandBlocks.join(this.DIVIDER) + this.DIVIDER;
+    const encoder = new TextEncoder();
+    const byteArray = encoder.encode(commandBlocksText);
+    const checksum = byteArray.reduce((acc, byte) => (acc += byte % 256), 0);
+    return commandBlocksText.concat(checksum.toString(16));
+  }
 }

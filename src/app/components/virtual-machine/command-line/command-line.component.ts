@@ -8,7 +8,7 @@ import {
   QueryList,
 } from '@angular/core';
 import { CommandBlockComponent } from '../../../models/business/class/command-block.model';
-import { CommandsEnum } from '../../../models/business/enums/devices.model';
+import { CommandsEnum } from '../../../models/business/enums/commands.model';
 
 @Component({
   selector: 'app-command-line',

@@ -55,12 +55,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
         }
         return !!result;
       }),
-      map(({ result }) => result as string),
-      tap(() => {
-        if (this.deviceStatus$.value === DeviceStatus.Unknown) {
-          this.deviceStatus$.next(DeviceStatus.Connected);
-        }
-      })
+      map(({ result }) => result as string)
     );
   }
 }
