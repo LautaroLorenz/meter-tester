@@ -5,12 +5,14 @@ import database from './resources/database/database';
 import knexFile from './resources/database/knexfile';
 import abm from './commands/abm';
 import essay from './commands/essay';
+import machine from './resources/machine/machine';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 
 function registerIpc(knex: any) {
   knexFile.register();
   abm.register(knex);
   essay.register(knex);
+  machine.register();
 }
 
 let win: BrowserWindow | null = null;
@@ -20,17 +22,26 @@ const isDev =
   args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
 let APP_CONFIG: any;
 
-// cuando estamos en el ambiente dev, podemos trabajar con el simulador
+// cuando estamos en el ambiente dev, podemos trabajar con la máquina virtual
 if (isDev) {
   import('../src/environments/environment.dev').then((environment) => {
     APP_CONFIG = environment.APP_CONFIG;
     if (APP_CONFIG.virtualMachine) {
       virtualMachine.register();
-    } 
+      virtualMachine.observeSoftwareWrite(machine.onSoftwareWrite$);
+      machine.setSerialPort(virtualMachine.getMockSerialPort());
+    } else {
+      machine.createSearialPort().then((serialPort) => {
+        machine.setSerialPort(serialPort);
+      });
+    }
   });
 } else {
   import('../src/environments/environment.prod').then((environment) => {
     APP_CONFIG = environment.APP_CONFIG;
+    machine.createSearialPort().then((serialPort) => {
+      machine.setSerialPort(serialPort);
+    });
   });
 }
 
@@ -47,7 +58,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
       contextIsolation: false,
-      devTools: serve
+      devTools: serve,
     },
   });
   win.setMenuBarVisibility(false);

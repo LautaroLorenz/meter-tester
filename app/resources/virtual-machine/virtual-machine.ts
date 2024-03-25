@@ -1,64 +1,32 @@
 import { BrowserWindow, ipcMain } from 'electron';
 import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
-import { DelimiterParser } from 'serialport';
-import {
-  Subject,
-  filter,
-  firstValueFrom,
-  from,
-  retry,
-  timeout,
-} from 'rxjs';
-import { CommandDirector } from '../../../src/app/models/business/class/command-director.model';
+import { Observable } from 'rxjs';
 
-let virtualMachineWindow: BrowserWindow | null = null;
-let serialPort: SerialPortStream<MockBindingInterface>;
-const parser = new DelimiterParser({
-  delimiter: '\n',
-  includeDelimiter: false,
-});
-const machineResponse$ = new Subject<string>();
+let window: BrowserWindow | null = null;
 
-function closeWindow(): void {
-  if (
-    virtualMachineWindow &&
-    !virtualMachineWindow.isDestroyed() &&
-    virtualMachineWindow.isClosable()
-  ) {
-    virtualMachineWindow.close();
-    disconnect();
-  }
-}
-
-function connect(): void {
-  MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
-  serialPort = new SerialPortStream({
+MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
+const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream(
+  {
     binding: MockBinding,
     path: '/dev/ROBOT',
     baudRate: 14400,
-  });
-  parser.removeAllListeners();
+  }
+);
 
-  // envio de comando puerto USB -> Sw
-  parser.on('data', (data) => {
-    machineResponse$.next(data.toString('ascii'));
-  });
-  serialPort.pipe(parser);
-}
-
-function disconnect(): void {
-  serialPort.close();
-  parser.removeAllListeners();
+function closeWindow(): void {
+  if (window && !window.isDestroyed() && window.isClosable()) {
+    window.close();
+  }
 }
 
 export default {
   register: () => {
     ipcMain.handle('open-virtual-machine', async () => {
-      if (virtualMachineWindow && !virtualMachineWindow.isDestroyed()) {
+      if (window && !window.isDestroyed()) {
         return;
       }
-      virtualMachineWindow = new BrowserWindow({
+      window = new BrowserWindow({
         x: 0,
         y: 0,
         width: 1240,
@@ -66,16 +34,22 @@ export default {
         webPreferences: {
           nodeIntegration: true,
           allowRunningInsecureContent: true,
-          contextIsolation: false
+          contextIsolation: false,
         },
         alwaysOnTop: true,
       });
-      virtualMachineWindow.setMenuBarVisibility(false);
-      virtualMachineWindow.loadURL('http://localhost:4200/maquina-virtual');
-      connect();
+      window.setMenuBarVisibility(false);
+      window.loadURL('http://localhost:4200/maquina-virtual');
+      if (!serialPort?.isOpen) {
+        serialPort.open();
+      }
       return;
     });
+
     ipcMain.handle('close-virtual-machine', async () => {
+      if (serialPort?.isOpen) {
+        serialPort.close();
+      }
       closeWindow();
       return;
     });
@@ -84,34 +58,12 @@ export default {
     ipcMain.handle('virtual-machine-write', async (_, { command }) => {
       serialPort.port?.emitData(command);
     });
-
-    // envió de comando Sw -> Máquina
-    ipcMain.handle('software-write', async (_, { command }) => {
-      // redirección del comando a la máquina virtual
-      virtualMachineWindow?.webContents.send('handle-software-write', command);
-
-      try {
-        const response = await firstValueFrom(
-          from(machineResponse$).pipe(
-            filter(
-              (responseCommand) =>
-                CommandDirector.getTo(command) ===
-                CommandDirector.getFrom(responseCommand)
-            ),
-            timeout({
-              first: 300,
-              with: () => {
-                throw new Error('Timeout');
-              },
-            }),
-            retry(3)
-          )
-        );
-        return { result: response };
-      } catch (error) {
-        return { error };
-      }
-    });
   },
   closeWindow,
+  getMockSerialPort: () => serialPort,
+  observeSoftwareWrite: (observable: Observable<string>) => {
+    observable.subscribe((command) =>
+      window?.webContents.send('handle-software-write', command)
+    );
+  },
 };

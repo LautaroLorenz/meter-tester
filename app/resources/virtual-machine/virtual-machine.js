@@ -12,49 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const binding_mock_1 = require("@serialport/binding-mock");
 const stream_1 = require("@serialport/stream");
-const serialport_1 = require("serialport");
-const rxjs_1 = require("rxjs");
-const command_director_model_1 = require("../../../src/app/models/business/class/command-director.model");
-let virtualMachineWindow = null;
-let serialPort;
-const parser = new serialport_1.DelimiterParser({
-    delimiter: '\n',
-    includeDelimiter: false,
+let window = null;
+binding_mock_1.MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
+const serialPort = new stream_1.SerialPortStream({
+    binding: binding_mock_1.MockBinding,
+    path: '/dev/ROBOT',
+    baudRate: 14400,
 });
-const machineResponse$ = new rxjs_1.Subject();
 function closeWindow() {
-    if (virtualMachineWindow &&
-        !virtualMachineWindow.isDestroyed() &&
-        virtualMachineWindow.isClosable()) {
-        virtualMachineWindow.close();
-        disconnect();
+    if (window && !window.isDestroyed() && window.isClosable()) {
+        window.close();
     }
-}
-function connect() {
-    binding_mock_1.MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
-    serialPort = new stream_1.SerialPortStream({
-        binding: binding_mock_1.MockBinding,
-        path: '/dev/ROBOT',
-        baudRate: 14400,
-    });
-    parser.removeAllListeners();
-    // envio de comando puerto USB -> Sw
-    parser.on('data', (data) => {
-        machineResponse$.next(data.toString('ascii'));
-    });
-    serialPort.pipe(parser);
-}
-function disconnect() {
-    serialPort.close();
-    parser.removeAllListeners();
 }
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
-            if (virtualMachineWindow && !virtualMachineWindow.isDestroyed()) {
+            if (window && !window.isDestroyed()) {
                 return;
             }
-            virtualMachineWindow = new electron_1.BrowserWindow({
+            window = new electron_1.BrowserWindow({
                 x: 0,
                 y: 0,
                 width: 1240,
@@ -62,16 +38,21 @@ exports.default = {
                 webPreferences: {
                     nodeIntegration: true,
                     allowRunningInsecureContent: true,
-                    contextIsolation: false
+                    contextIsolation: false,
                 },
                 alwaysOnTop: true,
             });
-            virtualMachineWindow.setMenuBarVisibility(false);
-            virtualMachineWindow.loadURL('http://localhost:4200/maquina-virtual');
-            connect();
+            window.setMenuBarVisibility(false);
+            window.loadURL('http://localhost:4200/maquina-virtual');
+            if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
+                serialPort.open();
+            }
             return;
         }));
         electron_1.ipcMain.handle('close-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
+            if (serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen) {
+                serialPort.close();
+            }
             closeWindow();
             return;
         }));
@@ -80,25 +61,11 @@ exports.default = {
             var _a;
             (_a = serialPort.port) === null || _a === void 0 ? void 0 : _a.emitData(command);
         }));
-        // envió de comando Sw -> Máquina
-        electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
-            // redirección del comando a la máquina virtual
-            virtualMachineWindow === null || virtualMachineWindow === void 0 ? void 0 : virtualMachineWindow.webContents.send('handle-software-write', command);
-            try {
-                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
-                    command_director_model_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                    first: 300,
-                    with: () => {
-                        throw new Error('Timeout');
-                    },
-                }), (0, rxjs_1.retry)(3)));
-                return { result: response };
-            }
-            catch (error) {
-                return { error };
-            }
-        }));
     },
     closeWindow,
+    getMockSerialPort: () => serialPort,
+    observeSoftwareWrite: (observable) => {
+        observable.subscribe((command) => window === null || window === void 0 ? void 0 : window.webContents.send('handle-software-write', command));
+    },
 };
 //# sourceMappingURL=virtual-machine.js.map
