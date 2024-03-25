@@ -57,6 +57,4 @@ export abstract class MachineDeviceComponent implements OnDestroy {
       map(({ result }) => result as string)
     );
   }
-
-  protected afterSuperOnInit(): void {}
 }
