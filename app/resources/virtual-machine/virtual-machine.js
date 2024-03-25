@@ -14,9 +14,8 @@ const binding_mock_1 = require("@serialport/binding-mock");
 const stream_1 = require("@serialport/stream");
 const serialport_1 = require("serialport");
 const rxjs_1 = require("rxjs");
-const command_director_model_1 = require("../../src/app/models/business/class/command-director.model");
+const command_director_model_1 = require("../../../src/app/models/business/class/command-director.model");
 let virtualMachineWindow = null;
-let softwareWindow = null;
 let serialPort;
 const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
@@ -41,7 +40,6 @@ function connect() {
     parser.removeAllListeners();
     // envio de comando puerto USB -> Sw
     parser.on('data', (data) => {
-        // TODO delete softwareWindow?.webContents.send('on-data-usb', data.toString('ascii'));
         virtualMachineResponse$.next(data.toString('ascii'));
     });
     serialPort.pipe(parser);
@@ -93,12 +91,6 @@ exports.default = {
             return response;
         }));
     },
-    closeWindow,
-    setSoftwareWindow: (window) => {
-        if (!window) {
-            throw new Error('Error abriendo máquina virtual');
-        }
-        softwareWindow = window;
-    },
+    closeWindow
 };
 //# sourceMappingURL=virtual-machine.js.map

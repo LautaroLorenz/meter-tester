@@ -59,11 +59,6 @@ function createWindow(): BrowserWindow {
     require('electron-reloader')(module);
     knex = database.connect({ isProduction: false });
     win.loadURL('http://localhost:4200');
-
-    if(APP_CONFIG.virtualMachine) {
-      virtualMachine.setSoftwareWindow(win);
-    }
-
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';

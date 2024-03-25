@@ -2,11 +2,10 @@ import { BrowserWindow, ipcMain } from 'electron';
 import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { DelimiterParser } from 'serialport';
-import { Subject, filter, firstValueFrom, tap } from 'rxjs';
-import { CommandDirector } from '../../src/app/models/business/class/command-director.model';
+import { Subject, filter, firstValueFrom } from 'rxjs';
+import { CommandDirector } from '../../../src/app/models/business/class/command-director.model';
 
 let virtualMachineWindow: BrowserWindow | null = null;
-let softwareWindow: BrowserWindow | null = null;
 let serialPort: SerialPortStream<MockBindingInterface>;
 const parser = new DelimiterParser({
   delimiter: '\n',
@@ -98,11 +97,5 @@ export default {
       return response;
     });
   },
-  closeWindow,
-  setSoftwareWindow: (window: BrowserWindow | null) => {
-    if (!window) {
-      throw new Error('Error abriendo máquina virtual');
-    }
-    softwareWindow = window;
-  },
+  closeWindow
 };
