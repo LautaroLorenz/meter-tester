@@ -18,10 +18,13 @@
     <ng-container
       *ngIf="
         currentStep.photocellAdjustmentStatus !==
-        PhotocellAdjustmentStatus.Pending
+          PhotocellAdjustmentStatus.Pending && preparationStep
       "
     >
-      <app-run-step-switch [currentStep]="currentStep"></app-run-step-switch>
+      <app-run-step-switch
+        [currentStep]="currentStep"
+        [preparationStep]="preparationStep"
+      ></app-run-step-switch>
     </ng-container>
   </ng-container>
 </div>

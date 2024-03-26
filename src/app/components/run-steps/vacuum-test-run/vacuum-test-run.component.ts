@@ -9,6 +9,7 @@ import { CountTimerComponent } from '../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
 import { switchMap } from 'rxjs';
+import { PreparationStep } from '../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -18,6 +19,7 @@ import { switchMap } from 'rxjs';
 })
 export class VacuumTestRunComponent {
   @Input() currentStep!: VacuumTestStep;
+  @Input() preparationStep!: PreparationStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
 
@@ -38,7 +40,11 @@ export class VacuumTestRunComponent {
       .stop$()
       .pipe(
         switchMap(() =>
-          this.calculator.start$(SoftwareCalculatorCommands.START_VACUUM)
+          this.calculator.start$(
+            SoftwareCalculatorCommands.START_VACUUM,
+            this.preparationStep.form_control_raw,
+            this.currentStep.form_control_raw.meterConstant
+          )
         )
       )
       .subscribe();

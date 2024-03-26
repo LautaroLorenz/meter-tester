@@ -27,3 +27,6 @@ EJECUCIÓN:
   - Inidicar la endDate
   - Agregar al historial (indicar el ID de reporte).
   - Reporte
+
+NICO
+- hay que hacer algo con el valor de la constante según la unidad, cuando se envia al calculador

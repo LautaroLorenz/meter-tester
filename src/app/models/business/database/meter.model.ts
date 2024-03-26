@@ -19,8 +19,8 @@ export interface Meter extends DbForeignKey {
   ratedVoltage: number;
   activeConstantValue: number;
   activeConstantUnit_id: number;
-  reactveConstantValue: number;
-  reactveConstantUnit_id: number;
+  reactiveConstantValue: number;
+  reactiveConstantUnit_id: number;
   brand_id: number;
   connection_id: number;
   foreign: {

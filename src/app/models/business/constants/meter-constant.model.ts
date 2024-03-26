@@ -1,15 +1,20 @@
 export interface MeterConstant {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
+}
+
+export enum MeterConstantEnum {
+  Active = 0,
+  Reactive = 1,
 }
 
 export const MeterConstants: MeterConstant[] = [
   {
-    id: 0,
+    id: MeterConstantEnum.Active,
     name: 'Activa',
   },
   {
-    id: 1,
+    id: MeterConstantEnum.Reactive,
     name: 'Reactiva',
   },
 ];

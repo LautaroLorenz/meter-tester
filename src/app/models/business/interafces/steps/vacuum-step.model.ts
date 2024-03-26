@@ -1,6 +1,6 @@
 import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
 import { Steps } from '../../../../models/business/enums/steps.model';
-import { MeterConstant } from '../../../../models/business/constants/meter-constant.model';
+import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 import { Phase } from '../../../../models/business/interafces/phase.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AbstractFormGroup } from '../../../core/abstract-form-group.model';
@@ -14,7 +14,7 @@ import { PhotocellAdjustmentStatus } from '../../enums/photocell-adjustment-stat
 
 export interface VacuumTestFormControlRaw {
   name: string;
-  meterConstant: MeterConstant;
+  meterConstant: MeterConstantEnum;
   phaseL1: Pick<Phase, 'voltage'>;
   phaseL2: Pick<Phase, 'voltage'>;
   phaseL3: Pick<Phase, 'voltage'>;

@@ -3,6 +3,7 @@ import { VMCommandMap } from '../../../models/business/interafces/vm-command-map
 import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { CalculatorCommands, SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
+import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 
 @Component({
   selector: 'app-command-map',
@@ -14,7 +15,7 @@ export class CommandMapComponent {
   columns = [
     {
       header: 'Dispositivo',
-      field: 'device',
+      field: 'deviceName',
     },
     {
       header: 'Recibe comando [Regex]',
@@ -29,11 +30,13 @@ export class CommandMapComponent {
   map: VMCommandMap[] = [
     {
       device: Devices.CAL,
+      deviceName: DeviceConstants[Devices.CAL],
       commandRegex: SoftwareCalculatorCommands.STOP,
       responseCommandName: CalculatorCommands.ACK,
     },
     {
       device: Devices.CAL,
+      deviceName: DeviceConstants[Devices.CAL],
       commandRegex: SoftwareCalculatorCommands.START_VACUUM,
       responseCommandName: CalculatorCommands.ACK,
     },

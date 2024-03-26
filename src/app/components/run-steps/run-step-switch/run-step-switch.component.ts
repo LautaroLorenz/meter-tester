@@ -10,6 +10,7 @@ import { Steps } from '../../../models/business/enums/steps.model';
 })
 export class RunStepSwitchComponent {
   @Input() currentStep!: EssayStep;
+  @Input() preparationStep!: EssayStep;
 
   readonly Steps = Steps;
 }
