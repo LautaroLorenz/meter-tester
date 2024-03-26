@@ -8,7 +8,7 @@ import { VacuumTestStep } from '../../../models/business/interafces/steps/vacuum
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
-import { switchMap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { PreparationStep } from '../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
@@ -40,18 +40,15 @@ export class VacuumTestRunComponent {
       .stop$()
       .pipe(
         switchMap(() =>
+          // TODO en el start falta enviar kp (10) |  Xs (8)
           this.calculator.start$(
             SoftwareCalculatorCommands.START_VACUUM,
             this.preparationStep.form_control_raw,
             this.currentStep.form_control_raw.meterConstant
           )
-        )
+        ),
+        tap(() => this.countTimer.start())
       )
       .subscribe();
-  }
-
-  // podria ser un forkJoin del check de todos
-  private checkMachineDeviceStatus(): void {
-    // TODO revisar el status de los componentes
   }
 }
