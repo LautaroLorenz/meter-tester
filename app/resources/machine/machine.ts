@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { SerialPort, DelimiterParser } from 'serialport';
 import { BindingInterface } from '@serialport/bindings-interface';
-import { Subject, filter, firstValueFrom, from, retry, timeout } from 'rxjs';
+import { Subject, filter, firstValueFrom, from, timeout } from 'rxjs';
 import { CommandDirector } from '../../../src/app/models/business/class/command-director.model';
 import { SerialPortStream } from '@serialport/stream';
 
@@ -32,12 +32,11 @@ export default {
                 CommandDirector.getFrom(responseCommand)
             ),
             timeout({
-              first: 300,
+              first: 3000,
               with: () => {
                 throw new Error('Timeout');
               },
-            }),
-            retry(3)
+            })
           )
         );
         return { result: response };

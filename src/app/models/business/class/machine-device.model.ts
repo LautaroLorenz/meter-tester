@@ -5,15 +5,14 @@ import {
   Observable,
   Subject,
   filter,
-  from,
   map,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { Devices } from '../enums/devices.model';
-import { IpcService } from '../../../services/ipc.service';
 import { MessagesService } from '../../../services/messages.service';
 import { DeviceConstants } from '../constants/devices-constant.model';
+import { DeviceService } from '../../../services/device.service';
+import { CommandDirector } from './command-director.model';
 
 @Component({
   template: '',
@@ -22,7 +21,7 @@ import { DeviceConstants } from '../constants/devices-constant.model';
 export abstract class MachineDeviceComponent implements OnDestroy {
   deviceStatus$ = new BehaviorSubject<DeviceStatus>(DeviceStatus.Unknown);
 
-  protected deviceStop = new Subject<void>();
+  protected deviceError = new Subject<void>();
   protected onDestroy = new Subject<void>();
 
   protected readonly DeviceConstants = DeviceConstants;
@@ -30,23 +29,30 @@ export abstract class MachineDeviceComponent implements OnDestroy {
   abstract readonly device: Devices;
 
   constructor(
-    protected readonly ipcService: IpcService,
+    private readonly deviceService: DeviceService,
     private readonly messagesService: MessagesService
   ) {}
 
   ngOnDestroy(): void {
     this.onDestroy.next();
     this.onDestroy.complete();
-    this.deviceStop.complete();
+    this.deviceError.complete();
   }
 
+  buildCommand(...blocks: string[]): string {
+    return CommandDirector.build(Devices.STW, this.device, ...blocks);
+  }
+
+  // TODO
+  // implementar unit test para MachineDevice
+  // testear que se pueda llamar a start, a stop, y hacer un loop en el medio con diferentes devices trabajando al mismo tiempo.
   write$(command: string): Observable<string> {
-    return from(this.ipcService.invoke('software-write', { command })).pipe(
+    return this.deviceService.write$(command).pipe(
+      takeUntil(this.deviceError),
       takeUntil(this.onDestroy),
-      takeUntil(this.deviceStop),
       filter(({ result, error }) => {
         if (error) {
-          this.deviceStop.next();
+          this.deviceError.next();
           this.deviceStatus$.next(DeviceStatus.Error);
           this.messagesService.error(
             `Error de comunicación [${DeviceConstants[this.device]}]`

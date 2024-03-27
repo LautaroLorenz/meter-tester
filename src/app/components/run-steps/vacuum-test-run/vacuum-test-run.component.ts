@@ -28,6 +28,7 @@ export class VacuumTestRunComponent {
   }
 
   timerStop(): void {
+    // this.calculator.stop$().subscribe();
     // TODO se llegó al fin del temporizador
     // this.runEssayService
     //   .getEssayStep(this.currentStep.id)
@@ -35,20 +36,25 @@ export class VacuumTestRunComponent {
     //   ?.setValue(StepStatus.Done);
   }
 
+  calculatorResults(): void {
+    // TODO recibe resultados del calculador
+  }
+
   private startTest(): void {
-    this.calculator
-      .stop$()
-      .pipe(
-        switchMap(() =>
-          // TODO en el start falta enviar kp (10) |  Xs (8)
-          this.calculator.start$(
-            SoftwareCalculatorCommands.START_VACUUM,
-            this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant
-          )
-        ),
-        tap(() => this.countTimer.start())
-      )
-      .subscribe();
+    // this.countTimer.reset();
+    // this.calculator
+    // .stop$()
+    // .pipe(
+    //   switchMap(() =>
+    //     // TODO en el start falta enviar kp (10) |  Xs (8)
+    //     this.calculator.start$(
+    //       SoftwareCalculatorCommands.START_VACUUM,
+    //       this.preparationStep.form_control_raw,
+    //       this.currentStep.form_control_raw.meterConstant
+    //     )
+    //   ),
+    //   tap(() => this.countTimer.start())
+    // )
+    // .subscribe();
   }
 }

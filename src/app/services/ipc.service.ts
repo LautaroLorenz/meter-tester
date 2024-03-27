@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */ // FIXME
 import { Injectable } from '@angular/core';
 import { IpcRenderer } from 'electron';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -44,11 +45,24 @@ export class IpcService {
     this.ipc.sendSync(channel, ...args);
   }
 
-  public invoke(channel: string, ...args: any[]): Promise<any> {
+  public invoke<T = any>(channel: string, ...args: any[]): Promise<T> {
     if (!this.ipc) {
       throw new Error('IpcRenderer not initialized');
     }
-    return this.ipc.invoke(channel, ...args);
+    return this.ipc.invoke(channel, ...args) as Promise<T>;
+  }
+
+  public invoke$<T = any>(channel: string, ...args: any[]): Observable<T> {
+    if (!this.ipc) {
+      throw new Error('IpcRenderer not initialized');
+    }
+    return new Observable<T>((observer) => {
+      const promise = this.ipc.invoke(channel, ...args) as Promise<T>;
+      void promise.then((result) => {
+        observer.next(result);
+        observer.complete();
+      });
+    });
   }
 
   public removeAllListeners(channel: string): void {

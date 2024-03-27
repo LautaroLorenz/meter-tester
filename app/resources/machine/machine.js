@@ -32,11 +32,11 @@ exports.default = {
             try {
                 const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
                     command_director_model_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                    first: 300,
+                    first: 3000,
                     with: () => {
                         throw new Error('Timeout');
                     },
-                }), (0, rxjs_1.retry)(3)));
+                })));
                 return { result: response };
             }
             catch (error) {
