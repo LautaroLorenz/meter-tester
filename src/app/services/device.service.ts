@@ -19,7 +19,12 @@ export class DeviceService {
     this.queue
       .pipe(
         concatMap(({ request, response }) =>
-          request.pipe(tap((result) => response.next(result)))
+          request.pipe(
+            tap((result) => {
+              response.next(result);
+              response.complete();
+            })
+          )
         )
       )
       .subscribe();
