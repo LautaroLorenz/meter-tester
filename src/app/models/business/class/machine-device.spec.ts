@@ -88,16 +88,16 @@ describe('Machine Device', () => {
         let response = '';
         switch (command) {
           case 'command1':
-            response = 'respuesta para command1';
+            response = 'respuesta command1';
             break;
           case 'command2':
-            response = 'respuesta para command2';
+            response = 'respuesta command2';
             break;
           case 'command3':
-            response = 'respuesta para command3';
+            response = 'respuesta command3';
             break;
           case 'command4':
-            response = 'respuesta para command4';
+            response = 'respuesta command4';
             break;
         }
         return of({ result: response }).pipe(
@@ -108,13 +108,11 @@ describe('Machine Device', () => {
 
     const spyDeviceWrite$ = spyOn(deviceService, 'write$').and.callThrough();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const obj = { onMergeSubscribe: (_: string) => {} };
-    const spyOnMergeSubscribe = spyOn(
-      obj,
-      'onMergeSubscribe'
-    ).and.callThrough();
+    // Spy para saber cuando llega la respuesta de un comando.
+    const obj = { onMergeSubscribe: (_: string) => {} }; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const spyResponse = spyOn(obj, 'onMergeSubscribe').and.callThrough();
 
+    // Emitimos todos los comandos al mismo tiempo (con merge)
     merge(
       deviceOne.write$('command1'), // comandos del device one
       deviceOne.write$('command2'),
@@ -142,32 +140,29 @@ describe('Machine Device', () => {
     ]);
 
     // Comprobamos que las llamadas a invoke$ emiten respuestas secuencialmente
-    // (Esto sucederá porque deviceService.write$ encola las llamadas con concatMap)
-    // ---------------------------------------------------------------------------------------
-    expect(spyOnMergeSubscribe.calls.all().length).toEqual(0);
+    // Esto sucederá porque deviceService.write$ encola las llamadas con concatMap
+    // concatMap se subscribe al observable que retorna invoke$ a medida que se completa el anterior
+    // ---------------------------------------------------------------------------------------------
+    expect(spyResponse.calls.all().length).toEqual(0);
 
     tick(responseDelay);
-    expect(spyOnMergeSubscribe.calls.all().length).toEqual(1);
-    expect(spyOnMergeSubscribe.calls.mostRecent().args).toEqual([
-      'respuesta para command1',
-    ]);
+    expect(spyResponse.calls.all().length).toEqual(1);
+    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command1']);
 
     tick(responseDelay);
-    expect(spyOnMergeSubscribe.calls.all().length).toEqual(2);
-    expect(spyOnMergeSubscribe.calls.mostRecent().args).toEqual([
-      'respuesta para command2',
-    ]);
+    expect(spyResponse.calls.all().length).toEqual(2);
+    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command2']);
 
     tick(responseDelay);
-    expect(spyOnMergeSubscribe.calls.all().length).toEqual(3);
-    expect(spyOnMergeSubscribe.calls.mostRecent().args).toEqual([
-      'respuesta para command3',
-    ]);
+    expect(spyResponse.calls.all().length).toEqual(3);
+    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command3']);
 
     tick(responseDelay);
-    expect(spyOnMergeSubscribe.calls.all().length).toEqual(4);
-    expect(spyOnMergeSubscribe.calls.mostRecent().args).toEqual([
-      'respuesta para command4',
-    ]);
+    expect(spyResponse.calls.all().length).toEqual(4);
+    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command4']);
   }));
+
+  // it('', fakeAsync(() => {
+  //   // TODO
+  // }));
 });
