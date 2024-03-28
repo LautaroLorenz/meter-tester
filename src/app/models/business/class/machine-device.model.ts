@@ -69,7 +69,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
   loopWrite$(
     command: string,
     delay: number,
-    whileFn: () => boolean
+    whileFn: () => boolean // condición de parada
   ): Observable<string> {
     return interval(delay).pipe(
       // el takeWhile nos permite poner una condición de parada para el loop

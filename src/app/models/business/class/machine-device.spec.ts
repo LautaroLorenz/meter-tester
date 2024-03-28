@@ -19,6 +19,7 @@ import {
   of,
   switchMap,
   takeUntil,
+  takeWhile,
   tap,
 } from 'rxjs';
 import { DeviceStatus } from '../enums/device-status.model';
@@ -293,12 +294,13 @@ describe('Machine Device', () => {
       .loopWrite$(
         buildCommand(deviceTwo.device, 'result'),
         loopDelay,
-        () => stopDeviceTwoLoop$.value // Si se frena con el whileFn, el ultimo comando tiene respuesta
+        () => true // Si se frena con el whileFn, el ultimo comando tiene respuesta
       )
       .pipe(
         tap(spyResponse),
-        tap((response) => console.log('loop', response))
-        // takeUntil(stopDeviceTwoLoop$) // stop abrupto del loop, no se procesa la respuesta del ultimo comando enviado.
+        tap((response) => console.log('loop', response)),
+        // takeUntil(subject) // parada abrupta: no procesa la ultima respuesta del loop
+        takeWhile(() => stopDeviceTwoLoop$.value) // parada suave: procesa la ultima respuesta del loop
       )
       .subscribe();
 
@@ -316,5 +318,9 @@ describe('Machine Device', () => {
 
   // it('' => {
   // TODO probar que pasa con el deviceStatus y el write$ y el loopWrite$ si invoke da error
+  // })
+
+  // it('' => {
+  // TODO probar la diferencia entre stop whileFn vs stop en el subcrive con takeUntil y takeWhile
   // })
 });
