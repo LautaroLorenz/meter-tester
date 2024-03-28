@@ -237,6 +237,7 @@ describe('Machine Device', () => {
       return 'result';
     };
 
+    // TODO detiene el loop porque se deja de cumplir la while condition
     setTimeout(() => {
       deviceOne
         .write$('stop')
@@ -265,6 +266,8 @@ describe('Machine Device', () => {
         )
       )
       .subscribe((response) => console.log('loop response', response));
+
+    // TODO hacer un loop que se detenga por un stop$ Subject en el padre, que no tenga relacion con la whileFn
 
     // TODO
     tick(10000);
