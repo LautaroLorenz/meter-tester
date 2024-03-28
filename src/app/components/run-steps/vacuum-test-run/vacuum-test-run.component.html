@@ -1,30 +1,25 @@
 <!-- Parámetros del paso -->
 <app-vacuum-test-params [currentStep]="currentStep"></app-vacuum-test-params>
 
-<!-- 1. Ajustar generador manual
-  Por output avisa cuando fue inicializado
--->
+<!-- Generador manual -->
 <div class="mt-4">
   <app-manual-generator
     (adjustmentDone)="manualGeneratorAdjusted()"
   ></app-manual-generator>
 </div>
 
-<!-- 2. re-inicializa el calculador 
-  - Por output avisa cuando esta inicializado para poder empezar el temporizador
-  - La prueba reinicia desde este punto.
--->
-<div class="mt-4">
-  <app-calculator #calculator></app-calculator>
-</div>
-
-<!-- 3. inicializa el temporizador -->
+<!-- Temporizador -->
 <div class="mt-4">
   <app-count-timer
     #countTimer
     [durationSeconds]="currentStep.form_control_raw.durationSeconds"
     (finishCount)="timerStop()"
   ></app-count-timer>
+</div>
+
+<!-- Calculador -->
+<div class="mt-4">
+  <app-calculator #calculator></app-calculator>
 </div>
 
 <!-- TODO 4. inicializa el patrón, consulta valores y refresca

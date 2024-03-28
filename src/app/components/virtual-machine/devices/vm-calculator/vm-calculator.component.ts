@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
 import { VMDeviceComponent } from '../../../../models/business/class/virtual-machine-device.model';
 import { Devices } from '../../../../models/business/enums/devices.model';
-import { CalculatorCommands } from '../../../../models/business/enums/commands.model';
+import { CalculatorResponseCommands } from '../../../../models/business/enums/commands.model';
 
 @Component({
   selector: 'app-vm-calculator',
@@ -16,13 +16,17 @@ import { CalculatorCommands } from '../../../../models/business/enums/commands.m
   ],
 })
 export class VmCalculatorComponent extends VMDeviceComponent {
-  readonly CalculatorCommands = CalculatorCommands;
+  readonly CalculatorResponseCommands = CalculatorResponseCommands;
 
   override readonly device = Devices.CAL;
 
-  override getCommandByName(commandName: CalculatorCommands): string | undefined {
-    const commandLine = this.commandLines.find(({ name }) => name === commandName);
-    if(!commandLine) {
+  override getCommandByName(
+    commandName: CalculatorResponseCommands
+  ): string | undefined {
+    const commandLine = this.commandLines.find(
+      ({ name }) => name === commandName
+    );
+    if (!commandLine) {
       return;
     }
     return commandLine.getCommand();

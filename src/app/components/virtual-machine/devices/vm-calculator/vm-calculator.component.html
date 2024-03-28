@@ -2,27 +2,11 @@
   <ng-template pTemplate="body">
     <div class="flex flex-column gap-2">
       <app-command-line
-        [name]="CalculatorCommands.ACK_START"
+        [name]="CalculatorResponseCommands.ACK"
         (send)="write.emit($event)"
       >
         <app-command-fixed-block
-          value="B|CAL|STW|ACK_START"
-        ></app-command-fixed-block>
-      </app-command-line>
-      <app-command-line
-        [name]="CalculatorCommands.ACK_STOP"
-        (send)="write.emit($event)"
-      >
-        <app-command-fixed-block
-          value="B|CAL|STW|ACK_STOP"
-        ></app-command-fixed-block>
-      </app-command-line>
-      <app-command-line
-        [name]="CalculatorCommands.ACK_RESULTS"
-        (send)="write.emit($event)"
-      >
-        <app-command-fixed-block
-          value="B|CAL|STW|ACK_RESULTS"
+          value="B|CAL|STW|ACK00000|Z|x"
         ></app-command-fixed-block>
       </app-command-line>
     </div>

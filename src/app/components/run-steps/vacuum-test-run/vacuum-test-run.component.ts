@@ -41,20 +41,20 @@ export class VacuumTestRunComponent {
   }
 
   private startTest(): void {
-    // this.countTimer.reset();
-    // this.calculator
-    // .stop$()
-    // .pipe(
-    //   switchMap(() =>
-    //     // TODO en el start falta enviar kp (10) |  Xs (8)
-    //     this.calculator.start$(
-    //       SoftwareCalculatorCommands.START_VACUUM,
-    //       this.preparationStep.form_control_raw,
-    //       this.currentStep.form_control_raw.meterConstant
-    //     )
-    //   ),
-    //   tap(() => this.countTimer.start())
-    // )
-    // .subscribe();
+    this.countTimer.reset();
+    this.calculator
+      .stop$()
+      .pipe(
+        switchMap(() =>
+          // TODO en el start falta enviar kp (10) |  Xs (8)
+          this.calculator.start$(
+            SoftwareCalculatorCommands.START_VACUUM,
+            this.preparationStep.form_control_raw,
+            this.currentStep.form_control_raw.meterConstant
+          )
+        ),
+        tap(() => this.countTimer.start())
+      )
+      .subscribe();
   }
 }

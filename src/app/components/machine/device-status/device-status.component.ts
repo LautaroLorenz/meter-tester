@@ -12,16 +12,16 @@ export class DeviceStatusComponent {
 
   get severity(): 'success' | 'info' | 'warning' | 'danger' | null | undefined {
     switch (this.deviceStatus) {
+      case DeviceStatus.StopInProgress:
       case DeviceStatus.Unknown:
         return null;
+      case DeviceStatus.StartInProgress:
       case DeviceStatus.Connected:
         return 'info';
       case DeviceStatus.Working:
         return 'success';
       case DeviceStatus.Error:
         return 'danger';
-      case DeviceStatus.StopInProgress:
-        return null;
     }
   }
 
@@ -37,6 +37,8 @@ export class DeviceStatusComponent {
         return 'Error';
       case DeviceStatus.StopInProgress:
         return 'Realizando stop';
+      case DeviceStatus.StartInProgress:
+        return 'Realizando start';
     }
   }
 }
