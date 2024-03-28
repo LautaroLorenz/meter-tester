@@ -11,17 +11,7 @@ import { Component, ViewChild } from '@angular/core';
 import { MessagesService } from '../../../services/messages.service';
 import { IpcService } from '../../../services/ipc.service';
 import { MessageService } from 'primeng/api';
-import {
-  BehaviorSubject,
-  Subject,
-  delay,
-  merge,
-  of,
-  switchMap,
-  takeUntil,
-  takeWhile,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, delay, merge, of, switchMap, tap } from 'rxjs';
 import { DeviceStatus } from '../enums/device-status.model';
 import { CommandDirector } from './command-director.model';
 
@@ -373,9 +363,96 @@ describe('Machine Device', () => {
     );
   }));
 
-  // it('' => {
-  // TODO probar más de un loop al mismo tiempo, para diferentes dispositivos
-  // })
+  it('dos dispositivos compiten por enviar comandos cada uno con su respectivo loop', fakeAsync(() => {
+    const deviceOneCommands = {
+      result: buildCommand(deviceOne.device, 'result'),
+      middle: buildCommand(deviceOne.device, 'middle'),
+    };
+    const deviceTwoCommands = {
+      result: buildCommand(deviceTwo.device, 'result'),
+      middle: buildCommand(deviceTwo.device, 'middle'),
+    };
+
+    // cola de comandos (solo lectura)
+    deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
+
+    // Control de loops
+    const runDeviceOneLoop$ = new BehaviorSubject<boolean>(true);
+    const runDeviceTwoLoop$ = new BehaviorSubject<boolean>(true);
+
+    // Inicialización de loops
+    deviceOne
+      .loopWrite$(
+        deviceOneCommands.result,
+        // hacemos que un loop sea el doble de rápido que el otro con un delay de la mitad
+        // aún así ambos deberían poder procesar sus comandos
+        loopDelay / 2,
+        () => runDeviceOneLoop$.value
+      )
+      .pipe(
+        tap(spyResponse),
+        tap((response) =>
+          // verificamos que por el loop one llegan las respuestas del device one
+          expect(response).toEqual(`response ${deviceOneCommands.result}`)
+        )
+      )
+      .subscribe();
+
+    deviceTwo
+      .loopWrite$(
+        deviceTwoCommands.result,
+        loopDelay,
+        () => runDeviceTwoLoop$.value
+      )
+      .pipe(
+        tap(spyResponse),
+        tap((response) =>
+          // verificamos que por el loop two llegan las respuestas del device two
+          expect(response).toEqual(`response ${deviceTwoCommands.result}`)
+        )
+      )
+      .subscribe();
+
+    // en medio del procesamiento de loops incertamos un comando directo en la cola, para ver si se procesa
+    setTimeout(() => {
+      deviceOne
+        .write$(deviceOneCommands.middle)
+        .pipe(tap(spyResponse))
+        .subscribe((response) =>
+          expect(response).toEqual(`response ${deviceOneCommands.middle}`)
+        );
+
+      deviceTwo
+        .write$(deviceTwoCommands.middle)
+        .pipe(tap(spyResponse))
+        .subscribe((response) =>
+          expect(response).toEqual(`response ${deviceTwoCommands.middle}`)
+        );
+    }, responseDelay * 4);
+
+    // Detenemos primero un loop y luego el otro
+    setTimeout(() => {
+      runDeviceOneLoop$.next(false);
+      setTimeout(() => {
+        runDeviceTwoLoop$.next(false);
+      }, responseDelay * 2);
+    }, responseDelay * 3);
+
+    tick(responseDelay * 10);
+
+    // Comprobamos que apesar de que un loop es el doble de rapido que el otro
+    // ambos dispositivos pudieron enviar sus comandos "result", ademas
+    // en el medio de los loops ambos dispotivios enviaron un comando "middle" fuera del loop
+    expect(spyResponse.calls.allArgs()).toEqual([
+      [`response ${deviceOneCommands.result}`],
+      [`response ${deviceTwoCommands.result}`],
+      [`response ${deviceOneCommands.result}`],
+      [`response ${deviceTwoCommands.result}`],
+      [`response ${deviceOneCommands.middle}`],
+      [`response ${deviceTwoCommands.middle}`],
+      [`response ${deviceTwoCommands.result}`],
+    ]);
+  }));
 
   // it('' => {
   // TODO probar que pasa con el deviceStatus y el write$ y el loopWrite$ si invoke da error
