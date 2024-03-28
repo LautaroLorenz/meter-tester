@@ -20,6 +20,8 @@ export class DeviceStatusComponent {
         return 'success';
       case DeviceStatus.Error:
         return 'danger';
+      case DeviceStatus.StopInProgress:
+        return null;
     }
   }
 
@@ -33,6 +35,8 @@ export class DeviceStatusComponent {
         return 'Trabajando';
       case DeviceStatus.Error:
         return 'Error';
+      case DeviceStatus.StopInProgress:
+        return 'Realizando stop';
     }
   }
 }

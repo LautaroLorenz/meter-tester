@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject, concatMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  Subject,
+  concatMap,
+  tap,
+} from 'rxjs';
 import { IpcService } from './ipc.service';
 import { CommandInvokeResponse } from '../models/business/interafces/command-invoke-response.model';
 
@@ -11,23 +18,35 @@ export class DeviceService {
    * cola de llamados a write$
    */
   private queue = new Subject<{
+    command: string;
     request: Observable<CommandInvokeResponse>;
     response: ReplaySubject<CommandInvokeResponse>;
   }>();
 
+  private _readQueueCommands$ = new BehaviorSubject<string[]>([]);
+
   constructor(private readonly ipcService: IpcService) {
     this.queue
       .pipe(
+        tap(({ command }) => this.addCommandToReadQueue(command)),
         concatMap(({ request, response }) =>
           request.pipe(
             tap((result) => {
               response.next(result);
               response.complete();
-            })
+            }),
+            tap(() => this.popCommandFromReadQueue())
           )
         )
       )
       .subscribe();
+  }
+
+  /**
+   * Retorna un string[] para saber que comandos hay encolados, es de lectura.
+   */
+  get readQueueCommands$(): Observable<string[]> {
+    return this._readQueueCommands$.asObservable();
   }
 
   /*
@@ -48,7 +67,15 @@ export class DeviceService {
       'software-write',
       { command }
     );
-    this.queue.next({ request, response });
+    this.queue.next({ command, request, response });
     return response.asObservable();
+  }
+
+  private addCommandToReadQueue(command: string): void {
+    this._readQueueCommands$.next([command, ...this._readQueueCommands$.value]);
+  }
+
+  private popCommandFromReadQueue(): void {
+    this._readQueueCommands$.next(this._readQueueCommands$.value.slice(0, -1));
   }
 }

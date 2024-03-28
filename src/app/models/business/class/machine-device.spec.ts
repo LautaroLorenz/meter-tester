@@ -11,8 +11,22 @@ import { Component, ViewChild } from '@angular/core';
 import { MessagesService } from '../../../services/messages.service';
 import { IpcService } from '../../../services/ipc.service';
 import { MessageService } from 'primeng/api';
-import { delay, merge, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  delay,
+  merge,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { DeviceStatus } from '../enums/device-status.model';
+import { CommandDirector } from './command-director.model';
+
+function buildCommand(to: Devices, action: string): string {
+  return `${to}${CommandDirector.DIVIDER}${action}`;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function logTimeHelper(): string {
@@ -60,24 +74,23 @@ describe('Machine Device', () => {
   const ipcRendererSpy = jasmine.createSpyObj('ipcRenderer', ['invoke']);
   const responseDelay = 250;
 
+  // El loopDelay es menor que el responseDelay, de esa manera aseguramos que el software
+  // intentará enviar un nuevo comando más rápido de lo que la máquina responde. La prueba es exaustiva
+  // porque el softaware debe ser lo suficientemente robusto, como para que de alguna manera, no sobreexija
+  // a la máquina. Lo que conseguimos descartando los intentos de envio cunado hay un comando de loop encolado.
+  const loopDelay = responseDelay / 2;
+
   // Estas son las respuetas que emite ipcMain.invoke cuando la máquina responde un comando
   ipcRendererSpy.invoke.and.callFake((channel: string, ...args: any[]) => {
     if (channel !== 'software-write') {
       throw new Error('channel incorrecto');
     }
     const command: string = args[0].command;
-    const response = { result: '' };
-    switch (command) {
-      case 'start':
-        response.result = 'response for start';
-        break;
-      case 'stop':
-        response.result = 'response for stop';
-        break;
-      case 'result':
-        response.result = 'response for result';
-        break;
-    }
+    const to = command.split(CommandDirector.DIVIDER)[0];
+    const action = command.split(CommandDirector.DIVIDER)[1];
+    const response = {
+      result: `response ${to}${CommandDirector.DIVIDER}${action}`,
+    };
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(response);
@@ -230,17 +243,28 @@ describe('Machine Device', () => {
 
   // TODO emprolijar y agregar los expect, test envio de comandos en loop
   fit('test loopWrite', fakeAsync(() => {
+    // TODO cola de comandos
+    // TODO poner un spy en la cola de comandos para controlar lo que hay encolado en todo momento
+    deviceService.readQueueCommands$.subscribe((commands) =>
+      console.log('commands', commands)
+    );
+
     // TODO detiene el loop porque se deja de cumplir la while condition
+    // TODO AL HACER STOP, ¿se puede eliminar de la cola, los comandos de este dispositivo?
     setTimeout(() => {
-      deviceOne
-        .write$('stop')
-        .pipe(tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected)))
-        .pipe(tap((response) => console.log(response)))
+      of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
+        .pipe(
+          switchMap(() =>
+            deviceOne.write$(buildCommand(deviceOne.device, 'stop'))
+          ),
+          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected)),
+          tap((response) => console.log(response))
+        )
         .subscribe(spyResponse);
     }, 2000);
 
     deviceOne
-      .write$('start')
+      .write$(buildCommand(deviceOne.device, 'start'))
       .pipe(
         tap(spyResponse),
         tap((response) => console.log(response)),
@@ -248,19 +272,35 @@ describe('Machine Device', () => {
         switchMap(() =>
           deviceOne
             .loopWrite$(
-              'result',
-              // el delay tiene que ser el responseDelay / 2, de esa forma aseguramos que el código funciona
-              // es decir, que se hacen mas envios de comandos de los que la máquina puede procesar
-              // y que aún asi el software espera a que la máquina responda, no la sobreecarga de envios.
-              100,
+              buildCommand(deviceOne.device, 'result'),
+              loopDelay,
               () => deviceOne.deviceStatus$.value === DeviceStatus.Working
             )
             .pipe(tap(spyResponse))
         )
       )
-      .subscribe((response) => console.log('loop response', response));
+      .subscribe((response) => console.log('loop', response));
 
     // TODO hacer un loop que se detenga por un stop$ Subject en el padre, que no tenga relacion con la whileFn
+    const stopDeviceTwoLoop$ = new BehaviorSubject<boolean>(true);
+    setTimeout(() => {
+      console.log(`stop ${deviceTwo.device}`);
+      stopDeviceTwoLoop$.next(false);
+      stopDeviceTwoLoop$.complete();
+    }, 2000);
+
+    deviceTwo
+      .loopWrite$(
+        buildCommand(deviceTwo.device, 'result'),
+        loopDelay,
+        () => stopDeviceTwoLoop$.value // Si se frena con el whileFn, el ultimo comando tiene respuesta
+      )
+      .pipe(
+        tap(spyResponse),
+        tap((response) => console.log('loop', response))
+        // takeUntil(stopDeviceTwoLoop$) // stop abrupto del loop, no se procesa la respuesta del ultimo comando enviado.
+      )
+      .subscribe();
 
     // TODO
     tick(10000);

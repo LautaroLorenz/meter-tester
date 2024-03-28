@@ -10,6 +10,7 @@ import {
   map,
   takeUntil,
   takeWhile,
+  tap,
 } from 'rxjs';
 import { Devices } from '../enums/devices.model';
 import { MessagesService } from '../../../services/messages.service';
@@ -71,14 +72,13 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     whileFn: () => boolean
   ): Observable<string> {
     return interval(delay).pipe(
-      // Usamos exhaustMap para descartar nuevos llamados a write$ generados por el interval,
-      // hasta que llegue la respuesta del write$ en curso.
-      exhaustMap(() => this.write$(command)),
-      // con el takeWhile abajo del exhaustMap hacemos que la respuesta del
-      // último write$ se descarte si la condición cambia antes de que llege la respuesta.
+      // el takeWhile nos permite poner una condición de parada para el loop
       takeWhile(whileFn),
       takeUntil(this.deviceError),
-      takeUntil(this.onDestroy)
+      takeUntil(this.onDestroy),
+      // Usamos exhaustMap para descartar nuevos llamados a write$ generados por el interval,
+      // hasta que llegue la respuesta del write$ en curso.
+      exhaustMap(() => this.write$(command))
     );
   }
 }
