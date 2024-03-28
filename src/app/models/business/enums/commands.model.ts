@@ -1,5 +1,6 @@
 export enum CalculatorResponseCommands {
   ACK = 'ACK',
+  RESULTS = 'RESULTS',
 }
 
 export enum SoftwareCalculatorCommands {
@@ -10,4 +11,6 @@ export enum SoftwareCalculatorCommands {
   RESULTS = 'STD00000',
 }
 
-export type CommandsEnum = CalculatorResponseCommands | SoftwareCalculatorCommands;
+export type CommandsEnum =
+  | CalculatorResponseCommands
+  | SoftwareCalculatorCommands;

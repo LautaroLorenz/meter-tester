@@ -40,6 +40,18 @@ export class CommandMapComponent {
     {
       device: Devices.CAL,
       deviceName: DeviceConstants[Devices.CAL],
+      commandRegex: SoftwareCalculatorCommands.START_CONTRAST,
+      responseCommandName: CalculatorResponseCommands.ACK,
+    },
+    {
+      device: Devices.CAL,
+      deviceName: DeviceConstants[Devices.CAL],
+      commandRegex: SoftwareCalculatorCommands.START_BOOT,
+      responseCommandName: CalculatorResponseCommands.ACK,
+    },
+    {
+      device: Devices.CAL,
+      deviceName: DeviceConstants[Devices.CAL],
       commandRegex: SoftwareCalculatorCommands.START_VACUUM,
       responseCommandName: CalculatorResponseCommands.ACK,
     },
@@ -47,7 +59,7 @@ export class CommandMapComponent {
       device: Devices.CAL,
       deviceName: DeviceConstants[Devices.CAL],
       commandRegex: SoftwareCalculatorCommands.RESULTS,
-      responseCommandName: CalculatorResponseCommands.ACK,
+      responseCommandName: CalculatorResponseCommands.RESULTS,
     },
   ];
 

@@ -107,15 +107,19 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   }
 
   private sendAutomaticResponse(command: string): void {
-    const map = this.commandMap.get(command);
-    if (!map) {
+    const commandMap = this.commandMap.get(command);
+    if (!commandMap) {
       return;
     }
-    const device = this.vmDevices.find(({ device }) => device === map.device);
+    const device = this.vmDevices.find(
+      ({ device }) => device === commandMap.device
+    );
     if (!device) {
       return;
     }
-    const responseCommand = device.getCommandByName(map.responseCommandName);
+    const responseCommand = device.getCommandByName(
+      commandMap.responseCommandName
+    );
     if (!responseCommand) {
       return;
     }
