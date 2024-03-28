@@ -43,17 +43,6 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     return CommandDirector.build(Devices.STW, this.device, ...blocks);
   }
 
-  // TODO
-  // implementar unit test para MachineDevice
-  // caso de uso
-  // difentes dispositivos hacen start, stop y tienen un loop
-  // cada dispositivo dispone de un único bus por el que pueden emitir los comandos.
-  // el start y el stop se deben emitir y esperar la respuesta.
-  // en el loop, si hay un llamado sin respuesta, el siguiente llamado no debe realizarse (recursividad)
-  // border case, hacer start, iniciar el loop, sin finalizar el loop hacer stop
-  // en este caso se debe respetar el ultimo ciclo del loop y luego ejecutar el stop en lugar de otor ciclo del loop
-  // es decir el stop elimina todos los llamados de request que se hayan encolado mientras se estaba la respuesta del stop.
-  // un posible método "clear device queue"
   write$(command: string): Observable<string> {
     return this.deviceService.write$(command).pipe(
       takeUntil(this.deviceError),

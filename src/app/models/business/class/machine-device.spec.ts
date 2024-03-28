@@ -11,7 +11,13 @@ import { Component, ViewChild } from '@angular/core';
 import { MessagesService } from '../../../services/messages.service';
 import { IpcService } from '../../../services/ipc.service';
 import { MessageService } from 'primeng/api';
-import { Observable, delay, merge, of } from 'rxjs';
+import { Observable, delay, merge, of, switchMap, tap } from 'rxjs';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function logTimeHelper(): string {
+  const date = new Date();
+  return `Time[${date.getSeconds()}.${date.getMilliseconds()}]`;
+}
 
 @Component({
   template: `Device One`,
@@ -51,6 +57,8 @@ describe('Machine Device', () => {
   let ipcService: IpcService;
   let deviceService: DeviceService;
 
+  const responseDelay = 250;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [HostComponent, DeviceOneComponent, DeviceTwoComponent],
@@ -80,8 +88,11 @@ describe('Machine Device', () => {
   });
 
   it('se puede encolar los comandos de salida cuando se llaman en paralelo', fakeAsync(() => {
-    const responseDelay = 250;
+    // Spy para saber cuando llega la respuesta de un comando.
+    const obj = { onResponse: (_: { result: string }) => {} }; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const spyResponse = spyOn(obj, 'onResponse').and.callThrough();
 
+    // Spy para saber como se emiten los comandos
     const spyInvoke$ = spyOn(ipcService, 'invoke$').and.callFake(
       <T = any>(_: string, ...args: any[]): Observable<T> => {
         const command: string = args[0].command;
@@ -101,16 +112,13 @@ describe('Machine Device', () => {
             break;
         }
         return of({ result: response }).pipe(
-          delay(responseDelay)
+          delay(responseDelay),
+          tap(obj.onResponse)
         ) as Observable<T>;
       }
     );
 
     const spyDeviceWrite$ = spyOn(deviceService, 'write$').and.callThrough();
-
-    // Spy para saber cuando llega la respuesta de un comando.
-    const obj = { onMergeSubscribe: (_: string) => {} }; // eslint-disable-line @typescript-eslint/no-unused-vars
-    const spyResponse = spyOn(obj, 'onMergeSubscribe').and.callThrough();
 
     // Emitimos todos los comandos al mismo tiempo (con merge)
     merge(
@@ -118,9 +126,7 @@ describe('Machine Device', () => {
       deviceOne.write$('command2'),
       deviceTwo.write$('command3'), // comandos del device two
       deviceTwo.write$('command4')
-    ).subscribe(obj.onMergeSubscribe);
-
-    tick(1);
+    ).subscribe();
 
     // Comprobaremos que el operador merge realice todas las llamadas write$ en paralelo:
     // ----------------------------------------------------------------------------------
@@ -147,22 +153,80 @@ describe('Machine Device', () => {
 
     tick(responseDelay);
     expect(spyResponse.calls.all().length).toEqual(1);
-    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command1']);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta command1' },
+    ]);
 
     tick(responseDelay);
     expect(spyResponse.calls.all().length).toEqual(2);
-    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command2']);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta command2' },
+    ]);
 
     tick(responseDelay);
     expect(spyResponse.calls.all().length).toEqual(3);
-    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command3']);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta command3' },
+    ]);
 
     tick(responseDelay);
     expect(spyResponse.calls.all().length).toEqual(4);
-    expect(spyResponse.calls.mostRecent().args).toEqual(['respuesta command4']);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta command4' },
+    ]);
   }));
 
-  // it('', fakeAsync(() => {
-  //   // TODO
-  // }));
+  it('se puede hacer un start y luego un stop', fakeAsync(() => {
+    // Spy para saber cuando llega la respuesta de un comando.
+    const obj = { onResponse: (_: { result: string }) => {} }; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const spyResponse = spyOn(obj, 'onResponse').and.callThrough();
+
+    // Spy para saber como se emiten los comandos
+    const spyInvoke$ = spyOn(ipcService, 'invoke$').and.callFake(
+      <T = any>(_: string, ...args: any[]): Observable<T> => {
+        const command: string = args[0].command;
+        let response = '';
+        switch (command) {
+          case 'start':
+            response = 'respuesta start';
+            break;
+          case 'stop':
+            response = 'respuesta stop';
+            break;
+        }
+        return of({ result: response }).pipe(
+          delay(responseDelay),
+          tap(obj.onResponse)
+        ) as Observable<T>;
+      }
+    );
+
+    // Hacemos un start y luego un stop
+    deviceOne
+      .write$('start')
+      .pipe(switchMap(() => deviceOne.write$('stop')))
+      .subscribe();
+
+    // Comprobaremos que las respuestas llegan secuencialmente
+    // -------------------------------------------------------
+    expect(spyInvoke$).toHaveBeenCalledTimes(1);
+    expect(spyInvoke$.calls.allArgs()).toEqual([
+      ['software-write', { command: 'start' }],
+    ]);
+    expect(spyResponse.calls.all().length).toEqual(0);
+
+    tick(responseDelay);
+    expect(spyResponse.calls.all().length).toEqual(1);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta start' },
+    ]);
+
+    tick(responseDelay);
+    expect(spyResponse.calls.all().length).toEqual(2);
+    expect(spyResponse.calls.mostRecent().args).toEqual([
+      { result: 'respuesta stop' },
+    ]);
+  }));
 });
+
+// TODO mejorar spyInvoke para que cree un Promise , lo que retorne un new promise lo que seria mas real
