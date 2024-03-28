@@ -41,7 +41,10 @@
           }
         ],
         "jsdoc/newline-after-description": 0,
-        "@typescript-eslint/member-ordering": ["error"]
+        "@typescript-eslint/member-ordering": ["error"],
+        "no-console": [
+          "warn"
+        ]
       }
     },
     {
