@@ -12,6 +12,7 @@ import { MessagesService } from '../../../services/messages.service';
 import { IpcService } from '../../../services/ipc.service';
 import { MessageService } from 'primeng/api';
 import { delay, merge, of, switchMap, tap } from 'rxjs';
+import { DeviceStatus } from '../enums/device-status.model';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function logTimeHelper(): string {
@@ -226,4 +227,58 @@ describe('Machine Device', () => {
     expect(spyResponse.calls.all().length).toEqual(3);
     expect(spyResponse.calls.mostRecent().args).toEqual(['response for stop']);
   }));
+
+  // TODO emprolijar y agregar los expect, test envio de comandos en loop
+  fit('test loopWrite', fakeAsync(() => {
+    let counter = 0;
+    const commandGenerator = () => {
+      console.log(logTimeHelper(), 'generate command', counter);
+      counter++;
+      return 'result';
+    };
+
+    setTimeout(() => {
+      deviceOne
+        .write$('stop')
+        .pipe(tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected)))
+        .pipe(tap((response) => console.log(response)))
+        .subscribe(spyResponse);
+    }, 2000);
+
+    deviceOne
+      .write$('start')
+      .pipe(
+        tap(spyResponse),
+        tap((response) => console.log(response)),
+        tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Working)),
+        switchMap(() =>
+          deviceOne
+            .loopWrite$(
+              commandGenerator,
+              // el delay tiene que ser el responseDelay / 2, de esa forma aseguramos que el código funciona
+              // es decir, que se hacen mas envios de comandos de los que la máquina puede procesar
+              // y que aún asi el software espera a que la máquina responda, no la sobreecarga de envios.
+              100,
+              () => deviceOne.deviceStatus$.value === DeviceStatus.Working
+            )
+            .pipe(tap(spyResponse))
+        )
+      )
+      .subscribe((response) => console.log('loop response', response));
+
+    // TODO
+    tick(10000);
+    console.log(
+      `comandos enviados ${ipcRendererSpy.invoke.calls.all().length as string}`
+    );
+    console.log(`comandos respondidos ${spyResponse.calls.all().length}`);
+  }));
+
+  // it('' => {
+  // TODO probar más de un loop al mismo tiempo, para diferentes dispositivos
+  // })
+
+  // it('' => {
+  // TODO probar que pasa con el deviceStatus y el write$ y el loopWrite$ si invoke da error
+  // })
 });
