@@ -4,9 +4,12 @@ import {
   BehaviorSubject,
   Observable,
   Subject,
+  exhaustMap,
   filter,
+  interval,
   map,
   takeUntil,
+  takeWhile,
 } from 'rxjs';
 import { Devices } from '../enums/devices.model';
 import { MessagesService } from '../../../services/messages.service';
@@ -59,6 +62,21 @@ export abstract class MachineDeviceComponent implements OnDestroy {
         return !!result;
       }),
       map(({ result }) => result as string)
+    );
+  }
+
+  loopWrite$(
+    commandGenerator: () => string,
+    delay: number,
+    whileFn: () => boolean
+  ): Observable<string> {
+    return interval(delay).pipe(
+      // Usamos exhaustMap para descartar nuevos llamados a write$ generados por el interval,
+      // hasta que llegue la respuesta del write$ en curso.
+      exhaustMap(() => this.write$(commandGenerator())),
+      takeWhile(whileFn),
+      takeUntil(this.deviceError),
+      takeUntil(this.onDestroy)
     );
   }
 }
