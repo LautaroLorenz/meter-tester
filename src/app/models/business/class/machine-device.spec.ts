@@ -230,13 +230,6 @@ describe('Machine Device', () => {
 
   // TODO emprolijar y agregar los expect, test envio de comandos en loop
   fit('test loopWrite', fakeAsync(() => {
-    let counter = 0;
-    const commandGenerator = () => {
-      console.log(logTimeHelper(), 'generate command', counter);
-      counter++;
-      return 'result';
-    };
-
     // TODO detiene el loop porque se deja de cumplir la while condition
     setTimeout(() => {
       deviceOne
@@ -255,7 +248,7 @@ describe('Machine Device', () => {
         switchMap(() =>
           deviceOne
             .loopWrite$(
-              commandGenerator,
+              'result',
               // el delay tiene que ser el responseDelay / 2, de esa forma aseguramos que el código funciona
               // es decir, que se hacen mas envios de comandos de los que la máquina puede procesar
               // y que aún asi el software espera a que la máquina responda, no la sobreecarga de envios.

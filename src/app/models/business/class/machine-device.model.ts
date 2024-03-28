@@ -66,14 +66,16 @@ export abstract class MachineDeviceComponent implements OnDestroy {
   }
 
   loopWrite$(
-    commandGenerator: () => string,
+    command: string,
     delay: number,
     whileFn: () => boolean
   ): Observable<string> {
     return interval(delay).pipe(
       // Usamos exhaustMap para descartar nuevos llamados a write$ generados por el interval,
       // hasta que llegue la respuesta del write$ en curso.
-      exhaustMap(() => this.write$(commandGenerator())),
+      exhaustMap(() => this.write$(command)),
+      // con el takeWhile abajo del exhaustMap hacemos que la respuesta del
+      // último write$ se descarte si la condición cambia antes de que llege la respuesta.
       takeWhile(whileFn),
       takeUntil(this.deviceError),
       takeUntil(this.onDestroy)
