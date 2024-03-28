@@ -10,7 +10,6 @@ import {
   map,
   takeUntil,
   takeWhile,
-  tap,
 } from 'rxjs';
 import { Devices } from '../enums/devices.model';
 import { MessagesService } from '../../../services/messages.service';

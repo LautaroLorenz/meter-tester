@@ -268,73 +268,109 @@ describe('Machine Device', () => {
     ]);
   }));
 
-  it('test loopWrite', fakeAsync(() => {
-    // TODO cola de comandos
-    // TODO poner un spy en la cola de comandos para controlar lo que hay encolado en todo momento
-    deviceService.readQueueCommands$
-      .pipe(tap(spyCommandQueue))
-      .subscribe((commands) => console.log('commands', commands));
+  it('se puede realizar un loop de envio de comandos', fakeAsync(() => {
+    const commands = {
+      start: buildCommand(deviceOne.device, 'start'),
+      result: buildCommand(deviceOne.device, 'result'),
+      stop: buildCommand(deviceOne.device, 'stop'),
+    };
 
-    // TODO detiene el loop porque se deja de cumplir la while condition
-    // TODO AL HACER STOP, ¿se puede eliminar de la cola, los comandos de este dispositivo?
-    setTimeout(() => {
-      of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
-        .pipe(
-          switchMap(() =>
-            deviceOne.write$(buildCommand(deviceOne.device, 'stop'))
-          ),
-          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected)),
-          tap((response) => console.log(response))
-        )
-        .subscribe(spyResponse);
-    }, 2000);
+    // cola de comandos (solo lectura)
+    deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
 
+    // Generación del loop: start->[device status Working]->loopWrite(result)
     deviceOne
-      .write$(buildCommand(deviceOne.device, 'start'))
+      .write$(commands.start)
       .pipe(
         tap(spyResponse),
-        tap((response) => console.log(response)),
         tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Working)),
         switchMap(() =>
           deviceOne
             .loopWrite$(
-              buildCommand(deviceOne.device, 'result'),
+              commands.result,
               loopDelay,
               () => deviceOne.deviceStatus$.value === DeviceStatus.Working
             )
             .pipe(tap(spyResponse))
         )
       )
-      .subscribe((response) => console.log('loop', response));
-
-    // TODO hacer un loop que se detenga por un stop$ Subject en el padre, que no tenga relacion con la whileFn
-    const stopDeviceTwoLoop$ = new BehaviorSubject<boolean>(true);
-    setTimeout(() => {
-      console.log(`stop ${deviceTwo.device}`);
-      stopDeviceTwoLoop$.next(false);
-      stopDeviceTwoLoop$.complete();
-    }, 2000);
-
-    deviceTwo
-      .loopWrite$(
-        buildCommand(deviceTwo.device, 'result'),
-        loopDelay,
-        () => true // Si se frena con el whileFn, el ultimo comando tiene respuesta
-      )
-      .pipe(
-        tap(spyResponse),
-        tap((response) => console.log('loop', response)),
-        // takeUntil(subject) // parada abrupta: no procesa la ultima respuesta del loop
-        takeWhile(() => stopDeviceTwoLoop$.value) // parada suave: procesa la ultima respuesta del loop
-      )
       .subscribe();
 
-    // TODO
-    tick(10000);
-    console.log(
-      `comandos enviados ${ipcRendererSpy.invoke.calls.all().length as string}`
+    // Detención del loop: stop->[device status StopInProgress]->stop loop write->[device status Connected]
+    setTimeout(() => {
+      of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
+        .pipe(
+          switchMap(() => deviceOne.write$(commands.stop)),
+          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected))
+        )
+        .subscribe(spyResponse);
+    }, responseDelay * 4);
+
+    // Comprobamos la cola de comandos a medida que avanza el tiempo:
+    // --------------------------------------------------------------
+
+    // la cola de comandos tiene para procesar un start
+    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
+      commands.start,
+    ]);
+    // aún no llega ninguna respuesta
+    expect(spyResponse.calls.all().length).toEqual(0);
+
+    tick(responseDelay);
+    // la cola de comandos queda vacia
+    expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
+
+    tick(responseDelay);
+    // llega respuesta del comando anterior
+    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
+      `response ${commands.start}`
     );
-    console.log(`comandos respondidos ${spyResponse.calls.all().length}`);
+    // (Empieza loop) ingresa en cola un nuevo comando result
+    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
+      commands.result,
+    ]);
+
+    tick(responseDelay);
+    // llega respuesta del comando anterior
+    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
+      `response ${commands.result}`
+    );
+    // (Ciclo loop) ingresa en cola un nuevo comando result
+    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
+      commands.result,
+    ]);
+
+    tick(responseDelay);
+    // llega respuesta del comando anterior
+    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
+      `response ${commands.result}`
+    );
+    // Ingresa en cola un stop
+    // (Ciclo loop) ingresa en cola un nuevo comando result
+    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
+      commands.stop,
+      commands.result,
+    ]);
+
+    tick(responseDelay);
+    // llega respuesta del comando anterior
+    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
+      `response ${commands.result}`
+    );
+    // Se detuvo el loop, así que solo queda por procesar el stop
+    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.stop]);
+
+    tick(responseDelay);
+    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
+      `response ${commands.stop}`
+    );
+    // la cola de comandos queda vacía
+    expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
+
+    // la cantidad de comandos enviados y respuestas recibidas coincide:
+    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(
+      spyResponse.calls.all().length
+    );
   }));
 
   // it('' => {
