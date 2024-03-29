@@ -39,8 +39,6 @@ import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
 import { CommandHistoryComponent } from './virtual-machine/command-history/command-history.component';
 import { CommandLineComponent } from './virtual-machine/command-line/command-line.component';
-import { CommandFixedBlockComponent } from './virtual-machine/command-fixed-block/command-fixed-block.component';
-import { CommandVariableBlockComponent } from './virtual-machine/command-variable-block/command-variable-block.component';
 import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/vm-calculator.component';
 import { CommandMapComponent } from './virtual-machine/command-map/command-map.component';
 
@@ -81,8 +79,6 @@ const AppComponents = [
   DeviceStatusComponent,
   CommandHistoryComponent,
   CommandLineComponent,
-  CommandFixedBlockComponent,
-  CommandVariableBlockComponent,
   VmCalculatorComponent,
   CommandMapComponent,
 ];

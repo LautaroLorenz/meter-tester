@@ -1,4 +1,4 @@
-import { CBVariableTypes } from '../enums/command-variable-block-config.model';
+import { CBVariableTypes } from '../enums/command-block-types.model';
 
 export const CBVariableTypesConstant = [
   {

@@ -15,7 +15,7 @@ import { DeviceConstants } from '../../../models/business/constants/devices-cons
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommandMapComponent {
-  columns = [
+  readonly columns = [
     {
       header: 'Dispositivo',
       field: 'deviceName',
@@ -30,7 +30,7 @@ export class CommandMapComponent {
     },
   ];
 
-  map: VMCommandMap[] = [
+  readonly map: VMCommandMap[] = [
     {
       device: Devices.CAL,
       deviceName: DeviceConstants[Devices.CAL],

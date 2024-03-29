@@ -117,13 +117,15 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     if (!device) {
       return;
     }
-    const responseCommand = device.getCommandByName(
+    const responseCommand = device.getCommandLineValue(
       commandMap.responseCommandName
     );
     if (!responseCommand) {
       return;
     }
     this.virtualMachineWrite(responseCommand);
+    // TODO si el mapeo incluye una acción extra, realizarla
+    // TODO Ejemplo: setear la configuración de otro comando
   }
 
   private getSendDelayByConfig(): number {
@@ -146,8 +148,8 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
 
   private refreshCommands(): void {
     this.vmDevices.forEach((vmDevice) =>
-      vmDevice.commandLines.forEach((commandLine) =>
-        commandLine.refreshCommand()
+      vmDevice.commandLines.forEach((_, index) =>
+        vmDevice.refreshCommand(index)
       )
     );
   }

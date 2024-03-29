@@ -3,13 +3,12 @@ import {
   Component,
   EventEmitter,
   Output,
-  QueryList,
-  ViewChildren,
 } from '@angular/core';
-import { CBVariableTypes } from '../enums/command-variable-block-config.model';
 import { Devices } from '../enums/devices.model';
-import { CommandLineComponent } from '../../../components/virtual-machine/command-line/command-line.component';
 import { CommandsEnum } from '../enums/commands.model';
+import { CommandLine } from '../interafces/command-line.model';
+import { CommandBlockTypes } from '../enums/command-block-types.model';
+import { CommandLineDirector } from './command-line-director.model';
 
 @Component({
   template: '',
@@ -17,12 +16,30 @@ import { CommandsEnum } from '../enums/commands.model';
 })
 export abstract class VMDeviceComponent {
   @Output() write = new EventEmitter<string>();
-  @ViewChildren(CommandLineComponent)
-  commandLines!: QueryList<CommandLineComponent>;
 
-  readonly CBVariableTypes = CBVariableTypes;
+  readonly CommandBlockTypes = CommandBlockTypes;
+
+  abstract readonly commandLines: CommandLine[];
 
   abstract readonly device: Devices;
 
-  abstract getCommandByName(name: CommandsEnum): string | undefined;
+  getCommandLineValue(commandName: CommandsEnum): string | undefined {
+    const commandLine = this.commandLines.find(
+      ({ name }) => name === commandName
+    );
+    if (!commandLine) {
+      return;
+    }
+    return CommandLineDirector.getValue(commandLine);
+  }
+
+  refreshCommand(commandLineIndex: number): void {
+    const commandLine = this.commandLines.at(commandLineIndex) as CommandLine;
+    commandLine.blocks = CommandLineDirector.refreshBlocks(commandLine);
+  }
+
+  sendCommand(commandLineIndex: number): void {
+    const commandLine = this.commandLines.at(commandLineIndex) as CommandLine;
+    this.write.emit(CommandLineDirector.getValue(commandLine));
+  }
 }

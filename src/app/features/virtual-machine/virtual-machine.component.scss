@@ -1,4 +1,8 @@
 :host ::ng-deep {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
   .p-inputnumber-input {
     width: 100%;
   }

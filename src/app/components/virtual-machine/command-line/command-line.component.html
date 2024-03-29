@@ -1,21 +1,43 @@
-<div class="flex flex-row gap-1 align-items-center">
-  <label class="text-base text-primary font-bold"> {{ name }}: </label>
-  <div class="flex flex-row gap-2 align-items-center">
-    <div class="flex flex-row gap-0">
-      <ng-content></ng-content>
-    </div>
-    <p-button
-      label="Refrescar"
-      [outlined]="true"
-      [disabled]="!hasVariableBlocks"
-      (click)="refreshCommand()"
-      size="small"
-    ></p-button>
-    <p-button
-      label="Enviar"
-      [outlined]="true"
-      (click)="sendCommand()"
-      size="small"
-    ></p-button>
-  </div>
-</div>
+<p-table
+  styleClass="p-datatable-gridlines p-datatable-striped mx-3"
+  [columns]="columns"
+  [value]="commandLines"
+>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns">
+        {{ col.header }}
+      </th>
+      <th>Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-rowData
+    let-columns="columns"
+    let-rowIndex="rowIndex"
+  >
+    <tr>
+      <td *ngFor="let col of columns">
+        <div [innerHTML]="getColValue(rowData, col)"></div>
+      </td>
+      <td>
+        <div class="flex flex-row gap-3">
+          <p-button
+            label="Refrescar"
+            [outlined]="true"
+            [disabled]="!isValueRefresh(rowData)"
+            (click)="refresh.emit(rowIndex)"
+            size="small"
+          ></p-button>
+          <p-button
+            label="Enviar"
+            [outlined]="true"
+            (click)="send.emit(rowIndex)"
+            size="small"
+          ></p-button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
