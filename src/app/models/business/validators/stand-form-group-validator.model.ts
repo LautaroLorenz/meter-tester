@@ -8,9 +8,9 @@ import {
 
 const isActive = (standFormGroup: AbstractFormGroup<Stand>): boolean => {
   if (standFormGroup.get('isActive')?.value === true) {
-    const { meterId, serialNumber, yearOfProduction } =
+    const { meter, serialNumber, yearOfProduction } =
       standFormGroup.getRawValue();
-    if (!meterId || !serialNumber || !yearOfProduction) {
+    if (!meter || !serialNumber || !yearOfProduction) {
       return true;
     }
   }

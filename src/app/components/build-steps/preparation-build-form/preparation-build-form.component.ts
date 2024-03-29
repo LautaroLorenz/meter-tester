@@ -94,18 +94,18 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
           takeUntil(this.onDestroy),
           tap((isActive) => {
             if (isActive) {
-              standFormGroup.get('meterId')?.enable();
+              standFormGroup.get('meter')?.enable();
               standFormGroup.get('serialNumber')?.enable();
               standFormGroup.get('yearOfProduction')?.enable();
             } else {
-              standFormGroup.get('meterId')?.disable();
-              standFormGroup.get('meterId')?.reset();
+              standFormGroup.get('meter')?.disable();
+              standFormGroup.get('meter')?.reset();
               standFormGroup.get('serialNumber')?.disable();
               standFormGroup.get('serialNumber')?.reset();
               standFormGroup.get('yearOfProduction')?.disable();
               standFormGroup.get('yearOfProduction')?.reset();
             }
-            standFormGroup.get('meterId')?.updateValueAndValidity();
+            standFormGroup.get('meter')?.updateValueAndValidity();
             standFormGroup.get('serialNumber')?.updateValueAndValidity();
             standFormGroup.get('yearOfProduction')?.updateValueAndValidity();
           })

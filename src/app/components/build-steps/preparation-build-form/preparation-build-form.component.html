@@ -22,12 +22,11 @@
         <div class="formgrid grid">
           <ng-container *ngIf="meters$ | async as meters">
             <div class="field col col-4">
-              <label for="meterId">Modelo de medidor</label>
+              <label for="meter">Modelo de medidor</label>
               <p-dropdown
-                id="meterId"
+                id="meter"
                 [options]="meters"
-                formControlName="meterId"
-                optionValue="id"
+                formControlName="meter"
                 optionLabel="label"
                 appendTo="body"
                 [autoDisplayFirst]="false"

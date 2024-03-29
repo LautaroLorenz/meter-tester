@@ -78,23 +78,27 @@ export class CalculatorComponent
     return (index + 1).toString().padStart(2, '0');
   }
 
+  // TODO
   private standConstant(
     stand: Stand,
     stepMeterConstant: MeterConstantEnum
   ): string {
     const offStandConstant = 'xxxxx';
-    if (!stand.isActive) {
-      return offStandConstant;
-    }
-    const meter = this.meters.find((meter) => meter.id === stand.meterId);
-    if (!meter) {
-      return offStandConstant;
-    }
-    const meterConstant = MeterConstantDirector.get(meter, stepMeterConstant);
-    if (!meterConstant) {
-      return offStandConstant;
-    }
-    return meterConstant.toString().padStart(offStandConstant.length, '0');
+    // if (!stand.isActive) {
+    //   return offStandConstant;
+    // }
+    // const meter = this.meters.find((meter) => meter.id === stand.meterId);
+    // if (!meter) {
+    //   return offStandConstant;
+    // }
+    // const meterConstant = MeterConstantDirector.get(meter, stepMeterConstant);
+    // if (!meterConstant) {
+    //   return offStandConstant;
+    // }
+    // return meterConstant.toString().padStart(offStandConstant.length, '0');
+
+    // TODO remover
+    return offStandConstant;
   }
 
   // TODO no es necesario, se puede obtener la data del medidor del preparation Step
