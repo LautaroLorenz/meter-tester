@@ -20,7 +20,11 @@
 <!-- Calculador -->
 <div class="mt-4">
   <app-calculator #calculator>
-    <app-stands-result [preparationStep]="preparationStep"></app-stands-result>
+    <app-stands-result
+      [preparationStep]="preparationStep"
+      [results]="vacuumStep.standResults"
+      resultColumnLabel="Impulsos"
+    ></app-stands-result>
   </app-calculator>
 </div>
 

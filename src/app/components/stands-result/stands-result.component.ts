@@ -1,7 +1,18 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { PreparationStep } from '../../models/business/interafces/steps/preparation-step.model';
-import { StandResult } from '../../models/business/interafces/stand-result.model';
+import {
+  StandResult,
+  StandStandResult,
+} from '../../models/business/interafces/stand-result.model';
 import { TableColumn } from '../../models/core/table-column.model';
+import { Stand } from '../../models/business/interafces/stand.model';
 
 @Component({
   selector: 'app-stands-result',
@@ -9,54 +20,90 @@ import { TableColumn } from '../../models/core/table-column.model';
   styleUrls: ['./stands-result.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StandsResultComponent {
+export class StandsResultComponent implements OnInit, OnChanges {
   @Input() preparationStep!: PreparationStep;
   @Input() results!: StandResult[];
+  @Input() resultColumnLabel!: string;
 
-  value: any[] = []; // TODO poner el tipo correcto
+  value: StandStandResult[] = [];
+  columns: TableColumn<StandStandResult>[] = [];
 
-  readonly columns: TableColumn[] = [
-    {
-      header: 'Puesto',
-      field: (): string => {
-        // TODO
-        return '';
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.results) {
+      this.value = this.getValues(
+        changes.results.currentValue as StandResult[],
+        this.preparationStep
+      );
+    }
+    if (changes.preparationStep) {
+      this.value = this.getValues(
+        this.results,
+        changes.preparationStep.currentValue as PreparationStep
+      );
+    }
+  }
+
+  ngOnInit(): void {
+    this.columns = [
+      {
+        header: 'Puesto',
+        field: (item) => ('name' in item ? item.name : ''),
       },
-    },
-    {
-      header: 'Marca',
-      field: (): string => {
-        // TODO
-        return '';
+      {
+        header: 'Medidor',
+        field: (item) => ('meter' in item ? item.meter?.label : ''),
       },
-    },
-    {
-      header: 'Modelo',
-      field: (): string => {
-        // TODO
-        return '';
+      {
+        header: 'Nº de serie',
+        field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
       },
-    },
-    {
-      header: 'Nº de serie',
-      field: (): string => {
-        // TODO
-        return '';
+      {
+        header: 'Año',
+        field: (item) =>
+          'yearOfProduction' in item ? item.yearOfProduction : '',
       },
-    },
-    {
-      header: 'Año de fabricación',
-      field: (): string => {
-        // TODO
-        return '';
+      {
+        header: 'Constante', // TODO: usar el label adecuado
+        field: (): string => {
+          // TODO obtener la constante que se usa en este paso.
+          // TODO mostrar la constante con la unidad
+          return '';
+        },
       },
-    },
-    {
-      header: 'Constante',
-      field: (): string => {
-        // TODO
-        return '';
+      {
+        header: this.resultColumnLabel,
+        field: (): string => {
+          // TODO
+          return '';
+        },
       },
-    },
-  ];
+      {
+        header: 'Resultado',
+        field: (): string => {
+          // TODO mostrar el estado del resultado (es un componente (aunque el componente se declara en el código de stand result), 
+          // no solo un string :S)
+          return '';
+        },
+      },
+    ];
+  }
+
+  private getValues(
+    results: StandResult[],
+    preparationStep: PreparationStep
+  ): StandStandResult[] {
+    if (!results?.length) {
+      return [];
+    }
+    if (!preparationStep) {
+      return [];
+    }
+    if (!preparationStep.form_control_raw?.length) {
+      return [];
+    }
+    return results.map((result, index) => ({
+      ...result,
+      ...preparationStep.form_control_raw[index],
+    }));
+  }
 }

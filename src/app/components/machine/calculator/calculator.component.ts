@@ -16,7 +16,6 @@ import {
 } from '../../../models/business/database/meter.model';
 import { RelationsManager } from '../../../models/core/relations-manager.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
-import { MeterConstantDirector } from '../../../models/business/class/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 
 @Component({
@@ -43,7 +42,7 @@ export class CalculatorComponent
     return of(this.buildCommand(SoftwareCalculatorCommands.STOP)).pipe(
       tap(() => this.deviceStatus$.next(DeviceStatus.StopInProgress)),
       switchMap((stopCommand) => this.write$(stopCommand)),
-      tap(() => this.deviceStatus$.next(DeviceStatus.Connected))
+      tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
     );
   }
 
