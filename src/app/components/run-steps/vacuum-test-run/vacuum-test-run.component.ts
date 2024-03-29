@@ -44,6 +44,10 @@ export class VacuumTestRunComponent {
     }
   }
 
+  private markStepAsDone(): void {
+    // TODO
+  }
+
   private startTest(): void {
     this.countTimer.reset();
     this.calculator
