@@ -115,18 +115,16 @@
       </div>
     </ng-template>
   </p-panel>
-
-  <div class="mt-4">
-    <app-vm-calculator
-      (write)="virtualMachineWrite($event)"
-    ></app-vm-calculator>
-  </div>
 </form>
 
 <div class="mt-4">
   <p-panel header="Mapeo de respuestas automáticas" [toggleable]="true">
     <app-command-map #commandMap></app-command-map>
   </p-panel>
+</div>
+
+<div class="mt-4">
+  <app-vm-calculator (write)="virtualMachineWrite($event)"></app-vm-calculator>
 </div>
 
 <div class="mt-4">

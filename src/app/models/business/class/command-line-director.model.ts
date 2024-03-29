@@ -8,8 +8,42 @@ import {
   CommandLineConfigTypeRandom,
   CommandLineConfigTypes,
 } from '../interafces/command-line.model';
+import { CommandHistory } from '../interafces/commnad-history.model';
+import { VMCommandMap } from '../interafces/vm-command-map.model';
 
 export class CommandLineDirector {
+  static findCommandValue(
+    commandMap: VMCommandMap,
+    commandLines: CommandLine[],
+    history: CommandHistory[]
+  ): string | undefined {
+    const responseCommandName = commandMap.responseCommandName;
+    const possibleCommandLineToResponse = commandLines.filter(
+      ({ name }) => name === responseCommandName
+    );
+    // Buscar en el historial (ordenado de comando más reciente a más antiguo)
+    // un comando que cumpla las enableConditions de las posibles commandLines de respuesta
+    for (let i = 0; i < history.length; i++) {
+      const { command } = history[i];
+      const commandLine = possibleCommandLineToResponse.find(
+        ({ enableConditions }) => {
+          // si es una posible commandLine de respuesta y no tiene condiciones de activación, se emite como respuesta
+          if (!enableConditions?.length) {
+            return true;
+          }
+          return enableConditions.some(({ pattern }) => {
+            return command.includes(pattern);
+          });
+        }
+      );
+      // si las enableConditions de la commandLine satisfacen, respondemos
+      if (commandLine) {
+        return this.getValue(commandLine);
+      }
+    }
+    return undefined;
+  }
+
   static getValue(commandLine: CommandLine): string {
     return commandLine.blocks.map(({ value }) => value).join('');
   }

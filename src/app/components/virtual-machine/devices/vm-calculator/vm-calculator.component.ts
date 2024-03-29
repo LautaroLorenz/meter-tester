@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
 import { VMDeviceComponent } from '../../../../models/business/class/virtual-machine-device.model';
 import { Devices } from '../../../../models/business/enums/devices.model';
-import { CalculatorResponseCommands } from '../../../../models/business/enums/commands.model';
+import {
+  CalculatorResponseCommands,
+  SoftwareCalculatorCommands,
+} from '../../../../models/business/enums/commands.model';
 import {
   CommandLine,
   CommandLineConfigTypes,
@@ -22,7 +25,7 @@ import { CommandBlockTypes } from '../../../../models/business/enums/command-blo
 })
 export class VmCalculatorComponent extends VMDeviceComponent {
   override readonly device = Devices.CAL;
-  override readonly commandLines: CommandLine[] = [
+  override commandLines: CommandLine[] = [
     {
       name: CalculatorResponseCommands.ACK,
       blocks: [
@@ -37,10 +40,17 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       name: CalculatorResponseCommands.RESULTS,
       config: {
         type: CommandLineConfigTypes.Incremental,
-        probabilityOfChange: 33,
+        probabilityOfChange: 100,
         incrementQuantity: 1,
       },
+      enableConditions: [
+        { pattern: SoftwareCalculatorCommands.START_CONTRAST },
+      ],
       blocks: [
+        {
+          type: CommandBlockTypes.Fixed,
+          value: 'B|CAL|STW|',
+        },
         {
           type: CommandBlockTypes.Variable,
           value: '00000',
@@ -59,11 +69,44 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       name: CalculatorResponseCommands.RESULTS,
       config: {
         type: CommandLineConfigTypes.Random,
-        probabilityOfChange: 33,
+        probabilityOfChange: 100,
         minRandom: 2,
         maxRandom: 6,
       },
+      enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
       blocks: [
+        {
+          type: CommandBlockTypes.Fixed,
+          value: 'B|CAL|STW|',
+        },
+        {
+          type: CommandBlockTypes.Variable,
+          value: '00000',
+        },
+        {
+          type: CommandBlockTypes.Fixed,
+          value: '|',
+        },
+        {
+          type: CommandBlockTypes.Variable,
+          value: '00000',
+        },
+      ],
+    },
+    {
+      name: CalculatorResponseCommands.RESULTS,
+      config: {
+        type: CommandLineConfigTypes.Random,
+        probabilityOfChange: 100,
+        minRandom: 9,
+        maxRandom: 13,
+      },
+      enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
+      blocks: [
+        {
+          type: CommandBlockTypes.Fixed,
+          value: 'B|CAL|STW|',
+        },
         {
           type: CommandBlockTypes.Variable,
           value: '00000',

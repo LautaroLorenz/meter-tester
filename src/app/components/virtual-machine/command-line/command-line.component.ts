@@ -38,7 +38,12 @@ export class CommandLineComponent {
        */
       header: 'Condición de activación',
       field: (commandLine: CommandLine) => {
-        // TODO retornar la condición de activación
+        if (!commandLine.enableConditions) {
+          return 'Activo por default';
+        }
+        return commandLine.enableConditions.map(
+          ({ pattern }) => `${pattern}<br/>`
+        );
       },
     },
     {

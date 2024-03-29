@@ -26,8 +26,13 @@ export type CommandLineConfigType =
   | CommandLineConfigTypeRandom
   | CommandLineConfigTypeIncremental;
 
+export interface EnableCommandCondition {
+  pattern: string;
+}
+
 export interface CommandLine {
   name: CommandsEnum;
   blocks: CommandBlock[];
   config?: CommandLineConfigType;
+  enableConditions?: EnableCommandCondition[];
 }

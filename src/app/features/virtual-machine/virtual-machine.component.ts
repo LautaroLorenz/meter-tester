@@ -24,6 +24,7 @@ import {
 import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
 import { VMDeviceComponent } from '../../models/business/class/virtual-machine-device.model';
 import { Random } from '../../models/core/random.model';
+import { CommandLineDirector } from '../../models/business/class/command-line-director.model';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -117,15 +118,15 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     if (!device) {
       return;
     }
-    const responseCommand = device.getCommandLineValue(
-      commandMap.responseCommandName
+    const responseCommand = CommandLineDirector.findCommandValue(
+      commandMap,
+      device.commandLines,
+      this.commandHistory.history$.value
     );
     if (!responseCommand) {
       return;
     }
     this.virtualMachineWrite(responseCommand);
-    // TODO si el mapeo incluye una acción extra, realizarla
-    // TODO Ejemplo: setear la configuración de otro comando
   }
 
   private getSendDelayByConfig(): number {
