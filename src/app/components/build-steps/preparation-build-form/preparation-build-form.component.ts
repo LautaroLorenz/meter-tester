@@ -9,7 +9,7 @@ import {
 } from '../../../models/business/database/meter.model';
 import { Observable, map, takeUntil, tap } from 'rxjs';
 import { RelationsManager } from '../../../models/core/relations-manager.model';
-import { Stand } from '../../../models/business/interafces/stand.model';
+import { Stand, StandMeter } from '../../../models/business/interafces/stand.model';
 import { YearOfProductionConstants } from '../../../models/business/constants/year-of-production-constant.model';
 import { DecimalPipe } from '@angular/common';
 import {
@@ -24,7 +24,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreparationBuildFormComponent extends StepBuildFormComponent<PreparationStep> {
-  meters$!: Observable<Meter[]>;
+  meters$!: Observable<StandMeter[]>;
 
   readonly YearOfProductionConstants = YearOfProductionConstants;
 
