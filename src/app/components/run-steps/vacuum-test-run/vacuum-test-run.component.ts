@@ -28,16 +28,20 @@ export class VacuumTestRunComponent {
   }
 
   timerStop(): void {
-    // this.calculator.stop$().subscribe();
-    // TODO se llegó al fin del temporizador
-    // this.runEssayService
-    //   .getEssayStep(this.currentStep.id)
-    //   .get('executedStatus')
-    //   ?.setValue(StepStatus.Done);
+    this.checkEndConditions();
   }
 
-  calculatorResults(): void {
-    // TODO recibe resultados del calculador
+  calculatorResults(results: string): void {
+    console.log('results', results);
+    // TODO actualizar formulario de resultados
+
+    this.checkEndConditions();
+  }
+
+  private checkEndConditions(): void {
+    if (!this.countTimer.isRunning) {
+      this.calculator.stop$().subscribe();
+    }
   }
 
   private startTest(): void {
@@ -53,7 +57,9 @@ export class VacuumTestRunComponent {
             this.currentStep.form_control_raw.meterConstant
           )
         ),
-        tap(() => this.countTimer.start())
+        tap(() => this.countTimer.start()),
+        switchMap(() => this.calculator.results$()),
+        tap((results) => this.calculatorResults(results))
       )
       .subscribe();
   }

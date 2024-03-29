@@ -27,6 +27,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
   protected deviceError = new Subject<void>();
   protected onDestroy = new Subject<void>();
 
+  protected readonly loopDelay = 500;
   protected readonly DeviceConstants = DeviceConstants;
 
   abstract readonly device: Devices;

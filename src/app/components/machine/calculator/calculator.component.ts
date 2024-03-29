@@ -66,6 +66,14 @@ export class CalculatorComponent
     );
   }
 
+  results$(): Observable<string> {
+    return this.loopWrite$(
+      this.buildCommand(SoftwareCalculatorCommands.RESULTS),
+      this.loopDelay,
+      () => this.deviceStatus$.value === DeviceStatus.Working
+    );
+  }
+
   private standIndex(index: number) {
     return (index + 1).toString().padStart(2, '0');
   }
