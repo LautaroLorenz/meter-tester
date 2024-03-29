@@ -1,6 +1,3 @@
-<!-- TODO ejecutar el current step -->
-<!-- TODO permitir la simulación de resultados -->
-
 <div class="px-6 pt-6">
   <ng-container *ngIf="currentStep$ | async as currentStep">
     <ng-container
@@ -28,14 +25,3 @@
     </ng-container>
   </ng-container>
 </div>
-
-<!-- TODO eliminar -->
-<br />
-<br />
-<br />
-<br />
-<ng-container *ngIf="executionSteps$ | async as executionSteps">
-  <pre>
-    {{ executionSteps | json }}
-  </pre>
-</ng-container>

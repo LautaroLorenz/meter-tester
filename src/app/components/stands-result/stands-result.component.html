@@ -1,14 +1,13 @@
 <p-table
   styleClass="p-datatable-gridlines p-datatable-striped mx-3"
   [columns]="columns"
-  [value]="commandLines"
+  [value]="value"
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th *ngFor="let col of columns">
         {{ col.header }}
       </th>
-      <th>Acciones</th>
     </tr>
   </ng-template>
   <ng-template
@@ -23,23 +22,6 @@
           [tableColumn]="col"
           [data]="rowData"
         ></app-table-column>
-      </td>
-      <td>
-        <div class="flex flex-row gap-3">
-          <p-button
-            label="Refrescar"
-            [outlined]="true"
-            [disabled]="!isValueRefresh(rowData)"
-            (click)="refresh.emit(rowIndex)"
-            size="small"
-          ></p-button>
-          <p-button
-            label="Enviar"
-            [outlined]="true"
-            (click)="send.emit(rowIndex)"
-            size="small"
-          ></p-button>
-        </div>
       </td>
     </tr>
   </ng-template>

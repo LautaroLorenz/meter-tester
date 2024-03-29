@@ -41,6 +41,8 @@ import { CommandHistoryComponent } from './virtual-machine/command-history/comma
 import { CommandLineComponent } from './virtual-machine/command-line/command-line.component';
 import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/vm-calculator.component';
 import { CommandMapComponent } from './virtual-machine/command-map/command-map.component';
+import { StandsResultComponent } from './stands-result/stands-result.component';
+import { TableColumnComponent } from './table-column/table-column.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -81,6 +83,8 @@ const AppComponents = [
   CommandLineComponent,
   VmCalculatorComponent,
   CommandMapComponent,
+  StandsResultComponent,
+  TableColumnComponent,
 ];
 
 @NgModule({

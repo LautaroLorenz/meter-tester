@@ -10,6 +10,7 @@ import {
   CommandLineConfigTypes,
 } from '../../../models/business/interafces/command-line.model';
 import { CommandLineDirector } from '../../../models/business/class/command-line-director.model';
+import { TableColumn } from '../../../models/core/table-column.model';
 
 @Component({
   selector: 'app-command-line',
@@ -23,7 +24,7 @@ export class CommandLineComponent {
   @Output() refresh = new EventEmitter<number>();
   @Output() send = new EventEmitter<number>();
 
-  readonly columns = [
+  readonly columns: TableColumn[] = [
     {
       header: 'Comando',
       field: 'name',
@@ -41,9 +42,9 @@ export class CommandLineComponent {
         if (!commandLine.enableConditions) {
           return 'Activo por default';
         }
-        return commandLine.enableConditions.map(
-          ({ pattern }) => `${pattern}<br/>`
-        );
+        return commandLine.enableConditions
+          .map(({ pattern }) => `${pattern}`)
+          .join('<br/>');
       },
     },
     {
@@ -69,19 +70,6 @@ export class CommandLineComponent {
       },
     },
   ];
-
-  getColValue(
-    commandLine: CommandLine,
-    col: {
-      header: string;
-      field: keyof CommandLine | ((commandLine: CommandLine) => string);
-    }
-  ): string {
-    if (typeof col.field === 'function') {
-      return col.field(commandLine);
-    }
-    return commandLine[col.field] as string;
-  }
 
   isValueRefresh(commandLine: CommandLine): boolean {
     return 'config' in commandLine;

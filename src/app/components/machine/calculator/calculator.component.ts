@@ -97,6 +97,7 @@ export class CalculatorComponent
     return meterConstant.toString().padStart(offStandConstant.length, '0');
   }
 
+  // TODO no es necesario, se puede obtener la data del medidor del preparation Step
   private requestToolsTables(): void {
     // Medidores
     this.dbServiceMeters
