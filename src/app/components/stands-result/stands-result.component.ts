@@ -12,7 +12,6 @@ import {
   StandStandResult,
 } from '../../models/business/interafces/stand-result.model';
 import { TableColumn } from '../../models/core/table-column.model';
-import { Stand } from '../../models/business/interafces/stand.model';
 
 @Component({
   selector: 'app-stands-result',
@@ -64,7 +63,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
       },
       {
         header: 'Constante', // TODO: usar el label adecuado
-        field: (): string => {
+        field: (item): string => {
           // TODO obtener la constante que se usa en este paso.
           // TODO mostrar la constante con la unidad
           return '';
