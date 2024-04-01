@@ -7,7 +7,6 @@ import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { StandMeterConstantPipe } from '../../../pipes/business/stand-meter-constant.pipe';
-import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
