@@ -28,7 +28,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
   }
 
   start$(
-    softwareCalculatorCommand: SoftwareCalculatorCommands,
+    stepParamBlocks: string[],
     preparationStepStands: Stand[],
     stepMeterConstant: MeterConstantEnum
   ): Observable<string> {
@@ -39,7 +39,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
           stepMeterConstant
         )}`
     );
-    return of(this.buildCommand(softwareCalculatorCommand, ...stands)).pipe(
+    return of(this.buildCommand(...stepParamBlocks, ...stands)).pipe(
       tap(() => this.deviceStatus$.next(DeviceStatus.StartInProgress)),
       switchMap((startCommand) => this.write$(startCommand)),
       tap(() => this.deviceStatus$.next(DeviceStatus.Working))

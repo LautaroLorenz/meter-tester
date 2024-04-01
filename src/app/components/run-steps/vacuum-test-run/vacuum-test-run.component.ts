@@ -70,7 +70,7 @@ export class VacuumTestRunComponent implements OnChanges {
         switchMap(() =>
           // TODO en el start falta enviar kp (10) |  Xs (8)
           this.calculator.start$(
-            SoftwareCalculatorCommands.START_VACUUM,
+            this.getStepCalculatorBlocks(),
             this.preparationStep.form_control_raw,
             this.currentStep.form_control_raw.meterConstant
           )
@@ -80,5 +80,17 @@ export class VacuumTestRunComponent implements OnChanges {
         tap((results) => this.calculatorResults(results))
       )
       .subscribe();
+  }
+
+  // TODO resolver de donde se obtiene la constante del patrón.
+  private getStepCalculatorBlocks(): string[] {
+    const stepTypeBlock = SoftwareCalculatorCommands.START_VACUUM;
+    const patternConstantBlock = '1234567891';
+    const maxAllowedPulsesBlock: string =
+      this.vacuumStep.form_control_raw.maxAllowedPulses
+        .toString()
+        .padStart(8, '0');
+
+    return [stepTypeBlock, patternConstantBlock, maxAllowedPulsesBlock];
   }
 }
