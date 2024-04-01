@@ -35,7 +35,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
         },
       ],
     },
-    // TODO este comando se arma en base a la configuracion de stands
+    // TODO este comando se arma en base a la configuracion de commandStandsQuantiy
     {
       name: CalculatorResponseCommands.RESULTS,
       config: {

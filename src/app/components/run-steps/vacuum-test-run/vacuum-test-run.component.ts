@@ -47,6 +47,8 @@ export class VacuumTestRunComponent implements OnChanges {
   calculatorResults(results: string): void {
     console.log('results', results);
     // TODO actualizar formulario de resultados
+    // TODO tener un observer del fomulario, que determine el stop del ensayo
+    // TODO en base a los estados de los resultados.
 
     this.checkEndConditions();
   }
@@ -68,7 +70,6 @@ export class VacuumTestRunComponent implements OnChanges {
       .stop$()
       .pipe(
         switchMap(() =>
-          // TODO en el start falta enviar kp (10) |  Xs (8)
           this.calculator.start$(
             this.getStepCalculatorBlocks(),
             this.preparationStep.form_control_raw,

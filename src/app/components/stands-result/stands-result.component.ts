@@ -57,8 +57,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
     this.columns = [
       {
         header: 'Puesto',
-        field: (item) => ('name' in item ? item.name : ''),
-        alignHorizontal: TC_AlignHorizontal.Text,
+        field: (_, index) => (index + 1).toString().padStart(2, '0'),
+        alignHorizontal: TC_AlignHorizontal.Number,
       },
       {
         header: 'Medidor',
@@ -105,8 +105,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
       {
         header: 'Resultado',
         field: (): string => {
-          // TODO mostrar el estado del resultado (es un componente (aunque el componente se declara en el código de stand result),
-          // no solo un string :S)
+          // TODO mostrar el estado del resultado usando strategia de templates
           return '';
         },
         alignHorizontal: TC_AlignHorizontal.Text,

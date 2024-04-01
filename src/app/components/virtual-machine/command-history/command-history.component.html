@@ -11,12 +11,18 @@
         </th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <ng-template
+      pTemplate="body"
+      let-rowData
+      let-columns="columns"
+      let-rowIndex="rowIndex"
+    >
       <tr>
         <td *ngFor="let col of columns">
           <app-table-column
             [tableColumn]="col"
             [data]="rowData"
+            [index]="rowIndex"
           ></app-table-column>
         </td>
       </tr>

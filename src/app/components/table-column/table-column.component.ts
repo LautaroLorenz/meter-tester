@@ -18,6 +18,7 @@ import {
 export class TableColumnComponent<T> implements OnInit {
   @Input() tableColumn!: TableColumn<T>;
   @Input() data!: T;
+  @Input() index!: number;
 
   value!: string;
 
@@ -29,7 +30,7 @@ export class TableColumnComponent<T> implements OnInit {
 
   private getColValue(item: T, col: TableColumn<T>): string {
     if (typeof col.field === 'function') {
-      return col.field(item);
+      return col.field(item, this.index);
     }
     return item[col.field] as string;
   }

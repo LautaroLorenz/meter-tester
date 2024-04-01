@@ -6,7 +6,7 @@ export enum TC_AlignHorizontal {
 
 export interface TableColumn<T = any> {
   header: string;
-  field: keyof T | ((item: T, ...args: any[]) => string);
+  field: keyof T | ((item: T, index: number) => string);
   alignHorizontal: TC_AlignHorizontal;
   customStyles?: string;
 }
