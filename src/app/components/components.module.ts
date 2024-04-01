@@ -43,6 +43,7 @@ import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/v
 import { CommandMapComponent } from './virtual-machine/command-map/command-map.component';
 import { StandsResultComponent } from './stands-result/stands-result.component';
 import { TableColumnComponent } from './table-column/table-column.component';
+import { ResultStatusComponent } from './result-status/result-status.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -85,6 +86,7 @@ const AppComponents = [
   CommandMapComponent,
   StandsResultComponent,
   TableColumnComponent,
+  ResultStatusComponent,
 ];
 
 @NgModule({

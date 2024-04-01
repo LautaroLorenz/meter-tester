@@ -1,5 +1,5 @@
 <p-table
-  styleClass="p-datatable-gridlines p-datatable-striped mx-3"
+  styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
   [columns]="columns"
   [value]="value"
 >
@@ -29,5 +29,5 @@
 </p-table>
 
 <ng-template #columnResultStatus let-item="item" let-index="index">
-  <span>{{ item.resultStatus }}</span>
+  <app-result-status [resultStatus]="item.resultStatus"></app-result-status>
 </ng-template>

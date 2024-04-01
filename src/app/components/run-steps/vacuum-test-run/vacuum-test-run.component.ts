@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -52,7 +53,10 @@ export class VacuumTestRunComponent implements OnChanges {
     },
   };
 
-  constructor(private readonly runEssayService: RunEssayService) {}
+  constructor(
+    private readonly runEssayService: RunEssayService,
+    private readonly cd: ChangeDetectorRef
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.currentStep) {
@@ -101,6 +105,10 @@ export class VacuumTestRunComponent implements OnChanges {
 
   private markStepAsDone(): void {
     // TODO
+  }
+
+  private restart(): void {
+    // TODO setear todos los resultados de los stands activos en pending
   }
 
   private startTest(): void {
@@ -153,6 +161,7 @@ export class VacuumTestRunComponent implements OnChanges {
           });
       }
     }
+    this.cd.detectChanges();
   }
 
   private calculateStandStatus(
