@@ -5,6 +5,8 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { PreparationStep } from '../../models/business/interafces/steps/preparation-step.model';
@@ -15,6 +17,7 @@ import {
 import {
   TC_AlignHorizontal,
   TableColumn,
+  TableColumnTemplateContext,
 } from '../../models/core/table-column.model';
 import { StandMeterConstantPipe } from '../../pipes/business/stand-meter-constant.pipe';
 import { MeterConstantEnum } from '../../models/business/constants/meter-constant.model';
@@ -31,6 +34,11 @@ export class StandsResultComponent implements OnInit, OnChanges {
   @Input() results!: StandResult[];
   @Input() resultsColumn!: TableColumn<StandStandResult>;
   @Input() stepMeterConstant!: MeterConstantEnum;
+
+  @ViewChild('columnResultStatus', { static: true })
+  columnResultStatusTmp!: TemplateRef<
+    TableColumnTemplateContext<StandStandResult>
+  >;
 
   value: StandStandResult[] = [];
   columns: TableColumn<StandStandResult>[] = [];
@@ -97,10 +105,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
       this.resultsColumn,
       {
         header: 'Resultado',
-        field: (item): string => {
-          // TODO mostrar el estado del resultado usando strategia de templates
-          return ('resultStatus' in item) ? item.resultStatus : '';
-        },
+        template: this.columnResultStatusTmp,
         alignHorizontal: TC_AlignHorizontal.Text,
       },
     ];

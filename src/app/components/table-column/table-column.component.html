@@ -1,10 +1,19 @@
-<div
-  class="flex"
-  [style]="tableColumn.customStyles"
-  [innerHTML]="value"
-  [ngClass]="{
+<ng-container *ngIf="value">
+  <div
+    class="flex"
+    [style]="tableColumn.customStyles"
+    [innerHTML]="value"
+    [ngClass]="{
     'justify-content-start': tableColumn.alignHorizontal === TC_AlignHorizontal.Text,
     'justify-content-center': tableColumn.alignHorizontal === TC_AlignHorizontal.Alphanumeric,
     'justify-content-end': tableColumn.alignHorizontal === TC_AlignHorizontal.Number,
   }"
-></div>
+  ></div>
+</ng-container>
+
+<ng-container *ngIf="template">
+  <ng-container
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{ item: data, index: index }"
+  ></ng-container>
+</ng-container>
