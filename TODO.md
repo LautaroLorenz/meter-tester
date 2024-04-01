@@ -29,4 +29,7 @@ EJECUCIÓN:
   - Reporte
 
 NICO
-- hay que hacer algo con el valor de la constante según la unidad, cuando se envia al calculador
+- Comandos calculador:
+- renombre de PCS a STW
+- ¿completar con 'x' cuando el puesto esta apagado?
+- cantidad de puestos que se envian en el comando
