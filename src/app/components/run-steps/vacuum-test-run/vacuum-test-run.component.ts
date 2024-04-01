@@ -39,7 +39,7 @@ export class VacuumTestRunComponent implements OnChanges {
   vacuumStep!: VacuumTestEssayStep;
 
   readonly resultsColumn: TableColumn<StandStandResult> = {
-    alignHorizontal: TC_AlignHorizontal.Text,
+    alignHorizontal: TC_AlignHorizontal.Number,
     header: 'Impulsos',
     field: (item: StandStandResult): string => {
       const realItem: Stand | VacuumTestStandResult = item as
