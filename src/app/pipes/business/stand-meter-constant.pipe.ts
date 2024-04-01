@@ -14,7 +14,11 @@ import { Meter } from '../../models/business/database/meter.model';
 export class StandMeterConstantPipe implements PipeTransform {
   readonly MeterConstants = MeterConstants;
 
-  transform(stepMeterConstant: MeterConstantEnum, standMeter: Meter): string {
+  transform(
+    stepMeterConstant: MeterConstantEnum,
+    standMeter: Meter,
+    returnType: 'OnlyValue' | 'ValueAndUnit' = 'ValueAndUnit'
+  ): string {
     let constantValue: number;
     let constantUnit = '';
     switch (stepMeterConstant) {
@@ -27,6 +31,12 @@ export class StandMeterConstantPipe implements PipeTransform {
         constantUnit = standMeter.foreign.reactiveConstantUnit.name;
         break;
     }
-    return `${constantValue} [${constantUnit}]`;
+
+    switch (returnType) {
+      case 'OnlyValue':
+        return constantValue.toString();
+      case 'ValueAndUnit':
+        return `${constantValue} [${constantUnit}]`;
+    }
   }
 }
