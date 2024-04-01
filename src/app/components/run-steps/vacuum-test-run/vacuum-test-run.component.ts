@@ -55,6 +55,7 @@ export class VacuumTestRunComponent implements OnChanges {
     if (!this.countTimer.isRunning) {
       this.calculator.stop$().subscribe();
     }
+    // TODO checkear las condiciones del stop
   }
 
   private markStepAsDone(): void {

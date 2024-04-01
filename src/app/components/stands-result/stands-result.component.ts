@@ -5,6 +5,7 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { PreparationStep } from '../../models/business/interafces/steps/preparation-step.model';
 import {
@@ -12,6 +13,9 @@ import {
   StandStandResult,
 } from '../../models/business/interafces/stand-result.model';
 import { TableColumn } from '../../models/core/table-column.model';
+import { StandMeterConstantPipe } from '../../pipes/business/stand-meter-constant.pipe';
+import { MeterConstantEnum } from '../../models/business/constants/meter-constant.model';
+import { MeterConstantPipe } from '../../pipes/business/meter-constant.pipe';
 
 @Component({
   selector: 'app-stands-result',
@@ -23,9 +27,13 @@ export class StandsResultComponent implements OnInit, OnChanges {
   @Input() preparationStep!: PreparationStep;
   @Input() results!: StandResult[];
   @Input() resultColumnLabel!: string;
+  @Input() stepMeterConstant!: MeterConstantEnum;
 
   value: StandStandResult[] = [];
   columns: TableColumn<StandStandResult>[] = [];
+
+  readonly meterConstantPipe = inject(MeterConstantPipe);
+  readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.results) {
@@ -62,11 +70,20 @@ export class StandsResultComponent implements OnInit, OnChanges {
           'yearOfProduction' in item ? item.yearOfProduction : '',
       },
       {
-        header: 'Constante', // TODO: usar el label adecuado
+        header: `Cte. (${this.meterConstantPipe.transform(
+          this.stepMeterConstant
+        )})`,
         field: (item): string => {
-          // TODO obtener la constante que se usa en este paso.
-          // TODO mostrar la constante con la unidad
-          return '';
+          if (this.stepMeterConstant === undefined) {
+            return '';
+          }
+          if (!('meter' in item) || !item.meter) {
+            return '';
+          }
+          return this.standMeterConstantPipe.transform(
+            this.stepMeterConstant,
+            item.meter
+          );
         },
       },
       {
@@ -79,7 +96,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
       {
         header: 'Resultado',
         field: (): string => {
-          // TODO mostrar el estado del resultado (es un componente (aunque el componente se declara en el código de stand result), 
+          // TODO mostrar el estado del resultado (es un componente (aunque el componente se declara en el código de stand result),
           // no solo un string :S)
           return '';
         },

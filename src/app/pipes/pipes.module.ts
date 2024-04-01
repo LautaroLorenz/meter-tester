@@ -5,13 +5,15 @@ import { CastAbstractControlToFormGroupPipe } from './core/cast-abstract-control
 import { FormatDatePipe } from './core/fomat-date.pipe';
 import { MeterConstantPipe } from './business/meter-constant.pipe';
 import { DeviceConstantPipe } from './business/device.pipe';
+import { StandMeterConstantPipe } from './business/stand-meter-constant.pipe';
 
 const AppPipes = [
   DotStringAsObjectPipe,
   CastAbstractControlToFormGroupPipe,
   FormatDatePipe,
   MeterConstantPipe,
-  DeviceConstantPipe
+  DeviceConstantPipe,
+  StandMeterConstantPipe,
 ];
 
 const CommonPipes = [DecimalPipe, DatePipe];
