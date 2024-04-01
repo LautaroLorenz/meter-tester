@@ -44,7 +44,7 @@ export class VacuumTestRunComponent implements OnChanges {
     this.checkEndConditions();
   }
 
-  calculatorResults(results: string): void {
+  calculatorResults(results: number[]): void {
     console.log('results', results);
     // TODO actualizar formulario de resultados
     // TODO tener un observer del fomulario, que determine el stop del ensayo

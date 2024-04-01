@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { Observable, map, of, switchMap, tap } from 'rxjs';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { StandMeterConstantPipe } from '../../../pipes/business/stand-meter-constant.pipe';
 import { APP_CONFIG } from '../../../../environments/environment';
+import { CommandDirector } from '../../../models/business/class/command-director.model';
 
 @Component({
   selector: 'app-calculator',
@@ -42,7 +43,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
         )}`
     );
 
-    // cunado la máquina tiene menos stands que los del comando 
+    // cunado la máquina tiene menos stands que los del comando
     // completamos la longitud del comando con puestos apagados.
     let padBlockQuantity = APP_CONFIG.commandStandsQuantity - stands.length;
     const padStandBlocks = [];
@@ -61,12 +62,21 @@ export class CalculatorComponent extends MachineDeviceComponent {
     );
   }
 
-  results$(): Observable<string> {
+  results$(): Observable<number[]> {
     return this.loopWrite$(
       this.buildCommand(SoftwareCalculatorCommands.RESULTS),
       this.loopDelay,
       () => this.deviceStatus$.value === DeviceStatus.Working
+    ).pipe(map((response) => this.extractNumbersFromResultsCommand(response)));
+  }
+
+  private extractNumbersFromResultsCommand(resultCommand: string): number[] {
+    const blocks = CommandDirector.getBlocks(resultCommand);
+    const allResultsBlock = blocks.filter((block) => block.includes('PS'));
+    const resultsBlock = allResultsBlock.filter(
+      (_, index) => index < APP_CONFIG.standsQuantiy
     );
+    return resultsBlock.map((block) => Number(block.substring(4)));
   }
 
   private standIndex(index: number) {
