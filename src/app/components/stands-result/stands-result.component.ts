@@ -12,7 +12,10 @@ import {
   StandResult,
   StandStandResult,
 } from '../../models/business/interafces/stand-result.model';
-import { TableColumn } from '../../models/core/table-column.model';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../models/core/table-column.model';
 import { StandMeterConstantPipe } from '../../pipes/business/stand-meter-constant.pipe';
 import { MeterConstantEnum } from '../../models/business/constants/meter-constant.model';
 import { MeterConstantPipe } from '../../pipes/business/meter-constant.pipe';
@@ -55,19 +58,23 @@ export class StandsResultComponent implements OnInit, OnChanges {
       {
         header: 'Puesto',
         field: (item) => ('name' in item ? item.name : ''),
+        alignHorizontal: TC_AlignHorizontal.Text,
       },
       {
         header: 'Medidor',
         field: (item) => ('meter' in item ? item.meter?.label : ''),
+        alignHorizontal: TC_AlignHorizontal.Text,
       },
       {
         header: 'Nº de serie',
         field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
+        alignHorizontal: TC_AlignHorizontal.Text,
       },
       {
         header: 'Año',
         field: (item) =>
           'yearOfProduction' in item ? item.yearOfProduction : '',
+        alignHorizontal: TC_AlignHorizontal.Number,
       },
       {
         header: `Cte. (${this.meterConstantPipe.transform(
@@ -85,6 +92,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             item.meter
           );
         },
+        alignHorizontal: TC_AlignHorizontal.Alphanumeric,
       },
       {
         header: this.resultColumnLabel,
@@ -92,6 +100,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
           // TODO
           return '';
         },
+        alignHorizontal: TC_AlignHorizontal.Text,
       },
       {
         header: 'Resultado',
@@ -100,6 +109,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
           // no solo un string :S)
           return '';
         },
+        alignHorizontal: TC_AlignHorizontal.Text,
       },
     ];
   }

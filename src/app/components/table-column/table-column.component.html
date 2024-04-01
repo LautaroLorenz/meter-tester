@@ -1,1 +1,9 @@
-<div [innerHTML]="value"></div>
+<div
+  class="flex"
+  [innerHTML]="value"
+  [ngClass]="{
+    'justify-content-start': tableColumn.alignHorizontal === TC_AlignHorizontal.Text,
+    'justify-content-center': tableColumn.alignHorizontal === TC_AlignHorizontal.Alphanumeric,
+    'justify-content-end': tableColumn.alignHorizontal === TC_AlignHorizontal.Number,
+  }"
+></div>

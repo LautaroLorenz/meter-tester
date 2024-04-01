@@ -10,7 +10,10 @@ import {
   CommandLineConfigTypes,
 } from '../../../models/business/interafces/command-line.model';
 import { CommandLineDirector } from '../../../models/business/class/command-line-director.model';
-import { TableColumn } from '../../../models/core/table-column.model';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../../models/core/table-column.model';
 
 @Component({
   selector: 'app-command-line',
@@ -28,10 +31,12 @@ export class CommandLineComponent {
     {
       header: 'Comando',
       field: 'name',
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       header: 'Valor',
       field: CommandLineDirector.getValue.bind(this),
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       /**
@@ -46,6 +51,7 @@ export class CommandLineComponent {
           .map(({ pattern }) => `${pattern}`)
           .join('<br/>');
       },
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       header: 'Configuración',
@@ -68,6 +74,7 @@ export class CommandLineComponent {
             `;
         }
       },
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];
 
