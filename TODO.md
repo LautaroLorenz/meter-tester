@@ -33,3 +33,4 @@ NICO
 - renombre de PCS a STW
 - ¿completar con 'x' cuando el puesto esta apagado?
 - cantidad de puestos que se envian en el comando
+- la constante del patrón de donde se obtiene? revisar flujo ensayo de vacio en el doc
