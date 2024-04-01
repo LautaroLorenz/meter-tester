@@ -1,5 +1,6 @@
 <div
   class="flex"
+  [style]="tableColumn.customStyles"
   [innerHTML]="value"
   [ngClass]="{
     'justify-content-start': tableColumn.alignHorizontal === TC_AlignHorizontal.Text,

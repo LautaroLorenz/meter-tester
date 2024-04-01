@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, NgZone } from '@angular/core';
-import {
-  CommandHistory,
-  CommandHistoryColumn,
-} from '../../../models/business/interafces/commnad-history.model';
+import { CommandHistory } from '../../../models/business/interafces/commnad-history.model';
 import { DatePipe } from '@angular/common';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { BehaviorSubject } from 'rxjs';
 import { DeviceConstantPipe } from '../../../pipes/business/device.pipe';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../../models/core/table-column.model';
 
 @Component({
   selector: 'app-command-history',
@@ -16,22 +17,27 @@ import { DeviceConstantPipe } from '../../../pipes/business/device.pipe';
 })
 export class CommandHistoryComponent {
   history$ = new BehaviorSubject<CommandHistory[]>([]);
-  columns: CommandHistoryColumn[] = [
+  columns: TableColumn<CommandHistory>[] = [
     {
       header: 'Envia',
       field: 'from',
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       header: 'Recibe',
       field: 'to',
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       header: 'Comando',
       field: 'command',
+      alignHorizontal: TC_AlignHorizontal.Text,
+      customStyles: 'word-break: break-word;',
     },
     {
       header: 'Fecha',
       field: 'date',
+      alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];
 

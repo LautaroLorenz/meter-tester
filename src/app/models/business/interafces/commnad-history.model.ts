@@ -4,8 +4,3 @@ export interface CommandHistory {
   command: string;
   date: string;
 }
-
-export interface CommandHistoryColumn {
-  header: string;
-  field: string;
-}
