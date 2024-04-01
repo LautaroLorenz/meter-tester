@@ -65,7 +65,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       name: CalculatorResponseCommands.RESULTS,
       config: {
         type: CommandLineConfigTypes.Incremental,
-        probabilityOfChange: 25,
+        probabilityOfChange: 40,
         incrementQuantity: 1,
       },
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],

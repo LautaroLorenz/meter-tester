@@ -97,9 +97,9 @@ export class StandsResultComponent implements OnInit, OnChanges {
       this.resultsColumn,
       {
         header: 'Resultado',
-        field: (): string => {
+        field: (item): string => {
           // TODO mostrar el estado del resultado usando strategia de templates
-          return '';
+          return ('resultStatus' in item) ? item.resultStatus : '';
         },
         alignHorizontal: TC_AlignHorizontal.Text,
       },

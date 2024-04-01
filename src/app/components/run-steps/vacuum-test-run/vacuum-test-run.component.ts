@@ -23,6 +23,7 @@ import {
 } from '../../../models/core/table-column.model';
 import { StandStandResult } from '../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../models/business/interafces/stand.model';
+import { ResultStatus } from '../../../models/business/enums/result-status.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -64,29 +65,38 @@ export class VacuumTestRunComponent implements OnChanges {
   }
 
   timerStop(): void {
-    this.checkEndConditions();
+    this.stopRunningStep();
+    this.updateStandsStatus();
   }
 
-  calculatorResults(results: number[]): void {
+  onCalculatorResults(results: number[]): void {
+    // update measuredPulses
     for (let index = 0; index < results.length; index++) {
       const result: number = results[index];
 
       if (this.preparationStep.form_control_raw[index].isActive) {
         this.runEssayService
           .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
-          .patchValue({
-            measuredPulses: result,
-          });
+          .patchValue({ measuredPulses: result });
       }
     }
-    this.checkEndConditions();
+    // update result status
+    this.updateStandsStatus();
+
+    // si todos los stands activos fallaron, detener ensayo
+    const isAllActiveStandsFailed = this.vacuumStep.standResults
+      .filter(
+        (_, index) => this.preparationStep.form_control_raw[index].isActive
+      )
+      .every(({ resultStatus }) => resultStatus === ResultStatus.Failed);
+    if (isAllActiveStandsFailed) {
+      this.stopRunningStep();
+    }
   }
 
-  private checkEndConditions(): void {
-    if (!this.countTimer.isRunning) {
-      this.calculator.stop$().subscribe();
-    }
-    // TODO checkear las condiciones del stop
+  private stopRunningStep(): void {
+    this.countTimer.stop();
+    this.calculator.stop$().subscribe();
   }
 
   private markStepAsDone(): void {
@@ -107,7 +117,7 @@ export class VacuumTestRunComponent implements OnChanges {
         ),
         tap(() => this.countTimer.start()),
         switchMap(() => this.calculator.results$()),
-        tap((results) => this.calculatorResults(results))
+        tap((results) => this.onCalculatorResults(results))
       )
       .subscribe();
   }
@@ -122,5 +132,39 @@ export class VacuumTestRunComponent implements OnChanges {
         .padStart(8, '0');
 
     return [stepTypeBlock, patternConstantBlock, maxAllowedPulsesBlock];
+  }
+
+  private updateStandsStatus(): void {
+    for (
+      let index = 0;
+      index < this.preparationStep.form_control_raw.length;
+      index++
+    ) {
+      const stand: Stand = this.preparationStep.form_control_raw[index];
+      const result: VacuumTestStandResult = this.vacuumStep.standResults[index];
+      if (stand.isActive) {
+        this.runEssayService
+          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+          .patchValue({
+            resultStatus: this.calculateStandStatus(
+              result.measuredPulses,
+              this.vacuumStep.form_control_raw.maxAllowedPulses as number
+            ),
+          });
+      }
+    }
+  }
+
+  private calculateStandStatus(
+    measuredPulses: number,
+    maxAllowedPulses: number
+  ): ResultStatus {
+    if (measuredPulses > maxAllowedPulses) {
+      return ResultStatus.Failed;
+    }
+    if (this.countTimer.isRunning) {
+      return ResultStatus.Pending;
+    }
+    return ResultStatus.Approved;
   }
 }
