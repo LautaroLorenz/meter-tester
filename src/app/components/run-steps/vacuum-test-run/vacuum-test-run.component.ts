@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import {
   VacuumTestEssayStep,
+  VacuumTestStandResult,
   VacuumTestStep,
 } from '../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
@@ -15,6 +16,13 @@ import { CalculatorComponent } from '../../machine/calculator/calculator.compone
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
 import { switchMap, tap } from 'rxjs';
 import { PreparationStep } from '../../../models/business/interafces/steps/preparation-step.model';
+import { RunEssayService } from '../../../services/run-essay.service';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../../models/core/table-column.model';
+import { StandStandResult } from '../../../models/business/interafces/stand-result.model';
+import { Stand } from '../../../models/business/interafces/stand.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -29,6 +37,21 @@ export class VacuumTestRunComponent implements OnChanges {
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
 
   vacuumStep!: VacuumTestEssayStep;
+
+  readonly resultsColumn: TableColumn<StandStandResult> = {
+    alignHorizontal: TC_AlignHorizontal.Text,
+    header: 'Impulsos',
+    field: (item: StandStandResult): string => {
+      const realItem: Stand | VacuumTestStandResult = item as
+        | Stand
+        | VacuumTestStandResult;
+      return 'measuredPulses' in realItem
+        ? realItem.measuredPulses?.toString()
+        : '';
+    },
+  };
+
+  constructor(private readonly runEssayService: RunEssayService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.currentStep) {
@@ -45,11 +68,17 @@ export class VacuumTestRunComponent implements OnChanges {
   }
 
   calculatorResults(results: number[]): void {
-    console.log('results', results);
-    // TODO actualizar formulario de resultados
-    // TODO tener un observer del fomulario, que determine el stop del ensayo
-    // TODO en base a los estados de los resultados.
+    for (let index = 0; index < results.length; index++) {
+      const result: number = results[index];
 
+      if (this.preparationStep.form_control_raw[index].isActive) {
+        this.runEssayService
+          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+          .patchValue({
+            measuredPulses: result,
+          });
+      }
+    }
     this.checkEndConditions();
   }
 

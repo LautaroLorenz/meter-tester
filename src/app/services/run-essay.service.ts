@@ -94,11 +94,11 @@ export class RunEssayService {
   }
 
   openVirtualMachine(): Promise<void> {
-    return this.ipcService.invoke('open-virtual-machine') as Promise<void>;
+    return this.ipcService.invoke('open-virtual-machine');
   }
 
   closeVirtualMachine(): Promise<void> {
-    return this.ipcService.invoke('close-virtual-machine') as Promise<void>;
+    return this.ipcService.invoke('close-virtual-machine');
   }
 
   reset(): void {
@@ -148,14 +148,14 @@ export class RunEssayService {
     return this.essaySteps.at(stepIndex);
   }
 
-  getStandResult(
+  getStandResult<T extends StandResult = StandResult>(
     essayStepId: number,
     standIndex: number
-  ): AbstractFormGroup<StandResult> {
+  ): AbstractFormGroup<T> {
     const essayStep = this.getEssayStep(essayStepId);
     return (essayStep.get('standResults') as FormArray).at(
       standIndex
-    ) as AbstractFormGroup<StandResult>;
+    ) as AbstractFormGroup<T>;
   }
 
   nextMajorStep(): void {

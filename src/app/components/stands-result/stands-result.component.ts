@@ -29,7 +29,7 @@ import { MeterConstantPipe } from '../../pipes/business/meter-constant.pipe';
 export class StandsResultComponent implements OnInit, OnChanges {
   @Input() preparationStep!: PreparationStep;
   @Input() results!: StandResult[];
-  @Input() resultColumnLabel!: string;
+  @Input() resultsColumn!: TableColumn<StandStandResult>;
   @Input() stepMeterConstant!: MeterConstantEnum;
 
   value: StandStandResult[] = [];
@@ -94,14 +94,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
         },
         alignHorizontal: TC_AlignHorizontal.Alphanumeric,
       },
-      {
-        header: this.resultColumnLabel,
-        field: (): string => {
-          // TODO
-          return '';
-        },
-        alignHorizontal: TC_AlignHorizontal.Text,
-      },
+      this.resultsColumn,
       {
         header: 'Resultado',
         field: (): string => {
