@@ -32,7 +32,7 @@ export class CommandHistoryComponent {
       header: 'Comando',
       field: 'command',
       alignHorizontal: TC_AlignHorizontal.Text,
-      customStyles: 'word-break: break-word;',
+      customStyles: 'word-break: break-word; font-family: monospace;',
     },
     {
       header: 'Fecha',

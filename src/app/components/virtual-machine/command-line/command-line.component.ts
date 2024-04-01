@@ -37,6 +37,7 @@ export class CommandLineComponent {
       header: 'Valor',
       field: CommandLineDirector.getValue.bind(this),
       alignHorizontal: TC_AlignHorizontal.Text,
+      customStyles: 'word-break: break-word; font-family: monospace;',
     },
     {
       /**

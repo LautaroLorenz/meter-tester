@@ -10,6 +10,9 @@ import {
   CommandLineConfigTypes,
 } from '../../../../models/business/interafces/command-line.model';
 import { CommandBlockTypes } from '../../../../models/business/enums/command-block-types.model';
+import { CommandBlock } from '../../../../models/business/interafces/command-block.model';
+import { APP_CONFIG } from '../../../../../environments/environment';
+import { CommandDirector } from '../../../../models/business/class/command-director.model';
 
 @Component({
   selector: 'app-vm-calculator',
@@ -35,7 +38,6 @@ export class VmCalculatorComponent extends VMDeviceComponent {
         },
       ],
     },
-    // TODO este comando se arma en base a la configuracion de commandStandsQuantiy
     {
       name: CalculatorResponseCommands.RESULTS,
       config: {
@@ -46,24 +48,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       enableConditions: [
         { pattern: SoftwareCalculatorCommands.START_CONTRAST },
       ],
-      blocks: [
-        {
-          type: CommandBlockTypes.Fixed,
-          value: 'B|CAL|STW|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-        {
-          type: CommandBlockTypes.Fixed,
-          value: '|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-      ],
+      blocks: this.generateResultCommandBlocks(),
     },
     {
       name: CalculatorResponseCommands.RESULTS,
@@ -74,24 +59,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
         maxRandom: 6,
       },
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
-      blocks: [
-        {
-          type: CommandBlockTypes.Fixed,
-          value: 'B|CAL|STW|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-        {
-          type: CommandBlockTypes.Fixed,
-          value: '|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-      ],
+      blocks: this.generateResultCommandBlocks(),
     },
     {
       name: CalculatorResponseCommands.RESULTS,
@@ -101,24 +69,35 @@ export class VmCalculatorComponent extends VMDeviceComponent {
         incrementQuantity: 1,
       },
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
-      blocks: [
-        {
-          type: CommandBlockTypes.Fixed,
-          value: 'B|CAL|STW|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-        {
-          type: CommandBlockTypes.Fixed,
-          value: '|',
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          value: '00000',
-        },
-      ],
+      blocks: this.generateResultCommandBlocks(),
     },
   ];
+
+  private generateResultCommandBlocks(): CommandBlock[] {
+    const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
+      .fill('')
+      .map((_, index) => [
+        {
+          type: CommandBlockTypes.Fixed,
+          value: `PS${(index + 1).toString().padStart(2, '0')}`,
+        },
+        {
+          type: CommandBlockTypes.Variable,
+          value: `00000`,
+        },
+        {
+          type: CommandBlockTypes.Fixed,
+          value: CommandDirector.DIVIDER,
+        },
+      ])
+      .reduce((acc, value) => (acc = acc.concat(value)), []);
+
+    return [
+      {
+        type: CommandBlockTypes.Fixed,
+        value: 'B|CAL|STW|',
+      },
+      ...standResult,
+    ];
+  }
 }
