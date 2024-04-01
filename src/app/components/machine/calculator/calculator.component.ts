@@ -7,6 +7,8 @@ import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { StandMeterConstantPipe } from '../../../pipes/business/stand-meter-constant.pipe';
+import { CommandDirector } from '../../../models/business/class/command-director.model';
+import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-calculator',
@@ -32,6 +34,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     preparationStepStands: Stand[],
     stepMeterConstant: MeterConstantEnum
   ): Observable<string> {
+    // para los stands que tiene la máquina completamos el comando según puesto activo/inactivo
     const stands: string[] = preparationStepStands.map(
       (stand, index) =>
         `PS${this.standIndex(index)}${this.standConstant(
@@ -39,7 +42,20 @@ export class CalculatorComponent extends MachineDeviceComponent {
           stepMeterConstant
         )}`
     );
-    return of(this.buildCommand(...stepParamBlocks, ...stands)).pipe(
+
+    // cunado la máquina tiene menos stands que los del comando 
+    // completamos la longitud del comando con puestos apagados.
+    let padBlockQuantity = APP_CONFIG.commandStandsQuantity - stands.length;
+    const padStandBlocks = [];
+    while (padBlockQuantity > 0) {
+      const index = APP_CONFIG.commandStandsQuantity - padBlockQuantity;
+      padStandBlocks.push(`PS${this.standIndex(index)}${this.standConstant()}`);
+      padBlockQuantity--;
+    }
+
+    return of(
+      this.buildCommand(...stepParamBlocks, ...stands, ...padStandBlocks)
+    ).pipe(
       tap(() => this.deviceStatus$.next(DeviceStatus.StartInProgress)),
       switchMap((startCommand) => this.write$(startCommand)),
       tap(() => this.deviceStatus$.next(DeviceStatus.Working))
@@ -59,10 +75,13 @@ export class CalculatorComponent extends MachineDeviceComponent {
   }
 
   private standConstant(
-    stand: Stand,
-    stepMeterConstant: MeterConstantEnum
+    stand?: Stand,
+    stepMeterConstant?: MeterConstantEnum
   ): string {
     const offStandConstant = 'xxxxx';
+    if (!stand || !stepMeterConstant) {
+      return offStandConstant;
+    }
     if (!stand.isActive) {
       return offStandConstant;
     }
