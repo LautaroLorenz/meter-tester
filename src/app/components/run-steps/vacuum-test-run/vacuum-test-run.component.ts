@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -16,8 +15,6 @@ import { CountTimerComponent } from '../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
 import { switchMap, tap } from 'rxjs';
-import { PreparationStep } from '../../../models/business/interafces/steps/preparation-step.model';
-import { RunEssayService } from '../../../services/run-essay.service';
 import {
   TC_AlignHorizontal,
   TableColumn,
@@ -25,6 +22,7 @@ import {
 import { StandStandResult } from '../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../models/business/enums/result-status.model';
+import { TestRunComponent } from '../../../models/business/class/test-run.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -32,9 +30,11 @@ import { ResultStatus } from '../../../models/business/enums/result-status.model
   styleUrls: ['./vacuum-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestRunComponent implements OnChanges {
+export class VacuumTestRunComponent
+  extends TestRunComponent
+  implements OnChanges
+{
   @Input() currentStep!: VacuumTestStep;
-  @Input() preparationStep!: PreparationStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
 
@@ -44,19 +44,12 @@ export class VacuumTestRunComponent implements OnChanges {
     alignHorizontal: TC_AlignHorizontal.Number,
     header: 'Impulsos',
     field: (item: StandStandResult): string => {
-      const realItem: Stand | VacuumTestStandResult = item as
-        | Stand
-        | VacuumTestStandResult;
+      const realItem = item as Stand | VacuumTestStandResult;
       return 'measuredPulses' in realItem
         ? realItem.measuredPulses?.toString()
         : '';
     },
   };
-
-  constructor(
-    private readonly runEssayService: RunEssayService,
-    private readonly cd: ChangeDetectorRef
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.currentStep) {
@@ -176,12 +169,5 @@ export class VacuumTestRunComponent implements OnChanges {
         .patchValue({ resultStatus, measuredPulses: 0 });
     });
     this.cd.detectChanges();
-  }
-
-  // TODO se puede mover al servicio
-  private getActiveStands(): { index: number; stand: Stand }[] {
-    return this.preparationStep.form_control_raw
-      .map((stand, index) => ({ stand, index }))
-      .filter(({ stand: { isActive } }) => isActive);
   }
 }
