@@ -133,18 +133,19 @@ export class VacuumTestRunComponent
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador
         tap(() => this.countTimer.start()),
-        // inicializa el patron
+        // inicializa el patrón
         tap(() => this.pattern.deviceStatus$.next(DeviceStatus.Working)),
-        // consulta resultados del calculador en loop
         switchMap(() =>
           merge(
+            // consulta estado del patrón en loop
             this.pattern.loopStatus$(),
+
+            // consulta resultados del calculador en loop
             this.calculator
               .loopResults$()
               .pipe(tap((results) => this.onCalculatorResults(results)))
           )
         )
-        // TODO consulta estado del patrón en loop
       )
       .subscribe();
   }
