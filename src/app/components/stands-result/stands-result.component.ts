@@ -85,9 +85,9 @@ export class StandsResultComponent implements OnInit, OnChanges {
         alignHorizontal: TC_AlignHorizontal.Number,
       },
       {
-        header: `Cte. (${this.meterConstantPipe.transform(
+        header: `Cte. ${this.meterConstantPipe.transform(
           this.stepMeterConstant
-        )})`,
+        )}`,
         field: (item): string => {
           if (this.stepMeterConstant === undefined) {
             return '';
