@@ -18,7 +18,7 @@ interface CommandBlockVariable extends CommandBlockBase {
   type: CommandBlockTypes.Variable;
   startWith?: string;
   endWith?: string;
-  variableValue: string | number;
+  variableValue: null | string | number;
   digitsQuantity: number;
   padText: string;
   config: CommandBlockConfig;

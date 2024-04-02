@@ -29,25 +29,27 @@ export class PatternComponent extends MachineDeviceComponent {
     );
   }
 
-  // TODO arreglar el mapeo
   private mapStatusCommand(command: string): PatternStatus {
     const blocks = CommandDirector.getBlocks(command);
+    const numberBlocks = blocks
+      .slice(3, 13)
+      .map((block) => Number(block.replace(/x/g, '')));
     return {
-      constant: Number(blocks[3]),
+      constant: Number(numberBlocks[0]),
       phase1: {
-        voltage: Number(blocks[4]),
-        current: Number(blocks[4]),
-        anglePhi: Number(blocks[4]),
+        voltage: Number(numberBlocks[1]),
+        current: Number(numberBlocks[4]),
+        anglePhi: Number(numberBlocks[7]),
       },
       phase2: {
-        voltage: Number(blocks[4]),
-        current: Number(blocks[4]),
-        anglePhi: Number(blocks[4]),
+        voltage: Number(numberBlocks[2]),
+        current: Number(numberBlocks[5]),
+        anglePhi: Number(numberBlocks[8]),
       },
       phase3: {
-        voltage: Number(blocks[4]),
-        current: Number(blocks[4]),
-        anglePhi: Number(blocks[4]),
+        voltage: Number(numberBlocks[3]),
+        current: Number(numberBlocks[6]),
+        anglePhi: Number(numberBlocks[9]),
       },
     };
   }

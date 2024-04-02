@@ -35,8 +35,8 @@ export class VmPatternComponent extends VMDeviceComponent {
         {
           type: CommandBlockTypes.Variable,
           endWith: CommandDirector.DIVIDER,
-          value: '',
-          variableValue: 0,
+          value: '0000000000',
+          variableValue: null,
           digitsQuantity: 10,
           padText: '0',
           config: {
@@ -66,8 +66,8 @@ export class VmPatternComponent extends VMDeviceComponent {
     return {
       type: CommandBlockTypes.Variable,
       endWith: CommandDirector.DIVIDER,
-      value: '',
-      variableValue: 0,
+      value: '0000',
+      variableValue: null,
       digitsQuantity: 8,
       padText: 'x',
       config: {
@@ -84,8 +84,8 @@ export class VmPatternComponent extends VMDeviceComponent {
       type: CommandBlockTypes.Variable,
       startWith: 'xxx',
       endWith: CommandDirector.DIVIDER,
-      value: '',
-      variableValue: 0,
+      value: '000',
+      variableValue: null,
       digitsQuantity: 5,
       padText: '0',
       config: {
@@ -102,7 +102,7 @@ export class VmPatternComponent extends VMDeviceComponent {
       type: CommandBlockTypes.Variable,
       startWith: 'xxxx',
       value: '+',
-      variableValue: '',
+      variableValue: null,
       digitsQuantity: 1,
       padText: '',
       config: {
@@ -118,7 +118,7 @@ export class VmPatternComponent extends VMDeviceComponent {
       type: CommandBlockTypes.Variable,
       endWith: CommandDirector.DIVIDER,
       value: '000',
-      variableValue: 0,
+      variableValue: null,
       digitsQuantity: 3,
       padText: '0',
       config: {

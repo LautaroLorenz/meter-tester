@@ -59,22 +59,27 @@ export class CommandLineDirector {
       return block;
     }
 
+    if (
+      block.variableValue !== null &&
+      block.config.probabilityOfChange < Random.range(0, 100)
+    ) {
+      return block;
+    }
+
     let variableValue = block.variableValue;
-    if (block.config.probabilityOfChange >= Random.range(0, 100)) {
-      switch (block.config.type) {
-        case CommandLineConfigTypes.Incremental:
-          variableValue = this.getBlockIncrementalValue(
-            block.variableValue,
-            block.config
-          );
-          break;
-        case CommandLineConfigTypes.Random:
-          variableValue = this.getBlockRandomValue(block.config);
-          break;
-        case CommandLineConfigTypes.CharRandom:
-          variableValue = this.getBlockCharRandomValue(block.config);
-          break;
-      }
+    switch (block.config.type) {
+      case CommandLineConfigTypes.Incremental:
+        variableValue = this.getBlockIncrementalValue(
+          block.variableValue,
+          block.config
+        );
+        break;
+      case CommandLineConfigTypes.Random:
+        variableValue = this.getBlockRandomValue(block.config);
+        break;
+      case CommandLineConfigTypes.CharRandom:
+        variableValue = this.getBlockCharRandomValue(block.config);
+        break;
     }
 
     const start: string = block.startWith ?? '';
@@ -89,10 +94,10 @@ export class CommandLineDirector {
   }
 
   static getBlockIncrementalValue(
-    value: string | number,
+    value: null | string | number,
     config: CommandBlockConfigIncremental
   ): number {
-    const currentValue = Number(value);
+    const currentValue = Number(value ?? 0);
     return currentValue + config.incrementQuantity;
   }
 

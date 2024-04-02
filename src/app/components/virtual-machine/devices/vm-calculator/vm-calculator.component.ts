@@ -65,8 +65,8 @@ export class VmCalculatorComponent extends VMDeviceComponent {
           type: CommandBlockTypes.Variable,
           startWith: `PS${(index + 1).toString().padStart(2, '0')}`,
           endWith: CommandDirector.DIVIDER,
-          value: '',
-          variableValue: 0,
+          value: '00000',
+          variableValue: null,
           digitsQuantity: 5,
           padText: '0',
           config: {
