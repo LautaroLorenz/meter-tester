@@ -5,10 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import {
-  CommandLine,
-  CommandLineConfigTypes,
-} from '../../../models/business/interafces/command-line.model';
+import { CommandLine } from '../../../models/business/interafces/command-line.model';
 import { CommandLineDirector } from '../../../models/business/class/command-line-director.model';
 import {
   TC_AlignHorizontal,
@@ -51,29 +48,6 @@ export class CommandLineComponent {
         return commandLine.enableConditions
           .map(({ pattern }) => `${pattern}`)
           .join('<br/>');
-      },
-      alignHorizontal: TC_AlignHorizontal.Text,
-    },
-    {
-      header: 'Configuración',
-      field: (commandLine: CommandLine) => {
-        if (!commandLine.config) {
-          return 'Valor fijo';
-        }
-        const config = commandLine.config;
-        switch (config.type) {
-          case CommandLineConfigTypes.Incremental:
-            return `
-                Probabilidad de cambio: ${config.probabilityOfChange}%<br/>
-                Incremento: ${config.incrementQuantity}
-            `;
-          case CommandLineConfigTypes.Random:
-            return `
-                Probabilidad de cambio: ${config.probabilityOfChange}%<br/>
-                Min: ${config.minRandom}<br/>
-                Max: ${config.maxRandom}
-            `;
-        }
       },
       alignHorizontal: TC_AlignHorizontal.Text,
     },

@@ -1,13 +1,14 @@
 import { Random } from '../../core/random.model';
-import { CommandBlockTypes } from '../enums/command-block-types.model';
-import { CommandBlock } from '../interafces/command-block.model';
 import {
-  CommandLine,
-  CommandLineConfigType,
-  CommandLineConfigTypeIncremental,
-  CommandLineConfigTypeRandom,
+  CommandBlockConfigIncremental,
+  CommandBlockConfigRandom,
   CommandLineConfigTypes,
-} from '../interafces/command-line.model';
+} from '../interafces/command-block-config.model';
+import {
+  CommandBlock,
+  CommandBlockTypes,
+} from '../interafces/command-block.model';
+import { CommandLine } from '../interafces/command-line.model';
 import { CommandHistory } from '../interafces/commnad-history.model';
 import { VMCommandMap } from '../interafces/vm-command-map.model';
 
@@ -49,50 +50,45 @@ export class CommandLineDirector {
   }
 
   static refreshBlocks(commandLine: CommandLine): CommandBlock[] {
-    if (commandLine.config === undefined) {
-      return commandLine.blocks;
-    }
-    return commandLine.blocks.map((block) =>
-      this.refreshBlockValue(block, commandLine.config)
-    );
+    return commandLine.blocks.map((block) => this.refreshBlockValue(block));
   }
 
-  static refreshBlockValue(
-    block: CommandBlock,
-    config: CommandLineConfigType | undefined
-  ): CommandBlock {
-    if (!config) {
-      return block;
-    }
+  static refreshBlockValue(block: CommandBlock): CommandBlock {
     if (block.type === CommandBlockTypes.Fixed) {
       return block;
     }
-    if (config.probabilityOfChange < Random.range(0, 100)) {
-      return block;
-    }
-    const digitsQuantity = block.value.length;
-    let newValue: number;
-    switch (config.type) {
+    let numberValue: number;
+    switch (block.config.type) {
       case CommandLineConfigTypes.Incremental:
-        newValue = this.getBlockIncrementalValue(block.value, config);
+        numberValue = this.getBlockIncrementalValue(
+          block.numberValue,
+          block.config
+        );
         break;
       case CommandLineConfigTypes.Random:
-        newValue = this.getBlockRandomValue(config);
+        numberValue = this.getBlockRandomValue(block.config);
         break;
     }
-    block.value = newValue.toString().padStart(digitsQuantity, '0');
+    const start: string = block.startWith ?? '';
+    const value: string = numberValue
+      .toString()
+      .padStart(block.digitsQuantity, block.padText);
+    const end: string = block.endWith ?? '';
+
+    block.numberValue = numberValue;
+    block.value = `${start}${value}${end}`;
     return block;
   }
 
   static getBlockIncrementalValue(
-    value: string,
-    config: CommandLineConfigTypeIncremental
+    value: number,
+    config: CommandBlockConfigIncremental
   ): number {
     const currentValue = Number(value);
     return currentValue + config.incrementQuantity;
   }
 
-  static getBlockRandomValue(config: CommandLineConfigTypeRandom): number {
+  static getBlockRandomValue(config: CommandBlockConfigRandom): number {
     return Random.range(config.minRandom, config.maxRandom);
   }
 }

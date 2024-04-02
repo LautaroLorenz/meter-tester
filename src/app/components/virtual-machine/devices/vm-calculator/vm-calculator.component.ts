@@ -5,14 +5,14 @@ import {
   CalculatorResponseCommands,
   SoftwareCalculatorCommands,
 } from '../../../../models/business/enums/commands.model';
+import { CommandLine } from '../../../../models/business/interafces/command-line.model';
 import {
-  CommandLine,
-  CommandLineConfigTypes,
-} from '../../../../models/business/interafces/command-line.model';
-import { CommandBlockTypes } from '../../../../models/business/enums/command-block-types.model';
-import { CommandBlock } from '../../../../models/business/interafces/command-block.model';
+  CommandBlock,
+  CommandBlockTypes,
+} from '../../../../models/business/interafces/command-block.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { CommandDirector } from '../../../../models/business/class/command-director.model';
+import { CommandLineConfigTypes } from '../../../../models/business/interafces/command-block-config.model';
 
 @Component({
   selector: 'app-vm-calculator',
@@ -40,11 +40,6 @@ export class VmCalculatorComponent extends VMDeviceComponent {
     },
     {
       name: CalculatorResponseCommands.RESULTS,
-      config: {
-        type: CommandLineConfigTypes.Incremental,
-        probabilityOfChange: 100,
-        incrementQuantity: 1,
-      },
       enableConditions: [
         { pattern: SoftwareCalculatorCommands.START_CONTRAST },
       ],
@@ -52,22 +47,11 @@ export class VmCalculatorComponent extends VMDeviceComponent {
     },
     {
       name: CalculatorResponseCommands.RESULTS,
-      config: {
-        type: CommandLineConfigTypes.Random,
-        probabilityOfChange: 100,
-        minRandom: 2,
-        maxRandom: 6,
-      },
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
       blocks: this.generateResultCommandBlocks(),
     },
     {
       name: CalculatorResponseCommands.RESULTS,
-      config: {
-        type: CommandLineConfigTypes.Incremental,
-        probabilityOfChange: 40,
-        incrementQuantity: 1,
-      },
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
       blocks: this.generateResultCommandBlocks(),
     },
@@ -76,18 +60,20 @@ export class VmCalculatorComponent extends VMDeviceComponent {
   private generateResultCommandBlocks(): CommandBlock[] {
     const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
       .fill('')
-      .map((_, index) => [
-        {
-          type: CommandBlockTypes.Fixed,
-          value: `PS${(index + 1).toString().padStart(2, '0')}`,
-        },
+      .map<CommandBlock[]>((_, index) => [
         {
           type: CommandBlockTypes.Variable,
-          value: `00000`,
-        },
-        {
-          type: CommandBlockTypes.Fixed,
-          value: CommandDirector.DIVIDER,
+          startWith: `PS${(index + 1).toString().padStart(2, '0')}`,
+          endWith: CommandDirector.DIVIDER,
+          value: '00000',
+          numberValue: 0,
+          digitsQuantity: 5,
+          padText: '0',
+          config: {
+            type: CommandLineConfigTypes.Incremental,
+            incrementQuantity: 1,
+            probabilityOfChange: 40,
+          },
         },
       ])
       .reduce((acc, value) => (acc = acc.concat(value)), []);

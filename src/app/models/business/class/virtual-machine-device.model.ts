@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Devices } from '../enums/devices.model';
 import { CommandLine } from '../interafces/command-line.model';
-import { CommandBlockTypes } from '../enums/command-block-types.model';
 import { CommandLineDirector } from './command-line-director.model';
 
 @Component({
@@ -17,8 +16,6 @@ import { CommandLineDirector } from './command-line-director.model';
 })
 export abstract class VMDeviceComponent {
   @Output() write = new EventEmitter<string>();
-
-  readonly CommandBlockTypes = CommandBlockTypes;
 
   private readonly cd = inject(ChangeDetectorRef);
 
