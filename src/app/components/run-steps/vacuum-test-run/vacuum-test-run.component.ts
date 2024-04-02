@@ -75,15 +75,13 @@ export class VacuumTestRunComponent implements OnChanges {
 
   onCalculatorResults(results: number[]): void {
     // update measuredPulses
-    for (let index = 0; index < results.length; index++) {
+    this.getActiveStands().forEach(({ index }) => {
       const result: number = results[index];
+      this.runEssayService
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .patchValue({ measuredPulses: result });
+    });
 
-      if (this.preparationStep.form_control_raw[index].isActive) {
-        this.runEssayService
-          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
-          .patchValue({ measuredPulses: result });
-      }
-    }
     // update result status
     this.updateStandsStatus();
 
@@ -123,6 +121,7 @@ export class VacuumTestRunComponent implements OnChanges {
             this.currentStep.form_control_raw.meterConstant
           )
         ),
+        tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         tap(() => this.countTimer.start()),
         switchMap(() => this.calculator.results$()),
         tap((results) => this.onCalculatorResults(results))
@@ -143,24 +142,17 @@ export class VacuumTestRunComponent implements OnChanges {
   }
 
   private updateStandsStatus(): void {
-    for (
-      let index = 0;
-      index < this.preparationStep.form_control_raw.length;
-      index++
-    ) {
-      const stand: Stand = this.preparationStep.form_control_raw[index];
+    this.getActiveStands().forEach(({ index }) => {
       const result: VacuumTestStandResult = this.vacuumStep.standResults[index];
-      if (stand.isActive) {
-        this.runEssayService
-          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
-          .patchValue({
-            resultStatus: this.calculateStandStatus(
-              result.measuredPulses,
-              this.vacuumStep.form_control_raw.maxAllowedPulses as number
-            ),
-          });
-      }
-    }
+      this.runEssayService
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .patchValue({
+          resultStatus: this.calculateStandStatus(
+            result.measuredPulses,
+            this.vacuumStep.form_control_raw.maxAllowedPulses as number
+          ),
+        });
+    });
     this.cd.detectChanges();
   }
 
@@ -172,8 +164,24 @@ export class VacuumTestRunComponent implements OnChanges {
       return ResultStatus.Failed;
     }
     if (this.countTimer.isRunning) {
-      return ResultStatus.Pending;
+      return ResultStatus.WorkInProgress;
     }
     return ResultStatus.Approved;
+  }
+
+  private restartResults(resultStatus: ResultStatus): void {
+    this.getActiveStands().forEach(({ index }) => {
+      this.runEssayService
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .patchValue({ resultStatus, measuredPulses: 0 });
+    });
+    this.cd.detectChanges();
+  }
+
+  // TODO se puede mover al servicio
+  private getActiveStands(): { index: number; stand: Stand }[] {
+    return this.preparationStep.form_control_raw
+      .map((stand, index) => ({ stand, index }))
+      .filter(({ stand: { isActive } }) => isActive);
   }
 }

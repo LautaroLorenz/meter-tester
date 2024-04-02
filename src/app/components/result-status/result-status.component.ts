@@ -12,6 +12,9 @@ export class ResultStatusComponent {
 
   get styleClass(): string {
     const classes: string[] = [];
+    if (this.severity === 'surface') {
+      classes.push('bg-surface-200');
+    }
     if (this.severity === 'info') {
       classes.push('bg-blue-400');
     }
@@ -31,12 +34,14 @@ export class ResultStatusComponent {
     return classes.join(' ');
   }
 
-  get severity(): 'info' | 'success' | 'danger' | undefined {
+  get severity(): 'surface' | 'info' | 'success' | 'danger' | undefined {
     switch (this.resultStatus) {
       case ResultStatus.NotApply:
       case ResultStatus.Unknown:
         return undefined;
       case ResultStatus.Pending:
+        return 'surface';
+      case ResultStatus.WorkInProgress:
         return 'info';
       case ResultStatus.Approved:
         return 'success';
@@ -51,6 +56,8 @@ export class ResultStatusComponent {
       case ResultStatus.Unknown:
         return undefined;
       case ResultStatus.Pending:
+        return 'En espera';
+      case ResultStatus.WorkInProgress:
         return 'Calculando';
       case ResultStatus.Approved:
         return 'Aprobado';

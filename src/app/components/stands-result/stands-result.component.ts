@@ -106,7 +106,6 @@ export class StandsResultComponent implements OnInit, OnChanges {
       {
         header: 'Resultado',
         template: this.columnResultStatusTmp,
-        alignHorizontal: TC_AlignHorizontal.Text,
       },
     ];
   }

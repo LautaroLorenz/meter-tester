@@ -29,5 +29,7 @@
 </p-table>
 
 <ng-template #columnResultStatus let-item="item" let-index="index">
-  <app-result-status [resultStatus]="item.resultStatus"></app-result-status>
+  <div class="flex justify-content-center">
+    <app-result-status [resultStatus]="item.resultStatus"></app-result-status>
+  </div>
 </ng-template>
