@@ -10,6 +10,9 @@
     </div>
   </ng-template>
   <ng-template pTemplate="body">
-    <!-- TODO mostrar lecturas del patrón -->
+    <!-- TODO -->
+    <ng-container *ngIf="lastStatus$ | async as lastStatus">
+      <pre>{{ lastStatus | json }}</pre>
+    </ng-container>
   </ng-template>
 </p-panel>

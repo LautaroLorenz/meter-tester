@@ -3,6 +3,10 @@ export enum CalculatorResponseCommands {
   RESULTS = 'RESULTS',
 }
 
+export enum PatternResponseCommands {
+  STATUS = 'STATUS',
+}
+
 export enum SoftwareCalculatorCommands {
   START_CONTRAST = 'TS1xxxxx',
   START_BOOT = 'TS2xxxxx',
@@ -11,6 +15,12 @@ export enum SoftwareCalculatorCommands {
   RESULTS = 'STD00000',
 }
 
+export enum SoftwarePatternCommands {
+  STATUS = 'STD00000',
+}
+
 export type CommandsEnum =
   | CalculatorResponseCommands
+  | PatternResponseCommands
+  | SoftwarePatternCommands
   | SoftwareCalculatorCommands;

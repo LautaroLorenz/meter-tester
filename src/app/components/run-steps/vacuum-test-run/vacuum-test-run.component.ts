@@ -14,7 +14,7 @@ import {
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
-import { switchMap, tap } from 'rxjs';
+import { merge, switchMap, tap } from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
@@ -24,6 +24,7 @@ import { Stand } from '../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../models/business/enums/result-status.model';
 import { TestRunComponent } from '../../../models/business/class/test-run.model';
 import { PatternComponent } from '../../machine/pattern/pattern.component';
+import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -81,11 +82,13 @@ export class VacuumTestRunComponent
     this.updateStandsResultStatus();
 
     // si todos los stands activos fallaron, detener ensayo
-    const isAllActiveStandsFailed = this.vacuumStep.standResults
-      .filter(
-        (_, index) => this.preparationStep.form_control_raw[index].isActive
-      )
-      .every(({ resultStatus }) => resultStatus === ResultStatus.Failed);
+    const isAllActiveStandsFailed = this.getActiveStands().every(
+      ({ index }) =>
+        this.runEssayService
+          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+          .getRawValue().resultStatus === ResultStatus.Failed
+    );
+
     if (isAllActiveStandsFailed) {
       this.stopRunningStep();
     }
@@ -94,6 +97,7 @@ export class VacuumTestRunComponent
   private stopRunningStep(): void {
     this.countTimer.stop();
     this.calculator.stop$().subscribe();
+    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
   }
 
   private markStepAsDone(): void {
@@ -129,21 +133,25 @@ export class VacuumTestRunComponent
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador
         tap(() => this.countTimer.start()),
+        // inicializa el patron
+        tap(() => this.pattern.deviceStatus$.next(DeviceStatus.Working)),
         // consulta resultados del calculador en loop
         switchMap(() =>
-          this.calculator
-            .loopResults$()
-            .pipe(tap((results) => this.onCalculatorResults(results)))
+          merge(
+            this.pattern.loopStatus$(),
+            this.calculator
+              .loopResults$()
+              .pipe(tap((results) => this.onCalculatorResults(results)))
+          )
         )
         // TODO consulta estado del patrón en loop
       )
       .subscribe();
   }
 
-  // TODO resolver de donde se obtiene la constante del patrón.
   private getStepCalculatorBlocks(): string[] {
     const stepTypeBlock = SoftwareCalculatorCommands.START_VACUUM;
-    const patternConstantBlock = '1234567891';
+    const patternConstantBlock = ''.padStart(10, '0');
     const maxAllowedPulsesBlock: string =
       this.vacuumStep.form_control_raw.maxAllowedPulses
         .toString()

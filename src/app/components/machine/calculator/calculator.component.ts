@@ -68,11 +68,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
       this.buildCommand(SoftwareCalculatorCommands.RESULTS),
       this.loopDelay,
       () => this.deviceStatus$.value === DeviceStatus.Working
-    ).pipe(map((response) => this.extractNumbersFromResultsCommand(response)));
+    ).pipe(map((response) => this.mapResultsCommand(response)));
   }
 
-  private extractNumbersFromResultsCommand(resultCommand: string): number[] {
-    const blocks = CommandDirector.getBlocks(resultCommand);
+  private mapResultsCommand(command: string): number[] {
+    const blocks = CommandDirector.getBlocks(command);
     const allResultsBlock = blocks.filter((block) => block.includes('PS'));
     const resultsBlock = allResultsBlock.filter(
       (_, index) => index < APP_CONFIG.standsQuantiy
