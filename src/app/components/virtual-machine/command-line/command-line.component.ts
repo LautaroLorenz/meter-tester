@@ -11,6 +11,7 @@ import {
   TC_AlignHorizontal,
   TableColumn,
 } from '../../../models/core/table-column.model';
+import { CommandBlockTypes } from '../../../models/business/interafces/command-block.model';
 
 @Component({
   selector: 'app-command-line',
@@ -54,6 +55,8 @@ export class CommandLineComponent {
   ];
 
   isValueRefresh(commandLine: CommandLine): boolean {
-    return 'config' in commandLine;
+    return commandLine.blocks.some(
+      ({ type }) => type === CommandBlockTypes.Variable
+    );
   }
 }

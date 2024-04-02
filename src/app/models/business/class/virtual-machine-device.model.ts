@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  OnInit,
   Output,
   inject,
 } from '@angular/core';
@@ -14,7 +15,7 @@ import { CommandLineDirector } from './command-line-director.model';
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export abstract class VMDeviceComponent {
+export abstract class VMDeviceComponent implements OnInit {
   @Output() write = new EventEmitter<string>();
 
   private readonly cd = inject(ChangeDetectorRef);
@@ -22,6 +23,10 @@ export abstract class VMDeviceComponent {
   abstract commandLines: CommandLine[];
 
   abstract readonly device: Devices;
+
+  ngOnInit(): void {
+    this.commandLines.forEach((_, index) => this.refreshCommand(index));
+  }
 
   refreshCommand(commandLineIndex: number): void {
     this.commandLines = this.commandLines.map((commandLine, index) => {

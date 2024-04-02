@@ -57,18 +57,22 @@ export class CommandLineDirector {
     if (block.type === CommandBlockTypes.Fixed) {
       return block;
     }
-    let numberValue: number;
-    switch (block.config.type) {
-      case CommandLineConfigTypes.Incremental:
-        numberValue = this.getBlockIncrementalValue(
-          block.numberValue,
-          block.config
-        );
-        break;
-      case CommandLineConfigTypes.Random:
-        numberValue = this.getBlockRandomValue(block.config);
-        break;
+
+    let numberValue = block.numberValue;
+    if (block.config.probabilityOfChange >= Random.range(0, 100)) {
+      switch (block.config.type) {
+        case CommandLineConfigTypes.Incremental:
+          numberValue = this.getBlockIncrementalValue(
+            block.numberValue,
+            block.config
+          );
+          break;
+        case CommandLineConfigTypes.Random:
+          numberValue = this.getBlockRandomValue(block.config);
+          break;
+      }
     }
+
     const start: string = block.startWith ?? '';
     const value: string = numberValue
       .toString()
