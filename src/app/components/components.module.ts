@@ -45,6 +45,7 @@ import { StandsResultComponent } from './stands-result/stands-result.component';
 import { TableColumnComponent } from './table-column/table-column.component';
 import { ResultStatusComponent } from './result-status/result-status.component';
 import { PatternComponent } from './machine/pattern/pattern.component';
+import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-pattern.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -89,6 +90,7 @@ const AppComponents = [
   TableColumnComponent,
   ResultStatusComponent,
   PatternComponent,
+  VmPatternComponent,
 ];
 
 @NgModule({
