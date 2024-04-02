@@ -102,6 +102,11 @@ export class VacuumTestRunComponent
     // TODO setear todos los resultados de los stands activos en pending
   }
 
+  private onDeactivate(): void {
+    // TODO resolver situación cuando el usuario sale de la pantalla
+    // TODO esto debería estar en TestRunComponent
+  }
+
   private startTest(): void {
     this.countTimer.reset();
     this.calculator
