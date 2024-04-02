@@ -23,6 +23,7 @@ import { StandStandResult } from '../../../models/business/interafces/stand-resu
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../models/business/enums/result-status.model';
 import { TestRunComponent } from '../../../models/business/class/test-run.model';
+import { PatternComponent } from '../../machine/pattern/pattern.component';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -37,6 +38,7 @@ export class VacuumTestRunComponent
   @Input() currentStep!: VacuumTestStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
+  @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
   vacuumStep!: VacuumTestEssayStep;
 
@@ -57,13 +59,13 @@ export class VacuumTestRunComponent
     }
   }
 
-  manualGeneratorAdjusted(): void {
+  onManualGeneratorAdjusted(): void {
     this.startTest();
   }
 
-  timerStop(): void {
+  onTimerCountdownFinish(): void {
     this.stopRunningStep();
-    this.updateStandsStatus();
+    this.updateStandsResultStatus();
   }
 
   onCalculatorResults(results: number[]): void {
@@ -76,7 +78,7 @@ export class VacuumTestRunComponent
     });
 
     // update result status
-    this.updateStandsStatus();
+    this.updateStandsResultStatus();
 
     // si todos los stands activos fallaron, detener ensayo
     const isAllActiveStandsFailed = this.vacuumStep.standResults
@@ -108,10 +110,14 @@ export class VacuumTestRunComponent
   }
 
   private startTest(): void {
+    // recetea el contador
     this.countTimer.reset();
+
+    // apaga el calculador por si estaba encendido
     this.calculator
       .stop$()
       .pipe(
+        // enciende el calculador
         switchMap(() =>
           this.calculator.start$(
             this.getStepCalculatorBlocks(),
@@ -119,10 +125,17 @@ export class VacuumTestRunComponent
             this.currentStep.form_control_raw.meterConstant
           )
         ),
+        // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
+        // inicializa el contador
         tap(() => this.countTimer.start()),
-        switchMap(() => this.calculator.results$()),
-        tap((results) => this.onCalculatorResults(results))
+        // consulta resultados del calculador en loop
+        switchMap(() =>
+          this.calculator
+            .results$()
+            .pipe(tap((results) => this.onCalculatorResults(results)))
+        )
+        // TODO consulta estado del patrón en loop
       )
       .subscribe();
   }
@@ -139,7 +152,7 @@ export class VacuumTestRunComponent
     return [stepTypeBlock, patternConstantBlock, maxAllowedPulsesBlock];
   }
 
-  private updateStandsStatus(): void {
+  private updateStandsResultStatus(): void {
     this.getActiveStands().forEach(({ index }) => {
       const result: VacuumTestStandResult = this.vacuumStep.standResults[index];
       this.runEssayService

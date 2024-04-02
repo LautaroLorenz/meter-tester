@@ -4,7 +4,7 @@
 <!-- Generador manual -->
 <div class="mt-4">
   <app-manual-generator
-    (adjustmentDone)="manualGeneratorAdjusted()"
+    (adjustmentDone)="onManualGeneratorAdjusted()"
   ></app-manual-generator>
 </div>
 
@@ -13,7 +13,7 @@
   <app-count-timer
     #countTimer
     [durationSeconds]="currentStep.form_control_raw.durationSeconds"
-    (finishCount)="timerStop()"
+    (finishCount)="onTimerCountdownFinish()"
   ></app-count-timer>
 </div>
 
@@ -30,6 +30,9 @@
 </div>
 
 <!-- Patrón -->
+<div class="mt-4">
+  <app-pattern #pattern></app-pattern>
+</div>
 
 <!-- TODO 4. inicializa el patrón, consulta valores y refresca
   El patrón es solo visual, se muestra lo que mide en pantalla.

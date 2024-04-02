@@ -24,9 +24,13 @@ export class ResultStatusComponent {
     if (this.severity === 'danger') {
       classes.push('bg-red-400');
     }
+    if (this.severity === 'warning') {
+      classes.push('bg-orange-400');
+    }
     if (
       this.severity === 'info' ||
       this.severity === 'success' ||
+      this.severity === 'warning' ||
       this.severity === 'danger'
     ) {
       classes.push('text-white');
@@ -34,7 +38,7 @@ export class ResultStatusComponent {
     return classes.join(' ');
   }
 
-  get severity(): 'surface' | 'info' | 'success' | 'danger' | undefined {
+  get severity(): 'surface' | 'info' | 'success' | 'danger' | 'warning' | undefined {
     switch (this.resultStatus) {
       case ResultStatus.NotApply:
       case ResultStatus.Unknown:
@@ -46,7 +50,7 @@ export class ResultStatusComponent {
       case ResultStatus.Approved:
         return 'success';
       case ResultStatus.Failed:
-        return 'danger';
+        return 'warning';
     }
   }
 
