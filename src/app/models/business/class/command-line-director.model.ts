@@ -1,5 +1,6 @@
 import { Random } from '../../core/random.model';
 import {
+  CommandBlockConfigCharRandom,
   CommandBlockConfigIncremental,
   CommandBlockConfigRandom,
   CommandLineConfigTypes,
@@ -58,34 +59,37 @@ export class CommandLineDirector {
       return block;
     }
 
-    let numberValue = block.numberValue;
+    let variableValue = block.variableValue;
     if (block.config.probabilityOfChange >= Random.range(0, 100)) {
       switch (block.config.type) {
         case CommandLineConfigTypes.Incremental:
-          numberValue = this.getBlockIncrementalValue(
-            block.numberValue,
+          variableValue = this.getBlockIncrementalValue(
+            block.variableValue,
             block.config
           );
           break;
         case CommandLineConfigTypes.Random:
-          numberValue = this.getBlockRandomValue(block.config);
+          variableValue = this.getBlockRandomValue(block.config);
+          break;
+        case CommandLineConfigTypes.CharRandom:
+          variableValue = this.getBlockCharRandomValue(block.config);
           break;
       }
     }
 
     const start: string = block.startWith ?? '';
-    const value: string = numberValue
+    const value: string = variableValue
       .toString()
       .padStart(block.digitsQuantity, block.padText);
     const end: string = block.endWith ?? '';
 
-    block.numberValue = numberValue;
+    block.variableValue = variableValue;
     block.value = `${start}${value}${end}`;
     return block;
   }
 
   static getBlockIncrementalValue(
-    value: number,
+    value: string | number,
     config: CommandBlockConfigIncremental
   ): number {
     const currentValue = Number(value);
@@ -94,5 +98,10 @@ export class CommandLineDirector {
 
   static getBlockRandomValue(config: CommandBlockConfigRandom): number {
     return Random.range(config.minRandom, config.maxRandom);
+  }
+
+  static getBlockCharRandomValue(config: CommandBlockConfigCharRandom): string {
+    const charIndex = Random.range(0, config.options.length - 1);
+    return config.options[charIndex];
   }
 }

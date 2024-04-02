@@ -1,6 +1,7 @@
 export enum CommandLineConfigTypes {
   Incremental,
   Random,
+  CharRandom,
 }
 
 interface CommandBlockConfigBase {
@@ -19,6 +20,12 @@ export interface CommandBlockConfigIncremental extends CommandBlockConfigBase {
   incrementQuantity: number;
 }
 
+export interface CommandBlockConfigCharRandom extends CommandBlockConfigBase {
+  type: CommandLineConfigTypes.CharRandom;
+  options: string[];
+}
+
 export type CommandBlockConfig =
   | CommandBlockConfigRandom
+  | CommandBlockConfigCharRandom
   | CommandBlockConfigIncremental;
