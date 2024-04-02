@@ -72,7 +72,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
           config: {
             type: CommandLineConfigTypes.Incremental,
             incrementQuantity: 1,
-            probabilityOfChange: 40,
+            probabilityOfChange: 35,
           },
         },
       ])

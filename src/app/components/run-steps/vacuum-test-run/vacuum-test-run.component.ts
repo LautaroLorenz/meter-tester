@@ -42,6 +42,7 @@ export class VacuumTestRunComponent
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
   vacuumStep!: VacuumTestEssayStep;
+  canContinue = false;
 
   readonly resultsColumn: TableColumn<StandStandResult> = {
     alignHorizontal: TC_AlignHorizontal.Number,
@@ -65,8 +66,8 @@ export class VacuumTestRunComponent
   }
 
   onTimerCountdownFinish(): void {
-    this.stopRunningStep();
     this.updateStandsResultStatus();
+    this.stopRunningStep();
   }
 
   onCalculatorResults(results: number[]): void {
@@ -94,18 +95,20 @@ export class VacuumTestRunComponent
     }
   }
 
+  restart(): void {
+    this.restartResults(ResultStatus.Pending);
+    this.canContinue = this.getCanContinue();
+    this.startTest();
+  }
+
   private stopRunningStep(): void {
     this.countTimer.stop();
     this.calculator.stop$().subscribe();
     this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
-  }
 
-  private markStepAsDone(): void {
-    // TODO
-  }
-
-  private restart(): void {
-    // TODO setear todos los resultados de los stands activos en pending
+    // puede continuar al siguiente step si todos los stands activos tienen un estado
+    this.canContinue = this.getCanContinue();
+    this.cd.detectChanges();
   }
 
   private onDeactivate(): void {
@@ -196,5 +199,17 @@ export class VacuumTestRunComponent
         .patchValue({ resultStatus, measuredPulses: 0 });
     });
     this.cd.detectChanges();
+  }
+
+  private getCanContinue(): boolean {
+    return this.getActiveStands().every(({ index }) => {
+      const { resultStatus } = this.runEssayService
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .getRawValue();
+      return (
+        resultStatus === ResultStatus.Failed ||
+        resultStatus === ResultStatus.Approved
+      );
+    });
   }
 }

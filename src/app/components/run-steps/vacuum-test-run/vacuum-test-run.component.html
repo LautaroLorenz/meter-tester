@@ -33,3 +33,20 @@
 <div class="mt-4">
   <app-pattern #pattern></app-pattern>
 </div>
+
+<!-- Actions -->
+<div class="flex justify-content-end mt-4 mb-8 gap-3">
+  <p-button
+    label="Reintentar"
+    [outlined]="true"
+    [disabled]="!canContinue"
+    (click)="restart()"
+  ></p-button>
+
+  <p-button
+    label="Continuar"
+    [outlined]="false"
+    [disabled]="!canContinue"
+    (click)="stepExectionDone(this.vacuumStep)"
+  ></p-button>
+</div>
