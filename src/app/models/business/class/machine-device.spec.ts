@@ -291,7 +291,7 @@ describe('Machine Device', () => {
       of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
         .pipe(
           switchMap(() => deviceOne.write$(commands.stop)),
-          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Connected))
+          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Stopped))
         )
         .subscribe(spyResponse);
     }, responseDelay * 4);
