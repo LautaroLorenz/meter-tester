@@ -1,1 +1,11 @@
-<p>vm-pattern works!</p>
+<p-panel header="Patrón" [toggleable]="true">
+  <ng-template pTemplate="body">
+    <div class="flex flex-column gap-3">
+      <app-command-line
+        [commandLines]="commandLines"
+        (send)="sendCommand($event)"
+        (refresh)="refreshCommand($event)"
+      ></app-command-line>
+    </div>
+  </ng-template>
+</p-panel>

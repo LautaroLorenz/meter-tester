@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
-import { Observable, ReplaySubject, map } from 'rxjs';
+import { Observable, ReplaySubject, map, tap } from 'rxjs';
 import { SoftwarePatternCommands } from '../../../models/business/enums/commands.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
@@ -23,7 +23,10 @@ export class PatternComponent extends MachineDeviceComponent {
       this.buildCommand(SoftwarePatternCommands.STATUS),
       this.loopDelay,
       () => this.deviceStatus$.value === DeviceStatus.Working
-    ).pipe(map((response) => this.mapStatusCommand(response)));
+    ).pipe(
+      map((response) => this.mapStatusCommand(response)),
+      tap((patternStatus) => this.lastStatus$.next(patternStatus))
+    );
   }
 
   // TODO arreglar el mapeo

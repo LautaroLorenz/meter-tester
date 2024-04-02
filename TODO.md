@@ -29,8 +29,8 @@ EJECUCIÓN:
   - Reporte
 
 NICO
-- Comandos calculador:
-- renombre de PCS a STW
-- ¿completar con 'x' cuando el puesto esta apagado?
-- cantidad de puestos que se envian en el comando
-- la constante del patrón de donde se obtiene? revisar flujo ensayo de vacio en el doc
+- Definición de comandos:
+  - renombre de PCS a STW
+  - cantidad de puestos que se envian en el comando
+  - en el PatternResponseCommands.STATUS ¿van las xxxxx antes de los números?
+  - ¿completar con 'x' cuando el puesto esta apagado?
