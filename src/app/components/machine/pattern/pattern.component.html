@@ -10,9 +10,8 @@
     </div>
   </ng-template>
   <ng-template pTemplate="body">
-    <!-- TODO -->
     <ng-container *ngIf="lastStatus$ | async as lastStatus">
-      <pre>{{ lastStatus | json }}</pre>
+      <app-pattern-status [patternStatus]="lastStatus"></app-pattern-status>
     </ng-container>
   </ng-template>
 </p-panel>

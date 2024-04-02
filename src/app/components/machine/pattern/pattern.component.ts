@@ -36,17 +36,17 @@ export class PatternComponent extends MachineDeviceComponent {
       .map((block) => Number(block.replace(/x/g, '')));
     return {
       constant: Number(numberBlocks[0]),
-      phase1: {
+      phaseL1: {
         voltage: Number(numberBlocks[1]),
         current: Number(numberBlocks[4]),
         anglePhi: Number(numberBlocks[7]),
       },
-      phase2: {
+      phaseL2: {
         voltage: Number(numberBlocks[2]),
         current: Number(numberBlocks[5]),
         anglePhi: Number(numberBlocks[8]),
       },
-      phase3: {
+      phaseL3: {
         voltage: Number(numberBlocks[3]),
         current: Number(numberBlocks[6]),
         anglePhi: Number(numberBlocks[9]),

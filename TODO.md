@@ -34,3 +34,4 @@ NICO
   - cantidad de puestos que se envian en el comando
   - en el PatternResponseCommands.STATUS ¿van las xxxxx antes de los números?
   - ¿completar con 'x' cuando el puesto esta apagado?
+  - en el patrón revisar que esten ok los valores que se muestran en la tabla, en cuanto a los decimales.

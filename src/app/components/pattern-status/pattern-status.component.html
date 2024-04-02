@@ -1,0 +1,76 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="grid">
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L1 - Tensión U1 [V]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL1.voltage }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L2 - Tensión U2 [V]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL2.voltage }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L3 - Tensión U3 [V]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL3.voltage }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="grid">
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L1 - Corriente I1 [A]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL1.current }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L2 - Corriente I2 [A]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL2.current }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary">Fase L3 - Corriente I3 [A]:</label>
+        <span class="text-color">
+          {{ patternStatus.phaseL3.current }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="grid">
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary"
+          >Fase L1 - Ángulo &#632;1 [º]:</label
+        >
+        <span class="text-color">
+          {{ patternStatus.phaseL1.current }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary"
+          >Fase L2 - Ángulo &#632;2 [º]:</label
+        >
+        <span class="text-color">
+          {{ patternStatus.phaseL2.current }}
+        </span>
+      </div>
+      <div class="flex flex-row col-12 md:col-4 gap-1">
+        <label class="text-color-secondary"
+          >Fase L3 - Ángulo &#632;3 [º]:</label
+        >
+        <span class="text-color">
+          {{ patternStatus.phaseL3.current }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

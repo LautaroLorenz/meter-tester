@@ -2,7 +2,7 @@ import { Phase } from './phase.model';
 
 export interface PatternStatus {
   constant: number;
-  phase1: Phase;
-  phase2: Phase;
-  phase3: Phase;
+  phaseL1: Phase;
+  phaseL2: Phase;
+  phaseL3: Phase;
 }
