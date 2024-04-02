@@ -63,7 +63,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     );
   }
 
-  results$(): Observable<number[]> {
+  loopResults$(): Observable<number[]> {
     return this.loopWrite$(
       this.buildCommand(SoftwareCalculatorCommands.RESULTS),
       this.loopDelay,

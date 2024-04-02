@@ -132,7 +132,7 @@ export class VacuumTestRunComponent
         // consulta resultados del calculador en loop
         switchMap(() =>
           this.calculator
-            .results$()
+            .loopResults$()
             .pipe(tap((results) => this.onCalculatorResults(results)))
         )
         // TODO consulta estado del patrón en loop
