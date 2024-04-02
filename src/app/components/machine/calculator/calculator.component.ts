@@ -35,7 +35,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     stepMeterConstant: MeterConstantEnum
   ): Observable<string> {
     // para los stands que tiene la máquina completamos el comando según puesto activo/inactivo
-    const stands: string[] = preparationStepStands.map(
+    const standBlocks: string[] = preparationStepStands.map(
       (stand, index) =>
         `PS${this.standIndex(index)}${this.standConstant(
           stand,
@@ -43,9 +43,10 @@ export class CalculatorComponent extends MachineDeviceComponent {
         )}`
     );
 
-    // cunado la máquina tiene menos stands que los del comando
+    // cunado la máquina tiene menos stands que los de la logitud del comando
     // completamos la longitud del comando con puestos apagados.
-    let padBlockQuantity = APP_CONFIG.commandStandsQuantity - stands.length;
+    let padBlockQuantity =
+      APP_CONFIG.commandStandsQuantity - standBlocks.length;
     const padStandBlocks = [];
     while (padBlockQuantity > 0) {
       const index = APP_CONFIG.commandStandsQuantity - padBlockQuantity;
@@ -54,7 +55,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     }
 
     return of(
-      this.buildCommand(...stepParamBlocks, ...stands, ...padStandBlocks)
+      this.buildCommand(...stepParamBlocks, ...standBlocks, ...padStandBlocks)
     ).pipe(
       tap(() => this.deviceStatus$.next(DeviceStatus.StartInProgress)),
       switchMap((startCommand) => this.write$(startCommand)),
