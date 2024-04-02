@@ -8,6 +8,7 @@ import {
   TC_AlignHorizontal,
   TableColumn,
 } from '../../../models/core/table-column.model';
+import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 
 @Component({
   selector: 'app-command-history',
@@ -40,6 +41,11 @@ export class CommandHistoryComponent {
       alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];
+
+  readonly devices = Object.values(DeviceConstants).map((device) => ({
+    label: device,
+    value: device,
+  }));
 
   constructor(
     private readonly datePipe: DatePipe,

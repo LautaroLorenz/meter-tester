@@ -10,6 +10,48 @@
           {{ col.header }}
         </th>
       </tr>
+      <tr>
+        <th>
+          <p-columnFilter field="from" matchMode="equals" [showMenu]="false">
+            <ng-template
+              pTemplate="filter"
+              let-value
+              let-filter="filterCallback"
+            >
+              <p-dropdown
+                [ngModel]="value"
+                [options]="devices"
+                (onChange)="filter($event.value)"
+                placeholder="Any"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="to" matchMode="equals" [showMenu]="false">
+            <ng-template
+              pTemplate="filter"
+              let-value
+              let-filter="filterCallback"
+            >
+              <p-dropdown
+                [ngModel]="value"
+                [options]="devices"
+                (onChange)="filter($event.value)"
+                placeholder="Any"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="command"></p-columnFilter>
+        </th>
+        <th></th>
+      </tr>
     </ng-template>
     <ng-template
       pTemplate="body"
