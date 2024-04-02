@@ -44,6 +44,7 @@ import { CommandMapComponent } from './virtual-machine/command-map/command-map.c
 import { StandsResultComponent } from './stands-result/stands-result.component';
 import { TableColumnComponent } from './table-column/table-column.component';
 import { ResultStatusComponent } from './result-status/result-status.component';
+import { PatternComponent } from './machine/pattern/pattern.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -87,6 +88,7 @@ const AppComponents = [
   StandsResultComponent,
   TableColumnComponent,
   ResultStatusComponent,
+  PatternComponent,
 ];
 
 @NgModule({
