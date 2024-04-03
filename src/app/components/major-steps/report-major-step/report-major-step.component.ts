@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   QueryList,
@@ -10,6 +11,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { PdfPageComponent } from '../../result-report/pdf-page/pdf-page.component';
 import { RunEssay } from '../../../models/business/interafces/run-essay.model';
+import { BlockUIService } from '../../../services/block-ui.service';
+import { MessagesService } from '../../../services/messages.service';
 
 @Component({
   selector: 'app-report-major-step',
@@ -20,10 +23,16 @@ import { RunEssay } from '../../../models/business/interafces/run-essay.model';
 export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(PdfPageComponent) pages!: QueryList<PdfPageComponent>;
 
+  isDownloading = false;
   fileName!: string;
   readonly runEssay: RunEssay;
 
-  constructor(private readonly runEssayService: RunEssayService) {
+  constructor(
+    private readonly runEssayService: RunEssayService,
+    private readonly blockUIService: BlockUIService,
+    private readonly messagesService: MessagesService,
+    private readonly cd: ChangeDetectorRef
+  ) {
     this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
   }
 
@@ -31,11 +40,22 @@ export class ReportMajorStepComponent implements OnInit {
     this.fileName = this.getFileName();
   }
 
-  // TODO
-  // 1. un cargando
-  // 2. nombre del reporte
-  // 3. contenido del reporte
-  async createPDF(): Promise<jsPDF> {
+  downloadPDF(): void {
+    this.isDownloading = true;
+    this.blockUIService.setBlocked(true);
+    this.cd.detectChanges();
+    this.createPDF(this.fileName)
+      .then(() => {
+        this.blockUIService.setBlocked(false);
+        this.isDownloading = false;
+        this.cd.detectChanges();
+      })
+      .catch(() => {
+        this.messagesService.error('No se pudo crear el reporte');
+      });
+  }
+
+  private async createPDF(fileName: string): Promise<void> {
     const PDF = new jsPDF('p', 'mm', 'a4', true);
     for (let index = 0; index < this.pages.length; index++) {
       const page = this.pages.get(index) as PdfPageComponent;
@@ -57,7 +77,7 @@ export class ReportMajorStepComponent implements OnInit {
         'FAST'
       );
     }
-    return PDF.save(this.fileName);
+    return PDF.save(fileName, { returnPromise: true });
   }
 
   private getFileName(): string {
