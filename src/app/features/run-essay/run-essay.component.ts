@@ -56,7 +56,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly route: ActivatedRoute,
-    // TODO control de estadisticas
+    // TODO control de estadisticas: podria hacerse antes de avanzar al reporte o luego
     //   private readonly staticsService: StaticsService,
     private readonly navigationService: NavigationService,
     public readonly runEssayService: RunEssayService
