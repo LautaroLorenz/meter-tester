@@ -27,7 +27,7 @@ export abstract class TestRunComponent {
       .filter(({ stand: { isActive } }) => isActive);
   }
 
-  stepExectionDone(essayStep: EssayStep): void {
+  stepExecutionDone(essayStep: EssayStep): void {
     this.runEssayService
       .getEssayStep(essayStep.id)
       .get('executedStatus')

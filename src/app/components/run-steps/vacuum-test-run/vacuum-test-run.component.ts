@@ -25,6 +25,7 @@ import { ResultStatus } from '../../../models/business/enums/result-status.model
 import { TestRunComponent } from '../../../models/business/class/test-run.model';
 import { PatternComponent } from '../../machine/pattern/pattern.component';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
+import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -109,6 +110,10 @@ export class VacuumTestRunComponent
     // puede continuar al siguiente step si todos los stands activos tienen un estado
     this.canContinue = this.getCanContinue();
     this.cd.detectChanges();
+
+    if (this.canContinue) {
+      this.skip();
+    }
   }
 
   private onDeactivate(): void {
@@ -211,5 +216,12 @@ export class VacuumTestRunComponent
         resultStatus === ResultStatus.Approved
       );
     });
+  }
+
+  private skip(): void {
+    if (!APP_CONFIG.skipSteps) {
+      return;
+    }
+    this.stepExecutionDone(this.vacuumStep);
   }
 }
