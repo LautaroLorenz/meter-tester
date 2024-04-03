@@ -1,15 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   QueryList,
   ViewChildren,
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
-import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { Observable, tap } from 'rxjs';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { PdfPageComponent } from '../../result-report/pdf-page/pdf-page.component';
+import { RunEssay } from '../../../models/business/interafces/run-essay.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -17,24 +17,18 @@ import { PdfPageComponent } from '../../result-report/pdf-page/pdf-page.componen
   styleUrls: ['./report-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportMajorStepComponent {
+export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(PdfPageComponent) pages!: QueryList<PdfPageComponent>;
 
-  executionSteps: EssayStep[] | undefined;
-  preparationStep: EssayStep | undefined;
+  fileName!: string;
+  readonly runEssay: RunEssay;
 
-  constructor(private readonly runEssayService: RunEssayService) {}
-
-  get executionSteps$(): Observable<EssayStep[]> {
-    return this.runEssayService.executionSteps$.pipe(
-      tap((executionSteps) => (this.executionSteps = executionSteps))
-    );
+  constructor(private readonly runEssayService: RunEssayService) {
+    this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
   }
 
-  get preparationStep$(): Observable<EssayStep> {
-    return this.runEssayService.preparationStep$.pipe(
-      tap((preparationStep) => (this.preparationStep = preparationStep))
-    );
+  ngOnInit(): void {
+    this.fileName = this.getFileName();
   }
 
   // TODO
@@ -63,6 +57,18 @@ export class ReportMajorStepComponent {
         'FAST'
       );
     }
-    return PDF.save(`reporte-${new Date().getTime()}.pdf`);
+    return PDF.save(this.fileName);
+  }
+
+  private getFileName(): string {
+    const date = new Date();
+    const day = date.getDay().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().padStart(4, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const formatedDate = `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`;
+    return `reporte_${this.runEssay.essayName}_${formatedDate}.pdf`;
   }
 }
