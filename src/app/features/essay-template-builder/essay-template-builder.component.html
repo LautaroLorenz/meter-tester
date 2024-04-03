@@ -22,8 +22,8 @@
   </app-page-title>
 
   <ng-container formGroupName="essayTemplate">
-    <div class="formgrid grid mx-3 mt-5">
-      <div class="field col col-3">
+    <p-toolbar styleClass="border-noround mb-4">
+      <div class="p-toolbar-group-right">
         <div class="flex flex-column gap-2">
           <label for="name">
             Nombre<span class="ml-1 text-red-300">*</span>
@@ -32,10 +32,8 @@
           <app-input-error formControlName="name"></app-input-error>
         </div>
       </div>
-
-      <div
-        class="flex flex-row align-items-center justify-content-end col col-9 gap-3"
-      >
+      
+      <div class="p-toolbar-group-left gap-3">
         <ng-container *ngIf="preparationStep">
           <p-button
             [outlined]="true"
@@ -54,9 +52,9 @@
             [outlined]="true"
             (click)="addStepToSequenceDialogOpened = true"
           ></p-button>
-        </ng-container>
+        </ng-container>        
       </div>
-    </div>
+    </p-toolbar>
   </ng-container>
 
   <app-steps-sequence-table

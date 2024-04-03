@@ -56,7 +56,7 @@ export class EssayTemplateBuilderComponent
   selectedEssayTemplateStep: EssayTemplateStep | undefined;
   steps: Step[] | undefined;
 
-  readonly title: string = 'Ensayo';
+  readonly title: string = 'Detalle de Ensayo';
   readonly id$: Observable<number>;
   readonly form: FormGroup;
   readonly saveButtonMenuItems: MenuItem[] = [];
