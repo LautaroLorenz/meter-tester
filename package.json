@@ -58,6 +58,7 @@
     "@angular/router": "16.2.12",
     "chart.js": "4.4.1",
     "dot-object": "2.1.4",
+    "jspdf": "2.5.1",
     "primeflex": "3.3.1",
     "primeicons": "6.0.1",
     "primeng": "16.5.1",

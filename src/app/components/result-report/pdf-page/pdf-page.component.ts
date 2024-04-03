@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-pdf-page',
@@ -6,4 +11,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['./pdf-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PdfPageComponent {}
+export class PdfPageComponent {
+  @ViewChild('container') elementRef!: ElementRef<HTMLDivElement>;
+
+  get html(): HTMLDivElement {
+    return this.elementRef.nativeElement;
+  }
+}

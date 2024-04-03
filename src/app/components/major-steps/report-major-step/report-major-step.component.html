@@ -1,9 +1,16 @@
-<div
-  #reportContainer
-  class="flex flex-column align-items-center p-5 gap-4"
->
-  <app-pdf-page>Page 1</app-pdf-page>
-  <app-pdf-page>Page 2</app-pdf-page>
+<!-- TODO para cada step que llega generar una página del reporte con un componente -->
+
+<div class="container flex flex-column align-items-center p-5">
+  <div class="flex gap-5 flex-column">
+    <div #report class="flex flex-column gap-4">
+      <app-pdf-page>Page 1</app-pdf-page>
+      <app-pdf-page>Page 2</app-pdf-page>
+    </div>
+
+    <div class="flex justify-content-end mb-8">
+      <p-button (click)="createPDF()">Descargar PDF</p-button>
+    </div>
+  </div>
 </div>
 
 <!-- Preparación
