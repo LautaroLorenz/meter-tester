@@ -64,7 +64,7 @@ export class MajorStepsDirector {
 
     const executionSteps = this.stepsByMajorStep(
       essaySteps,
-      MajorSteps.Preparation
+      MajorSteps.Execution
     );
 
     const isVerificationDone: boolean = this.checkMajorStepStatus(

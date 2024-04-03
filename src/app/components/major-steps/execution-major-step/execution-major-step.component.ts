@@ -1,9 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { ExecutionDirector } from '../../../models/business/class/execution-director.model';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { Observable, forkJoin, take, tap } from 'rxjs';
+import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 
 @Component({
@@ -12,12 +17,13 @@ import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photoc
   styleUrls: ['./execution-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExecutionMajorStepComponent implements OnInit {
+export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
   executionSteps: EssayStep[] | undefined;
   preparationStep: EssayStep | undefined;
   currentStep: EssayStep | undefined;
 
   readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
+  readonly onDestroy = new Subject<void>();
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
@@ -47,6 +53,13 @@ export class ExecutionMajorStepComponent implements OnInit {
       this.initExecutionsProps(executionSteps, preparationStep);
       this.start();
     });
+
+    this.observeExecutionSteps();
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy.next();
+    this.onDestroy.complete();
   }
 
   photocellAdjustmentDone(stepId: number): void {
@@ -102,5 +115,45 @@ export class ExecutionMajorStepComponent implements OnInit {
           ?.setValue(standResultStatus);
       });
     });
+  }
+
+  private observeExecutionSteps(): void {
+    this.executionSteps$
+      .pipe(
+        takeUntil(this.onDestroy),
+        tap((steps) => {
+          // si todos los steps se ejecutaron, avanzar al siguiente major step
+          if (this.isAllStepsDone(steps)) {
+            this.runEssayService.nextMajorStep();
+          }
+          // si un step paso a Executed Done, avanzar con la ejecución del próximo
+          if (this.isAnyCurrentStep(steps)) {
+            const nextExecutionStep = steps.find(
+              ({ executedStatus }) => executedStatus === StepStatus.Pending
+            );
+            if (!nextExecutionStep) {
+              this.runEssayService.nextMajorStep();
+              return;
+            }
+            this.runEssayService
+              .getEssayStep(nextExecutionStep.id)
+              .get('executedStatus')
+              ?.setValue(StepStatus.Current);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private isAllStepsDone(executionSteps: EssayStep[]): boolean {
+    return executionSteps.every(
+      ({ executedStatus }) => executedStatus === StepStatus.Done
+    );
+  }
+
+  private isAnyCurrentStep(executionSteps: EssayStep[]): boolean {
+    return executionSteps.every(
+      ({ executedStatus }) => executedStatus !== StepStatus.Current
+    );
   }
 }

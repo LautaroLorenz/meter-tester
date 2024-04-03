@@ -51,28 +51,12 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   private readonly formatDate = inject(FormatDatePipe);
   private readonly onDestroy = new Subject<void>();
 
-  // get stepControls(): FormArray<FormControl> {
-  //   return (this.form.get('essayTemplateSteps') as FormArray);
-  // }
-  // get activeAction$(): Observable<Action | null> {
-  //   return this.executionDirectorService.activeAction$;
-  // }
-  // get activeStepIndex$(): Observable<number | null> {
-  //   return this.executionDirectorService.activeStepIndex$;
-  // }
-  // get activeActionIndex$(): Observable<number | null> {
-  //   return this.executionDirectorService.activeActionIndex$;
-  // }
-  // get executionStatus$(): Observable<ExecutionStatus> {
-  //   return this.executionDirectorService.executionStatus$;
-  // }
-
   constructor(
     private readonly fb: FormBuilder,
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly route: ActivatedRoute,
-    //   private readonly executionDirectorService: ExecutionDirector,
+    // TODO control de estadisticas
     //   private readonly staticsService: StaticsService,
     private readonly navigationService: NavigationService,
     public readonly runEssayService: RunEssayService
@@ -81,16 +65,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     this.runEssayForm = this.buildForm();
     this.runEssayService.runEssayForm = this.runEssayForm;
   }
-
-  // private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
-  //   this.stepBuilders = [];
-  //   essayTemplateSteps.forEach((essayTemplateStep) => {
-  //     const newStep: StepBuilder = StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$);
-  //     newStep.buildStepForm();
-  //     newStep.form.patchValue(essayTemplateStep.actions_raw_data);
-  //     this.stepBuilders.push(newStep);
-  //   });
-  // }
 
   ngOnInit(): void {
     if (APP_CONFIG.virtualMachine) {
@@ -115,10 +89,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   }
 
-  // executeNext(): void {
-  //   this.executionDirectorService.executeNext();
-  // }
-
+  // TODO fin de la ejecución
   // goToHistory(): void {
   //   this.staticsService.increment$(MetricEnum.execution, { essay: this.essayName }).pipe(
   //     take(1),
