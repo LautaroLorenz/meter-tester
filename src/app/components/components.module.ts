@@ -47,6 +47,7 @@ import { ResultStatusComponent } from './result-status/result-status.component';
 import { PatternComponent } from './machine/pattern/pattern.component';
 import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-pattern.component';
 import { PatternStatusComponent } from './pattern-status/pattern-status.component';
+import { PdfPageComponent } from './result-report/pdf-page/pdf-page.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -92,11 +93,12 @@ const AppComponents = [
   ResultStatusComponent,
   PatternComponent,
   VmPatternComponent,
-  PatternStatusComponent
+  PatternStatusComponent,
+  PdfPageComponent,
 ];
 
 @NgModule({
-  declarations: [AppComponents, ],
+  declarations: [AppComponents],
   imports: [
     CommonModule,
     PrimeNgModule,
