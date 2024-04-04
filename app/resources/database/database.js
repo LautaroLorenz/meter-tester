@@ -67,7 +67,7 @@ exports.default = {
                 .then(() => {
                 status = true;
             })
-                .catch((err) => {
+                .catch(() => {
                 status = false;
             });
             return { status };

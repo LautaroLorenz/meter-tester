@@ -6,6 +6,8 @@ import abm from './commands/abm';
 import essay from './commands/essay';
 import machine from './resources/machine/machine';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
+import { APP_CONFIG } from './environment/environment';
+import * as KnexLib from 'knex';
 
 function registerIpc(knex: any) {
   database.register();
@@ -15,15 +17,15 @@ function registerIpc(knex: any) {
 }
 
 let win: BrowserWindow | null = null;
+let knex: KnexLib.Knex;
 const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
 const isDev =
   args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
 
-const environment = isDev ? 'dev' : 'prod';
-const { APP_CONFIG } = require(`./environment/environment.${environment}`);
+const environment = APP_CONFIG(isDev);
 
-if (APP_CONFIG.virtualMachine) {
+if (environment.virtualMachine) {
   virtualMachine.register();
   virtualMachine.observeSoftwareWrite(machine.onSoftwareWrite$);
   machine.setSerialPort(virtualMachine.getMockSerialPort());
@@ -46,12 +48,11 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
       contextIsolation: false,
-      devTools: APP_CONFIG.inspector,
+      devTools: environment.inspector,
     },
   });
   win.setMenuBarVisibility(false);
 
-  let knex: any;
   if (serve) {
     const debug = require('electron-debug');
     debug();
@@ -77,6 +78,10 @@ function createWindow(): BrowserWindow {
 
   // Emitted when the window is closed.
   win.on('closed', () => {
+    if (knex) {
+      knex.destroy();
+    }
+
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
