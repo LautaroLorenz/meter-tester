@@ -5,6 +5,7 @@ import { Observable, filter, take } from 'rxjs';
 import { PageUrlName } from './models/business/enums/page-name.model';
 import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
+import { IpcService } from './services/ipc.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly router: Router,
     private readonly titleService: Title,
-    private readonly blockUIService: BlockUIService
+    private readonly blockUIService: BlockUIService,
+    private readonly ipcService: IpcService
   ) {
     this.translate.setDefaultLang('en');
   }
@@ -40,5 +42,10 @@ export class AppComponent implements OnInit {
           this.titleService.setTitle('Máquina virtual');
         }
       });
+
+    this.ipcService
+      .invoke$('get-database-path')
+      .pipe(take(1))
+      .subscribe(({ dataBasePath }) => console.log('database path ', dataBasePath));
   }
 }
