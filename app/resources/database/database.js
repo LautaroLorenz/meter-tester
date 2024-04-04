@@ -52,9 +52,6 @@ exports.default = {
         if (!fs.existsSync(dataBasePath)) {
             createDataBase(knex);
         }
-        else {
-            console.log('Base de datos encontrada', dataBasePath);
-        }
         return knex;
     },
     register: () => {
@@ -62,6 +59,18 @@ exports.default = {
             return {
                 dataBasePath,
             };
+        }));
+        electron_1.ipcMain.handle('get-database-connection-status', () => __awaiter(void 0, void 0, void 0, function* () {
+            let status;
+            yield knex
+                .raw('select 1+1 as result')
+                .then(() => {
+                status = true;
+            })
+                .catch((err) => {
+                status = false;
+            });
+            return { status };
         }));
     },
 };

@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as KnexLib from 'knex';
 
-let knex: any;
+let knex: KnexLib.Knex;
 
 // Path de la base de datos en el directorio de datos del usuario
 const userDataDir = app.getPath('userData');
@@ -48,8 +48,6 @@ export default {
     // crear base de datos si no existe
     if (!fs.existsSync(dataBasePath)) {
       createDataBase(knex);
-    } else {
-      console.log('Base de datos encontrada', dataBasePath);
     }
 
     return knex;
@@ -59,6 +57,19 @@ export default {
       return {
         dataBasePath,
       };
+    });
+    ipcMain.handle('get-database-connection-status', async () => {
+      let status;
+      await knex
+        .raw('select 1+1 as result')
+        .then(() => {
+          status = true;
+        })
+        .catch(() => {
+          status = false;
+        });
+
+      return { status };
     });
   },
 };

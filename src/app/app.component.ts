@@ -6,6 +6,7 @@ import { PageUrlName } from './models/business/enums/page-name.model';
 import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
 import { IpcService } from './services/ipc.service';
+import { MessagesService } from './services/messages.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent implements OnInit {
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly blockUIService: BlockUIService,
-    private readonly ipcService: IpcService
+    private readonly ipcService: IpcService,
+    private readonly messagesService: MessagesService
   ) {
     this.translate.setDefaultLang('en');
   }
@@ -44,8 +46,12 @@ export class AppComponent implements OnInit {
       });
 
     this.ipcService
-      .invoke$('get-database-path')
+      .invoke$('get-database-connection-status')
       .pipe(take(1))
-      .subscribe(({ dataBasePath }) => console.log('database path ', dataBasePath));
+      .subscribe(({ status }) => {
+        if (!status) {
+          this.messagesService.error('Error de conexión a la base de datos');
+        }
+      });
   }
 }
