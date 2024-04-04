@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const serialport_1 = require("serialport");
 const rxjs_1 = require("rxjs");
-const command_director_model_1 = require("../../../src/app/models/business/class/command-director.model");
+const command_director_1 = require("./command-director");
 let serialPort;
 const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
@@ -30,8 +30,8 @@ exports.default = {
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             _onSoftwareWrite$.next(command);
             try {
-                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_model_1.CommandDirector.getTo(command) ===
-                    command_director_model_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) ===
+                    command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
                     first: 3000,
                     with: () => {
                         throw new Error('Timeout');

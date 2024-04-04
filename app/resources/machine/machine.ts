@@ -2,8 +2,8 @@ import { ipcMain } from 'electron';
 import { SerialPort, DelimiterParser } from 'serialport';
 import { BindingInterface } from '@serialport/bindings-interface';
 import { Subject, filter, firstValueFrom, from, timeout } from 'rxjs';
-import { CommandDirector } from '../../../src/app/models/business/class/command-director.model';
 import { SerialPortStream } from '@serialport/stream';
+import { CommandDirector } from './command-director';
 
 let serialPort: SerialPortStream<BindingInterface>;
 const parser = new DelimiterParser({
