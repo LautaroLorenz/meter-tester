@@ -24,7 +24,7 @@ let APP_CONFIG: any;
 
 // cuando estamos en el ambiente dev, podemos trabajar con la máquina virtual
 if (isDev) {
-  import('../src/environments/environment.dev').then((environment) => {
+  import('./environment/environment.dev').then((environment) => {
     APP_CONFIG = environment.APP_CONFIG;
     if (APP_CONFIG.virtualMachine) {
       virtualMachine.register();
@@ -37,7 +37,7 @@ if (isDev) {
     }
   });
 } else {
-  import('../src/environments/environment.prod').then((environment) => {
+  import('./environment/environment.prod').then((environment) => {
     APP_CONFIG = environment.APP_CONFIG;
     machine.createSearialPort().then((serialPort) => {
       machine.setSerialPort(serialPort);
