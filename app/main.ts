@@ -2,14 +2,13 @@ import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import database from './resources/database/database';
-import knexFile from './resources/database/knexfile';
 import abm from './commands/abm';
 import essay from './commands/essay';
 import machine from './resources/machine/machine';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 
 function registerIpc(knex: any) {
-  knexFile.register();
+  database.register();
   abm.register(knex);
   essay.register(knex);
   machine.register();
@@ -58,7 +57,7 @@ function createWindow(): BrowserWindow {
     debug();
 
     require('electron-reloader')(module);
-    knex = database.connect({ isProduction: APP_CONFIG.production });
+    knex = database.connect();
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -69,7 +68,7 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    knex = database.connect({ isProduction: APP_CONFIG.production });
+    knex = database.connect();
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
   }
