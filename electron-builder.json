@@ -14,12 +14,6 @@
       "filter": ["**/*"]
     }
   ],
-  "extraResources": [
-    {
-      "from": "dist/assets/database.db",
-      "to": "database.db"
-    }
-  ],
   "win": {
     "icon": "dist/assets/icons",
     "target": ["portable"]
