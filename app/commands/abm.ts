@@ -1,12 +1,11 @@
 import { ipcMain } from 'electron';
-import { ForeignTable } from '../../src/app/models/core/database.model';
 
 function getForeignTableNameByProp(
-  relations: ForeignTable[],
+  relations: any[],
   property: string
 ): string {
   const relation = relations.find(
-    ({ propertyName }: ForeignTable) => propertyName === property
+    ({ propertyName }: any) => propertyName === property
   );
   return relation?.tableName ?? '';
 }
@@ -88,7 +87,7 @@ export default {
       }
 
       for (let i = 0; i < relations?.length; i++) {
-        const relation: ForeignTable = relations[i];
+        const relation: any = relations[i];
         queryBuilder.join(
           relation.tableName,
           `${tableName}.${relation.propertyName}_id`,
