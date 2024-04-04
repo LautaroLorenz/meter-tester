@@ -1,4 +1,5 @@
 export const APP_CONFIG = {
   production: true,
-  virtualMachine: false,
+  virtualMachine: true,
+  inspector: true,
 };

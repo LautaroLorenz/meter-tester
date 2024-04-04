@@ -20,28 +20,17 @@ const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
 const isDev =
   args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
-let APP_CONFIG: any;
 
-// cuando estamos en el ambiente dev, podemos trabajar con la máquina virtual
-if (isDev) {
-  import('./environment/environment.dev').then((environment) => {
-    APP_CONFIG = environment.APP_CONFIG;
-    if (APP_CONFIG.virtualMachine) {
-      virtualMachine.register();
-      virtualMachine.observeSoftwareWrite(machine.onSoftwareWrite$);
-      machine.setSerialPort(virtualMachine.getMockSerialPort());
-    } else {
-      machine.createSearialPort().then((serialPort) => {
-        machine.setSerialPort(serialPort);
-      });
-    }
-  });
+const environment = isDev ? 'dev' : 'prod';
+const { APP_CONFIG } = require(`./environment/environment.${environment}`);
+
+if (APP_CONFIG.virtualMachine) {
+  virtualMachine.register();
+  virtualMachine.observeSoftwareWrite(machine.onSoftwareWrite$);
+  machine.setSerialPort(virtualMachine.getMockSerialPort());
 } else {
-  import('./environment/environment.prod').then((environment) => {
-    APP_CONFIG = environment.APP_CONFIG;
-    machine.createSearialPort().then((serialPort) => {
-      machine.setSerialPort(serialPort);
-    });
+  machine.createSearialPort().then((serialPort) => {
+    machine.setSerialPort(serialPort);
   });
 }
 
@@ -58,7 +47,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
       contextIsolation: false,
-      devTools: serve,
+      devTools: APP_CONFIG.inspector,
     },
   });
   win.setMenuBarVisibility(false);
@@ -69,7 +58,7 @@ function createWindow(): BrowserWindow {
     debug();
 
     require('electron-reloader')(module);
-    knex = database.connect({ isProduction: false });
+    knex = database.connect({ isProduction: APP_CONFIG.production });
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -80,7 +69,7 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    knex = database.connect({ isProduction: true });
+    knex = database.connect({ isProduction: APP_CONFIG.production });
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
   }

@@ -7,21 +7,13 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "target": "es2015",
-    "types": [
-      "node"
-    ],
-    "lib": [
-      "es2017",
-      "es2016",
-      "es2015",
-      "dom"
-    ]
+    "types": ["node"],
+    "lib": ["es2017", "es2016", "es2015", "dom"]
   },
   "files": [
-    "app/main.ts"
+    "app/main.ts",
+    "app/environment/environment.dev.ts",
+    "app/environment/environment.prod.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
