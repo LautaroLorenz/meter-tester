@@ -1,5 +1,6 @@
 import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
+import { Steps } from '../enums/steps.model';
 import {
   EssayTemplate,
   EssayTemplateDbTableContext,
@@ -10,7 +11,7 @@ export interface EssayTemplateStep extends DbForeignKey {
   id: number;
   order: number;
   essay_template_id: number;
-  step_id: number;
+  step_id: Steps;
   form_control_raw: any;
   foreign: {
     essayTemplate?: EssayTemplate;

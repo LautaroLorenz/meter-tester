@@ -50,6 +50,7 @@ import { PatternStatusComponent } from './pattern-status/pattern-status.componen
 import { PdfPageComponent } from './result-report/pdf-page/pdf-page.component';
 import { BlockUiComponent } from './block-ui/block-ui.component';
 import { ReportStepSwitchComponent } from './result-report/report-step-switch/report-step-switch.component';
+import { VacuumTestPdfReportComponent } from './result-report/vacuum-test-pdf-report/vacuum-test-pdf-report.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -102,7 +103,7 @@ const AppComponents = [
 ];
 
 @NgModule({
-  declarations: [AppComponents],
+  declarations: [AppComponents, VacuumTestPdfReportComponent],
   imports: [
     CommonModule,
     PrimeNgModule,

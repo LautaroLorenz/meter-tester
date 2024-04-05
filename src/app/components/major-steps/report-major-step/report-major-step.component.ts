@@ -105,7 +105,7 @@ export class ReportMajorStepComponent implements OnInit {
 
   private getPages(): PdfPageComponent[] {
     return this.steps.reduce<PdfPageComponent[]>(
-      (acc, { pages }) => (acc = acc.concat(pages.toArray())),
+      (acc, { pages }) => (acc = acc.concat(pages)),
       []
     );
   }

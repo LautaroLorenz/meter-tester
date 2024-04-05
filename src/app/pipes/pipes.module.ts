@@ -6,6 +6,7 @@ import { FormatDatePipe } from './core/fomat-date.pipe';
 import { MeterConstantPipe } from './business/meter-constant.pipe';
 import { DeviceConstantPipe } from './business/device.pipe';
 import { StandMeterConstantPipe } from './business/stand-meter-constant.pipe';
+import { StepAsPipe } from './business/step-as.pipe';
 
 const AppPipes = [
   DotStringAsObjectPipe,
@@ -14,6 +15,7 @@ const AppPipes = [
   MeterConstantPipe,
   DeviceConstantPipe,
   StandMeterConstantPipe,
+  StepAsPipe,
 ];
 
 const CommonPipes = [DecimalPipe, DatePipe];

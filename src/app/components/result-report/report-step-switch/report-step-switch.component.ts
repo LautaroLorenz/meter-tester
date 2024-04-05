@@ -2,10 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  QueryList,
-  ViewChildren,
+  ViewChild,
 } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
+import { Steps } from '../../../models/business/enums/steps.model';
+import { PdfReportComponent } from '../../../models/business/class/pdf-report-component.model';
 import { PdfPageComponent } from '../pdf-page/pdf-page.component';
 
 @Component({
@@ -16,5 +17,11 @@ import { PdfPageComponent } from '../pdf-page/pdf-page.component';
 })
 export class ReportStepSwitchComponent {
   @Input() essayStep!: EssayStep;
-  @ViewChildren(PdfPageComponent) pages!: QueryList<PdfPageComponent>;
+  @ViewChild(PdfReportComponent) stepPdfReport!: PdfReportComponent;
+
+  readonly Steps = Steps;
+
+  get pages(): PdfPageComponent[] {
+    return this.stepPdfReport.pages.toArray();
+  }
 }

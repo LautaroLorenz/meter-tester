@@ -2,14 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnChanges,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {
   VacuumTestEssayStep,
   VacuumTestStandResult,
-  VacuumTestStep,
 } from '../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
@@ -33,16 +30,12 @@ import { APP_CONFIG } from '../../../../environments/environment';
   styleUrls: ['./vacuum-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestRunComponent
-  extends TestRunComponent
-  implements OnChanges
-{
-  @Input() currentStep!: VacuumTestStep;
+export class VacuumTestRunComponent extends TestRunComponent {
+  @Input() currentStep!: VacuumTestEssayStep;
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
-  vacuumStep!: VacuumTestEssayStep;
   canContinue = false;
 
   readonly resultsColumn: TableColumn<StandStandResult> = {
@@ -55,12 +48,6 @@ export class VacuumTestRunComponent
         : '';
     },
   };
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.currentStep) {
-      this.vacuumStep = changes.currentStep.currentValue as VacuumTestEssayStep;
-    }
-  }
 
   onManualGeneratorAdjusted(): void {
     this.startTest();
@@ -162,7 +149,7 @@ export class VacuumTestRunComponent
     const stepTypeBlock = SoftwareCalculatorCommands.START_VACUUM;
     const patternConstantBlock = ''.padStart(10, '0');
     const maxAllowedPulsesBlock: string =
-      this.vacuumStep.form_control_raw.maxAllowedPulses
+      this.currentStep.form_control_raw.maxAllowedPulses
         .toString()
         .padStart(8, '0');
 
@@ -171,13 +158,14 @@ export class VacuumTestRunComponent
 
   private updateStandsResultStatus(): void {
     this.getActiveStands().forEach(({ index }) => {
-      const result: VacuumTestStandResult = this.vacuumStep.standResults[index];
+      const result: VacuumTestStandResult =
+        this.currentStep.standResults[index];
       this.runEssayService
         .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
         .patchValue({
           resultStatus: this.calculateStandStatus(
             result.measuredPulses,
-            this.vacuumStep.form_control_raw.maxAllowedPulses as number
+            this.currentStep.form_control_raw.maxAllowedPulses as number
           ),
         });
     });
@@ -222,6 +210,6 @@ export class VacuumTestRunComponent
     if (!APP_CONFIG.skipSteps) {
       return;
     }
-    this.stepExecutionDone(this.vacuumStep);
+    this.stepExecutionDone(this.currentStep);
   }
 }

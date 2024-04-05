@@ -10,6 +10,7 @@ import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
+import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-execution-major-step',
@@ -33,10 +34,10 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
     );
   }
 
-  get preparationStep$(): Observable<EssayStep> {
+  get preparationStep$(): Observable<PreparationEssayStep> {
     return this.runEssayService.preparationStep$.pipe(
       tap((preparationStep) => (this.preparationStep = preparationStep))
-    );
+    ) as Observable<PreparationEssayStep>;
   }
 
   get currentStep$(): Observable<EssayStep | undefined> {
@@ -82,7 +83,7 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
 
   private initExecutionsProps(
     essaySteps: EssayStep[],
-    preparationStep: EssayStep
+    preparationStep: PreparationEssayStep
   ): void {
     essaySteps.forEach((essayStep, index) => {
       // estado de la ejecución

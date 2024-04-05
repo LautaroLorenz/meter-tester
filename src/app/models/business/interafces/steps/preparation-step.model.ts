@@ -15,8 +15,6 @@ export interface PreparationStep extends EssayTemplateStep {
   form_control_raw: PreparationFormControlRaw;
 }
 
-// export type PreparationEssayStep = PreparationStep & EssayStep;
-
 export type PreparationEssayStep = PreparationStep &
   Pick<EssayStep, 'verifiedStatus'>;
 

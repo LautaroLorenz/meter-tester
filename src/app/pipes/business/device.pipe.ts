@@ -10,6 +10,6 @@ export class DeviceConstantPipe implements PipeTransform {
   readonly DeviceConstants = DeviceConstants;
 
   transform(value: Devices): string {
-    return DeviceConstants[value] as string;
+    return DeviceConstants[value];
   }
 }

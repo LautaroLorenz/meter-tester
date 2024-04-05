@@ -46,7 +46,8 @@
             "allowedCommonJsDependencies": [
               "rxjs",
               "rxjs/operators",
-              "dot-object"
+              "dot-object",
+              "html2canvas"
             ]
           },
           "configurations": {

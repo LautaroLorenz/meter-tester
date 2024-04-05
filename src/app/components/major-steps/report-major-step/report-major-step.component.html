@@ -1,6 +1,6 @@
 <div class="container flex flex-column align-items-center p-5">
   <div class="flex gap-5 flex-column">
-    <div #report class="flex flex-column gap-4">
+    <div #report class="report flex flex-column gap-4">
       <ng-container *ngFor="let essayStep of executionSteps">
         <app-report-step-switch
           [essayStep]="essayStep"

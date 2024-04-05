@@ -22,7 +22,7 @@
   <app-calculator #calculator>
     <app-stands-result
       [preparationStep]="preparationStep"
-      [results]="vacuumStep.standResults"
+      [results]="currentStep.standResults"
       [resultsColumn]="resultsColumn"
       [stepMeterConstant]="currentStep.form_control_raw.meterConstant"
     ></app-stands-result>
@@ -47,6 +47,6 @@
     label="Continuar"
     [outlined]="false"
     [disabled]="!canContinue"
-    (click)="stepExecutionDone(this.vacuumStep)"
+    (click)="stepExecutionDone(this.currentStep)"
   ></p-button>
 </div>

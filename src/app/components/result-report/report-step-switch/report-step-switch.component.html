@@ -1,2 +1,6 @@
-<app-pdf-page>página 1 - {{ essayStep.form_control_raw?.name }}</app-pdf-page>
-<app-pdf-page>página 1 - {{ essayStep.form_control_raw?.name }}</app-pdf-page>
+<ng-container [ngSwitch]="essayStep.step_id">
+  <app-vacuum-test-pdf-report
+    *ngSwitchCase="Steps.VacuumTest"
+    [essayStep]="essayStep | stepAs"
+  ></app-vacuum-test-pdf-report>
+</ng-container>
