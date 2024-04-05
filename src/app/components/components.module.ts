@@ -49,6 +49,7 @@ import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-patt
 import { PatternStatusComponent } from './pattern-status/pattern-status.component';
 import { PdfPageComponent } from './result-report/pdf-page/pdf-page.component';
 import { BlockUiComponent } from './block-ui/block-ui.component';
+import { ReportStepSwitchComponent } from './result-report/report-step-switch/report-step-switch.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -96,7 +97,8 @@ const AppComponents = [
   VmPatternComponent,
   PatternStatusComponent,
   PdfPageComponent,
-  BlockUiComponent
+  BlockUiComponent,
+  ReportStepSwitchComponent,
 ];
 
 @NgModule({

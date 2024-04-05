@@ -13,6 +13,10 @@ import { PdfPageComponent } from '../../result-report/pdf-page/pdf-page.componen
 import { RunEssay } from '../../../models/business/interafces/run-essay.model';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { MessagesService } from '../../../services/messages.service';
+import { EssayStep } from '../../../models/business/interafces/essay-step.model';
+import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
+import { MajorSteps } from '../../../models/business/enums/major-steps.model';
+import { ReportStepSwitchComponent } from '../../result-report/report-step-switch/report-step-switch.component';
 
 @Component({
   selector: 'app-report-major-step',
@@ -21,11 +25,13 @@ import { MessagesService } from '../../../services/messages.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportMajorStepComponent implements OnInit {
-  @ViewChildren(PdfPageComponent) pages!: QueryList<PdfPageComponent>;
+  @ViewChildren(ReportStepSwitchComponent)
+  steps!: QueryList<ReportStepSwitchComponent>;
 
   isDownloading = false;
   fileName!: string;
   readonly runEssay: RunEssay;
+  readonly executionSteps: EssayStep[];
 
   constructor(
     private readonly runEssayService: RunEssayService,
@@ -34,6 +40,10 @@ export class ReportMajorStepComponent implements OnInit {
     private readonly cd: ChangeDetectorRef
   ) {
     this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
+    this.executionSteps = MajorStepsDirector.stepsByMajorStep(
+      this.runEssay.essaySteps,
+      MajorSteps.Execution
+    );
   }
 
   ngOnInit(): void {
@@ -56,9 +66,10 @@ export class ReportMajorStepComponent implements OnInit {
   }
 
   private async createPDF(fileName: string): Promise<void> {
+    const pages = this.getPages();
     const PDF = new jsPDF('p', 'mm', 'a4', true);
-    for (let index = 0; index < this.pages.length; index++) {
-      const page = this.pages.get(index) as PdfPageComponent;
+    for (let index = 0; index < pages.length; index++) {
+      const page = pages[index];
       if (index > 0) {
         PDF.addPage();
       }
@@ -90,5 +101,12 @@ export class ReportMajorStepComponent implements OnInit {
     const seconds = date.getSeconds().toString().padStart(2, '0');
     const formatedDate = `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`;
     return `reporte_${this.runEssay.essayName}_${formatedDate}.pdf`;
+  }
+
+  private getPages(): PdfPageComponent[] {
+    return this.steps.reduce<PdfPageComponent[]>(
+      (acc, { pages }) => (acc = acc.concat(pages.toArray())),
+      []
+    );
   }
 }
