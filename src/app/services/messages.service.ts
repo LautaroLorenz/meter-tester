@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { Message, MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -11,13 +11,20 @@ export class MessagesService {
 
   constructor(private readonly messageService: MessageService) {}
 
-  public info(message: string): void {
-    this.messageService.add({
+  public info(message: string, sticky = false): void {
+    const config: Message = {
       severity: 'info',
       summary: 'Información',
       detail: message,
-      life: this.messageInfoLifeMs,
-    });
+    };
+
+    if (sticky) {
+      config.sticky = true;
+    } else {
+      config.life = this.messageInfoLifeMs;
+    }
+
+    this.messageService.add(config);
   }
 
   public warn(message: string): void {

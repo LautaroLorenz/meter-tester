@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = require("path");
 let knex;
+let created = false;
 // Path de la base de datos en el directorio de datos del usuario
 const userDataDir = electron_1.app.getPath('userData');
 const dataBaseName = 'database.db';
@@ -41,7 +42,9 @@ function runSeedsFirstTime(knex) {
             .then((rows) => rows[0].count === 0);
         if (isEmpty) {
             // Si la base de datos está vacía, ejecuta los seeds
-            knex.seed.run();
+            knex.seed.run().then(() => {
+                created = true;
+            });
         }
     });
 }
@@ -71,7 +74,7 @@ exports.default = {
                 .catch(() => {
                 status = false;
             });
-            return { status };
+            return { status, created };
         }));
     },
 };

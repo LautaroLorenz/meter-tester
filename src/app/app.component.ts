@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, filter, take } from 'rxjs';
+import { Observable, filter, take, timer, switchMap } from 'rxjs';
 import { PageUrlName } from './models/business/enums/page-name.model';
 import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
@@ -45,12 +45,19 @@ export class AppComponent implements OnInit {
         }
       });
 
-    this.ipcService
-      .invoke$('get-database-connection-status')
-      .pipe(take(1))
-      .subscribe(({ status }) => {
+    timer(3000)
+      .pipe(
+        take(1),
+        switchMap(() =>
+          this.ipcService.invoke$('get-database-connection-status')
+        )
+      )
+      .subscribe(({ status, created }) => {
         if (!status) {
           this.messagesService.error('Error de conexión a la base de datos');
+        }
+        if (created) {
+          this.messagesService.info('Base de datos creada', true);
         }
       });
   }

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as KnexLib from 'knex';
 
 let knex: KnexLib.Knex;
+let created = false;
 
 // Path de la base de datos en el directorio de datos del usuario
 const userDataDir = app.getPath('userData');
@@ -37,7 +38,9 @@ async function runSeedsFirstTime(knex: KnexLib.Knex) {
 
   if (isEmpty) {
     // Si la base de datos está vacía, ejecuta los seeds
-    knex.seed.run();
+    knex.seed.run().then(() => {
+      created = true;
+    });
   }
 }
 
@@ -70,7 +73,7 @@ export default {
           status = false;
         });
 
-      return { status };
+      return { status, created };
     });
   },
 };
