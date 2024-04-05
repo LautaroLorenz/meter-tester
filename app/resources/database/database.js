@@ -74,7 +74,11 @@ exports.default = {
                 .catch(() => {
                 status = false;
             });
-            return { status, created };
+            const response = { status, created, location: '' };
+            if (status) {
+                response.location = dataBasePath;
+            }
+            return response;
         }));
     },
 };

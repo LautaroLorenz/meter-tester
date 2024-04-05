@@ -52,22 +52,6 @@ export class AppComponent implements OnInit {
           this.ipcService.invoke$('get-database-connection-status')
         )
       )
-      .subscribe(({ status, created }) => {
-        if (!status) {
-          this.messagesService.error('Error de conexión a la base de datos');
-        }
-        if (created) {
-          this.messagesService.info('Base de datos creada', true);
-        }
-      });
-
-    timer(3000)
-      .pipe(
-        take(1),
-        switchMap(() =>
-          this.ipcService.invoke$('get-database-connection-status')
-        )
-      )
       .subscribe(({ status, created, location }) => {
         if (!status) {
           this.messagesService.error('Error de conexión a la base de datos');
