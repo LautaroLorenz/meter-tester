@@ -73,7 +73,11 @@ export default {
           status = false;
         });
 
-      return { status, created };
+      const response = { status, created, location: '' };
+      if (status) {
+        response.location = dataBasePath;
+      }
+      return response;
     });
   },
 };
