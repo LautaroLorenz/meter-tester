@@ -23,6 +23,7 @@ import { TestRunComponent } from '../../../models/business/class/test-run.model'
 import { PatternComponent } from '../../machine/pattern/pattern.component';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { APP_CONFIG } from '../../../../environments/environment';
+import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -121,7 +122,7 @@ export class VacuumTestRunComponent extends TestRunComponent {
           this.calculator.start$(
             this.getStepCalculatorBlocks(),
             this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant
+            this.currentStep.form_control_raw.meterConstant as MeterConstantEnum
           )
         ),
         // cambia el estado de los resultados

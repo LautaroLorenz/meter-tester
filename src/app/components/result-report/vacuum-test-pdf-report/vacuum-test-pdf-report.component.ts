@@ -4,8 +4,12 @@ import {
   Input,
   forwardRef,
 } from '@angular/core';
-import { VacuumTestEssayStep } from '../../../models/business/interafces/steps/vacuum-step.model';
+import { VacuumTestEssayStep, VacuumTestStandResult } from '../../../models/business/interafces/steps/vacuum-step.model';
 import { PdfReportComponent } from '../../../models/business/class/pdf-report-component.model';
+import { TC_AlignHorizontal, TableColumn } from '../../../models/core/table-column.model';
+import { StandStandResult } from '../../../models/business/interafces/stand-result.model';
+import { Stand } from '../../../models/business/interafces/stand.model';
+import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-vacuum-test-pdf-report',
@@ -21,4 +25,16 @@ import { PdfReportComponent } from '../../../models/business/class/pdf-report-co
 })
 export class VacuumTestPdfReportComponent extends PdfReportComponent {
   @Input() essayStep!: VacuumTestEssayStep;
+  @Input() preparationStep!: PreparationEssayStep;
+
+  readonly resultsColumn: TableColumn<StandStandResult> = {
+    alignHorizontal: TC_AlignHorizontal.Number,
+    header: 'Impulsos',
+    field: (item: StandStandResult): string => {
+      const realItem = item as Stand | VacuumTestStandResult;
+      return 'measuredPulses' in realItem
+        ? realItem.measuredPulses?.toString()
+        : '';
+    },
+  };
 }

@@ -1,6 +1,15 @@
 <app-pdf-page>
-  <!-- 
-    TODO armar el reporte para el ensayo de vacio
-    <app-vacuum-test-params [currentStep]="essayStep"></app-vacuum-test-params> 
-  -->
+  <!-- TODO hacer un haeder genérico -->
+  <!-- TODO Mostrar los parámetros -->
+
+  <!-- Resultados -->
+  <!-- TODO no funciona el template de result status el texto "Falló" "Aprobó" no sale en el pdf -->
+  <div class="-mx-3">
+    <app-stands-result
+      [preparationStep]="preparationStep"
+      [results]="essayStep.standResults"
+      [resultsColumn]="resultsColumn"
+      [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
+    ></app-stands-result>
+  </div>
 </app-pdf-page>

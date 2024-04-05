@@ -17,6 +17,7 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
 import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { ReportStepSwitchComponent } from '../../result-report/report-step-switch/report-step-switch.component';
+import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -32,6 +33,7 @@ export class ReportMajorStepComponent implements OnInit {
   fileName!: string;
   readonly runEssay: RunEssay;
   readonly executionSteps: EssayStep[];
+  readonly preparationStep: PreparationEssayStep;
 
   constructor(
     private readonly runEssayService: RunEssayService,
@@ -44,6 +46,10 @@ export class ReportMajorStepComponent implements OnInit {
       this.runEssay.essaySteps,
       MajorSteps.Execution
     );
+    this.preparationStep = MajorStepsDirector.stepsByMajorStep(
+      this.runEssay.essaySteps,
+      MajorSteps.Preparation
+    )?.[0] as PreparationEssayStep;
   }
 
   ngOnInit(): void {
