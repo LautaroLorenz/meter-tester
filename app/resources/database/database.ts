@@ -29,26 +29,27 @@ const config = {
   },
 };
 
-function createDataBase(knex: KnexLib.Knex): void {
-  knex.migrate
-    .latest()
-    .then(() => knex.seed.run())
-    .then(() => {
-      console.log('Base de datos creada y migraciones/seeds ejecutados');
-    })
-    .catch((error) => {
-      console.error(`Error al crear la base de datos: ${error}`);
-    });
+async function runSeedsFirstTime(knex: KnexLib.Knex) {
+  // Verifica si la base de datos está vacía
+  const isEmpty = await knex('meters')
+    .count('* as count')
+    .then((rows) => rows[0].count === 0);
+
+  if (isEmpty) {
+    // Si la base de datos está vacía, ejecuta los seeds
+    knex.seed.run();
+  }
 }
 
 export default {
   connect: () => {
     knex = require('knex')(config);
 
-    // crear base de datos si no existe
-    if (!fs.existsSync(dataBasePath)) {
-      createDataBase(knex);
-    }
+    // Actualizar base de datos
+    knex.migrate.latest().then(() => {
+      // Run seeds first time
+      runSeedsFirstTime(knex);
+    });
 
     return knex;
   },

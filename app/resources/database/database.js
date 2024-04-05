@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = require("path");
-const fs = require("fs");
 let knex;
 // Path de la base de datos en el directorio de datos del usuario
 const userDataDir = electron_1.app.getPath('userData');
@@ -34,24 +33,26 @@ const config = {
         afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb),
     },
 };
-function createDataBase(knex) {
-    knex.migrate
-        .latest()
-        .then(() => knex.seed.run())
-        .then(() => {
-        console.log('Base de datos creada y migraciones/seeds ejecutados');
-    })
-        .catch((error) => {
-        console.error(`Error al crear la base de datos: ${error}`);
+function runSeedsFirstTime(knex) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Verifica si la base de datos está vacía
+        const isEmpty = yield knex('meters')
+            .count('* as count')
+            .then((rows) => rows[0].count === 0);
+        if (isEmpty) {
+            // Si la base de datos está vacía, ejecuta los seeds
+            knex.seed.run();
+        }
     });
 }
 exports.default = {
     connect: () => {
         knex = require('knex')(config);
-        // crear base de datos si no existe
-        if (!fs.existsSync(dataBasePath)) {
-            createDataBase(knex);
-        }
+        // Actualizar base de datos
+        knex.migrate.latest().then(() => {
+            // Run seeds first time
+            runSeedsFirstTime(knex);
+        });
         return knex;
     },
     register: () => {
