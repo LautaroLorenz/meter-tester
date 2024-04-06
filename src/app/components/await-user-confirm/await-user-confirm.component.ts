@@ -3,10 +3,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
-import { APP_CONFIG } from '../../../environments/environment';
 
 @Component({
   selector: 'app-await-user-confirm',
@@ -14,7 +12,7 @@ import { APP_CONFIG } from '../../../environments/environment';
   styleUrls: ['./await-user-confirm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AwaitUserConfirmComponent implements OnInit {
+export class AwaitUserConfirmComponent {
   @Input() headerText!: string;
   @Input() confirmButtonText!: string;
   @Input() confirmButtonIcon!: string;
@@ -26,10 +24,6 @@ export class AwaitUserConfirmComponent implements OnInit {
   confirmed = false;
   removed = false;
 
-  ngOnInit(): void {
-    this.skip();
-  }
-
   onUserConfirm(): void {
     this.confirmed = true;
     this.userConfirm.emit();
@@ -38,16 +32,5 @@ export class AwaitUserConfirmComponent implements OnInit {
   removePanel(): void {
     this.removed = true;
     this.userRemove.emit();
-  }
-
-  private skip(): void {
-    if (!APP_CONFIG.skipSteps) {
-      return;
-    }
-
-    setTimeout(() => {
-      this.onUserConfirm();
-      this.removePanel();
-    }, 250);
   }
 }
