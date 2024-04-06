@@ -12,7 +12,7 @@ export interface Environment {
   commandStandsQuantity: number;
 
   // completa pasos automaticamente
-  skipSteps: boolean;
+  skipSteps: Record<string, boolean>;
 
   // activa la maquina virtual
   virtualMachine: boolean;

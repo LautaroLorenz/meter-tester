@@ -23,7 +23,7 @@ export class PhotocellAdjusmentRequestComponent implements OnInit {
   }
 
   private skip(): void {
-    if (!APP_CONFIG.skipSteps) {
+    if (!APP_CONFIG.skipSteps.photocellAdjustmentRequest) {
       return;
     }
 

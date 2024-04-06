@@ -63,7 +63,7 @@ export class PreparationMajorStepComponent implements OnInit {
   }
 
   private skip(): void {
-    if (!APP_CONFIG.skipSteps) {
+    if (!APP_CONFIG.skipSteps.preparationMajorStep) {
       return;
     }
 

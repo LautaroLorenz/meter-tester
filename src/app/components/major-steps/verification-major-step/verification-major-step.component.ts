@@ -80,7 +80,7 @@ export class VerificationMajorStepComponent implements OnInit {
   }
 
   private skip(): void {
-    if (!APP_CONFIG.skipSteps) {
+    if (!APP_CONFIG.skipSteps.verificationMajorStep) {
       return;
     }
 

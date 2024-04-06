@@ -3,8 +3,14 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
   production: true,
   environment: 'WEB-PROD',
-  standsQuantiy: 10, // cantidad de puestos que tiene la máquina
-  commandStandsQuantity: 20, // cantidad de puestos que se envian en los comandos
-  skipSteps: false,
+  standsQuantiy: 10,
+  commandStandsQuantity: 20,
+  skipSteps: {
+    manualGeneratorConfirm: false,
+    photocellAdjustmentRequest: false,
+    verificationMajorStep: false,
+    preparationMajorStep: false,
+    vacuumTestRun: false,
+  },
   virtualMachine: false,
 };

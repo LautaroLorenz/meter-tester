@@ -208,7 +208,7 @@ export class VacuumTestRunComponent extends TestRunComponent {
   }
 
   private skip(): void {
-    if (!APP_CONFIG.skipSteps) {
+    if (!APP_CONFIG.skipSteps.vacuumTestRun) {
       return;
     }
     this.stepExecutionDone(this.currentStep);
