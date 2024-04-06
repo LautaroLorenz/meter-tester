@@ -5,7 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { VacuumTestStep } from '../../../models/business/interafces/steps/vacuum-step.model';
+import { VacuumTestStep } from '../../../../models/business/interafces/steps/vacuum-step.model';
 
 @Component({
   selector: 'app-vacuum-test-params',

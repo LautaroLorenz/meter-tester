@@ -4,11 +4,11 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
-import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { Steps } from '../../../models/business/enums/steps.model';
-import { PdfReportComponent } from '../../../models/business/class/pdf-report-component.model';
 import { PdfPageComponent } from '../pdf-page/pdf-page.component';
-import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
+import { PreparationEssayStep } from '../../../../models/business/interafces/steps/preparation-step.model';
+import { PdfReportComponent } from '../../../../models/business/class/pdf-report-component.model';
+import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
+import { Steps } from '../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-report-step-switch',

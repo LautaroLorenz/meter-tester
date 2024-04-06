@@ -8,11 +8,7 @@ import { PipesModule } from '../pipes/pipes.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MenuComponent } from './menu/menu.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
-import { BootTestBuildFormComponent } from './build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
-import { PreparationBuildFormComponent } from './build-steps/preparation-build-form/preparation-build-form.component';
-import { ContrastTestBuildFormComponent } from './build-steps/contrast-test-build-form/contrast-test-build-form.component';
-import { VacuumTestBuildFormComponent } from './build-steps/vacuum-test-build-form/vacuum-test-build-form.component';
 import { InputErrorComponent } from './input-error/input-error.component';
 import { AddStepToSequenceComponent } from './add-step-to-sequence/add-step-to-sequence.component';
 import { StepsSequenceTableComponent } from './steps-sequence-table/steps-sequence-table.component';
@@ -27,12 +23,10 @@ import { ReportMajorStepComponent } from './major-steps/report-major-step/report
 import { StepTimelineComponent } from './timeline/step-timeline/step-timeline.component';
 import { StepTimelineBadgeComponent } from './timeline/step-timeline-badge/step-timeline-badge.component';
 import { VerifyStepInSequenceComponent } from './verify-step-in-sequence/verify-step-in-sequence.component';
-import { BuildStepSwitchComponent } from './build-steps/build-step-switch/build-step-switch.component';
-import { RunStepSwitchComponent } from './run-steps/run-step-switch/run-step-switch.component';
+import { RunStepSwitchComponent } from './steps/run-steps/run-step-switch/run-step-switch.component';
 import { PhotocellAdjusmentRequestComponent } from './photocell-adjusment-request/photocell-adjusment-request.component';
-import { VacuumTestRunComponent } from './run-steps/vacuum-test-run/vacuum-test-run.component';
+import { VacuumTestRunComponent } from './steps/run-steps/vacuum-test-run/vacuum-test-run.component';
 import { CountTimerComponent } from './count-timer/count-timer.component';
-import { VacuumTestParamsComponent } from './step-params/vacuum-test-params/vacuum-test-params.component';
 import { ManualGeneratorComponent } from './machine/manual-generator/manual-generator.component';
 import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 import { CalculatorComponent } from './machine/calculator/calculator.component';
@@ -47,10 +41,16 @@ import { ResultStatusComponent } from './result-status/result-status.component';
 import { PatternComponent } from './machine/pattern/pattern.component';
 import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-pattern.component';
 import { PatternStatusComponent } from './pattern-status/pattern-status.component';
-import { PdfPageComponent } from './result-report/pdf-page/pdf-page.component';
 import { BlockUiComponent } from './block-ui/block-ui.component';
-import { ReportStepSwitchComponent } from './result-report/report-step-switch/report-step-switch.component';
-import { VacuumTestPdfReportComponent } from './result-report/vacuum-test-pdf-report/vacuum-test-pdf-report.component';
+import { BootTestBuildFormComponent } from './steps/build-steps/boot-test-build-form/boot-test-build-form.component';
+import { PreparationBuildFormComponent } from './steps/build-steps/preparation-build-form/preparation-build-form.component';
+import { ContrastTestBuildFormComponent } from './steps/build-steps/contrast-test-build-form/contrast-test-build-form.component';
+import { VacuumTestBuildFormComponent } from './steps/build-steps/vacuum-test-build-form/vacuum-test-build-form.component';
+import { BuildStepSwitchComponent } from './steps/build-steps/build-step-switch/build-step-switch.component';
+import { VacuumTestParamsComponent } from './steps/step-params/vacuum-test-params/vacuum-test-params.component';
+import { PdfPageComponent } from './steps/result-report/pdf-page/pdf-page.component';
+import { ReportStepSwitchComponent } from './steps/result-report/report-step-switch/report-step-switch.component';
+import { VacuumTestPdfReportComponent } from './steps/result-report/vacuum-test-pdf-report/vacuum-test-pdf-report.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -100,10 +100,11 @@ const AppComponents = [
   PdfPageComponent,
   BlockUiComponent,
   ReportStepSwitchComponent,
+  VacuumTestPdfReportComponent,
 ];
 
 @NgModule({
-  declarations: [AppComponents, VacuumTestPdfReportComponent],
+  declarations: [AppComponents],
   imports: [
     CommonModule,
     PrimeNgModule,

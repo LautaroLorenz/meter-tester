@@ -9,15 +9,15 @@ import {
 import { RunEssayService } from '../../../services/run-essay.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { PdfPageComponent } from '../../result-report/pdf-page/pdf-page.component';
 import { RunEssay } from '../../../models/business/interafces/run-essay.model';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { MessagesService } from '../../../services/messages.service';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
-import { ReportStepSwitchComponent } from '../../result-report/report-step-switch/report-step-switch.component';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
+import { ReportStepSwitchComponent } from '../../steps/result-report/report-step-switch/report-step-switch.component';
+import { PdfPageComponent } from '../../steps/result-report/pdf-page/pdf-page.component';
 
 @Component({
   selector: 'app-report-major-step',

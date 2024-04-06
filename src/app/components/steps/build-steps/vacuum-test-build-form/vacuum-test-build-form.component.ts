@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { StepBuildFormComponent } from '../../../models/business/class/step-build-form-component.model';
-import { AbstractFormGroup } from '../../../models/core/abstract-form-group.model';
 import { FormBuilder } from '@angular/forms';
-import { MeterConstants } from '../../../models/business/constants/meter-constant.model';
-import {
-  VacuumTestFormBuilder,
-  VacuumTestStep,
-} from '../../../models/business/interafces/steps/vacuum-step.model';
+import { StepBuildFormComponent } from '../../../../models/business/class/step-build-form-component.model';
+import { VacuumTestFormBuilder, VacuumTestStep } from '../../../../models/business/interafces/steps/vacuum-step.model';
+import { MeterConstants } from '../../../../models/business/constants/meter-constant.model';
+import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
 
 @Component({
   selector: 'app-vacuum-test-build-form',

@@ -7,8 +7,8 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { EssayStep } from '../../../models/business/interafces/essay-step.model';
-import { Steps } from '../../../models/business/enums/steps.model';
+import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
+import { Steps } from '../../../../models/business/enums/steps.model';
 import { timer } from 'rxjs';
 
 @Component({

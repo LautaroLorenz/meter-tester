@@ -5,8 +5,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Steps } from '../../../models/business/enums/steps.model';
-import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
+import { EssayTemplateStep } from '../../../../models/business/database/essay-template-step.model';
+import { Steps } from '../../../../models/business/enums/steps.model';
 
 @Component({
   selector: 'app-build-step-switch',

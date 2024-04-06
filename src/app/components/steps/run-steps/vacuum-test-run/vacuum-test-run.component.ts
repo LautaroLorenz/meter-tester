@@ -7,23 +7,23 @@ import {
 import {
   VacuumTestEssayStep,
   VacuumTestStandResult,
-} from '../../../models/business/interafces/steps/vacuum-step.model';
-import { CountTimerComponent } from '../../count-timer/count-timer.component';
-import { CalculatorComponent } from '../../machine/calculator/calculator.component';
-import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
+} from '../../../../models/business/interafces/steps/vacuum-step.model';
+import { CountTimerComponent } from '../../../count-timer/count-timer.component';
+import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
+import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
 import { merge, switchMap, tap } from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
-} from '../../../models/core/table-column.model';
-import { StandStandResult } from '../../../models/business/interafces/stand-result.model';
-import { Stand } from '../../../models/business/interafces/stand.model';
-import { ResultStatus } from '../../../models/business/enums/result-status.model';
-import { TestRunComponent } from '../../../models/business/class/test-run.model';
-import { PatternComponent } from '../../machine/pattern/pattern.component';
-import { DeviceStatus } from '../../../models/business/enums/device-status.model';
-import { APP_CONFIG } from '../../../../environments/environment';
-import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
+} from '../../../../models/core/table-column.model';
+import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
+import { Stand } from '../../../../models/business/interafces/stand.model';
+import { ResultStatus } from '../../../../models/business/enums/result-status.model';
+import { TestRunComponent } from '../../../../models/business/class/test-run.model';
+import { PatternComponent } from '../../../machine/pattern/pattern.component';
+import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { APP_CONFIG } from '../../../../../environments/environment';
+import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
   selector: 'app-vacuum-test-run',

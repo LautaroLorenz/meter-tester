@@ -4,7 +4,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { PdfPageComponent } from '../../../components/result-report/pdf-page/pdf-page.component';
+import { PdfPageComponent } from '../../../components/steps/result-report/pdf-page/pdf-page.component';
 
 @Component({
   template: '',

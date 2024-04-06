@@ -1,21 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { StepBuildFormComponent } from '../../../models/business/class/step-build-form-component.model';
 import { FormArray, FormBuilder } from '@angular/forms';
-import { AbstractFormGroup } from '../../../models/core/abstract-form-group.model';
-import { DatabaseService } from '../../../services/database.service';
-import {
-  Meter,
-  MeterDbTableContext,
-} from '../../../models/business/database/meter.model';
 import { Observable, map, takeUntil, tap } from 'rxjs';
-import { RelationsManager } from '../../../models/core/relations-manager.model';
-import { Stand, StandMeter } from '../../../models/business/interafces/stand.model';
-import { YearOfProductionConstants } from '../../../models/business/constants/year-of-production-constant.model';
 import { DecimalPipe } from '@angular/common';
-import {
-  PreparationFormBuilder,
-  PreparationStep,
-} from '../../../models/business/interafces/steps/preparation-step.model';
+import { StepBuildFormComponent } from '../../../../models/business/class/step-build-form-component.model';
+import { PreparationFormBuilder, PreparationStep } from '../../../../models/business/interafces/steps/preparation-step.model';
+import { Stand, StandMeter } from '../../../../models/business/interafces/stand.model';
+import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
+import { DatabaseService } from '../../../../services/database.service';
+import { Meter, MeterDbTableContext } from '../../../../models/business/database/meter.model';
+import { YearOfProductionConstants } from '../../../../models/business/constants/year-of-production-constant.model';
+import { RelationsManager } from '../../../../models/core/relations-manager.model';
 
 @Component({
   selector: 'app-preparation-build-form',
