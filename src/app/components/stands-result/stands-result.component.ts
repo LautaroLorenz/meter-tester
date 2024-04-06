@@ -34,9 +34,12 @@ export class StandsResultComponent implements OnInit, OnChanges {
   @Input() results!: StandResult[];
   @Input() resultsColumn!: TableColumn<StandStandResult>;
   @Input() stepMeterConstant!: MeterConstantEnum;
+  @Input() resultStatusColumnTemplate:
+    | TemplateRef<TableColumnTemplateContext<StandStandResult>>
+    | undefined;
 
-  @ViewChild('columnResultStatus', { static: true })
-  columnResultStatusTmp!: TemplateRef<
+  @ViewChild('resultStatusColumnTmp', { static: true })
+  resultStatusColumnTmp!: TemplateRef<
     TableColumnTemplateContext<StandStandResult>
   >;
 
@@ -105,7 +108,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
       this.resultsColumn,
       {
         header: 'Resultado',
-        template: this.columnResultStatusTmp,
+        template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
       },
     ];
   }

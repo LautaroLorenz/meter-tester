@@ -11,7 +11,7 @@ export class ResultStatusComponent {
   @Input() resultStatus!: ResultStatus;
 
   get styleClass(): string {
-    const classes: string[] = [];
+    const classes: string[] = ['py-2 px-3 gap-2'];
     if (this.severity === 'surface') {
       classes.push('bg-surface-200');
     }
@@ -38,7 +38,13 @@ export class ResultStatusComponent {
     return classes.join(' ');
   }
 
-  get severity(): 'surface' | 'info' | 'success' | 'danger' | 'warning' | undefined {
+  get severity():
+    | 'surface'
+    | 'info'
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | undefined {
     switch (this.resultStatus) {
       case ResultStatus.NotApply:
       case ResultStatus.Unknown:

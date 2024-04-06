@@ -1,6 +1,4 @@
-<p-chip
-  *ngIf="text"
-  [label]="text"
-  [icon]="icon"
-  [styleClass]="styleClass"
-></p-chip>
+<p-chip *ngIf="text" [styleClass]="styleClass">
+  <i *ngIf="icon" [class]="icon"></i>
+  {{ text }}
+</p-chip>
