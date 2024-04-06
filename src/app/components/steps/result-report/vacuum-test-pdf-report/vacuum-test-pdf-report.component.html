@@ -1,15 +1,19 @@
 <app-pdf-page>
-  <!-- TODO hacer un haeder genérico -->
-  <!-- TODO Mostrar los parámetros -->
+  <div class="flex flex-column p-3 gap-4">
+    <!-- Parámetros -->
+    <app-vacuum-test-params
+      [toggleable]="false"
+      [currentStep]="essayStep"
+    ></app-vacuum-test-params>
 
-  <!-- Resultados -->
-  <!-- TODO no funciona el template de result status el texto "Falló" "Aprobó" no sale en el pdf -->
-  <div class="-mx-3">
-    <app-stands-result
-      [preparationStep]="preparationStep"
-      [results]="essayStep.standResults"
-      [resultsColumn]="resultsColumn"
-      [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
-    ></app-stands-result>
+    <!-- Resultados -->
+    <div class="-mx-3">
+      <app-stands-result
+        [preparationStep]="preparationStep"
+        [results]="essayStep.standResults"
+        [resultsColumn]="resultsColumn"
+        [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
+      ></app-stands-result>
+    </div>
   </div>
 </app-pdf-page>

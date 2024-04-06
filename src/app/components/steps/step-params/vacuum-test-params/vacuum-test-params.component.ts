@@ -15,6 +15,7 @@ import { VacuumTestStep } from '../../../../models/business/interafces/steps/vac
 })
 export class VacuumTestParamsComponent implements OnChanges {
   @Input() currentStep!: VacuumTestStep;
+  @Input() toggleable!: boolean;
 
   showCompleteName!: boolean;
 
