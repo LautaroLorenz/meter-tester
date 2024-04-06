@@ -1,4 +1,6 @@
-export const APP_CONFIG = {
+import { Environment } from '../app/models/core/environment.model';
+
+export const APP_CONFIG: Environment = {
   production: false,
   environment: 'LOCAL',
   standsQuantiy: 10, // cantidad de puestos que tiene la máquina
