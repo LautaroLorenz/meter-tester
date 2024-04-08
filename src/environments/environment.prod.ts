@@ -11,6 +11,7 @@ export const APP_CONFIG: Environment = {
     verificationMajorStep: false,
     preparationMajorStep: false,
     vacuumTestRun: false,
+    bootTestRun: false,
   },
   virtualMachine: false,
 };
