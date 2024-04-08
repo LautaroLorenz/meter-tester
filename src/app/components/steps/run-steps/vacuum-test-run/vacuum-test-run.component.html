@@ -15,6 +15,7 @@
 <div class="mt-4">
   <app-count-timer
     #countTimer
+    visibility="visible"
     [durationSeconds]="currentStep.form_control_raw.durationSeconds"
     (finishCount)="onTimerCountdownFinish()"
   ></app-count-timer>

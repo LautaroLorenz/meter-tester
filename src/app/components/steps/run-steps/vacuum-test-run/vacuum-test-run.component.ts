@@ -63,15 +63,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     // revisar si algún puesto pasa a estado Falló
     this.checkFailedStatus();
-
     // si todos los stands activos fallaron, detener ensayo
-    const isAllActiveStandsFailed = this.getActiveStands().every(
-      ({ index }) =>
-        this.runEssayService
-          .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
-          .getRawValue().resultStatus === ResultStatus.Failed
-    );
-    if (isAllActiveStandsFailed) {
+    if (this.isAllStandsFailed()) {
       this.stopRunningStep();
     }
   }
@@ -96,10 +89,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         finalize(() => {
           // revisar si algún puesto pasa a estado Falló
           this.checkFailedStatus();
-
           // todo lo que no está en estado Falló, pasa a estado Aprobado
           this.setApprovedStatus();
-
           // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
           this.canContinue = this.getCanContinue();
           this.cd.detectChanges();
@@ -142,7 +133,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
           merge(
             // activa el device "patrón" y consultando el estado en loop
             this.pattern.loopStatus$(),
-
             // consulta resultados del calculador en loop
             this.calculator
               .loopResults$()

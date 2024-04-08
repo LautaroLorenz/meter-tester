@@ -65,6 +65,15 @@ export abstract class TestRunComponent<T extends EssayStep> {
     });
   }
 
+  protected isAllStandsFailed(): boolean {
+    return this.getActiveStands().every(
+      ({ index }) =>
+        this.runEssayService
+          .getStandResult(this.currentStep.id, index)
+          .getRawValue().resultStatus === ResultStatus.Failed
+    );
+  }
+
   protected checkFailedStatus(): void {
     this.getActiveStands().forEach(({ index }) => {
       const result = this.currentStep.standResults[index];

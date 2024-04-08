@@ -18,6 +18,7 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CountTimerComponent implements OnDestroy, OnChanges {
+  @Input() visibility!: 'visible' | 'hidden';
   @Input() durationSeconds!: number;
 
   @Output() stopped = new EventEmitter<void>();
