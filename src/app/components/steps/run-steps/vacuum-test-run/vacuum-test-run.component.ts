@@ -52,6 +52,11 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
   }
 
   onCalculatorResults(results: number[]): void {
+    // descartar resultados fuera de tiempo
+    if (!this.countTimer.isRunning) {
+      return;
+    }
+
     // update measuredPulses
     this.getActiveStands().forEach(({ index }) => {
       const result: number = results[index];
@@ -83,14 +88,16 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
   private stopRunningStep(): void {
     this.countTimer.stop();
     this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
+
     this.calculator
       .stop$()
       .pipe(
         finalize(() => {
-          // revisar si algún puesto pasa a estado Falló
-          this.checkFailedStatus();
-          // todo lo que no está en estado Falló, pasa a estado Aprobado
-          this.setApprovedStatus();
           // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
           this.canContinue = this.getCanContinue();
           this.cd.detectChanges();

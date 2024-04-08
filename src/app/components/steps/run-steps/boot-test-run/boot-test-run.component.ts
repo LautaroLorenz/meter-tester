@@ -65,6 +65,10 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
   }
 
   onCalculatorResults(results: number[]): void {
+    // descartar resultados fuera de tiempo
+    if (!this.countTimerMax.isRunning) {
+      return;
+    }
     // update measuredPulses
     this.getActiveStands().forEach(({ index }) => {
       const result: number = results[index];
@@ -88,9 +92,25 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     this.startTest();
   }
 
-  // TODO
-  override isFailCondition(): boolean {
-    // TODO: condición de corte:
+  override isFailCondition(result: BootTestStandResult): boolean {
+    // Condición de corte por tiempo mínimo:
+    // la cantidad de impulsos se iguala o supera antes de cumplir el tiempo mínimo.
+    if (this.countTimerMin.isRunning) {
+      if (
+        result.measuredPulses >= this.currentStep.form_control_raw.allowedPulses
+      ) {
+        return true;
+      }
+    }
+    // Condición de corte por tiempo máximo:
+    // la cantidad de impulsos no iguala ni supera a la mínima y no queda más tiempo.
+    if (!this.countTimerMax.isRunning) {
+      if (
+        result.measuredPulses < this.currentStep.form_control_raw.allowedPulses
+      ) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -98,14 +118,16 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     this.countTimerMin.stop();
     this.countTimerMax.stop();
     this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
+
     this.calculator
       .stop$()
       .pipe(
         finalize(() => {
-          // revisar si algún puesto pasa a estado Falló
-          this.checkFailedStatus();
-          // todo lo que no está en estado Falló, pasa a estado Aprobado
-          this.setApprovedStatus();
           // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
           this.canContinue = this.getCanContinue();
           this.cd.detectChanges();
