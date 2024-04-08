@@ -29,6 +29,7 @@ export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(ReportStepSwitchComponent)
   steps!: QueryList<ReportStepSwitchComponent>;
 
+  // TODO implementar canDeactivate si no descargó el archivo e intenta salir
   isFileDownloaded = false;
   isDownloading = false;
   fileName!: string;
