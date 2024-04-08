@@ -18,7 +18,6 @@ FEATURES:
 - historial
 
 EJECUCIÓN:
-- crear las interfaces para Results
 - Pasos:
   - Verificación de parámetros
     - Poner un warning si hay stands activos sin data para el reporte
@@ -27,6 +26,11 @@ EJECUCIÓN:
   - Inidicar la endDate
   - Agregar al historial (indicar el ID de reporte).
   - Reporte
+
+CREACÓN
+- Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
+- Validar si el nombre de ensayo ya está en uso.
+- Si un puesto esta activo los campos son requeridos.
 
 NICO
 - Definición de comandos:
