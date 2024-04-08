@@ -25,6 +25,7 @@ import { CommandMapComponent } from '../../components/virtual-machine/command-ma
 import { VMDeviceComponent } from '../../models/business/class/virtual-machine-device.model';
 import { Random } from '../../models/core/random.model';
 import { CommandLineDirector } from '../../models/business/class/command-line-director.model';
+import { take } from 'rxjs/operators';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -66,7 +67,10 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.ngZone.run(() => {
         this.commandHistory.add(command);
-        void this.virtualMachineService.write(command + '\n');
+        this.virtualMachineService
+          .write$(command + '\n')
+          .pipe(take(1))
+          .subscribe();
         if (
           this.configForm.getRawValue().commandRefreshType ===
           CommandRefreshType.Automatic

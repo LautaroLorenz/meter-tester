@@ -17,12 +17,10 @@ export class VirtualMachineService {
     return this._onSoftwareToMachine$;
   }
 
-  write(command: string): Observable<void> {
-    return from(
-      this.ipcService.invoke('virtual-machine-write', {
-        command,
-      }) as Promise<void>
-    );
+  write$(command: string): Observable<void> {
+    return this.ipcService.invoke$('virtual-machine-write', {
+      command,
+    });
   }
 
   private observe(): void {
