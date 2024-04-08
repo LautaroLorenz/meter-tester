@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { IpcService } from './ipc.service';
 
 @Injectable({
