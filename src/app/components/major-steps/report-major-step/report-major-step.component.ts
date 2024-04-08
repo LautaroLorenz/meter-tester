@@ -29,6 +29,7 @@ export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(ReportStepSwitchComponent)
   steps!: QueryList<ReportStepSwitchComponent>;
 
+  isFileDownloaded = false;
   isDownloading = false;
   fileName!: string;
   readonly runEssay: RunEssay;
@@ -64,6 +65,7 @@ export class ReportMajorStepComponent implements OnInit {
       .then(() => {
         this.blockUIService.setBlocked(false);
         this.isDownloading = false;
+        this.isFileDownloaded = true;
         this.cd.detectChanges();
       })
       .catch(() => {
