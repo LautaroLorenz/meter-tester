@@ -32,7 +32,7 @@ export interface ContrastTestStandResult extends StandResult {
 }
 
 export type ContrastTestEssayStep = ContrastTestStep &
-  EssayStep & {
+  Omit<EssayStep, 'form_control_raw'> & {
     standResults: ContrastTestStandResult[];
   };
 

@@ -32,7 +32,7 @@ export interface VacuumTestStandResult extends StandResult {
 }
 
 export type VacuumTestEssayStep = VacuumTestStep &
-  EssayStep & {
+  Omit<EssayStep, 'form_control_raw'> & {
     standResults: VacuumTestStandResult[];
   };
 

@@ -33,7 +33,7 @@ export interface BootTestStandResult extends StandResult {
 }
 
 export type BootTestEssayStep = BootTestStep &
-  EssayStep & {
+  Omit<EssayStep, 'form_control_raw'> & {
     standResults: BootTestStandResult[];
   };
 
