@@ -10,4 +10,12 @@ import { BootTestEssayStep } from '../../../../models/business/interafces/steps/
 })
 export class BootTestRunComponent extends TestRunComponent {
   @Input() currentStep!: BootTestEssayStep;
+
+  onManualGeneratorAdjusted(): void {
+    this.startTest();
+  }
+
+  private startTest(): void {
+    console.log('start');
+  }
 }
