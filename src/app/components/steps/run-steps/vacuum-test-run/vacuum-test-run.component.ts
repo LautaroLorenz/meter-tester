@@ -23,7 +23,6 @@ import { TestRunComponent } from '../../../../models/business/class/test-run.mod
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
-import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
