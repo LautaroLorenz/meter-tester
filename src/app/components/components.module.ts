@@ -51,6 +51,7 @@ import { VacuumTestParamsComponent } from './steps/step-params/vacuum-test-param
 import { PdfPageComponent } from './steps/result-report/pdf-page/pdf-page.component';
 import { ReportStepSwitchComponent } from './steps/result-report/report-step-switch/report-step-switch.component';
 import { VacuumTestPdfReportComponent } from './steps/result-report/vacuum-test-pdf-report/vacuum-test-pdf-report.component';
+import { BootTestRunComponent } from './steps/run-steps/boot-test-run/boot-test-run.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -101,6 +102,7 @@ const AppComponents = [
   BlockUiComponent,
   ReportStepSwitchComponent,
   VacuumTestPdfReportComponent,
+  BootTestRunComponent,
 ];
 
 @NgModule({
