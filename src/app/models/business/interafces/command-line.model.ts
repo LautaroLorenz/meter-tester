@@ -6,6 +6,7 @@ export interface EnableCommandCondition {
 }
 
 export interface CommandLine {
+  id: number;
   name: CommandsEnum;
   blocks: CommandBlock[];
   enableConditions?: EnableCommandCondition[];

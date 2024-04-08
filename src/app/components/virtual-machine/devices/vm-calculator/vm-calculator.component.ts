@@ -30,6 +30,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
   override readonly device = Devices.CAL;
   override commandLines: CommandLine[] = [
     {
+      id: 1,
       name: CalculatorResponseCommands.ACK,
       blocks: [
         {
@@ -39,6 +40,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       ],
     },
     {
+      id: 2,
       name: CalculatorResponseCommands.RESULTS,
       enableConditions: [
         { pattern: SoftwareCalculatorCommands.START_CONTRAST },
@@ -46,11 +48,13 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       blocks: this.generateResultCommandBlocks(),
     },
     {
+      id: 3,
       name: CalculatorResponseCommands.RESULTS,
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
       blocks: this.generateResultCommandBlocks(),
     },
     {
+      id: 4,
       name: CalculatorResponseCommands.RESULTS,
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
       blocks: this.generateResultCommandBlocks(),

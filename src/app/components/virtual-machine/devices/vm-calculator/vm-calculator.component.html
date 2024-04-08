@@ -4,7 +4,7 @@
       <app-command-line
         [commandLines]="commandLines"
         (send)="sendCommand($event)"
-        (refresh)="refreshCommand($event)"
+        (refresh)="refreshCommand(commandLines[$event])"
       ></app-command-line>
     </div>
   </ng-template>

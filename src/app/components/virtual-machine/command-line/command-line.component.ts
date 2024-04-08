@@ -27,6 +27,11 @@ export class CommandLineComponent {
 
   readonly columns: TableColumn[] = [
     {
+      header: 'ID',
+      field: 'id',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+    {
       header: 'Comando',
       field: 'name',
       alignHorizontal: TC_AlignHorizontal.Text,

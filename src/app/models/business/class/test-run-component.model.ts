@@ -50,6 +50,8 @@ export abstract class TestRunComponent<T extends EssayStep> {
         control.patchValue({ resultStatus: ResultStatus.Approved });
       }
     });
+
+    // TODO: si todos aprobaron continuar automaticamente.
   }
 
   getCanContinue(): boolean {

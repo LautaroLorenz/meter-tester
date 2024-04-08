@@ -26,6 +26,7 @@ export class VmPatternComponent extends VMDeviceComponent {
   override readonly device = Devices.PAT;
   override commandLines: CommandLine[] = [
     {
+      id: 1,
       name: PatternResponseCommands.STATUS,
       blocks: [
         {

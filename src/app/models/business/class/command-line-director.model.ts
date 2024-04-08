@@ -14,11 +14,11 @@ import { CommandHistory } from '../interafces/commnad-history.model';
 import { VMCommandMap } from '../interafces/vm-command-map.model';
 
 export class CommandLineDirector {
-  static findCommandValue(
+  static findCommandLine(
     commandMap: VMCommandMap,
     commandLines: CommandLine[],
     history: CommandHistory[]
-  ): string | undefined {
+  ): CommandLine | undefined {
     const responseCommandName = commandMap.responseCommandName;
     const possibleCommandLineToResponse = commandLines.filter(
       ({ name }) => name === responseCommandName
@@ -40,7 +40,7 @@ export class CommandLineDirector {
       );
       // si las enableConditions de la commandLine satisfacen, respondemos
       if (commandLine) {
-        return this.getValue(commandLine);
+        return commandLine;
       }
     }
     return undefined;
@@ -58,7 +58,6 @@ export class CommandLineDirector {
     if (block.type === CommandBlockTypes.Fixed) {
       return block;
     }
-
     if (
       block.variableValue !== null &&
       block.config.probabilityOfChange < Random.range(0, 100)
@@ -82,22 +81,40 @@ export class CommandLineDirector {
         break;
     }
 
-    const start: string = block.startWith ?? '';
+    block.variableValue = variableValue;
+    block.value = this.formatVariableValueToValue(
+      variableValue,
+      block.digitsQuantity,
+      block.padText,
+      block.startWith,
+      block.endWith
+    );
+    return block;
+  }
+
+  static formatVariableValueToValue(
+    variableValue: string | number,
+    digitsQuantity: number,
+    padText: string,
+    startWith: string | undefined,
+    endWith: string | undefined
+  ): string {
+    const start: string = startWith ?? '';
     const value: string = variableValue
       .toString()
-      .padStart(block.digitsQuantity, block.padText);
-    const end: string = block.endWith ?? '';
-
-    block.variableValue = variableValue;
-    block.value = `${start}${value}${end}`;
-    return block;
+      .padStart(digitsQuantity, padText);
+    const end: string = endWith ?? '';
+    return `${start}${value}${end}`;
   }
 
   static getBlockIncrementalValue(
     value: null | string | number,
     config: CommandBlockConfigIncremental
   ): number {
-    const currentValue = Number(value ?? 0);
+    if (value === null) {
+      return 0;
+    }
+    const currentValue = Number(value);
     return currentValue + config.incrementQuantity;
   }
 

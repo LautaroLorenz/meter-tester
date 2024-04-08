@@ -25,18 +25,18 @@ export abstract class VMDeviceComponent implements OnInit {
   abstract readonly device: Devices;
 
   ngOnInit(): void {
-    this.commandLines.forEach((_, index) => this.refreshCommand(index));
+    this.commandLines.forEach((commandLine) => this.refreshCommand(commandLine));
   }
 
-  refreshCommand(commandLineIndex: number): void {
-    this.commandLines = this.commandLines.map((commandLine, index) => {
-      if (index === commandLineIndex) {
+  refreshCommand(commandLine: CommandLine): void {
+    this.commandLines = this.commandLines.map((cml) => {
+      if (commandLine.id === cml.id) {
         return {
-          ...commandLine,
-          blocks: CommandLineDirector.refreshBlocks(commandLine),
+          ...cml,
+          blocks: CommandLineDirector.refreshBlocks(cml),
         };
       }
-      return { ...commandLine };
+      return { ...cml };
     });
     this.cd.detectChanges();
   }

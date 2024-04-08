@@ -71,12 +71,6 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
           .write$(command + '\n')
           .pipe(take(1))
           .subscribe();
-        if (
-          this.configForm.getRawValue().commandRefreshType ===
-          CommandRefreshType.Automatic
-        ) {
-          this.refreshCommands();
-        }
       });
     }, delay);
   }
@@ -122,15 +116,25 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     if (!device) {
       return;
     }
-    const responseCommand = CommandLineDirector.findCommandValue(
+    const commandLine = CommandLineDirector.findCommandLine(
       commandMap,
       device.commandLines,
       this.commandHistory.history$.value
     );
-    if (!responseCommand) {
+    if (!commandLine) {
       return;
     }
-    this.virtualMachineWrite(responseCommand);
+
+    // enviar respuesta
+    this.virtualMachineWrite(CommandLineDirector.getValue(commandLine));
+
+    // refrescar valor automáticamente
+    if (
+      this.configForm.getRawValue().commandRefreshType ===
+      CommandRefreshType.Automatic
+    ) {
+      device.refreshCommand(commandLine);
+    }
   }
 
   private getSendDelayByConfig(): number {
@@ -149,14 +153,6 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
       case VMDelayTypes.Range:
         return Random.range(minDelay as number, maxDelay as number);
     }
-  }
-
-  private refreshCommands(): void {
-    this.vmDevices.forEach((vmDevice) =>
-      vmDevice.commandLines.forEach((_, index) =>
-        vmDevice.refreshCommand(index)
-      )
-    );
   }
 
   private observeConfig(): void {
