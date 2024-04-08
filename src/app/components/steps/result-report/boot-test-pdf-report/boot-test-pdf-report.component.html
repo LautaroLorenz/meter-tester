@@ -1,0 +1,19 @@
+<app-pdf-page>
+  <div class="flex flex-column p-3 gap-4">
+    <!-- Parámetros -->
+    <app-boot-test-params
+      [toggleable]="false"
+      [currentStep]="essayStep"
+    ></app-boot-test-params>
+
+    <!-- Resultados -->
+    <div class="-mx-3">
+      <app-stands-result
+        [preparationStep]="preparationStep"
+        [results]="essayStep.standResults"
+        [resultsColumn]="resultsColumn"
+        [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
+      ></app-stands-result>
+    </div>
+  </div>
+</app-pdf-page>

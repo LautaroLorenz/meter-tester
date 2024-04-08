@@ -4,4 +4,10 @@
     [essayStep]="essayStep | stepAs"
     [preparationStep]="preparationStep"
   ></app-vacuum-test-pdf-report>
+
+  <app-boot-test-pdf-report
+    *ngSwitchCase="Steps.BootTest"
+    [essayStep]="essayStep | stepAs"
+    [preparationStep]="preparationStep"
+  ></app-boot-test-pdf-report>
 </ng-container>
