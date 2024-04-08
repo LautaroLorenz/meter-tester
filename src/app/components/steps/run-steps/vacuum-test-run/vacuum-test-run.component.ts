@@ -122,7 +122,7 @@ export class VacuumTestRunComponent extends TestRunComponent {
           this.calculator.start$(
             this.getStepCalculatorBlocks(),
             this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant as MeterConstantEnum
+            this.currentStep.form_control_raw.meterConstant
           )
         ),
         // cambia el estado de los resultados
@@ -166,7 +166,7 @@ export class VacuumTestRunComponent extends TestRunComponent {
         .patchValue({
           resultStatus: this.calculateStandStatus(
             result.measuredPulses,
-            this.currentStep.form_control_raw.maxAllowedPulses as number
+            this.currentStep.form_control_raw.maxAllowedPulses
           ),
         });
     });
