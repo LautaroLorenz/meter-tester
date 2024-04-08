@@ -10,3 +10,48 @@
     (adjustmentDone)="onManualGeneratorAdjusted()"
   ></app-manual-generator>
 </div>
+
+<!-- Temporizador -->
+<div class="mt-4">
+  <app-count-timer
+    #countTimer
+    [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
+    (finishCount)="onTimerCountdownFinish()"
+  ></app-count-timer>
+</div>
+
+<!-- Calculador -->
+<div class="mt-4">
+  <app-calculator #calculator>
+    <!-- TODO -->
+    <!-- <app-stands-result
+      [preparationStep]="preparationStep"
+      [results]="currentStep.standResults"
+      [resultsColumn]="resultsColumn"
+      [stepMeterConstant]="currentStep.form_control_raw.meterConstant"
+    ></app-stands-result> -->
+  </app-calculator>
+</div>
+
+<!-- Patrón -->
+<div class="mt-4">
+  <app-pattern #pattern></app-pattern>
+</div>
+
+<!-- Actions -->
+<div class="flex justify-content-end mt-4 mb-8 gap-3">
+  <!-- TODO -->
+  <!-- <p-button
+    label="Reintentar"
+    [outlined]="true"
+    [disabled]="!canContinue"
+    (click)="restart()"
+  ></p-button> -->
+  <!-- TODO -->
+  <!-- <p-button
+    label="Continuar"
+    [outlined]="false"
+    [disabled]="!canContinue"
+    (click)="stepExecutionDone(this.currentStep)"
+  ></p-button> -->
+</div>
