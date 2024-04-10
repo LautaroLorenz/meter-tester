@@ -54,6 +54,9 @@ import { VacuumTestPdfReportComponent } from './steps/result-report/vacuum-test-
 import { BootTestRunComponent } from './steps/run-steps/boot-test-run/boot-test-run.component';
 import { BootTestParamsComponent } from './steps/step-params/boot-test-params/boot-test-params.component';
 import { BootTestPdfReportComponent } from './steps/result-report/boot-test-pdf-report/boot-test-pdf-report.component';
+import { ContrastTestParamsComponent } from './steps/step-params/contrast-test-params/contrast-test-params.component';
+import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/contrast-test-run.component';
+import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -107,6 +110,9 @@ const AppComponents = [
   BootTestRunComponent,
   BootTestParamsComponent,
   BootTestPdfReportComponent,
+  ContrastTestParamsComponent,
+  ContrastTestRunComponent,
+  ContrastTestPdfReportComponent,
 ];
 
 @NgModule({
