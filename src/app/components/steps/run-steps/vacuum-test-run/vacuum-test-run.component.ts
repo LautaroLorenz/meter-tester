@@ -30,8 +30,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
-  canContinue = false;
-
   readonly resultsColumn: TableColumn<StandStandResult> = {
     alignHorizontal: TC_AlignHorizontal.Number,
     header: 'Impulsos',
@@ -43,12 +41,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     },
   };
 
+  override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
+
   onManualGeneratorAdjusted(): void {
     this.startTest();
   }
 
   onTimerCountdownFinish(): void {
-    this.stopRunningStep();
+    this.stopTest();
   }
 
   onCalculatorResults(results: number[]): void {
@@ -70,14 +70,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     this.checkFailedStatus();
     // si todos los stands activos fallaron, detener ensayo
     if (this.isAllStandsFailed()) {
-      this.stopRunningStep();
+      this.stopTest();
     }
-  }
-
-  restart(): void {
-    this.restartResults(ResultStatus.Pending);
-    this.canContinue = this.getCanContinue();
-    this.startTest();
   }
 
   override isFailCondition(result: VacuumTestStandResult): boolean {
@@ -85,36 +79,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     return result.measuredPulses > maxAllowedPulses;
   }
 
-  private stopRunningStep(): void {
-    this.countTimer.stop();
-    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
-    // revisar si algún puesto pasa a estado Falló
-    this.checkFailedStatus();
-    // todo lo que no está en estado Falló, pasa a estado Aprobado
-    this.setApprovedStatus();
-    this.cd.detectChanges();
-
-    this.calculator
-      .stop$()
-      .pipe(
-        finalize(() => {
-          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
-          this.canContinue = this.getCanContinue();
-          this.cd.detectChanges();
-          if (this.canContinue) {
-            this.skip();
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  private onDeactivate(): void {
-    // TODO resolver situación cuando el usuario sale de la pantalla
-    // TODO esto debería estar en TestRunComponent
-  }
-
-  private startTest(): void {
+  override startTest(): void {
     // recetea el contador
     this.countTimer.reset();
 
@@ -150,6 +115,39 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
       .subscribe();
   }
 
+  override stopTest(): void {
+    this.countTimer.stop();
+    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
+
+    this.calculator
+      .stop$()
+      .pipe(
+        finalize(() => {
+          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
+          this.canContinue = this.getCanContinue();
+          this.cd.detectChanges();
+          if (this.canContinue) {
+            this.skip();
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  override restartResults(resultStatus: ResultStatus): void {
+    this.getActiveStands().forEach(({ index }) => {
+      this.runEssayService
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .patchValue({ resultStatus, measuredPulses: 0 });
+    });
+    this.cd.detectChanges();
+  }
+
   private getStepCalculatorBlocks(): string[] {
     const stepTypeBlock = SoftwareCalculatorCommands.START_VACUUM;
     const patternConstantBlock = ''.padStart(10, '0');
@@ -159,21 +157,5 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         .padStart(8, '0');
 
     return [stepTypeBlock, patternConstantBlock, maxAllowedPulsesBlock];
-  }
-
-  private restartResults(resultStatus: ResultStatus): void {
-    this.getActiveStands().forEach(({ index }) => {
-      this.runEssayService
-        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
-        .patchValue({ resultStatus, measuredPulses: 0 });
-    });
-    this.cd.detectChanges();
-  }
-
-  private skip(): void {
-    if (!APP_CONFIG.skipSteps.vacuumTestRun) {
-      return;
-    }
-    this.stepExecutionDone(this.currentStep);
   }
 }

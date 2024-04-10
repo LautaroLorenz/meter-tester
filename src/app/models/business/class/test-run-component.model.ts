@@ -20,8 +20,12 @@ export abstract class TestRunComponent<T extends EssayStep> {
   @Input() currentStep!: T;
   @Input() preparationStep!: PreparationStep;
 
+  canContinue = false;
+
   protected readonly runEssayService = inject(RunEssayService);
   protected readonly cd = inject(ChangeDetectorRef);
+
+  abstract readonly skipEnabled: boolean;
 
   getActiveStands(): { index: number; stand: Stand }[] {
     return this.preparationStep.form_control_raw
@@ -67,6 +71,12 @@ export abstract class TestRunComponent<T extends EssayStep> {
     });
   }
 
+  restart(): void {
+    this.restartResults(ResultStatus.Pending);
+    this.canContinue = this.getCanContinue();
+    this.startTest();
+  }
+
   protected isAllStandsFailed(): boolean {
     return this.getActiveStands().every(
       ({ index }) =>
@@ -88,5 +98,24 @@ export abstract class TestRunComponent<T extends EssayStep> {
     this.cd.detectChanges();
   }
 
+  protected skip(): void {
+    if (!this.skipEnabled) {
+      return;
+    }
+    this.stepExecutionDone(this.currentStep);
+  }
+
+  // TODO
+  private onDeactivate(): void {
+    // TODO resolver situación cuando el usuario sale de la pantalla
+    // TODO esto debería estar en TestRunComponent
+  }
+
   abstract isFailCondition(...args: any[]): boolean;
+
+  abstract startTest(): void;
+
+  abstract stopTest(): void;
+
+  abstract restartResults(resultStatus: ResultStatus): void;
 }

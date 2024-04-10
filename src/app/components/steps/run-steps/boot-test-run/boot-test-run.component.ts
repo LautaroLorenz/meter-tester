@@ -34,8 +34,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
-  canContinue = false;
-
   readonly resultsColumn: TableColumn<StandStandResult> = {
     alignHorizontal: TC_AlignHorizontal.Number,
     header: 'Impulsos',
@@ -47,6 +45,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     },
   };
 
+  override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
+
   onManualGeneratorAdjusted(): void {
     this.startTest();
   }
@@ -56,12 +56,12 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     this.checkFailedStatus();
     // si todos los stands activos fallaron, detener ensayo
     if (this.isAllStandsFailed()) {
-      this.stopRunningStep();
+      this.stopTest();
     }
   }
 
   onMaxTimerCountdownFinish(): void {
-    this.stopRunningStep();
+    this.stopTest();
   }
 
   onCalculatorResults(results: number[]): void {
@@ -82,14 +82,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     this.checkFailedStatus();
     // si todos los stands activos fallaron, detener ensayo
     if (this.isAllStandsFailed()) {
-      this.stopRunningStep();
+      this.stopTest();
     }
-  }
-
-  restart(): void {
-    this.restartResults(ResultStatus.Pending);
-    this.canContinue = this.getCanContinue();
-    this.startTest();
   }
 
   override isFailCondition(result: BootTestStandResult): boolean {
@@ -114,37 +108,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     return false;
   }
 
-  private stopRunningStep(): void {
-    this.countTimerMin.stop();
-    this.countTimerMax.stop();
-    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
-    // revisar si algún puesto pasa a estado Falló
-    this.checkFailedStatus();
-    // todo lo que no está en estado Falló, pasa a estado Aprobado
-    this.setApprovedStatus();
-    this.cd.detectChanges();
-
-    this.calculator
-      .stop$()
-      .pipe(
-        finalize(() => {
-          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
-          this.canContinue = this.getCanContinue();
-          this.cd.detectChanges();
-          if (this.canContinue) {
-            this.skip();
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  private onDeactivate(): void {
-    // TODO resolver situación cuando el usuario sale de la pantalla
-    // TODO esto debería estar en TestRunComponent
-  }
-
-  private startTest(): void {
+  override startTest(): void {
     // recetea el contador
     this.countTimerMin.reset();
     this.countTimerMax.reset();
@@ -184,6 +148,40 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
       .subscribe();
   }
 
+  override stopTest(): void {
+    this.countTimerMin.stop();
+    this.countTimerMax.stop();
+    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
+
+    this.calculator
+      .stop$()
+      .pipe(
+        finalize(() => {
+          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
+          this.canContinue = this.getCanContinue();
+          this.cd.detectChanges();
+          if (this.canContinue) {
+            this.skip();
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  override restartResults(resultStatus: ResultStatus): void {
+    this.getActiveStands().forEach(({ index }) => {
+      this.runEssayService
+        .getStandResult<BootTestStandResult>(this.currentStep.id, index)
+        .patchValue({ resultStatus, measuredPulses: 0 });
+    });
+    this.cd.detectChanges();
+  }
+
   private getStepCalculatorBlocks(): string[] {
     const stepTypeBlock = SoftwareCalculatorCommands.START_BOOT;
     const patternConstantBlock = ''.padStart(10, '0');
@@ -193,21 +191,5 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
         .padStart(8, '0');
 
     return [stepTypeBlock, patternConstantBlock, allowedPulsesBlock];
-  }
-
-  private restartResults(resultStatus: ResultStatus): void {
-    this.getActiveStands().forEach(({ index }) => {
-      this.runEssayService
-        .getStandResult<BootTestStandResult>(this.currentStep.id, index)
-        .patchValue({ resultStatus, measuredPulses: 0 });
-    });
-    this.cd.detectChanges();
-  }
-
-  private skip(): void {
-    if (!APP_CONFIG.skipSteps.bootTestRun) {
-      return;
-    }
-    this.stepExecutionDone(this.currentStep);
   }
 }
