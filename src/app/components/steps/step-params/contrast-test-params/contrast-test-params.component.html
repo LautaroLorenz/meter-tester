@@ -1,1 +1,123 @@
-<p>contrast-test-params works!</p>
+<p-panel [toggleable]="toggleable">
+  <ng-template pTemplate="header">
+    <div class="flex gap-2 align-items-center">
+      <ng-container *ngIf="showCompleteName">
+        <span
+          class="p-panel-title text-color-secondary"
+          [ngStyle]="{ order: 1 }"
+        >
+          {{ currentStep.foreign.step?.name }}
+        </span>
+        <span [ngStyle]="{ order: 2 }">-</span>
+      </ng-container>
+      <span class="p-panel-title" [ngStyle]="{ order: 3 }">
+        {{ currentStep.form_control_raw.name }}
+      </span>
+    </div>
+  </ng-template>
+
+  <div class="grid">
+    <div class="col-12">
+      <div class="grid">
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary">Fase L1 - Tensión U1 [V]:</label>
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL1.voltage }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary">Fase L2 - Tensión U2 [V]:</label>
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL2.voltage }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary">Fase L3 - Tensión U3 [V]:</label>
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL3.voltage }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="grid">
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L1 - Corriente I1 [A]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL1.current }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L2 - Corriente I2 [A]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL2.current }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L3 - Corriente I3 [A]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL3.current }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="grid">
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L1 - Ángulo &#632;1 [º]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL1.anglePhi }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L2 - Ángulo &#632;2 [º]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL2.anglePhi }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Fase L3 - Ángulo &#632;3 [º]:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.phaseL3.anglePhi }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="grid">
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary">
+            Máximo error permitido [%]:
+          </label>
+          <span class="text-color">
+            {{ currentStep.form_control_raw.maxAllowedError }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1">
+          <label class="text-color-secondary"
+            >Cantidad de impulsos:</label
+          >
+          <span class="text-color">
+            {{ currentStep.form_control_raw.meterPulses }}
+          </span>
+        </div>
+        <div class="flex flex-row col-12 md:col-4 gap-1"></div>
+      </div>
+    </div>
+  </div>
+</p-panel>

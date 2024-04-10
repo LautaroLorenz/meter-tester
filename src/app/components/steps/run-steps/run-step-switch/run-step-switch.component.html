@@ -14,4 +14,12 @@
       [preparationStep]="preparationStep | stepAs"
     ></app-boot-test-run>
   </ng-container>
+
+  <ng-container [ngSwitch]="currentStep.step_id">
+    <app-contrast-test-run
+      *ngSwitchCase="Steps.ContrastTest"
+      [currentStep]="currentStep | stepAs"
+      [preparationStep]="preparationStep | stepAs"
+    ></app-contrast-test-run>
+  </ng-container>
 </ng-container>
