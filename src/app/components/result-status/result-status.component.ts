@@ -53,6 +53,8 @@ export class ResultStatusComponent {
         return 'surface';
       case ResultStatus.WorkInProgress:
         return 'info';
+      case ResultStatus.Locked:
+        return 'surface';
       case ResultStatus.Approved:
         return 'success';
       case ResultStatus.Failed:
@@ -69,6 +71,8 @@ export class ResultStatusComponent {
         return 'En espera';
       case ResultStatus.WorkInProgress:
         return 'Calculando';
+      case ResultStatus.Locked:
+        return 'Bloqueado';
       case ResultStatus.Approved:
         return 'Aprobado';
       case ResultStatus.Failed:
@@ -82,6 +86,8 @@ export class ResultStatusComponent {
       case ResultStatus.NotApply:
       case ResultStatus.Pending:
         return undefined;
+      case ResultStatus.Locked:
+        return 'pi pi-lock';
       case ResultStatus.Approved:
         return 'pi pi-check';
       case ResultStatus.Failed:

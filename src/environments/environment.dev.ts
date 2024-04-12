@@ -12,7 +12,7 @@ export const APP_CONFIG: Environment = {
     preparationMajorStep: true,
     vacuumTestRun: true,
     bootTestRun: true,
-    contrastTestRun: false,
+    contrastTestRun: true,
   },
   virtualMachine: true,
 };

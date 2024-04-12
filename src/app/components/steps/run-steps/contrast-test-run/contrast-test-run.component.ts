@@ -14,6 +14,12 @@ import { tap, switchMap, merge, finalize, forkJoin } from 'rxjs';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
 import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../../../models/core/table-column.model';
+import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
+import { Stand } from '../../../../models/business/interafces/stand.model';
 
 @Component({
   selector: 'app-contrast-test-run',
@@ -25,45 +31,77 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
-  stepRunMode = StepRunMode.continuousResultUpdate;
-
   override readonly skipEnabled = APP_CONFIG.skipSteps.contrastTestRun;
+
+  stepRunMode = this.skipEnabled
+    ? StepRunMode.finalResultLock
+    : StepRunMode.continuousResultUpdate;
 
   readonly StepRunModes: EnumAsOption[] = this.EnumAsOptionPipe.transform(
     'StepRunMode',
     StepRunMode
   );
+  readonly resultsColumn: TableColumn<StandStandResult> = {
+    alignHorizontal: TC_AlignHorizontal.Number,
+    header: 'Error [%]',
+    field: (item: StandStandResult): string => {
+      const realItem = item as Stand | ContrastTestStandResult;
+      return 'measuredError' in realItem
+        ? realItem.measuredError?.toString()
+        : '';
+    },
+  };
 
   onManualGeneratorAdjusted(): void {
     this.startTest();
   }
 
-  // TODO
   onCalculatorResults(results: number[]): void {
-    console.log(results);
-    // // descartar resultados fuera de tiempo
-    // if (!this.countTimerMax.isRunning) {
-    //   return;
-    // }
-    // // update measuredPulses
-    // this.getActiveStands().forEach(({ index }) => {
-    //   const result: number = results[index];
-    //   this.runEssayService
-    //     .getStandResult<BootTestStandResult>(this.currentStep.id, index)
-    //     .patchValue({ measuredPulses: result });
-    // });
-    // this.cd.detectChanges();
-    // // revisar si algún puesto pasa a estado Falló
-    // this.checkFailedStatus();
-    // // si todos los stands activos fallaron, detener ensayo
-    // if (this.isAllStandsFailed()) {
-    //   this.stopTest();
-    // }
+    // update measured error
+    this.getActiveStands().forEach(({ index }) => {
+      const result: number = results[index];
+      const stand =
+        this.runEssayService.getStandResult<ContrastTestStandResult>(
+          this.currentStep.id,
+          index
+        );
+      // bloqueo de resultado actual según modo de ejecución
+      if (
+        this.stepRunMode === StepRunMode.finalResultLock &&
+        stand.getRawValue().resultStatus === ResultStatus.Locked
+      ) {
+        return;
+      }
+      // nuevo estado de resulado
+      const resultStatus =
+        // si llegó un valor diferente del actual
+        stand.getRawValue().measuredError !== result &&
+        // si el modo es bloqueo de resultado
+        this.stepRunMode === StepRunMode.finalResultLock
+          ? ResultStatus.Locked
+          : ResultStatus.WorkInProgress;
+
+      // actualización de resultado
+      stand.patchValue({
+        measuredError: result,
+        resultStatus,
+      });
+    });
+    this.cd.detectChanges();
+    // revisar si el modo de ejecución es bloqueo y todos los stands tienen resultado.
+    if (
+      this.stepRunMode === StepRunMode.finalResultLock &&
+      this.isAllStandsWithResultLocked()
+    ) {
+      this.stopTest();
+    }
   }
 
-  // TODO
   override isFailCondition(result: ContrastTestStandResult): boolean {
-    return false;
+    return (
+      Math.abs(result.measuredError) >
+      this.currentStep.form_control_raw.maxAllowedError
+    );
   }
 
   override startTest(): void {

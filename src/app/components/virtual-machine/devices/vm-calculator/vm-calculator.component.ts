@@ -108,7 +108,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
           padText: '',
           config: {
             type: CommandLineConfigTypes.CharRandom,
-            probabilityOfChange: 35,
+            probabilityOfChange: 5,
             options: ['+', '-'],
           },
         },
@@ -121,7 +121,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
           padText: '0',
           config: {
             type: CommandLineConfigTypes.Random,
-            probabilityOfChange: 35,
+            probabilityOfChange: 25,
             maxRandom: 9999,
             minRandom: 0,
           },

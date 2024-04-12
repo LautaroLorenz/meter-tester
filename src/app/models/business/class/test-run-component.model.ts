@@ -47,13 +47,13 @@ export abstract class TestRunComponent<T extends EssayStep> {
    */
   setApprovedStatus(): void {
     this.getActiveStands().forEach(({ index }) => {
-      const control = this.runEssayService.getStandResult(
+      const stand = this.runEssayService.getStandResult(
         this.currentStep.id,
         index
       );
-      const { resultStatus } = control.getRawValue();
+      const { resultStatus } = stand.getRawValue();
       if (resultStatus !== ResultStatus.Failed) {
-        control.patchValue({ resultStatus: ResultStatus.Approved });
+        stand.patchValue({ resultStatus: ResultStatus.Approved });
       }
     });
 
@@ -88,13 +88,24 @@ export abstract class TestRunComponent<T extends EssayStep> {
     );
   }
 
-  protected checkFailedStatus(): void {
-    this.getActiveStands().forEach(({ index }) => {
-      const result = this.currentStep.standResults[index];
-      if (this.isFailCondition(result)) {
+  protected isAllStandsWithResultLocked(): boolean {
+    return this.getActiveStands().every(
+      ({ index }) =>
         this.runEssayService
           .getStandResult(this.currentStep.id, index)
-          .patchValue({ resultStatus: ResultStatus.Failed });
+          .getRawValue().resultStatus === ResultStatus.Locked
+    );
+  }
+
+  protected checkFailedStatus(): void {
+    this.getActiveStands().forEach(({ index }) => {
+      const stand = this.runEssayService.getStandResult(
+        this.currentStep.id,
+        index
+      );
+      const result = stand.getRawValue();
+      if (this.isFailCondition(result)) {
+        stand.patchValue({ resultStatus: ResultStatus.Failed });
       }
     });
     this.cd.detectChanges();
