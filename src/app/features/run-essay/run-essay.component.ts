@@ -56,8 +56,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly route: ActivatedRoute,
-    // TODO control de estadisticas: podria hacerse antes de avanzar al reporte o luego
-    //   private readonly staticsService: StaticsService,
     private readonly navigationService: NavigationService,
     public readonly runEssayService: RunEssayService
   ) {
@@ -88,18 +86,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
   exit() {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   }
-
-  // TODO fin de la ejecución
-  // goToHistory(): void {
-  //   this.staticsService.increment$(MetricEnum.execution, { essay: this.essayName }).pipe(
-  //     take(1),
-  //     tap(() => {
-  //       setTimeout(() => {
-  //         this.navigationService.back({ targetPage: PageUrlName.historyAndReports });
-  //       })
-  //     })
-  //   ).subscribe();
-  // }
 
   private getId$(): Observable<number> {
     return this.route.queryParams.pipe(
@@ -188,7 +174,8 @@ export class RunEssayComponent implements OnInit, OnDestroy {
       essayName: undefined,
       essayTemplateId: undefined,
       startDate: undefined,
-      endDate: undefined,
+      // endDate se setea cuando termina la ejecución de todos los pasos
+      endDate: undefined, 
       essaySteps: this.fb.array([]),
     }) as RunEssayForm;
   }

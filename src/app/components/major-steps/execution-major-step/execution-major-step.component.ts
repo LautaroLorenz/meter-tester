@@ -3,6 +3,7 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { ExecutionDirector } from '../../../models/business/class/execution-director.model';
@@ -11,6 +12,10 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
+import {
+  FormatDateMode,
+  FormatDatePipe,
+} from '../../../pipes/core/fomat-date.pipe';
 
 @Component({
   selector: 'app-execution-major-step',
@@ -25,6 +30,8 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
 
   readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
   readonly onDestroy = new Subject<void>();
+
+  private readonly formatDate = inject(FormatDatePipe);
 
   constructor(private readonly runEssayService: RunEssayService) {}
 
@@ -125,6 +132,12 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         tap((steps) => {
           // si todos los steps se ejecutaron, avanzar al siguiente major step
           if (this.isAllStepsDone(steps)) {
+            this.runEssayService.runEssayForm.patchValue({
+              endDate: this.formatDate.transform(
+                new Date(),
+                FormatDateMode.fromClientToDatabase
+              ) as string,
+            });
             this.runEssayService.nextMajorStep();
           }
           // si un step paso a Executed Done, avanzar con la ejecución del próximo
