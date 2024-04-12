@@ -75,6 +75,12 @@ export class CommandMapComponent {
       commandRegex: SoftwarePatternCommands.CONSTANT,
       responseCommandName: PatternResponseCommands.STATUS,
     },
+    {
+      device: Devices.PAT,
+      deviceName: DeviceConstants[Devices.PAT],
+      commandRegex: SoftwarePatternCommands.STOP,
+      responseCommandName: PatternResponseCommands.ACK,
+    },
   ];
 
   get(command: string): VMCommandMap | undefined {

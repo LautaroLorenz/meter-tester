@@ -27,6 +27,16 @@ export class VmPatternComponent extends VMDeviceComponent {
   override commandLines: CommandLine[] = [
     {
       id: 1,
+      name: PatternResponseCommands.ACK,
+      blocks: [
+        {
+          type: CommandBlockTypes.Fixed,
+          value: 'B|PAT|STW|ACK00000|Z|x',
+        },
+      ],
+    },
+    {
+      id: 1,
       name: PatternResponseCommands.STATUS,
       blocks: [
         {

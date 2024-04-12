@@ -18,6 +18,7 @@ import { TestRunComponent } from '../../../../models/business/class/test-run-com
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -116,19 +117,19 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
   }
 
   override stopTest(): void {
+    // detener contador
     this.countTimer.stop();
-    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
-    // revisar si algún puesto pasa a estado Falló
-    this.checkFailedStatus();
-    // todo lo que no está en estado Falló, pasa a estado Aprobado
-    this.setApprovedStatus();
-    this.cd.detectChanges();
-
-    this.calculator
-      .stop$()
+    // apagar dispositivos
+    forkJoin({
+      // apagar patrón
+      pattern: this.pattern.stop$(),
+      // apagar calculador
+      calculator: this.calculator.stop$(),
+    })
       .pipe(
         finalize(() => {
-          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
+          // Puede continuar al siguiente step si todos los stands activos tienen
+          // un estado final (Aprobado o Falló)
           this.canContinue = this.getCanContinue();
           this.cd.detectChanges();
           if (this.canContinue) {
@@ -137,6 +138,11 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         })
       )
       .subscribe();
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
   }
 
   override restartResults(resultStatus: ResultStatus): void {

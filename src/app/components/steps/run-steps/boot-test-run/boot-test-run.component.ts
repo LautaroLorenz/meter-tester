@@ -7,7 +7,7 @@ import {
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, finalize } from 'rxjs';
+import { tap, switchMap, finalize, forkJoin } from 'rxjs';
 import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import {
@@ -149,20 +149,20 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
   }
 
   override stopTest(): void {
+    // detener contadores
     this.countTimerMin.stop();
     this.countTimerMax.stop();
-    this.pattern.deviceStatus$.next(DeviceStatus.Stopped);
-    // revisar si algún puesto pasa a estado Falló
-    this.checkFailedStatus();
-    // todo lo que no está en estado Falló, pasa a estado Aprobado
-    this.setApprovedStatus();
-    this.cd.detectChanges();
-
-    this.calculator
-      .stop$()
+    // apagar dispositivos
+    forkJoin({
+      // apagar patrón
+      pattern: this.pattern.stop$(),
+      // apagar calculador
+      calculator: this.calculator.stop$(),
+    })
       .pipe(
         finalize(() => {
-          // puede continuar al siguiente step si todos los stands activos tienen un estado final (Aprobado o Falló)
+          // Puede continuar al siguiente step si todos los stands activos tienen
+          // un estado final (Aprobado o Falló)
           this.canContinue = this.getCanContinue();
           this.cd.detectChanges();
           if (this.canContinue) {
@@ -171,6 +171,11 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
         })
       )
       .subscribe();
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
   }
 
   override restartResults(resultStatus: ResultStatus): void {

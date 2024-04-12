@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
-import { Observable, ReplaySubject, map, tap } from 'rxjs';
+import { Observable, ReplaySubject, map, tap, of, switchMap } from 'rxjs';
 import { SoftwarePatternCommands } from '../../../models/business/enums/commands.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
@@ -18,6 +18,14 @@ export class PatternComponent extends MachineDeviceComponent {
   override readonly device = Devices.PAT;
 
   readonly lastStatus$ = new ReplaySubject<PatternStatus>(1);
+
+  stop$(): Observable<string> {
+    return of(this.buildCommand(SoftwarePatternCommands.STOP)).pipe(
+      tap(() => this.deviceStatus$.next(DeviceStatus.StopInProgress)),
+      switchMap((stopCommand) => this.write$(stopCommand)),
+      tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
+    );
+  }
 
   constant$(
     phaseL1: Phase,
