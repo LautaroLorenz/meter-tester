@@ -16,6 +16,7 @@ export enum SoftwareCalculatorCommands {
 }
 
 export enum SoftwarePatternCommands {
+  CONSTANT = 'MAR00000',
   STATUS = 'STD00000',
 }
 

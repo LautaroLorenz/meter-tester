@@ -37,7 +37,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     // para los stands que tiene la máquina completamos el comando según puesto activo/inactivo
     const standBlocks: string[] = preparationStepStands.map(
       (stand, index) =>
-        `PS${this.standIndex(index)}${this.standConstant(
+        `PS${this.subBlockStandIndex(index)}${this.subBlockStandConstant(
           stand,
           stepMeterConstant
         )}`
@@ -50,7 +50,9 @@ export class CalculatorComponent extends MachineDeviceComponent {
     const padStandBlocks = [];
     while (padBlockQuantity > 0) {
       const index = APP_CONFIG.commandStandsQuantity - padBlockQuantity;
-      padStandBlocks.push(`PS${this.standIndex(index)}${this.standConstant()}`);
+      padStandBlocks.push(
+        `PS${this.subBlockStandIndex(index)}${this.subBlockStandConstant()}`
+      );
       padBlockQuantity--;
     }
 
@@ -80,11 +82,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
     return resultsBlock.map((block) => Number(block.substring(4)));
   }
 
-  private standIndex(index: number) {
+  private subBlockStandIndex(index: number) {
     return (index + 1).toString().padStart(2, '0');
   }
 
-  private standConstant(
+  private subBlockStandConstant(
     stand?: Stand,
     stepMeterConstant?: MeterConstantEnum
   ): string {

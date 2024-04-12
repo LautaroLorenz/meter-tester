@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import {
   ContrastTestEssayStep,
@@ -8,6 +8,8 @@ import { ResultStatus } from '../../../../models/business/enums/result-status.mo
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
 import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
+import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
+import { PatternComponent } from '../../../machine/pattern/pattern.component';
 
 @Component({
   selector: 'app-contrast-test-run',
@@ -16,6 +18,9 @@ import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssayStep> {
+  @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
+  @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+
   stepRunMode = StepRunMode.continuousResultUpdate;
 
   override readonly skipEnabled = APP_CONFIG.skipSteps.contrastTestRun;
@@ -36,6 +41,13 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
 
   // TODO
   override startTest(): void {
+    this.pattern
+      .constant$(
+        this.currentStep.form_control_raw.phaseL1,
+        this.currentStep.form_control_raw.phaseL2,
+        this.currentStep.form_control_raw.phaseL3
+      )
+      .subscribe();
     console.log('start');
   }
 
