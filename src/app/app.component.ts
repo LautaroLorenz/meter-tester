@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
     private readonly ipcService: IpcService,
     private readonly messagesService: MessagesService
   ) {
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang('es');
   }
 
   get blocked$(): Observable<boolean> {
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
           this.messagesService.info('Base de datos creada', true);
         }
         if (location) {
-          console.log(location);
+          // console.log(location);
         }
       });
   }

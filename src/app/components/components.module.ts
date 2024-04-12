@@ -57,6 +57,7 @@ import { BootTestPdfReportComponent } from './steps/result-report/boot-test-pdf-
 import { ContrastTestParamsComponent } from './steps/step-params/contrast-test-params/contrast-test-params.component';
 import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/contrast-test-run.component';
 import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 const AppComponents = [
   PageTitleComponent,
@@ -123,6 +124,7 @@ const AppComponents = [
     PipesModule,
     ReactiveFormsModule,
     FormsModule,
+    TranslateModule
   ],
   exports: [PrimeNgModule, AppComponents],
 })

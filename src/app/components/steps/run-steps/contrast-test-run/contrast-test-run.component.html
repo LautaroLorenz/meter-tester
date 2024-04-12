@@ -11,3 +11,14 @@
   ></app-manual-generator>
 </div>
 
+<!-- Execution mode -->
+<div class="mt-4 execution-mode-panel">
+  <p-panel header="Ejecución">
+    <p-selectButton
+      [options]="StepRunModes"
+      [(ngModel)]="stepRunMode"
+      optionLabel="label"
+      optionValue="value"
+    ></p-selectButton>
+  </p-panel>
+</div>

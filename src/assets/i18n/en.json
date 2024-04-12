@@ -1,13 +1,4 @@
 {
-  "PAGES": {
-      "HOME": {
-          "TITLE": "App works !",
-          "GO_TO_DETAIL": "Go to Detail",
-          "GO_TO_BRANDS": "Go to Brands"
-      },
-      "DETAIL": {
-        "TITLE": "Detail page !",
-        "BACK_TO_HOME": "Back to Home"
-    }
-  }
+  "StepRunMode.continuousResultUpdate": "Continuous results update",
+  "StepRunMode.finalResultLock": "Lock final result and finish"
 }

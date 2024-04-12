@@ -11,6 +11,7 @@ import { Stand } from '../interafces/stand.model';
 import { EssayStep } from '../interafces/essay-step.model';
 import { StepStatus } from '../enums/step-status.model';
 import { ResultStatus } from '../enums/result-status.model';
+import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 
 @Component({
   template: '',
@@ -24,6 +25,7 @@ export abstract class TestRunComponent<T extends EssayStep> {
 
   protected readonly runEssayService = inject(RunEssayService);
   protected readonly cd = inject(ChangeDetectorRef);
+  protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
 
   abstract readonly skipEnabled: boolean;
 
