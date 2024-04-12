@@ -10,7 +10,7 @@ import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
 import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, merge } from 'rxjs';
+import { tap, switchMap, merge, finalize, forkJoin } from 'rxjs';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
 import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
@@ -111,14 +111,40 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
       .subscribe();
   }
 
-  // TODO
   override stopTest(): void {
-    console.log('stop');
+    // apagar dispositivos
+    forkJoin({
+      // apagar patrón
+      pattern: this.pattern.stop$(),
+      // apagar calculador
+      calculator: this.calculator.stop$(),
+    })
+      .pipe(
+        finalize(() => {
+          // Puede continuar al siguiente step si todos los stands activos tienen
+          // un estado final (Aprobado o Falló)
+          this.canContinue = this.getCanContinue();
+          this.cd.detectChanges();
+          if (this.canContinue) {
+            this.skip();
+          }
+        })
+      )
+      .subscribe();
+    // revisar si algún puesto pasa a estado Falló
+    this.checkFailedStatus();
+    // todo lo que no está en estado Falló, pasa a estado Aprobado
+    this.setApprovedStatus();
+    this.cd.detectChanges();
   }
 
-  // TODO
   override restartResults(resultStatus: ResultStatus): void {
-    console.log('re-start');
+    this.getActiveStands().forEach(({ index }) => {
+      this.runEssayService
+        .getStandResult<ContrastTestStandResult>(this.currentStep.id, index)
+        .patchValue({ resultStatus, measuredError: 0 });
+    });
+    this.cd.detectChanges();
   }
 
   private getStepCalculatorBlocks(patternConstant: number): string[] {
