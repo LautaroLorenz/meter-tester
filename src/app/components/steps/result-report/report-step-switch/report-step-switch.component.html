@@ -10,4 +10,10 @@
     [essayStep]="essayStep | stepAs"
     [preparationStep]="preparationStep"
   ></app-boot-test-pdf-report>
+
+  <app-contrast-test-pdf-report
+    *ngSwitchCase="Steps.ContrastTest"
+    [essayStep]="essayStep | stepAs"
+    [preparationStep]="preparationStep"
+  ></app-contrast-test-pdf-report>
 </ng-container>
