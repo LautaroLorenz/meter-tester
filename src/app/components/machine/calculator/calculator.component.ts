@@ -87,7 +87,19 @@ export class CalculatorComponent extends MachineDeviceComponent {
       (_, index) => index < APP_CONFIG.standsQuantiy
     );
     return resultsBlock.map((block) => {
-      const value = Number(block.substring(4));
+      let result = block.substring(4);
+      const signal = block.substring(4, 5);
+      let value: number;
+      if (signal === '-' || signal === '+') {
+        result = block.substring(5);
+        if (signal === '+') {
+          value = Number(result);
+        } else {
+          value = -1 * Number(result);
+        }
+      } else {
+        value = Number(result);
+      }
       const decimals = Math.pow(10, this.resultDecimalsQuantity);
       return Math.round((value / decimals) * decimals) / decimals;
     });
