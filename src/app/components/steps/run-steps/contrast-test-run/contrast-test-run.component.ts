@@ -47,7 +47,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     field: (item: StandStandResult): string => {
       const realItem = item as Stand | ContrastTestStandResult;
       return 'measuredError' in realItem
-        ? realItem.measuredError?.toString()
+        ? realItem.measuredError?.toFixed(2)
         : '';
     },
   };
