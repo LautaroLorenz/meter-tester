@@ -45,29 +45,31 @@ export class VmCalculatorComponent extends VMDeviceComponent {
       enableConditions: [
         { pattern: SoftwareCalculatorCommands.START_CONTRAST },
       ],
-      blocks: this.generateResultCommandBlocks(),
+      blocks: this.generateResultCommandBlocksError(),
     },
     {
       id: 3,
       name: CalculatorResponseCommands.RESULTS,
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
-      blocks: this.generateResultCommandBlocks(),
+      blocks: this.generateResultCommandBlocksImpulses(),
     },
     {
       id: 4,
       name: CalculatorResponseCommands.RESULTS,
       enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
-      blocks: this.generateResultCommandBlocks(),
+      blocks: this.generateResultCommandBlocksImpulses(),
     },
   ];
 
-  private generateResultCommandBlocks(): CommandBlock[] {
+  private generateResultCommandBlocksImpulses(): CommandBlock[] {
     const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
       .fill('')
       .map<CommandBlock[]>((_, index) => [
         {
           type: CommandBlockTypes.Variable,
-          startWith: `PS${(index + 1).toString().padStart(2, '0')}`,
+          startWith: `${CommandDirector.STAND}${(index + 1)
+            .toString()
+            .padStart(2, '0')}`,
           endWith: CommandDirector.DIVIDER,
           value: '00000',
           variableValue: null,
@@ -77,6 +79,51 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             type: CommandLineConfigTypes.Incremental,
             incrementQuantity: 1,
             probabilityOfChange: 35,
+          },
+        },
+      ])
+      .reduce((acc, value) => (acc = acc.concat(value)), []);
+
+    return [
+      {
+        type: CommandBlockTypes.Fixed,
+        value: 'B|CAL|STW|',
+      },
+      ...standResult,
+    ];
+  }
+
+  private generateResultCommandBlocksError(): CommandBlock[] {
+    const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
+      .fill('')
+      .map<CommandBlock[]>((_, index) => [
+        {
+          type: CommandBlockTypes.Variable,
+          startWith: `${CommandDirector.STAND}${(index + 1)
+            .toString()
+            .padStart(2, '0')}`,
+          value: '+',
+          variableValue: null,
+          digitsQuantity: 1,
+          padText: '',
+          config: {
+            type: CommandLineConfigTypes.CharRandom,
+            probabilityOfChange: 35,
+            options: ['+', '-'],
+          },
+        },
+        {
+          type: CommandBlockTypes.Variable,
+          endWith: CommandDirector.DIVIDER,
+          value: '0000',
+          variableValue: null,
+          digitsQuantity: 4,
+          padText: '0',
+          config: {
+            type: CommandLineConfigTypes.Random,
+            probabilityOfChange: 35,
+            maxRandom: 9999,
+            minRandom: 0,
           },
         },
       ])

@@ -4,6 +4,7 @@ export class CommandDirector {
   public static readonly CHAR_START = 'B';
   public static readonly CHAR_END = 'Z';
   public static readonly DIVIDER = '|';
+  public static readonly STAND = 'PS';
 
   static getFrom(command: string): Devices {
     return this.getBlocks(command)[1] as Devices;
