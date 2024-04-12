@@ -47,7 +47,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.currentStep.form_control_raw.phaseL2,
         this.currentStep.form_control_raw.phaseL3
       )
-      .subscribe();
+      .subscribe((response) => console.log(response));
     console.log('start');
   }
 
