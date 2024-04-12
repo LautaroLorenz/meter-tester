@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
@@ -17,6 +22,8 @@ import { CommandDirector } from '../../../models/business/class/command-director
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent extends MachineDeviceComponent {
+  @Input() resultDecimalsQuantity!: number;
+
   override readonly device = Devices.CAL;
 
   readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
@@ -79,7 +86,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
     const resultsBlock = allResultsBlock.filter(
       (_, index) => index < APP_CONFIG.standsQuantiy
     );
-    return resultsBlock.map((block) => Number(block.substring(4)));
+    return resultsBlock.map((block) => {
+      const value = Number(block.substring(4));
+      const decimals = Math.pow(10, this.resultDecimalsQuantity);
+      return Math.round((value / decimals) * decimals) / decimals;
+    });
   }
 
   private subBlockStandIndex(index: number) {

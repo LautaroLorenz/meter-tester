@@ -32,7 +32,7 @@
 
 <!-- Calculador -->
 <div class="mt-4">
-  <app-calculator #calculator>
+  <app-calculator #calculator [resultDecimalsQuantity]="0">
     <app-stands-result
       [preparationStep]="preparationStep"
       [results]="currentStep.standResults"
