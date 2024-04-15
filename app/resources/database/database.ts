@@ -1,34 +1,12 @@
-import { ipcMain, app } from 'electron';
-import * as path from 'path';
-import * as fs from 'fs';
+import { ipcMain } from 'electron';
 import * as KnexLib from 'knex';
+import knexfile from './knexfile';
+import { dataBasePath } from './databasePath';
 
 let knex: KnexLib.Knex;
 let created = false;
-
-// Path de la base de datos en el directorio de datos del usuario
-const userDataDir = app.getPath('userData');
-const dataBaseName = 'database.db';
-const dataBasePath = path.join(userDataDir, dataBaseName);
-
-const config = {
-  client: 'sqlite3',
-  connection: dataBasePath,
-  useNullAsDefault: true,
-  migrations: {
-    // Will create your migrations in the data folder automatically
-    directory: path.join(__dirname, './migrations'),
-  },
-  seeds: {
-    // Will create your seeds in the data folder automatically
-    directory: path.join(__dirname, './seeds'),
-  },
-  pool: {
-    // activate foreign keys check
-    afterCreate: (conn: any, cb: any) =>
-      conn.run('PRAGMA foreign_keys = ON', cb),
-  },
-};
+let updated = false;
+let updatedError = false;
 
 async function runSeedsFirstTime(knex: KnexLib.Knex) {
   // Verifica si la base de datos está vacía
@@ -46,13 +24,23 @@ async function runSeedsFirstTime(knex: KnexLib.Knex) {
 
 export default {
   connect: () => {
-    knex = require('knex')(config);
+    knex = require('knex')(knexfile);
 
     // Actualizar base de datos
-    knex.migrate.latest().then(() => {
-      // Run seeds first time
-      runSeedsFirstTime(knex);
-    });
+    knex.migrate
+      .latest()
+      .then((migrations) => {
+        if (migrations?.[1]?.length > 0) {
+          console.log(migrations);
+          updated = true;
+        }
+
+        // Run seeds first time
+        runSeedsFirstTime(knex);
+      })
+      .catch(() => {
+        updatedError = true;
+      });
 
     return knex;
   },
@@ -73,7 +61,7 @@ export default {
           status = false;
         });
 
-      const response = { status, created, location: '' };
+      const response = { status, created, updated, updatedError, location: '' };
       if (status) {
         response.location = dataBasePath;
       }

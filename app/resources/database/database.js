@@ -10,30 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
-const path = require("path");
+const knexfile_1 = require("./knexfile");
+const databasePath_1 = require("./databasePath");
 let knex;
 let created = false;
-// Path de la base de datos en el directorio de datos del usuario
-const userDataDir = electron_1.app.getPath('userData');
-const dataBaseName = 'database.db';
-const dataBasePath = path.join(userDataDir, dataBaseName);
-const config = {
-    client: 'sqlite3',
-    connection: dataBasePath,
-    useNullAsDefault: true,
-    migrations: {
-        // Will create your migrations in the data folder automatically
-        directory: path.join(__dirname, './migrations'),
-    },
-    seeds: {
-        // Will create your seeds in the data folder automatically
-        directory: path.join(__dirname, './seeds'),
-    },
-    pool: {
-        // activate foreign keys check
-        afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb),
-    },
-};
+let updated = false;
+let updatedError = false;
 function runSeedsFirstTime(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         // Verifica si la base de datos está vacía
@@ -50,18 +32,28 @@ function runSeedsFirstTime(knex) {
 }
 exports.default = {
     connect: () => {
-        knex = require('knex')(config);
+        knex = require('knex')(knexfile_1.default);
         // Actualizar base de datos
-        knex.migrate.latest().then(() => {
+        knex.migrate
+            .latest()
+            .then((migrations) => {
+            var _a;
+            if (((_a = migrations === null || migrations === void 0 ? void 0 : migrations[1]) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+                console.log(migrations);
+                updated = true;
+            }
             // Run seeds first time
             runSeedsFirstTime(knex);
+        })
+            .catch(() => {
+            updatedError = true;
         });
         return knex;
     },
     register: () => {
         electron_1.ipcMain.handle('get-database-path', () => __awaiter(void 0, void 0, void 0, function* () {
             return {
-                dataBasePath,
+                dataBasePath: databasePath_1.dataBasePath,
             };
         }));
         electron_1.ipcMain.handle('get-database-connection-status', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,9 +66,9 @@ exports.default = {
                 .catch(() => {
                 status = false;
             });
-            const response = { status, created, location: '' };
+            const response = { status, created, updated, updatedError, location: '' };
             if (status) {
-                response.location = dataBasePath;
+                response.location = databasePath_1.dataBasePath;
             }
             return response;
         }));
