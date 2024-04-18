@@ -18,6 +18,13 @@ import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 import { ReportStepSwitchComponent } from '../../steps/result-report/report-step-switch/report-step-switch.component';
 import { PdfPageComponent } from '../../steps/result-report/pdf-page/pdf-page.component';
+import { HistoryEssay } from '../../../models/business/database/history_essay.model';
+import { HistoryEssayService } from '../../../services/history-essay.service';
+import { tap, take, map, catchError, finalize } from 'rxjs';
+import { Observable } from 'rxjs/internal/Observable';
+import { throwError } from 'rxjs/internal/observable/throwError';
+import { NavigationService } from '../../../services/navigation.service';
+import { PageUrlName } from '../../../models/business/enums/page-name.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -29,9 +36,10 @@ export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(ReportStepSwitchComponent)
   steps!: QueryList<ReportStepSwitchComponent>;
 
-  // TODO implementar canDeactivate si no descargó el archivo e intenta salir
+  // TODO implementar canDeactivate si intenta salir y no guardó en la base de datos
   isFileDownloaded = false;
   isDownloading = false;
+  isSaving = false;
   fileName!: string;
   readonly runEssay: RunEssay;
   readonly executionSteps: EssayStep[];
@@ -41,7 +49,9 @@ export class ReportMajorStepComponent implements OnInit {
     private readonly runEssayService: RunEssayService,
     private readonly blockUIService: BlockUIService,
     private readonly messagesService: MessagesService,
-    private readonly cd: ChangeDetectorRef
+    private readonly cd: ChangeDetectorRef,
+    private readonly historyEssayService: HistoryEssayService,
+    private readonly navigationService: NavigationService
   ) {
     this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
     this.executionSteps = MajorStepsDirector.stepsByMajorStep(
@@ -72,6 +82,14 @@ export class ReportMajorStepComponent implements OnInit {
       .catch(() => {
         this.messagesService.error('No se pudo crear el reporte');
       });
+  }
+
+  exit(): void {
+    this.navigationService.back({ targetPage: PageUrlName.availableTest });
+  }
+
+  saveAndExit(): void {
+    this.saveOnHistory$().subscribe(() => this.exit());
   }
 
   private async createPDF(fileName: string): Promise<void> {
@@ -116,6 +134,53 @@ export class ReportMajorStepComponent implements OnInit {
     return this.steps.reduce<PdfPageComponent[]>(
       (acc, { pages }) => (acc = acc.concat(pages)),
       []
+    );
+  }
+
+  /**
+   * guardar ejecución en la base de datos
+   */
+  private saveOnHistory$(): Observable<HistoryEssay[]> {
+    // bloquear la UI mientras está generando el historial.
+    this.isSaving = true;
+    this.blockUIService.setBlocked(true);
+    this.cd.detectChanges();
+    const savedTime = new Date().getTime();
+    let rows: Omit<HistoryEssay, 'id' | 'foreign'>[] = [];
+    this.executionSteps.forEach((step) => {
+      this.runEssayService
+        .getActiveStands(this.preparationStep)
+        .forEach(({ index, stand }) => {
+          const historyEssay: Omit<HistoryEssay, 'id' | 'foreign'> = {
+            saved_time: savedTime,
+            essay_name: this.runEssay.essayName,
+            step_name: step.form_control_raw.name,
+            meter_id: stand.meter.id,
+            serial_number: stand.serialNumber,
+            year_of_production: stand.yearOfProduction,
+            result_status_enum: step.standResults[index].resultStatus,
+          };
+          rows = rows.concat(historyEssay);
+        });
+    });
+
+    return this.historyEssayService.saveHistoryEssay$(rows).pipe(
+      take(1),
+      tap(() => {
+        this.messagesService.success('Guardado correctamente');
+      }),
+      map(({ historyEssayRows }) => historyEssayRows),
+      finalize(() => {
+        this.isSaving = false;
+        this.blockUIService.setBlocked(false);
+        this.cd.detectChanges();
+      }),
+      catchError((err: Error) => {
+        this.messagesService.error(
+          'No se pudo guardar el historial en la base de datos'
+        );
+        return throwError(() => err);
+      })
     );
   }
 }

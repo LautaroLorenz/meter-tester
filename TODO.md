@@ -4,6 +4,7 @@ NICE TO HAVE
 - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
 - Verificación y preparación podrian ser opcionales.
 - El componente de paso activo, podria tener una opción collapsed (sin textos y con tooltips)
+- La creación del ensayo "app/essay.ts" podría ser código generico que haga eliminación/creación/edición sobre elementso de un array.
 
 CORE
 - Contraseña en la base de datos para que no se pueda acceder

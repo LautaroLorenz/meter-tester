@@ -30,9 +30,7 @@ export abstract class TestRunComponent<T extends EssayStep> {
   abstract readonly skipEnabled: boolean;
 
   getActiveStands(): { index: number; stand: Stand }[] {
-    return this.preparationStep.form_control_raw
-      .map((stand, index) => ({ stand, index }))
-      .filter(({ stand: { isActive } }) => isActive);
+    return this.runEssayService.getActiveStands(this.preparationStep);
   }
 
   stepExecutionDone(essayStep: EssayStep): void {

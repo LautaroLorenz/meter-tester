@@ -10,9 +10,15 @@
       </ng-container>
     </div>
 
-    <div class="flex justify-content-end mb-8">
+    <div class="flex justify-content-end mb-8 gap-3">
+      <p-button [disabled]="isSaving" (click)="exit()" [outlined]="true">
+        Salir sin guardar
+      </p-button>
       <p-button [disabled]="isDownloading" (click)="downloadPDF()">
         Descargar PDF
+      </p-button>
+      <p-button [disabled]="isSaving" (click)="saveAndExit()">
+        Guardar y salir
       </p-button>
     </div>
   </div>

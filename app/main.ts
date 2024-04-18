@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import database from './resources/database/database';
 import abm from './commands/abm';
 import essay from './commands/essay';
+import history from './commands/history';
 import machine from './resources/machine/machine';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 import { APP_CONFIG } from './environment/environment';
@@ -13,6 +14,7 @@ function registerIpc(knex: any) {
   database.register();
   abm.register(knex);
   essay.register(knex);
+  history.register(knex);
   machine.register();
 }
 

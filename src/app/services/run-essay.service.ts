@@ -14,6 +14,8 @@ import { EssayTemplateStep } from '../models/business/database/essay-template-st
 import { Observable, ReplaySubject, filter, map, take, tap } from 'rxjs';
 import { StandResult } from '../models/business/interafces/stand-result.model';
 import { IpcService } from './ipc.service';
+import { Stand } from '../models/business/interafces/stand.model';
+import { PreparationStep } from '../models/business/interafces/steps/preparation-step.model';
 
 @Injectable({
   providedIn: 'root',
@@ -156,6 +158,14 @@ export class RunEssayService {
     return (essayStep.get('standResults') as FormArray).at(
       standIndex
     ) as AbstractFormGroup<T>;
+  }
+
+  getActiveStands(
+    preparationStep: PreparationStep
+  ): { index: number; stand: Stand }[] {
+    return preparationStep.form_control_raw
+      .map((stand, index) => ({ stand, index }))
+      .filter(({ stand: { isActive } }) => isActive);
   }
 
   nextMajorStep(): void {

@@ -43,7 +43,7 @@ export class DatabaseService<T> {
       relations: [],
       conditions: [],
       lazyLoadEvent: {},
-      globalFilterColumns: []
+      globalFilterColumns: [],
     },
     rawProperties: string[] = []
   ): void {
@@ -85,7 +85,10 @@ export class DatabaseService<T> {
     );
   }
 
-  addElementToTable$(tableName: string, element: T): Observable<number> {
+  addElementToTable$(
+    tableName: string,
+    element: T | Omit<T, 'id' | 'foreign'>
+  ): Observable<number> {
     return from(this._addRowToTable(tableName, element)).pipe(
       tap((result) => {
         if (result === null) {
@@ -133,7 +136,7 @@ export class DatabaseService<T> {
 
   private _addRowToTable = (
     tableName: string,
-    element: T
+    element: T | Omit<T, 'id' | 'foreign'>
   ): Promise<number[] | null> => {
     return this.ipcService.invoke('add-to-table', { tableName, element });
   };

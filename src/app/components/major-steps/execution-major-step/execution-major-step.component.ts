@@ -132,12 +132,13 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         tap((steps) => {
           // si todos los steps se ejecutaron, avanzar al siguiente major step
           if (this.isAllStepsDone(steps)) {
-            this.runEssayService.runEssayForm.patchValue({
-              endDate: this.formatDate.transform(
-                new Date(),
-                FormatDateMode.fromClientToDatabase
-              ) as string,
-            });
+            // FIXME no funciona en el modo skip de todos los steps
+            // this.runEssayService.runEssayForm.patchValue({
+            //   endDate: this.formatDate.transform(
+            //     new Date(),
+            //     FormatDateMode.fromClientToDatabase
+            //   ) as string,
+            // });
             this.runEssayService.nextMajorStep();
           }
           // si un step paso a Executed Done, avanzar con la ejecución del próximo
