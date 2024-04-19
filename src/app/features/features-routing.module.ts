@@ -9,6 +9,7 @@ import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
+import { HistoryEssayComponent } from './history-essay/history-essay.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
   {
     path: PageUrlName.virtualMachine,
     component: VirtualMachineComponent,
+  },
+  {
+    path: PageUrlName.history,
+    component: HistoryEssayComponent,
   },
 ];
 

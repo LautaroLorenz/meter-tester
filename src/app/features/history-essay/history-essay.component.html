@@ -1,0 +1,10 @@
+<app-page-title [title]="title"></app-page-title>
+<ng-container *ngIf="historyEssayRows$ | async as historyEssayRows">
+  <app-abm
+    [dataset]="historyEssayRows"
+    [totalRecords]="totalRecords"
+    [columns]="cols"
+    (lazyLoad)="lazyLoad($event)"
+    actionColumnStyleClass="w-10rem"
+  ></app-abm>
+</ng-container>

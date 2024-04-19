@@ -14,6 +14,7 @@ import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { DirectivesModule } from '../directives/directives.module';
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
+import { HistoryEssayComponent } from './history-essay/history-essay.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { VirtualMachineComponent } from './virtual-machine/virtual-machine.compo
     EssayTemplateBuilderComponent,
     RunEssayComponent,
     VirtualMachineComponent,
+    HistoryEssayComponent,
   ],
   imports: [
     CommonModule,

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmPage } from '../../models/core/abm-page.model';
@@ -32,10 +32,7 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
   templateUrl: './meters.component.html',
   styleUrls: ['./meters.component.scss'],
 })
-export class MetersComponent
-  extends AbmPage<Meter>
-  implements OnInit, OnDestroy
-{
+export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
   readonly title: string = 'Administración de medidores';
   readonly cols = MeterTableColumns;
   readonly form: FormGroup;
@@ -99,10 +96,6 @@ export class MetersComponent
     this.initFormValueChangeListeners();
   }
 
-  ngOnInit(): void {
-    this.refreshTable();
-  }
-
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
@@ -156,18 +149,26 @@ export class MetersComponent
   }
 
   private readonly updateDropdownOptions = (): void => {
-    this.dropdownActiveConstantUnitOptions = this._relations[
-      ActiveConstantUnitDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownReactiveConstantUnitOptions = this._relations[
-      ReactiveConstantUnitDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownBrandOptions = this._relations[
-      BrandDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    this.dropdownConnectionOptions = this._relations[
-      ConnectionDbTableContext.tableName
-    ].sort((a, b) => a.name.localeCompare(b.name));
+    if (this._relations[ActiveConstantUnitDbTableContext.tableName]) {
+      this.dropdownActiveConstantUnitOptions = this._relations[
+        ActiveConstantUnitDbTableContext.tableName
+      ].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (this._relations[ReactiveConstantUnitDbTableContext.tableName]) {
+      this.dropdownReactiveConstantUnitOptions = this._relations[
+        ReactiveConstantUnitDbTableContext.tableName
+      ].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (this._relations[BrandDbTableContext.tableName]) {
+      this.dropdownBrandOptions = this._relations[
+        BrandDbTableContext.tableName
+      ].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (this._relations[ConnectionDbTableContext.tableName]) {
+      this.dropdownConnectionOptions = this._relations[
+        ConnectionDbTableContext.tableName
+      ].sort((a, b) => a.name.localeCompare(b.name));
+    }
   };
 
   private initFormValueChangeListeners(): void {

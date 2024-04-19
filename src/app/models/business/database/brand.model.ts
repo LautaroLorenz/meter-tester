@@ -4,9 +4,6 @@ import { DbForeignKey, DbTableContext } from '../../core/database.model';
 export interface Brand extends DbForeignKey {
   id: number;
   name: string;
-  model: string;
-  connection_id: number;
-  foreign: object;
 }
 
 export const BrandDbTableContext: DbTableContext = {

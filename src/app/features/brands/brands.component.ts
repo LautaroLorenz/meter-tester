@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, first, Observable, tap } from 'rxjs';
 import {
@@ -15,7 +15,7 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
   templateUrl: './brands.component.html',
   styleUrls: ['./brands.component.scss'],
 })
-export class BrandsComponent extends AbmPage<Brand> implements OnInit {
+export class BrandsComponent extends AbmPage<Brand> {
   readonly title: string = 'Administración de marcas';
   readonly cols = BrandTableColumns;
   readonly form: FormGroup;
@@ -33,10 +33,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       id: new FormControl(),
       name: new FormControl(undefined, Validators.required.bind(this)),
     });
-  }
-
-  ngOnInit(): void {
-    this.refreshTable();
   }
 
   deleteBrands(ids: string[] = []) {

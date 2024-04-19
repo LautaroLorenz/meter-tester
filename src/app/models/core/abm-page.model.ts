@@ -1,4 +1,4 @@
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, tap, startWith } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
 import { DbTableContext, TableRelationsMap } from './database.model';
 import { RelationsManager } from './relations-manager.model';
@@ -23,6 +23,11 @@ export abstract class AbmPage<T> {
     // FIXME
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this._dbService.getTableReply$(tableName).pipe(
+      startWith(({
+        totalRecords: 0,
+        relations: {},
+        rows: []
+      })),
       tap(({ totalRecords }) => (this.totalRecords = totalRecords)),
       tap(({ relations }) => this._setRelations(relations)),
       map(({ rows }) =>
@@ -33,7 +38,8 @@ export abstract class AbmPage<T> {
           this._relations,
           this._dbTableConnection.foreignTables
         )
-      )
+      ),
+      // tap((response) => console.log(response))
     );
   }
 

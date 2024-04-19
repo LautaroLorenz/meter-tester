@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { filter, first, Observable, tap } from 'rxjs';
 import { AbmPage } from '../../models/core/abm-page.model';
 import {
@@ -14,10 +14,7 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
   templateUrl: './available-test.component.html',
   styleUrls: ['./available-test.component.scss'],
 })
-export class AvailableTestComponent
-  extends AbmPage<EssayTemplate>
-  implements OnInit
-{
+export class AvailableTestComponent extends AbmPage<EssayTemplate> {
   readonly title: string = 'Administración de ensayos';
   readonly cols = EssayTemplateTableColumns;
   readonly essayTemplates$: Observable<EssayTemplate[]>;
@@ -30,10 +27,6 @@ export class AvailableTestComponent
     this.essayTemplates$ = this.refreshDataWhenDatabaseReply$(
       EssayTemplateDbTableContext.tableName
     );
-  }
-
-  ngOnInit(): void {
-    this.refreshTable();
   }
 
   deleteEssayTemplates(ids: string[] = []) {
