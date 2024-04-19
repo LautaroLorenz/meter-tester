@@ -30,7 +30,6 @@ export const HistoryEssayDbTableContext: DbTableContext = {
   ],
 };
 
-// TODO
 export const HistoryEssayTableColumns: AbmColum[] = [
   {
     field: 'essay_name',
@@ -57,57 +56,14 @@ export const HistoryEssayTableColumns: AbmColum[] = [
     header: 'Número de serie',
     sortable: true,
   },
-  //   {
-  //     field: 'maximumCurrent',
-  //     header: 'Imax [A]',
-  //     sortable: false,
-  //     styleClass: 'text-right',
-  //     headerTooltip: 'Corriente máxima',
-  //   },
-  //   {
-  //     field: 'ratedCurrent',
-  //     header: 'In [A]',
-  //     sortable: false,
-  //     styleClass: 'text-right',
-  //     headerTooltip: 'Corriente nominal',
-  //   },
-  //   {
-  //     field: 'ratedVoltage',
-  //     header: 'Un [V]',
-  //     sortable: false,
-  //     styleClass: 'text-right',
-  //     headerTooltip: 'Tensión nominal',
-  //   },
-  //   {
-  //     field: 'activeConstantValue',
-  //     header: 'Cte. energía activa',
-  //     sortable: false,
-  //     styleClass: 'text-right pr-1 border-right-none',
-  //     headerTooltip: 'Constante de energía activa',
-  //     colSpan: 2,
-  //     colSpanColumns: [
-  //       {
-  //         field: 'foreign.activeConstantUnit.name',
-  //         styleClass: 'pl-1 text-left border-left-none',
-  //         prefix: '[',
-  //         suffix: ']',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     field: 'reactiveConstantValue',
-  //     header: 'Cte. energía reactiva',
-  //     sortable: false,
-  //     styleClass: 'text-right pr-1 border-right-none',
-  //     headerTooltip: 'Constante de energía reactiva',
-  //     colSpan: 2,
-  //     colSpanColumns: [
-  //       {
-  //         field: 'foreign.reactiveConstantUnit.name',
-  //         styleClass: 'pl-1 text-left border-left-none',
-  //         prefix: '[',
-  //         suffix: ']',
-  //       },
-  //     ],
-  //   },
+  {
+    field: 'year_of_production',
+    header: 'Año de fabricación',
+    sortable: true,
+  },
+  {
+    field: 'result_status_enum',
+    header: 'Resultado',
+    sortable: true,
+  },
 ];

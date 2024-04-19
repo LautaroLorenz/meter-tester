@@ -1,5 +1,19 @@
 import { ipcMain } from 'electron';
 import { Knex } from 'knex';
+import * as util from 'util';
+
+type ForeignTable = {
+  tableName: string;
+  foreignKey: string;
+  propertyName: string;
+  foreignTables?: ForeignTable[];
+};
+
+type JoinTable = {
+  tableName: string;
+  leftProp: string;
+  rightProp: string;
+};
 
 function getForeignTableNameByProp(relations: any[], property: string): string {
   const relation = relations.find(
@@ -8,6 +22,9 @@ function getForeignTableNameByProp(relations: any[], property: string): string {
   return relation?.tableName ?? '';
 }
 
+/**
+ * Arma la parte de get table que tiene que ver con retornar las tablas relacioandas a la buscada
+ */
 async function getRelatedTables(
   knex: Knex,
   relationsMap: Record<string, any>,
@@ -20,6 +37,152 @@ async function getRelatedTables(
       await getRelatedTables(knex, relationsMap, relation.foreignTables);
     }
   }
+}
+
+/**
+ * Arma la parte de get table que tiene que ver con la búsqueda por texto genérico.
+ */
+function getColumns(
+  tableName: string,
+  foreignTables: ForeignTable[],
+  globalFilterColumns: string[]
+): string[] {
+  const output: string[] = [];
+
+  const findForeignTable = (
+    propertyName: string,
+    foreignTables: ForeignTable[]
+  ): ForeignTable | undefined => {
+    for (const table of foreignTables) {
+      if (table.propertyName === propertyName) {
+        return table;
+      }
+      if (table.foreignTables) {
+        const foundTable = findForeignTable(propertyName, table.foreignTables);
+        if (foundTable) {
+          return foundTable;
+        }
+      }
+    }
+  };
+
+  for (const column of globalFilterColumns) {
+    if (!column.includes('foreign')) {
+      output.push(`${tableName}.${column}`);
+    } else {
+      const parts = column.split('.');
+      let currentTables = foreignTables;
+      let currentTable: ForeignTable | undefined;
+
+      for (let i = 1; i < parts.length; i += 2) {
+        currentTable = findForeignTable(parts[i], currentTables);
+        if (currentTable && currentTable.foreignTables) {
+          currentTables = currentTable.foreignTables;
+        }
+      }
+
+      if (currentTable) {
+        output.push(`${currentTable.tableName}.${parts[parts.length - 1]}`);
+      }
+    }
+  }
+
+  return output;
+}
+function getTableSearchBuilder(
+  queryBuilder: Knex.QueryBuilder,
+  globalFilter: string,
+  globalFilterColumns: string[],
+  relations: ForeignTable[],
+  tableName: string
+) {
+  const columns: string[] = getColumns(
+    tableName,
+    relations,
+    globalFilterColumns
+  );
+  queryBuilder.andWhereRaw(
+    `CONCAT(${columns.join(',')}) COLLATE utf8_general_ci LIKE ?`,
+    [`%${globalFilter}%`]
+  );
+}
+
+/**
+ * Genera la parte de la query de los join entre la tabla y las relacionadas
+ */
+function joinTables(relations: ForeignTable[], tableName: string): JoinTable[] {
+  let joins: JoinTable[] = [];
+
+  for (const table of relations) {
+    const leftProp = `${tableName}.${table.foreignKey}`;
+    const rightProp = `${table.tableName}.id`;
+
+    joins.push({
+      tableName: table.tableName,
+      leftProp,
+      rightProp,
+    });
+
+    if (table.foreignTables) {
+      joins = joins.concat(joinTables(table.foreignTables, table.tableName));
+    }
+  }
+
+  return joins;
+}
+function getJoinTablesBuilder(
+  queryBuilder: Knex.QueryBuilder,
+  relations: ForeignTable[],
+  tableName: string
+) {
+  joinTables(relations, tableName).forEach(
+    ({ tableName, leftProp, rightProp }) =>
+      queryBuilder.join(tableName, leftProp, rightProp)
+  );
+}
+
+/**
+ * Generar la parte del ordenamiento del builder
+ */
+function findForeignTable(propertyName: string, foreignTables: any[]): any {
+  for (const table of foreignTables) {
+    if (table.propertyName === propertyName) {
+      return table;
+    }
+    if (table.foreignTables) {
+      const foundTable = findForeignTable(propertyName, table.foreignTables);
+      if (foundTable) {
+        return foundTable;
+      }
+    }
+  }
+  return null;
+}
+function getTableOrderBuilder(
+  queryBuilder: Knex.QueryBuilder,
+  sortField: string,
+  sortOrder: number,
+  relations: ForeignTable[],
+  tableName: string
+): void {
+  const orderDirection = sortOrder > 0 ? 'desc' : 'asc';
+  const parts = sortField.split('.');
+  let currentTable = tableName;
+  let tableColumnOrder = '';
+
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i] === 'foreign') {
+      const nextTable = parts[i + 1];
+      const foreignTable = findForeignTable(nextTable, relations);
+      if (foreignTable) {
+        currentTable = foreignTable.tableName;
+        i++; // Skip the next part because we've already processed it
+      }
+    } else {
+      tableColumnOrder = `${currentTable}.${parts[i]}`;
+    }
+  }
+  queryBuilder.orderBy(tableColumnOrder, orderDirection);
 }
 
 export default {
@@ -39,49 +202,25 @@ export default {
       if (lazyLoadEvent) {
         // Ordenamiento
         if (!!lazyLoadEvent.sortField) {
-          const sortOrder = lazyLoadEvent.sortOrder > 0 ? 'desc' : 'asc';
-          if (lazyLoadEvent.sortField.includes('foreign')) {
-            const foreignSortFieldParts = lazyLoadEvent.sortField.split('.');
-            const foreignSortFieldPropertyName = foreignSortFieldParts[1];
-            const foreignTableName = getForeignTableNameByProp(
-              relations,
-              foreignSortFieldPropertyName
-            );
-            const foreignTableColumn = foreignSortFieldParts[2];
-            queryBuilder.orderBy(
-              `${foreignTableName}.${foreignTableColumn}`,
-              sortOrder
-            );
-          } else {
-            queryBuilder.orderBy(lazyLoadEvent.sortField, sortOrder);
-          }
+          getTableOrderBuilder(
+            queryBuilder,
+            lazyLoadEvent.sortField,
+            lazyLoadEvent.sortOrder,
+            relations,
+            tableName
+          );
         } else {
           queryBuilder.orderBy('id', 'desc');
         }
 
         // Búsqueda global
         if (!!lazyLoadEvent.globalFilter) {
-          console.log('globalFilterColumns', globalFilterColumns);
-          const columns: string[] = globalFilterColumns.map(
-            (filterColumn: string) => {
-              if (filterColumn.includes('foreign')) {
-                const foreignFieldParts = filterColumn.split('.');
-                const foreignFieldPropertyName = foreignFieldParts[1];
-                const foreignTableName = getForeignTableNameByProp(
-                  relations,
-                  foreignFieldPropertyName
-                );
-                const foreignTableColumn = foreignFieldParts[2];
-                return `${foreignTableName}.${foreignTableColumn}`;
-              } else {
-                return `${tableName}.${filterColumn}`;
-              }
-            }
-          );
-
-          queryBuilder.andWhereRaw(
-            `CONCAT(${columns.join(',')}) COLLATE utf8_general_ci LIKE ?`,
-            [`%${lazyLoadEvent.globalFilter}%`]
+          getTableSearchBuilder(
+            queryBuilder,
+            lazyLoadEvent.globalFilter,
+            globalFilterColumns,
+            relations,
+            tableName
           );
         }
       } else {
@@ -103,14 +242,7 @@ export default {
       }
 
       // Joins de tablas relacionadas
-      for (let i = 0; i < relations?.length; i++) {
-        const relation: any = relations[i];
-        queryBuilder.join(
-          relation.tableName,
-          `${tableName}.${relation.propertyName}_id`,
-          `${relation.tableName}.id`
-        );
-      }
+      getJoinTablesBuilder(queryBuilder, relations, tableName);
 
       // Paginado
       const totalRecordsQueryBuilder = queryBuilder.clone();
@@ -122,6 +254,8 @@ export default {
           queryBuilder.offset(lazyLoadEvent.first);
         }
       }
+
+      // Generación de la respuesta
       let rows = await queryBuilder;
       const { totalRecords } = (
         await totalRecordsQueryBuilder.count('*', { as: 'totalRecords' })
