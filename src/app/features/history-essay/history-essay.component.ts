@@ -34,4 +34,8 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       ),
     });
   }
+
+  // TODO eliminación de filas
+  // TODO columna resultado
+  // TODO detalle del medidor
 }
