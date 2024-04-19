@@ -38,8 +38,7 @@ export abstract class AbmPage<T> {
           this._relations,
           this._dbTableConnection.foreignTables
         )
-      ),
-      // tap((response) => console.log(response))
+      )
     );
   }
 

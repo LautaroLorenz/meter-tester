@@ -12,23 +12,33 @@ export class RelationsManager {
     if (foreignTables.length === 0) {
       return rows;
     }
-
-    // FIXME row: any
     return rows.map((row: any) => {
-      foreignTables.forEach((ft) => {
-        if (row[ft.foreignKey] !== undefined) {
-          if (row['foreign'] === undefined) {
-            row['foreign'] = {};
-          }
-          row['foreign'][ft.propertyName] = relations[ft.tableName]?.find(
-            (value) => value.id === row[ft.foreignKey]
-          );
-        }
-      });
+      this.createForeignProp(row, foreignTables, relations);
+      return row as T;
+    });
+  }
 
-      // FIXME
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return row;
-    }) as T[];
+  private static createForeignProp(
+    element: any,
+    foreignTables: ForeignTable[],
+    relations: TableRelationsMap
+  ) {
+    foreignTables.forEach((ft) => {
+      if (element[ft.foreignKey] !== undefined) {
+        if (element['foreign'] === undefined) {
+          element['foreign'] = {};
+        }
+        element['foreign'][ft.propertyName] = relations[ft.tableName]?.find(
+          (value) => value.id === element[ft.foreignKey]
+        );
+      }
+      if (ft.foreignTables) {
+        this.createForeignProp(
+          element.foreign[ft.propertyName],
+          ft.foreignTables,
+          relations
+        );
+      }
+    });
   }
 }

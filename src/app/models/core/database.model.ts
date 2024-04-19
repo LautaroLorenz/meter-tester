@@ -27,6 +27,7 @@ export interface ForeignTable {
   tableName: TableName;
   foreignKey: string;
   propertyName: string;
+  foreignTables?: ForeignTable[];
 }
 
 export enum WhereKind {

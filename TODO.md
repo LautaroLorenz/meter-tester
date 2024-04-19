@@ -6,6 +6,9 @@ NICE TO HAVE
 - El componente de paso activo, podria tener una opción collapsed (sin textos y con tooltips)
 - La creación del ensayo "app/essay.ts" podría ser código generico que haga eliminación/creación/edición sobre elementso de un array.
 
+BUG
+- en el seed de meters no usar valores aleatorios porque se rompe el preparation step del template
+
 CORE
 - Contraseña en la base de datos para que no se pueda acceder
 

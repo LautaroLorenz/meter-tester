@@ -1,17 +1,29 @@
 import { ipcMain } from 'electron';
+import { Knex } from 'knex';
 
-function getForeignTableNameByProp(
-  relations: any[],
-  property: string
-): string {
+function getForeignTableNameByProp(relations: any[], property: string): string {
   const relation = relations.find(
     ({ propertyName }: any) => propertyName === property
   );
   return relation?.tableName ?? '';
 }
 
+async function getRelatedTables(
+  knex: Knex,
+  relationsMap: Record<string, any>,
+  relations: any[]
+): Promise<void> {
+  for await (const relation of relations) {
+    const relationTableName = relation.tableName;
+    relationsMap[relationTableName] = await knex(relationTableName);
+    if (!!relation.foreignTables?.length) {
+      await getRelatedTables(knex, relationsMap, relation.foreignTables);
+    }
+  }
+}
+
 export default {
-  register: (knex: any) => {
+  register: (knex: Knex) => {
     ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
       const {
         tableName,
@@ -21,10 +33,11 @@ export default {
         lazyLoadEvent,
         globalFilterColumns,
       } = dbTableConnection;
-      const relationsMap: any = {};
+      const relationsMap: Record<string, any> = {};
       const queryBuilder = knex(tableName).select(`${tableName}.*`);
 
       if (lazyLoadEvent) {
+        // Ordenamiento
         if (!!lazyLoadEvent.sortField) {
           const sortOrder = lazyLoadEvent.sortOrder > 0 ? 'desc' : 'asc';
           if (lazyLoadEvent.sortField.includes('foreign')) {
@@ -46,7 +59,9 @@ export default {
           queryBuilder.orderBy('id', 'desc');
         }
 
+        // Búsqueda global
         if (!!lazyLoadEvent.globalFilter) {
+          console.log('globalFilterColumns', globalFilterColumns);
           const columns: string[] = globalFilterColumns.map(
             (filterColumn: string) => {
               if (filterColumn.includes('foreign')) {
@@ -73,6 +88,7 @@ export default {
         queryBuilder.orderBy('id', 'desc');
       }
 
+      // Filtrado
       for (const condition of conditions) {
         const { kind, columnName, operator, value } = condition;
         if (kind === 'where') {
@@ -86,6 +102,7 @@ export default {
         }
       }
 
+      // Joins de tablas relacionadas
       for (let i = 0; i < relations?.length; i++) {
         const relation: any = relations[i];
         queryBuilder.join(
@@ -95,6 +112,7 @@ export default {
         );
       }
 
+      // Paginado
       const totalRecordsQueryBuilder = queryBuilder.clone();
       if (lazyLoadEvent) {
         if (!!lazyLoadEvent.rows) {
@@ -109,6 +127,7 @@ export default {
         await totalRecordsQueryBuilder.count('*', { as: 'totalRecords' })
       )[0];
 
+      // Propiedades JSON como string
       if (rawProperties.length > 0) {
         rows = rows.map((row: any) => {
           rawProperties.forEach((rawProperty: string) => {
@@ -117,10 +136,10 @@ export default {
           return { ...row };
         });
       }
-      for await (const relation of relations) {
-        const relationTableName = relation.tableName;
-        relationsMap[relationTableName] = await knex(relationTableName);
-      }
+
+      // Tablas relacionadas (recursivo)
+      await getRelatedTables(knex, relationsMap, relations);
+
       reply('get-table-reply', {
         tableNameReply: tableName,
         rows,

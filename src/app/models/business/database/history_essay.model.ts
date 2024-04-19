@@ -2,7 +2,6 @@ import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Meter, MeterDbTableContext } from './meter.model';
 import { ResultStatus } from '../enums/result-status.model';
-import { Brand, BrandDbTableContext } from './brand.model';
 
 export interface HistoryEssay extends DbForeignKey {
   id: number;
@@ -15,7 +14,6 @@ export interface HistoryEssay extends DbForeignKey {
   result_status_enum: ResultStatus;
   foreign: {
     meter: Meter;
-    brand: Brand;
   };
 }
 
@@ -27,6 +25,7 @@ export const HistoryEssayDbTableContext: DbTableContext = {
       tableName: MeterDbTableContext.tableName,
       foreignKey: 'meter_id',
       propertyName: 'meter',
+      foreignTables: MeterDbTableContext.foreignTables,
     },
   ],
 };
@@ -46,6 +45,16 @@ export const HistoryEssayTableColumns: AbmColum[] = [
   {
     field: 'foreign.meter.foreign.brand.name',
     header: 'Marca',
+    sortable: true,
+  },
+  {
+    field: 'foreign.meter.model',
+    header: 'Modelo',
+    sortable: true,
+  },
+  {
+    field: 'serial_number',
+    header: 'Número de serie',
     sortable: true,
   },
   //   {

@@ -22,10 +22,40 @@ function getForeignTableNameByProp(relations, property) {
     const relation = relations.find(({ propertyName }) => propertyName === property);
     return (_a = relation === null || relation === void 0 ? void 0 : relation.tableName) !== null && _a !== void 0 ? _a : '';
 }
+function getRelatedTables(knex, relationsMap, relations) {
+    var _a, relations_1, relations_1_1;
+    var _b, e_1, _c, _d;
+    var _e;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            for (_a = true, relations_1 = __asyncValues(relations); relations_1_1 = yield relations_1.next(), _b = relations_1_1.done, !_b;) {
+                _d = relations_1_1.value;
+                _a = false;
+                try {
+                    const relation = _d;
+                    const relationTableName = relation.tableName;
+                    relationsMap[relationTableName] = yield knex(relationTableName);
+                    if (!!((_e = relation.foreignTables) === null || _e === void 0 ? void 0 : _e.length)) {
+                        yield getRelatedTables(knex, relationsMap, relation.foreignTables);
+                    }
+                }
+                finally {
+                    _a = true;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (!_a && !_b && (_c = relations_1.return)) yield _c.call(relations_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    });
+}
 exports.default = {
     register: (knex) => {
         electron_1.ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a, e_1, _b, _c;
             const { tableName, relations, conditions, rawProperties, lazyLoadEvent, globalFilterColumns, } = dbTableConnection;
             const relationsMap = {};
             const queryBuilder = knex(tableName).select(`${tableName}.*`);
@@ -47,6 +77,7 @@ exports.default = {
                     queryBuilder.orderBy('id', 'desc');
                 }
                 if (!!lazyLoadEvent.globalFilter) {
+                    console.log('globalFilterColumns', globalFilterColumns);
                     const columns = globalFilterColumns.map((filterColumn) => {
                         if (filterColumn.includes('foreign')) {
                             const foreignFieldParts = filterColumn.split('.');
@@ -100,27 +131,7 @@ exports.default = {
                     return Object.assign({}, row);
                 });
             }
-            try {
-                for (var _d = true, relations_1 = __asyncValues(relations), relations_1_1; relations_1_1 = yield relations_1.next(), _a = relations_1_1.done, !_a;) {
-                    _c = relations_1_1.value;
-                    _d = false;
-                    try {
-                        const relation = _c;
-                        const relationTableName = relation.tableName;
-                        relationsMap[relationTableName] = yield knex(relationTableName);
-                    }
-                    finally {
-                        _d = true;
-                    }
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (!_d && !_a && (_b = relations_1.return)) yield _b.call(relations_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
+            yield getRelatedTables(knex, relationsMap, relations);
             reply('get-table-reply', {
                 tableNameReply: tableName,
                 rows,
@@ -143,7 +154,7 @@ exports.default = {
                 const newElementsIds = yield knex(tableName).insert(element);
                 return newElementsIds;
             }
-            catch (_e) {
+            catch (_a) {
                 return null;
             }
         }));
