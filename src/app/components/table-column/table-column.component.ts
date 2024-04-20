@@ -4,6 +4,7 @@ import {
   Input,
   OnInit,
   TemplateRef,
+  inject,
 } from '@angular/core';
 import {
   TC_AlignHorizontal,
@@ -11,6 +12,7 @@ import {
   TableColumnField,
   TableColumnTemplateContext,
 } from '../../models/core/table-column.model';
+import { DotStringAsObjectPipe } from '../../pipes/core/dot-string-as-object.pipe';
 
 @Component({
   selector: 'app-table-column',
@@ -25,12 +27,16 @@ export class TableColumnComponent<T> implements OnInit {
 
   value!: string;
   template!: TemplateRef<TableColumnTemplateContext<any>>;
+  alignHorizontal!: TC_AlignHorizontal;
 
   readonly TC_AlignHorizontal = TC_AlignHorizontal;
+
+  private readonly dDotStringAsObjectPipe = inject(DotStringAsObjectPipe);
 
   ngOnInit(): void {
     if ('field' in this.tableColumn) {
       this.value = this.getColValue(this.data, this.tableColumn);
+      this.alignHorizontal = this.tableColumn.alignHorizontal;
     }
     if ('template' in this.tableColumn) {
       this.template = this.tableColumn.template;
@@ -41,6 +47,9 @@ export class TableColumnComponent<T> implements OnInit {
     if (typeof col.field === 'function') {
       return col.field(item, this.index);
     }
-    return item[col.field] as string;
+    return this.dDotStringAsObjectPipe.transform(
+      item as object,
+      col.field as string
+    ) as string;
   }
 }

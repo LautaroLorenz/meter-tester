@@ -160,11 +160,20 @@ function findForeignTable(propertyName: string, foreignTables: any[]): any {
 }
 function getTableOrderBuilder(
   queryBuilder: Knex.QueryBuilder,
-  sortField: string,
+  sortField: string | string[],
   sortOrder: number,
   relations: ForeignTable[],
   tableName: string
 ): void {
+  if (Array.isArray(sortField)) {
+    // ordenamiento por multiples columnas
+    sortField.forEach((field) =>
+      getTableOrderBuilder(queryBuilder, field, sortOrder, relations, tableName)
+    );
+    return;
+  }
+
+  // ordenamiento por una columna
   const orderDirection = sortOrder > 0 ? 'desc' : 'asc';
   const parts = sortField.split('.');
   let currentTable = tableName;
@@ -182,6 +191,7 @@ function getTableOrderBuilder(
       tableColumnOrder = `${currentTable}.${parts[i]}`;
     }
   }
+
   queryBuilder.orderBy(tableColumnOrder, orderDirection);
 }
 

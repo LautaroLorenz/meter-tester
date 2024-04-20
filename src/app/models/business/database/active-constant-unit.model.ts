@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbTableContext } from '../../core/database.model';
 
 export interface ActiveConstantUnit {
@@ -11,11 +10,3 @@ export const ActiveConstantUnitDbTableContext: DbTableContext = {
   rawProperties: [],
   foreignTables: [],
 };
-
-export const ActiveConstantUnitTableColumns: AbmColum[] = [
-  {
-    field: 'name',
-    header: 'Nombre',
-    sortable: true,
-  },
-];

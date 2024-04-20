@@ -139,6 +139,12 @@ function findForeignTable(propertyName, foreignTables) {
     return null;
 }
 function getTableOrderBuilder(queryBuilder, sortField, sortOrder, relations, tableName) {
+    if (Array.isArray(sortField)) {
+        // ordenamiento por multiples columnas
+        sortField.forEach((field) => getTableOrderBuilder(queryBuilder, field, sortOrder, relations, tableName));
+        return;
+    }
+    // ordenamiento por una columna
     const orderDirection = sortOrder > 0 ? 'desc' : 'asc';
     const parts = sortField.split('.');
     let currentTable = tableName;

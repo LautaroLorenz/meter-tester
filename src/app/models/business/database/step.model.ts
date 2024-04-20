@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 
 export interface Step extends DbForeignKey {
@@ -12,11 +11,3 @@ export const StepDbTableContext: DbTableContext = {
   rawProperties: [],
   foreignTables: [],
 };
-
-export const StepTableColumns: AbmColum[] = [
-  {
-    field: 'name',
-    header: 'Paso',
-    sortable: true,
-  },
-];

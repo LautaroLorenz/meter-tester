@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 
 export interface Brand extends DbForeignKey {
@@ -11,12 +10,3 @@ export const BrandDbTableContext: DbTableContext = {
   rawProperties: [],
   foreignTables: [],
 };
-
-export const BrandTableColumns: AbmColum[] = [
-  {
-    field: 'name',
-    header: 'Marca',
-    sortable: true,
-    styleClass: 'w-9',
-  },
-];

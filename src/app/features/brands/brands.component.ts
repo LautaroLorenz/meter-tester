@@ -4,12 +4,15 @@ import { filter, first, Observable, tap } from 'rxjs';
 import {
   Brand,
   BrandDbTableContext,
-  BrandTableColumns,
 } from '../../models/business/database/brand.model';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
 import { AbmPage } from '../../models/core/abm-page.model';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../models/core/table-column.model';
 
 @Component({
   templateUrl: './brands.component.html',
@@ -17,7 +20,15 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
 })
 export class BrandsComponent extends AbmPage<Brand> {
   readonly title: string = 'Administración de marcas';
-  readonly cols = BrandTableColumns;
+  readonly cols: TableColumn<Brand>[] = [
+    {
+      field: 'name',
+      header: 'Marca',
+      sortable: 'name',
+      globalFilter: 'name',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+  ];
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;
 
@@ -78,7 +89,7 @@ export class BrandsComponent extends AbmPage<Brand> {
     this.dbService.getTable(BrandDbTableContext.tableName, {
       relations: BrandDbTableContext.foreignTables,
       lazyLoadEvent: this.lazyLoadEvent,
-      globalFilterColumns: GlobalFilterManager.transform(BrandTableColumns),
+      globalFilterColumns: GlobalFilterManager.transform(this.cols),
     });
   }
 

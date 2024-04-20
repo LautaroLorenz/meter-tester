@@ -19,7 +19,7 @@ import {
 } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
-import { AbmColum } from '../../models/core/abm.model';
+import { TableColumn } from '../../models/core/table-column.model';
 
 @Component({
   selector: 'app-abm',
@@ -30,7 +30,7 @@ import { AbmColum } from '../../models/core/abm.model';
 export class AbmComponent implements OnChanges, OnDestroy {
   @Input() dataset: any[] = [];
   @Input() totalRecords = 0;
-  @Input() columns: AbmColum[] = [];
+  @Input() columns: TableColumn[] = [];
   @Input() paginator = true;
   @Input() detailFormValid = false;
   @Input() toolbar = true;

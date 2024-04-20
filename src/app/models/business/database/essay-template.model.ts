@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 
 export interface EssayTemplate extends DbForeignKey {
@@ -11,11 +10,3 @@ export const EssayTemplateDbTableContext: DbTableContext = {
   rawProperties: [],
   foreignTables: [],
 };
-
-export const EssayTemplateTableColumns: AbmColum[] = [
-  {
-    field: 'name',
-    header: 'Ensayo',
-    sortable: true,
-  },
-];

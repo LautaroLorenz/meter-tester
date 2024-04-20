@@ -4,9 +4,9 @@
     [style]="tableColumn.customStyles"
     [innerHTML]="value"
     [ngClass]="{
-    'justify-content-start': tableColumn.alignHorizontal === TC_AlignHorizontal.Text,
-    'justify-content-center': tableColumn.alignHorizontal === TC_AlignHorizontal.Alphanumeric,
-    'justify-content-end': tableColumn.alignHorizontal === TC_AlignHorizontal.Number,
+    'justify-content-start': alignHorizontal === TC_AlignHorizontal.Text,
+    'justify-content-center': alignHorizontal === TC_AlignHorizontal.Alphanumeric,
+    'justify-content-end': alignHorizontal === TC_AlignHorizontal.Number,
   }"
   ></div>
 </ng-container>

@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Brand, BrandDbTableContext } from './brand.model';
 import {
@@ -57,74 +56,3 @@ export const MeterDbTableContext: DbTableContext = {
     },
   ],
 };
-
-export const MeterTableColumns: AbmColum[] = [
-  {
-    field: 'foreign.brand.name',
-    header: 'Marca',
-    sortable: true,
-  },
-  {
-    field: 'model',
-    header: 'Modelo',
-    sortable: true,
-  },
-  {
-    field: 'foreign.connection.name',
-    header: 'Conexión',
-    sortable: true,
-  },
-  {
-    field: 'maximumCurrent',
-    header: 'Imax [A]',
-    sortable: false,
-    styleClass: 'text-right',
-    headerTooltip: 'Corriente máxima',
-  },
-  {
-    field: 'ratedCurrent',
-    header: 'In [A]',
-    sortable: false,
-    styleClass: 'text-right',
-    headerTooltip: 'Corriente nominal',
-  },
-  {
-    field: 'ratedVoltage',
-    header: 'Un [V]',
-    sortable: false,
-    styleClass: 'text-right',
-    headerTooltip: 'Tensión nominal',
-  },
-  {
-    field: 'activeConstantValue',
-    header: 'Cte. energía activa',
-    sortable: false,
-    styleClass: 'text-right pr-1 border-right-none',
-    headerTooltip: 'Constante de energía activa',
-    colSpan: 2,
-    colSpanColumns: [
-      {
-        field: 'foreign.activeConstantUnit.name',
-        styleClass: 'pl-1 text-left border-left-none',
-        prefix: '[',
-        suffix: ']',
-      },
-    ],
-  },
-  {
-    field: 'reactiveConstantValue',
-    header: 'Cte. energía reactiva',
-    sortable: false,
-    styleClass: 'text-right pr-1 border-right-none',
-    headerTooltip: 'Constante de energía reactiva',
-    colSpan: 2,
-    colSpanColumns: [
-      {
-        field: 'foreign.reactiveConstantUnit.name',
-        styleClass: 'pl-1 text-left border-left-none',
-        prefix: '[',
-        suffix: ']',
-      },
-    ],
-  },
-];

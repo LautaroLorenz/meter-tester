@@ -6,7 +6,6 @@ import { AbmPage } from '../../models/core/abm-page.model';
 import {
   Meter,
   MeterDbTableContext,
-  MeterTableColumns,
 } from '../../models/business/database/meter.model';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
@@ -27,6 +26,10 @@ import {
   ConnectionDbTableContext,
 } from '../../models/business/database/connection.model';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
+import {
+  TC_AlignHorizontal,
+  TableColumn,
+} from '../../models/core/table-column.model';
 
 @Component({
   templateUrl: './meters.component.html',
@@ -34,7 +37,74 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
 })
 export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
   readonly title: string = 'Administración de medidores';
-  readonly cols = MeterTableColumns;
+  readonly cols: TableColumn<Meter>[] = [
+    {
+      field: 'foreign.brand.name',
+      header: 'Marca',
+      sortable: 'foreign.brand.name',
+      globalFilter: 'foreign.brand.name',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+    {
+      field: 'model',
+      header: 'Modelo',
+      sortable: 'model',
+      globalFilter: 'model',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+    {
+      field: 'foreign.connection.name',
+      header: 'Conexión',
+      sortable: 'foreign.connection.name',
+      globalFilter: 'foreign.connection.name',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+    {
+      field: 'maximumCurrent',
+      header: 'Imax [A]',
+      sortable: 'maximumCurrent',
+      globalFilter: 'maximumCurrent',
+      alignHorizontal: TC_AlignHorizontal.Number,
+      headerTooltip: 'Corriente máxima',
+    },
+    {
+      field: 'ratedCurrent',
+      header: 'In [A]',
+      sortable: 'ratedCurrent',
+      globalFilter: 'ratedCurrent',
+      alignHorizontal: TC_AlignHorizontal.Number,
+      headerTooltip: 'Corriente nominal',
+    },
+    {
+      field: 'ratedVoltage',
+      header: 'Un [V]',
+      sortable: 'ratedVoltage',
+      globalFilter: 'ratedVoltage',
+      alignHorizontal: TC_AlignHorizontal.Number,
+      headerTooltip: 'Tensión nominal',
+    },
+    {
+      field: (meter) =>
+        `${meter.activeConstantValue} [${meter.foreign.activeConstantUnit.name}]`,
+      header: 'Cte. energía activa',
+      headerTooltip: 'Constante de energía activa',
+      sortable: ['activeConstantValue', 'foreign.activeConstantUnit.name'],
+      globalFilter: ['activeConstantValue', 'foreign.activeConstantUnit.name'],
+      alignHorizontal: TC_AlignHorizontal.Alphanumeric,
+    },
+    {
+      field: (meter) =>
+        `${meter.reactiveConstantValue} [${meter.foreign.reactiveConstantUnit.name}]`,
+      header: 'Cte. energía reactiva',
+      headerTooltip: 'Constante de energía reactiva',
+      sortable: ['reactiveConstantValue', 'foreign.reactiveConstantUnit.name'],
+      globalFilter: [
+        'reactiveConstantValue',
+        'foreign.reactiveConstantUnit.name',
+      ],
+      alignHorizontal: TC_AlignHorizontal.Alphanumeric,
+    },
+  ];
   readonly form: FormGroup;
   readonly meters$: Observable<Meter[]>;
 
@@ -144,7 +214,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
     this.dbService.getTable(MeterDbTableContext.tableName, {
       relations: MeterDbTableContext.foreignTables,
       lazyLoadEvent: this.lazyLoadEvent,
-      globalFilterColumns: GlobalFilterManager.transform(MeterTableColumns),
+      globalFilterColumns: GlobalFilterManager.transform(this.cols),
     });
   }
 

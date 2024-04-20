@@ -50,14 +50,13 @@
     <tr>
       <th
         *ngFor="let col of columns"
-        [pSortableColumn]="col.field"
+        [pSortableColumn]="col.sortable"
         [pSortableColumnDisabled]="!col.sortable"
         [pTooltip]="col.headerTooltip"
         tooltipPosition="top"
-        [colSpan]="col.colSpan"
       >
         {{ col.header }}
-        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+        <p-sortIcon *ngIf="col.sortable" [field]="col.sortable"></p-sortIcon>
       </th>
       <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
     </tr>
@@ -68,20 +67,14 @@
     let-columns="columns"
     let-rowIndex="rowIndex"
   >
-    <tr>      
-      <ng-container *ngFor="let col of columns">
-        <td class="{{ col.styleClass }}">
-          {{ col.prefix }}{{ rowData | dotStringAsObject : col.field
-          }}{{ col.suffix }}
-        </td>
-        <ng-container *ngFor="let colSpanColumn of col.colSpanColumns">
-          <td class="{{ colSpanColumn.styleClass }}">
-            {{ colSpanColumn.prefix
-            }}{{ rowData | dotStringAsObject : colSpanColumn.field
-            }}{{ colSpanColumn.suffix }}
-          </td>
-        </ng-container>
-      </ng-container>
+    <tr>
+      <td *ngFor="let col of columns">
+        <app-table-column
+          [tableColumn]="col"
+          [data]="rowData"
+          [index]="rowIndex"
+        ></app-table-column>
+      </td>
       <td class="p-2 text-center">
         <ng-container
           [ngTemplateOutlet]="tableColumnButtonsTemplate"

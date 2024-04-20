@@ -1,4 +1,3 @@
-import { AbmColum } from '../../core/abm.model';
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Steps } from '../enums/steps.model';
 import {
@@ -35,21 +34,3 @@ export const EssayTemplateStepDbTableContext: DbTableContext = {
     },
   ],
 };
-
-export const EssayTemplateStepTableColumns: AbmColum[] = [
-  {
-    field: 'order',
-    header: 'Orden de ejecución',
-    sortable: false,
-  },
-  {
-    field: 'foreign.step.name',
-    header: 'Paso',
-    sortable: false,
-  },
-  {
-    field: 'form_control_raw.name',
-    header: 'Nombre',
-    sortable: false,
-  },
-];

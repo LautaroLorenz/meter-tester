@@ -4,11 +4,14 @@ import { AbmPage } from '../../models/core/abm-page.model';
 import {
   EssayTemplate,
   EssayTemplateDbTableContext,
-  EssayTemplateTableColumns,
 } from '../../models/business/database/essay-template.model';
 import { MessagesService } from '../../services/messages.service';
 import { DatabaseService } from '../../services/database.service';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
+import {
+  TableColumn,
+  TC_AlignHorizontal,
+} from '../../models/core/table-column.model';
 
 @Component({
   templateUrl: './available-test.component.html',
@@ -16,7 +19,15 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
 })
 export class AvailableTestComponent extends AbmPage<EssayTemplate> {
   readonly title: string = 'Administración de ensayos';
-  readonly cols = EssayTemplateTableColumns;
+  readonly cols: TableColumn<EssayTemplate>[] = [
+    {
+      field: 'name',
+      header: 'Ensayo',
+      sortable: 'name',
+      globalFilter: 'name',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+  ];
   readonly essayTemplates$: Observable<EssayTemplate[]>;
 
   constructor(
@@ -54,9 +65,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> {
     this.dbService.getTable(EssayTemplateDbTableContext.tableName, {
       relations: EssayTemplateDbTableContext.foreignTables,
       lazyLoadEvent: this.lazyLoadEvent,
-      globalFilterColumns: GlobalFilterManager.transform(
-        EssayTemplateTableColumns
-      ),
+      globalFilterColumns: GlobalFilterManager.transform(this.cols),
     });
   }
 }

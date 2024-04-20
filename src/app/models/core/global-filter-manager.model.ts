@@ -1,13 +1,9 @@
-import { AbmColum } from './abm.model';
+import { TC_GlobalFilter, TableColumn } from './table-column.model';
 
 export class GlobalFilterManager {
-  static transform(abmColumns: AbmColum[]): string[] {
-    return abmColumns.reduce<string[]>((acc: string[], column: AbmColum) => {
-      acc = acc.concat(column.field);
-      if (column.colSpanColumns?.length) {
-        acc = acc.concat(column.colSpanColumns.map(({ field }) => field));
-      }
-      return acc;
-    }, []);
+  static transform(abmColumns: TableColumn[]): string[] {
+    return abmColumns
+      .filter(({ globalFilter }) => !!globalFilter)
+      .flatMap(({ globalFilter }) => globalFilter as TC_GlobalFilter);
   }
 }
