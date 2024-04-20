@@ -5,12 +5,13 @@ import {
   HistoryEssayDbTableContext,
 } from '../../models/business/database/history_essay.model';
 import { AbmPage } from '../../models/core/abm-page.model';
-import { Observable } from 'rxjs';
+import { Observable, first, filter, tap } from 'rxjs';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import {
   TC_AlignHorizontal,
   TableColumn,
 } from '../../models/core/table-column.model';
+import { MessagesService } from '../../services/messages.service';
 
 @Component({
   templateUrl: './history-essay.component.html',
@@ -71,7 +72,10 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
   ];
   readonly historyEssayRows$: Observable<HistoryEssay[]>;
 
-  constructor(private readonly dbService: DatabaseService<HistoryEssay>) {
+  constructor(
+    private readonly dbService: DatabaseService<HistoryEssay>,
+    private readonly messagesService: MessagesService
+  ) {
     super(dbService, HistoryEssayDbTableContext);
     this.historyEssayRows$ = this.refreshDataWhenDatabaseReply$(
       HistoryEssayDbTableContext.tableName
@@ -86,8 +90,28 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
     });
   }
 
+  deleteHistoryEssay(ids: string[] = []) {
+    this.dbService
+      .deleteTableElements$(HistoryEssayDbTableContext.tableName, ids)
+      .pipe(
+        first(),
+        filter(
+          (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
+        ),
+        tap(() => {
+          this.refreshTable();
+          this.messagesService.success('Eliminado correctamente');
+        })
+      )
+      .subscribe({
+        error: () =>
+          this.messagesService.error(
+            'Verifique que ningun elemento este en uso antes de eliminar'
+          ),
+      });
+  }
+
   // TODO sumar la fecha, y poder ordenar por la fecha
-  // TODO eliminación de filas
   // TODO detalle del medidor
   // TODO filtros individuales
 }
