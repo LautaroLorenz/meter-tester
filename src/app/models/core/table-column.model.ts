@@ -1,5 +1,7 @@
 import { TemplateRef } from '@angular/core';
 
+export type TC_TemplateName = string;
+
 export type TC_Sortable = string | string[];
 
 export type TC_GlobalFilter = string | string[];
@@ -24,7 +26,15 @@ export interface TableColumnField<T = any> extends TableColumnBase {
 }
 
 export interface TableColumnTemplate<T = any> extends TableColumnBase {
+  // el template se inicializa en el componente que declara la columna
   template: TemplateRef<TableColumnTemplateContext<T>>;
+}
+
+export interface TableColumnTemplatename<T = any> extends TableColumnBase {
+  // el componente que declara la columna, indica el nombre del template
+  templateName: TC_TemplateName;
+  // el template se inicializa en abm.component.ts
+  template: TemplateRef<TableColumnTemplateContext<T>> | undefined;
 }
 
 export interface TableColumnTemplateContext<T> {
@@ -32,4 +42,7 @@ export interface TableColumnTemplateContext<T> {
   index: number;
 }
 
-export type TableColumn<T = any> = TableColumnField<T> | TableColumnTemplate<T>;
+export type TableColumn<T = any> =
+  | TableColumnField<T>
+  | TableColumnTemplate<T>
+  | TableColumnTemplatename;

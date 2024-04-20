@@ -38,7 +38,7 @@ export class TableColumnComponent<T> implements OnInit {
       this.value = this.getColValue(this.data, this.tableColumn);
       this.alignHorizontal = this.tableColumn.alignHorizontal;
     }
-    if ('template' in this.tableColumn) {
+    if ('template' in this.tableColumn && this.tableColumn.template) {
       this.template = this.tableColumn.template;
     }
   }

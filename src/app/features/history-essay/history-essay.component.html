@@ -6,5 +6,13 @@
     [columns]="cols"
     (lazyLoad)="lazyLoad($event)"
     actionColumnStyleClass="w-10rem"
-  ></app-abm>
+  >
+    <ng-template
+      abmColumnTemplateName="result_status_enum"
+      let-item="item"
+      let-index="index"
+    >
+      {{ item.result_status_enum | translateEnum : "ResultStatus" }}
+    </ng-template>
+  </app-abm>
 </ng-container>

@@ -1,4 +1,6 @@
 {
   "StepRunMode.continuousResultUpdate": "Continuous results update",
-  "StepRunMode.finalResultLock": "Lock final result and finish"
+  "StepRunMode.finalResultLock": "Lock final result and finish",
+  "ResultStatus.Approved": "Approved",
+  "ResultStatus.Failed": "Failed"
 }

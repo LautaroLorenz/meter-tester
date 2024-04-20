@@ -8,6 +8,7 @@ import { DeviceConstantPipe } from './business/device.pipe';
 import { StandMeterConstantPipe } from './business/stand-meter-constant.pipe';
 import { StepAsPipe } from './business/step-as.pipe';
 import { EnumAsOptionPipe } from './core/enum-as-option.pipe';
+import { TranslateEnumPipe } from './core/translate-enum.pipe';
 
 const AppPipes = [
   DotStringAsObjectPipe,
@@ -17,7 +18,8 @@ const AppPipes = [
   DeviceConstantPipe,
   StandMeterConstantPipe,
   StepAsPipe,
-  EnumAsOptionPipe
+  EnumAsOptionPipe,
+  TranslateEnumPipe,
 ];
 
 const CommonPipes = [DecimalPipe, DatePipe];

@@ -62,11 +62,11 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       alignHorizontal: TC_AlignHorizontal.Number,
     },
     {
-      field: 'result_status_enum',
+      templateName: 'result_status_enum',
+      template: undefined, // se inicializa en abm.component.ts
       header: 'Resultado',
       sortable: 'result_status_enum',
       globalFilter: 'result_status_enum',
-      alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];
   readonly historyEssayRows$: Observable<HistoryEssay[]>;
@@ -88,6 +88,5 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
 
   // TODO sumar la fecha, y poder ordenar por la fecha
   // TODO eliminación de filas
-  // TODO columna resultado
   // TODO detalle del medidor
 }

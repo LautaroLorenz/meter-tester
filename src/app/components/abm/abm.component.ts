@@ -1,11 +1,14 @@
 import {
+  AfterContentInit,
   ChangeDetectionStrategy,
   Component,
+  ContentChildren,
   EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   Output,
+  QueryList,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -20,6 +23,7 @@ import {
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
 import { TableColumn } from '../../models/core/table-column.model';
+import { AbmColumnTemplateNameDirective } from '../../directives/abm-column-template-name.directive';
 
 @Component({
   selector: 'app-abm',
@@ -27,7 +31,7 @@ import { TableColumn } from '../../models/core/table-column.model';
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AbmComponent implements OnChanges, OnDestroy {
+export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   @Input() dataset: any[] = [];
   @Input() totalRecords = 0;
   @Input() columns: TableColumn[] = [];
@@ -45,6 +49,8 @@ export class AbmComponent implements OnChanges, OnDestroy {
   @Output() lazyLoad = new EventEmitter<LazyLoadEvent>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
+  @ContentChildren(AbmColumnTemplateNameDirective)
+  templateColumns!: QueryList<AbmColumnTemplateNameDirective>;
 
   readonly checkboxColumnMenuItems: MenuItem[] = [];
   readonly rows = 5;
@@ -66,6 +72,10 @@ export class AbmComponent implements OnChanges, OnDestroy {
         this.closeDialog();
       }
     }
+  }
+
+  ngAfterContentInit(): void {
+    this.initColumnTemplates();
   }
 
   clearSearch(): void {
@@ -126,5 +136,20 @@ export class AbmComponent implements OnChanges, OnDestroy {
         tap((value: string) => this.filterByText(value))
       )
       .subscribe();
+  }
+
+  private initColumnTemplates(): void {
+    if (!this.templateColumns.length) {
+      return;
+    }
+    this.templateColumns.forEach(({ abmColumnTemplateName, templateRef }) => {
+      const column = this.columns.find(
+        (col) =>
+          'templateName' in col && col.templateName === abmColumnTemplateName
+      );
+      if (column && 'template' in column) {
+        column.template = templateRef;
+      }
+    });
   }
 }
