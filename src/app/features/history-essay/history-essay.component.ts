@@ -89,4 +89,5 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
   // TODO sumar la fecha, y poder ordenar por la fecha
   // TODO eliminación de filas
   // TODO detalle del medidor
+  // TODO filtros individuales
 }
