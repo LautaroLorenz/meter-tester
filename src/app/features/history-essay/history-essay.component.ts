@@ -21,6 +21,14 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
   readonly title: string = 'Historial de ejecución';
   readonly cols: TableColumn<HistoryEssay>[] = [
     {
+      templateName: 'saved_time',
+      template: undefined, // se inicializa en abm.component.ts
+      header: 'Realizado',
+      sortable: 'saved_time',
+      globalFilter: 'saved_time',
+      alignHorizontal: TC_AlignHorizontal.Text,
+    },
+    {
       field: 'essay_name',
       header: 'Ensayo',
       sortable: 'essay_name',
@@ -111,7 +119,6 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       });
   }
 
-  // TODO sumar la fecha, y poder ordenar por la fecha
   // TODO detalle del medidor
   // TODO filtros individuales
 }

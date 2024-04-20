@@ -9,6 +9,13 @@
     actionColumnStyleClass="w-10rem"
   >
     <ng-template
+      abmColumnTemplateName="saved_time"
+      let-item="item"
+      let-index="index"
+    >
+      {{ item.saved_time | date : "dd/MM/yyyy" }}
+    </ng-template>
+    <ng-template
       abmColumnTemplateName="result_status_enum"
       let-item="item"
       let-index="index"
