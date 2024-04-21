@@ -124,7 +124,7 @@ const AppComponents = [
     PipesModule,
     ReactiveFormsModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
   ],
   exports: [PrimeNgModule, AppComponents],
 })

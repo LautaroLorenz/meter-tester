@@ -66,7 +66,7 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dataset']) {
+    if (changes.dataset) {
       const { dataset } = changes;
       if (dataset.currentValue !== dataset.previousValue) {
         this.closeDialog();

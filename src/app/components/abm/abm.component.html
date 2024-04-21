@@ -57,6 +57,17 @@
       >
         {{ col.header }}
         <p-sortIcon *ngIf="col.sortable" [field]="col.sortable"></p-sortIcon>
+        <p-columnFilter
+          *ngIf="col.filter"
+          [type]="col.filter.type"
+          [field]="col.filter.field"
+          [showMatchModes]="col.filter.showMatchModes"
+          [matchMode]="col.filter.matchMode"
+          [showAddButton]="col.filter.showAddButton"
+          [showOperator]="col.filter.showOperator"
+          [hideOnClear]="col.filter.hideOnClear"
+          display="menu"
+        ></p-columnFilter>
       </th>
       <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
     </tr>

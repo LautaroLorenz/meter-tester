@@ -17,11 +17,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
-function getForeignTableNameByProp(relations, property) {
-    var _a;
-    const relation = relations.find(({ propertyName }) => propertyName === property);
-    return (_a = relation === null || relation === void 0 ? void 0 : relation.tableName) !== null && _a !== void 0 ? _a : '';
-}
+var F_MatchMode;
+(function (F_MatchMode) {
+    F_MatchMode["dateIs"] = "dateIs";
+})(F_MatchMode || (F_MatchMode = {}));
 /**
  * Arma la parte de get table que tiene que ver con retornar las tablas relacioandas a la buscada
  */
@@ -164,6 +163,34 @@ function getTableOrderBuilder(queryBuilder, sortField, sortOrder, relations, tab
     }
     queryBuilder.orderBy(tableColumnOrder, orderDirection);
 }
+/**
+ * Filtrado por el usuario
+ */
+function getTableFilterBuilder(queryBuilder, filters) {
+    console.log('filters', filters);
+    Object.entries(filters).forEach((conditions) => {
+        console.log('conditions', conditions);
+        const [tableNameProp, metaData] = conditions;
+        if (Array.isArray(metaData)) {
+            metaData.forEach((condition) => {
+                switch (condition.matchMode) {
+                    case F_MatchMode.dateIs:
+                        if (condition.value === null) {
+                            return;
+                        }
+                        const dateValue = new Date(condition.value);
+                        // Configura la fecha al principio del día (00:00:00)
+                        const startDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 0, 0, 0);
+                        // Configura la fecha al final del día (23:59:59)
+                        const endDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59);
+                        queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
+                        queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+                        break;
+                }
+            });
+        }
+    });
+}
 exports.default = {
     register: (knex) => {
         electron_1.ipcMain.on('get-table', ({ reply }, dbTableConnection) => __awaiter(void 0, void 0, void 0, function* () {
@@ -182,11 +209,15 @@ exports.default = {
                 if (!!lazyLoadEvent.globalFilter) {
                     getTableSearchBuilder(queryBuilder, lazyLoadEvent.globalFilter, globalFilterColumns, relations, tableName);
                 }
+                // Filtrado (por el usuario)
+                if (!!lazyLoadEvent.filters) {
+                    getTableFilterBuilder(queryBuilder, lazyLoadEvent.filters);
+                }
             }
             else {
                 queryBuilder.orderBy('id', 'desc');
             }
-            // Filtrado
+            // Filtrado (condiciones harcodeadas por el desarrollador)
             for (const condition of conditions) {
                 const { kind, columnName, operator, value } = condition;
                 if (kind === 'where') {

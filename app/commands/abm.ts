@@ -2,6 +2,26 @@ import { ipcMain } from 'electron';
 import { Knex } from 'knex';
 import * as util from 'util';
 
+enum F_MatchMode {
+  dateIs = 'dateIs',
+}
+
+type F_Operator = 'and' | 'or';
+
+type FilterTypeBase<T> = {
+  matchMode: F_MatchMode;
+  operator: F_Operator;
+  value: T;
+};
+
+interface F_DateIs extends FilterTypeBase<string> {
+  matchMode: F_MatchMode.dateIs;
+}
+
+type FilterMetaData = F_DateIs;
+
+type TableName = string;
+
 type ForeignTable = {
   tableName: string;
   foreignKey: string;
@@ -15,12 +35,7 @@ type JoinTable = {
   rightProp: string;
 };
 
-function getForeignTableNameByProp(relations: any[], property: string): string {
-  const relation = relations.find(
-    ({ propertyName }: any) => propertyName === property
-  );
-  return relation?.tableName ?? '';
-}
+type Filters = Record<TableName, FilterMetaData | FilterMetaData[]>;
 
 /**
  * Arma la parte de get table que tiene que ver con retornar las tablas relacioandas a la buscada
@@ -195,6 +210,50 @@ function getTableOrderBuilder(
   queryBuilder.orderBy(tableColumnOrder, orderDirection);
 }
 
+/**
+ * Filtrado por el usuario
+ */
+function getTableFilterBuilder(
+  queryBuilder: Knex.QueryBuilder,
+  filters: Filters
+): void {
+  Object.entries(filters).forEach((conditions) => {
+    const [tableNameProp, metaData] = conditions;
+    if (Array.isArray(metaData)) {
+      metaData.forEach((condition) => {
+        switch (condition.matchMode) {
+          case F_MatchMode.dateIs:
+            if (condition.value === null) {
+              return;
+            }
+            const dateValue = new Date(condition.value);
+            // Configura la fecha al principio del día (00:00:00)
+            const startDateValue = new Date(
+              dateValue.getFullYear(),
+              dateValue.getMonth(),
+              dateValue.getDate(),
+              0,
+              0,
+              0
+            );
+            // Configura la fecha al final del día (23:59:59)
+            const endDateValue = new Date(
+              dateValue.getFullYear(),
+              dateValue.getMonth(),
+              dateValue.getDate(),
+              23,
+              59,
+              59
+            );
+            queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
+            queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+            break;
+        }
+      });
+    }
+  });
+}
+
 export default {
   register: (knex: Knex) => {
     ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
@@ -233,11 +292,16 @@ export default {
             tableName
           );
         }
+
+        // Filtrado (por el usuario)
+        if (!!lazyLoadEvent.filters) {
+          getTableFilterBuilder(queryBuilder, lazyLoadEvent.filters);
+        }
       } else {
         queryBuilder.orderBy('id', 'desc');
       }
 
-      // Filtrado
+      // Filtrado (condiciones harcodeadas por el desarrollador)
       for (const condition of conditions) {
         const { kind, columnName, operator, value } = condition;
         if (kind === 'where') {

@@ -1,10 +1,43 @@
 import { TemplateRef } from '@angular/core';
 
+export enum TC_FilterType {
+  text = 'text',
+  date = 'date',
+  numeric = 'numeric',
+}
+
+export enum TC_MatchMode {
+  startsWith = 'startsWith', // Comprueba si el valor de la columna comienza con el valor del filtro.
+  endsWith = 'endsWith', // Comprueba si el valor de la columna termina con el valor del filtro.
+  contains = 'contains', // Comprueba si el valor de la columna contiene el valor del filtro.
+  equals = 'equals', // Comprueba si el valor de la columna es igual al valor del filtro.
+  notEquals = 'notEquals', // Comprueba si el valor de la columna no es igual al valor del filtro.
+  lt = 'lt', // Comprueba si el valor de la columna es menor que el valor del filtro.
+  lte = 'lte', // Comprueba si el valor de la columna es menor o igual que el valor del filtro.
+  gt = 'gt', // Comprueba si el valor de la columna es mayor que el valor del filtro.
+  gte = 'gte', // Comprueba si el valor de la columna es mayor o igual que el valor del filtro.
+  is = 'is', // Comprueba si el valor de la columna es igual al valor del filtro, alias para equals.
+  dateIs = 'dateIs',
+  isNot = 'isNot', // Comprueba si el valor de la columna no es igual al valor del filtro, alias para notEquals.
+  before = 'before', // Comprueba si el valor de la fecha es anterior a la fecha del filtro.
+  after = 'after', // Comprueba si el valor de la fecha es posterior a la fecha del filtro.
+}
+
 export type TC_TemplateName = string;
 
 export type TC_Sortable = string | string[];
 
 export type TC_GlobalFilter = string | string[];
+
+export interface TC_Filter {
+  field: string;
+  type: TC_FilterType;
+  matchMode: TC_MatchMode;
+  showMatchModes: boolean;
+  showAddButton: boolean;
+  showOperator: boolean;
+  hideOnClear: boolean;
+}
 
 export enum TC_AlignHorizontal {
   Text = 'Text',
@@ -14,6 +47,7 @@ export enum TC_AlignHorizontal {
 
 export interface TableColumnBase {
   header: string;
+  filter?: TC_Filter;
   sortable?: TC_Sortable;
   globalFilter?: TC_GlobalFilter;
   headerTooltip?: string;

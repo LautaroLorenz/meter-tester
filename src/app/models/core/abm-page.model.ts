@@ -23,11 +23,11 @@ export abstract class AbmPage<T> {
     // FIXME
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this._dbService.getTableReply$(tableName).pipe(
-      startWith(({
+      startWith({
         totalRecords: 0,
         relations: {},
-        rows: []
-      })),
+        rows: [],
+      }),
       tap(({ totalRecords }) => (this.totalRecords = totalRecords)),
       tap(({ relations }) => this._setRelations(relations)),
       map(({ rows }) =>

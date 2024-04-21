@@ -47,7 +47,7 @@ export class DatabaseService<T> {
     },
     rawProperties: string[] = []
   ): void {
-    const { first, rows, sortField, sortOrder, globalFilter } =
+    const { first, rows, sortField, sortOrder, globalFilter, filters } =
       options.lazyLoadEvent ?? {};
     const lazyLoadEvent: LazyLoadEvent = {
       first,
@@ -55,6 +55,7 @@ export class DatabaseService<T> {
       sortField,
       sortOrder,
       globalFilter,
+      filters,
     };
     this.ipcService.send('get-table', {
       tableName,

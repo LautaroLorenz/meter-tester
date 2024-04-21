@@ -7,6 +7,7 @@ import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
 import { IpcService } from './services/ipc.service';
 import { MessagesService } from './services/messages.service';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,8 @@ export class AppComponent implements OnInit {
     private readonly titleService: Title,
     private readonly blockUIService: BlockUIService,
     private readonly ipcService: IpcService,
-    private readonly messagesService: MessagesService
+    private readonly messagesService: MessagesService,
+    private readonly primeNgConfig: PrimeNGConfig
   ) {
     this.translate.setDefaultLang('es');
   }
@@ -69,5 +71,76 @@ export class AppComponent implements OnInit {
           // console.log(location);
         }
       });
+
+    this.primeNgConfig.setTranslation({
+      startsWith: 'Comienza con',
+      contains: 'Contiene',
+      notContains: 'No contiene',
+      endsWith: 'Termina con',
+      equals: 'Igual',
+      notEquals: 'No igual',
+      noFilter: 'Sin filtro',
+      lt: 'Menor que',
+      lte: 'Menor o igual que',
+      gt: 'Mayor que',
+      gte: 'Mayor o igual que',
+      is: 'Es',
+      isNot: 'No es',
+      before: 'Antes',
+      after: 'Después',
+      clear: 'Limpiar',
+      apply: 'Aplicar',
+      matchAll: 'Coincidir todo',
+      matchAny: 'Coincidir cualquier',
+      addRule: 'Agregar regla',
+      removeRule: 'Eliminar regla',
+      accept: 'Sí',
+      reject: 'No',
+      choose: 'Elegir',
+      upload: 'Subir',
+      cancel: 'Cancelar',
+      dayNames: [
+        'Domingo',
+        'Lunes',
+        'Martes',
+        'Miércoles',
+        'Jueves',
+        'Viernes',
+        'Sábado',
+      ],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+      monthNames: [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+      ],
+      monthNamesShort: [
+        'Ene',
+        'Feb',
+        'Mar',
+        'Abr',
+        'May',
+        'Jun',
+        'Jul',
+        'Ago',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dic',
+      ],
+      today: 'Hoy',
+      weekHeader: 'Semana',
+      dateFormat: 'dd/mm/yy'
+    });
   }
 }

@@ -9,6 +9,8 @@ import { Observable, first, filter, tap } from 'rxjs';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import {
   TC_AlignHorizontal,
+  TC_FilterType,
+  TC_MatchMode,
   TableColumn,
 } from '../../models/core/table-column.model';
 import { MessagesService } from '../../services/messages.service';
@@ -25,8 +27,15 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       template: undefined, // se inicializa en abm.component.ts
       header: 'Realizado',
       sortable: 'saved_time',
-      globalFilter: 'saved_time',
-      alignHorizontal: TC_AlignHorizontal.Text,
+      filter: {
+        field: `${HistoryEssayDbTableContext.tableName}.saved_time`,
+        type: TC_FilterType.date,
+        showMatchModes: false,
+        matchMode: TC_MatchMode.dateIs,
+        showAddButton: false,
+        showOperator: false,
+        hideOnClear: true,
+      },
     },
     {
       field: 'essay_name',
@@ -120,5 +129,4 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
   }
 
   // TODO detalle del medidor
-  // TODO filtros individuales
 }
