@@ -159,55 +159,20 @@ function getJoinTablesBuilder(
 /**
  * Generar la parte del ordenamiento del builder
  */
-function findForeignTable(propertyName: string, foreignTables: any[]): any {
-  for (const table of foreignTables) {
-    if (table.propertyName === propertyName) {
-      return table;
-    }
-    if (table.foreignTables) {
-      const foundTable = findForeignTable(propertyName, table.foreignTables);
-      if (foundTable) {
-        return foundTable;
-      }
-    }
-  }
-  return null;
-}
 function getTableOrderBuilder(
   queryBuilder: Knex.QueryBuilder,
   sortField: string | string[],
-  sortOrder: number,
-  relations: ForeignTable[],
-  tableName: string
+  sortOrder: number
 ): void {
   if (Array.isArray(sortField)) {
     // ordenamiento por multiples columnas
     sortField.forEach((field) =>
-      getTableOrderBuilder(queryBuilder, field, sortOrder, relations, tableName)
+      getTableOrderBuilder(queryBuilder, field, sortOrder)
     );
     return;
   }
-
-  // ordenamiento por una columna
   const orderDirection = sortOrder > 0 ? 'desc' : 'asc';
-  const parts = sortField.split('.');
-  let currentTable = tableName;
-  let tableColumnOrder = '';
-
-  for (let i = 0; i < parts.length; i++) {
-    if (parts[i] === 'foreign') {
-      const nextTable = parts[i + 1];
-      const foreignTable = findForeignTable(nextTable, relations);
-      if (foreignTable) {
-        currentTable = foreignTable.tableName;
-        i++; // Skip the next part because we've already processed it
-      }
-    } else {
-      tableColumnOrder = `${currentTable}.${parts[i]}`;
-    }
-  }
-
-  queryBuilder.orderBy(tableColumnOrder, orderDirection);
+  queryBuilder.orderBy(sortField, orderDirection);
 }
 
 /**
@@ -274,9 +239,7 @@ export default {
           getTableOrderBuilder(
             queryBuilder,
             lazyLoadEvent.sortField,
-            lazyLoadEvent.sortOrder,
-            relations,
-            tableName
+            lazyLoadEvent.sortOrder
           );
         } else {
           queryBuilder.orderBy('id', 'desc');

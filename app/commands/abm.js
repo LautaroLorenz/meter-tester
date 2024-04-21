@@ -123,53 +123,21 @@ function getJoinTablesBuilder(queryBuilder, relations, tableName) {
 /**
  * Generar la parte del ordenamiento del builder
  */
-function findForeignTable(propertyName, foreignTables) {
-    for (const table of foreignTables) {
-        if (table.propertyName === propertyName) {
-            return table;
-        }
-        if (table.foreignTables) {
-            const foundTable = findForeignTable(propertyName, table.foreignTables);
-            if (foundTable) {
-                return foundTable;
-            }
-        }
-    }
-    return null;
-}
-function getTableOrderBuilder(queryBuilder, sortField, sortOrder, relations, tableName) {
+function getTableOrderBuilder(queryBuilder, sortField, sortOrder) {
     if (Array.isArray(sortField)) {
         // ordenamiento por multiples columnas
-        sortField.forEach((field) => getTableOrderBuilder(queryBuilder, field, sortOrder, relations, tableName));
+        sortField.forEach((field) => getTableOrderBuilder(queryBuilder, field, sortOrder));
         return;
     }
     // ordenamiento por una columna
     const orderDirection = sortOrder > 0 ? 'desc' : 'asc';
-    const parts = sortField.split('.');
-    let currentTable = tableName;
-    let tableColumnOrder = '';
-    for (let i = 0; i < parts.length; i++) {
-        if (parts[i] === 'foreign') {
-            const nextTable = parts[i + 1];
-            const foreignTable = findForeignTable(nextTable, relations);
-            if (foreignTable) {
-                currentTable = foreignTable.tableName;
-                i++; // Skip the next part because we've already processed it
-            }
-        }
-        else {
-            tableColumnOrder = `${currentTable}.${parts[i]}`;
-        }
-    }
-    queryBuilder.orderBy(tableColumnOrder, orderDirection);
+    queryBuilder.orderBy(sortField, orderDirection);
 }
 /**
  * Filtrado por el usuario
  */
 function getTableFilterBuilder(queryBuilder, filters) {
-    console.log('filters', filters);
     Object.entries(filters).forEach((conditions) => {
-        console.log('conditions', conditions);
         const [tableNameProp, metaData] = conditions;
         if (Array.isArray(metaData)) {
             metaData.forEach((condition) => {
@@ -200,7 +168,7 @@ exports.default = {
             if (lazyLoadEvent) {
                 // Ordenamiento
                 if (!!lazyLoadEvent.sortField) {
-                    getTableOrderBuilder(queryBuilder, lazyLoadEvent.sortField, lazyLoadEvent.sortOrder, relations, tableName);
+                    getTableOrderBuilder(queryBuilder, lazyLoadEvent.sortField, lazyLoadEvent.sortOrder);
                 }
                 else {
                     queryBuilder.orderBy('id', 'desc');

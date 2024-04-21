@@ -14,6 +14,8 @@ import {
   TableColumn,
 } from '../../models/core/table-column.model';
 import { MessagesService } from '../../services/messages.service';
+import { BrandDbTableContext } from '../../models/business/database/brand.model';
+import { MeterDbTableContext } from '../../models/business/database/meter.model';
 
 @Component({
   templateUrl: './history-essay.component.html',
@@ -26,7 +28,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       templateName: 'saved_time',
       template: undefined, // se inicializa en abm.component.ts
       header: 'Realizado',
-      sortable: 'saved_time',
+      sortable: `${HistoryEssayDbTableContext.tableName}.saved_time`,
       filter: {
         field: `${HistoryEssayDbTableContext.tableName}.saved_time`,
         type: TC_FilterType.date,
@@ -40,42 +42,42 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
     {
       field: 'essay_name',
       header: 'Ensayo',
-      sortable: 'essay_name',
+      sortable: `${HistoryEssayDbTableContext.tableName}.essay_name`,
       globalFilter: 'essay_name',
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'step_name',
       header: 'Paso',
-      sortable: 'step_name',
+      sortable: `${HistoryEssayDbTableContext.tableName}.step_name`,
       globalFilter: 'step_name',
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'foreign.meter.foreign.brand.name',
       header: 'Marca',
-      sortable: 'foreign.meter.foreign.brand.name',
+      sortable: `${BrandDbTableContext.tableName}.name`,
       globalFilter: 'foreign.meter.foreign.brand.name',
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'foreign.meter.model',
       header: 'Modelo',
-      sortable: 'foreign.meter.model',
+      sortable: `${MeterDbTableContext.tableName}.model`,
       globalFilter: 'foreign.meter.model',
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'serial_number',
       header: 'Número de serie',
-      sortable: 'serial_number',
+      sortable: `${HistoryEssayDbTableContext.tableName}.serial_number`,
       globalFilter: 'serial_number',
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'year_of_production',
       header: 'Año de fabricación',
-      sortable: 'year_of_production',
+      sortable: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
       globalFilter: 'year_of_production',
       alignHorizontal: TC_AlignHorizontal.Number,
     },
@@ -83,7 +85,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       templateName: 'result_status_enum',
       template: undefined, // se inicializa en abm.component.ts
       header: 'Resultado',
-      sortable: 'result_status_enum',
+      sortable: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
       globalFilter: 'result_status_enum',
     },
   ];
