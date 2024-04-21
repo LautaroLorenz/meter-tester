@@ -38,7 +38,7 @@ type JoinTable = {
 type Filters = Record<TableName, FilterMetaData | FilterMetaData[]>;
 
 /**
- * Arma la parte de get table que tiene que ver con retornar las tablas relacioandas a la buscada
+ * Arma la parte de get table que tiene que ver con retornar las tablas relacionadas a la buscada (recursivamente)
  */
 async function getRelatedTables(
   knex: Knex,
@@ -55,75 +55,21 @@ async function getRelatedTables(
 }
 
 /**
- * Arma la parte de get table que tiene que ver con la búsqueda por texto genérico.
+ * Arma la parte la query de la búsqueda por texto genérico.
  */
-function getColumns(
-  tableName: string,
-  foreignTables: ForeignTable[],
-  globalFilterColumns: string[]
-): string[] {
-  const output: string[] = [];
-
-  const findForeignTable = (
-    propertyName: string,
-    foreignTables: ForeignTable[]
-  ): ForeignTable | undefined => {
-    for (const table of foreignTables) {
-      if (table.propertyName === propertyName) {
-        return table;
-      }
-      if (table.foreignTables) {
-        const foundTable = findForeignTable(propertyName, table.foreignTables);
-        if (foundTable) {
-          return foundTable;
-        }
-      }
-    }
-  };
-
-  for (const column of globalFilterColumns) {
-    if (!column.includes('foreign')) {
-      output.push(`${tableName}.${column}`);
-    } else {
-      const parts = column.split('.');
-      let currentTables = foreignTables;
-      let currentTable: ForeignTable | undefined;
-
-      for (let i = 1; i < parts.length; i += 2) {
-        currentTable = findForeignTable(parts[i], currentTables);
-        if (currentTable && currentTable.foreignTables) {
-          currentTables = currentTable.foreignTables;
-        }
-      }
-
-      if (currentTable) {
-        output.push(`${currentTable.tableName}.${parts[parts.length - 1]}`);
-      }
-    }
-  }
-
-  return output;
-}
 function getTableSearchBuilder(
   queryBuilder: Knex.QueryBuilder,
   globalFilter: string,
-  globalFilterColumns: string[],
-  relations: ForeignTable[],
-  tableName: string
+  globalFilterColumns: string[]
 ) {
-  const columns: string[] = getColumns(
-    tableName,
-    relations,
-    globalFilterColumns
-  );
   queryBuilder.andWhereRaw(
-    `CONCAT(${columns.join(',')}) COLLATE utf8_general_ci LIKE ?`,
+    `CONCAT(${globalFilterColumns.join(',')}) COLLATE utf8_general_ci LIKE ?`,
     [`%${globalFilter}%`]
   );
 }
 
 /**
- * Genera la parte de la query de los join entre la tabla y las relacionadas
+ * Arma la parte la query de los joins entre todas las ForeignTable (es recursiva para traer relacionadas de relacionadas)
  */
 function joinTables(relations: ForeignTable[], tableName: string): JoinTable[] {
   let joins: JoinTable[] = [];
@@ -157,7 +103,7 @@ function getJoinTablesBuilder(
 }
 
 /**
- * Generar la parte del ordenamiento del builder
+ * Arma la parte la query del ordenamiento
  */
 function getTableOrderBuilder(
   queryBuilder: Knex.QueryBuilder,
@@ -176,7 +122,7 @@ function getTableOrderBuilder(
 }
 
 /**
- * Filtrado por el usuario
+ *  Arma la parte la query del filtrado por el usuario
  */
 function getTableFilterBuilder(
   queryBuilder: Knex.QueryBuilder,
@@ -250,9 +196,7 @@ export default {
           getTableSearchBuilder(
             queryBuilder,
             lazyLoadEvent.globalFilter,
-            globalFilterColumns,
-            relations,
-            tableName
+            globalFilterColumns
           );
         }
 

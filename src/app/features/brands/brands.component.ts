@@ -25,7 +25,7 @@ export class BrandsComponent extends AbmPage<Brand> {
       field: 'name',
       header: 'Marca',
       sortable: `${BrandDbTableContext.tableName}.name`,
-      globalFilter: 'name',
+      globalFilter: `${BrandDbTableContext.tableName}.name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];

@@ -43,42 +43,42 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       field: 'essay_name',
       header: 'Ensayo',
       sortable: `${HistoryEssayDbTableContext.tableName}.essay_name`,
-      globalFilter: 'essay_name',
+      globalFilter: `${HistoryEssayDbTableContext.tableName}.essay_name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'step_name',
       header: 'Paso',
       sortable: `${HistoryEssayDbTableContext.tableName}.step_name`,
-      globalFilter: 'step_name',
+      globalFilter: `${HistoryEssayDbTableContext.tableName}.step_name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'foreign.meter.foreign.brand.name',
       header: 'Marca',
       sortable: `${BrandDbTableContext.tableName}.name`,
-      globalFilter: 'foreign.meter.foreign.brand.name',
+      globalFilter: `${BrandDbTableContext.tableName}.name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'foreign.meter.model',
       header: 'Modelo',
       sortable: `${MeterDbTableContext.tableName}.model`,
-      globalFilter: 'foreign.meter.model',
+      globalFilter: `${MeterDbTableContext.tableName}.model`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'serial_number',
       header: 'Número de serie',
       sortable: `${HistoryEssayDbTableContext.tableName}.serial_number`,
-      globalFilter: 'serial_number',
+      globalFilter: `${HistoryEssayDbTableContext.tableName}.serial_number`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'year_of_production',
       header: 'Año de fabricación',
       sortable: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
-      globalFilter: 'year_of_production',
+      globalFilter: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
       alignHorizontal: TC_AlignHorizontal.Number,
     },
     {
@@ -86,7 +86,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       template: undefined, // se inicializa en abm.component.ts
       header: 'Resultado',
       sortable: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
-      globalFilter: 'result_status_enum',
+      // filter: TODO filtro por opciones
     },
   ];
   readonly historyEssayRows$: Observable<HistoryEssay[]>;

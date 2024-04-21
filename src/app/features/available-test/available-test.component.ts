@@ -24,7 +24,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> {
       field: 'name',
       header: 'Ensayo',
       sortable: `${EssayTemplateDbTableContext.tableName}.name`,
-      globalFilter: 'name',
+      globalFilter: `${EssayTemplateDbTableContext.tableName}.name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
   ];
