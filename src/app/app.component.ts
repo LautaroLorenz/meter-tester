@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, filter, take, timer, switchMap } from 'rxjs';
 import { PageUrlName } from './models/business/enums/page-name.model';
 import { Title } from '@angular/platform-browser';
@@ -18,16 +17,13 @@ export class AppComponent implements OnInit {
   isVirtualMachinePage = false;
 
   constructor(
-    private readonly translate: TranslateService,
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly blockUIService: BlockUIService,
     private readonly ipcService: IpcService,
     private readonly messagesService: MessagesService,
     private readonly primeNgConfig: PrimeNGConfig
-  ) {
-    this.translate.setDefaultLang('es');
-  }
+  ) {}
 
   get blocked$(): Observable<boolean> {
     return this.blockUIService.blocked$;
@@ -140,7 +136,7 @@ export class AppComponent implements OnInit {
       ],
       today: 'Hoy',
       weekHeader: 'Semana',
-      dateFormat: 'dd/mm/yy'
+      dateFormat: 'dd/mm/yy',
     });
   }
 }

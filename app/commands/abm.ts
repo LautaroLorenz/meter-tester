@@ -4,6 +4,7 @@ import * as util from 'util';
 
 enum F_MatchMode {
   dateIs = 'dateIs',
+  equals = 'equals',
 }
 
 type F_Operator = 'and' | 'or';
@@ -18,7 +19,11 @@ interface F_DateIs extends FilterTypeBase<string> {
   matchMode: F_MatchMode.dateIs;
 }
 
-type FilterMetaData = F_DateIs;
+interface F_Equals extends FilterTypeBase<string | number> {
+  matchMode: F_MatchMode.equals;
+}
+
+type FilterMetaData = F_DateIs | F_Equals;
 
 type TableName = string;
 
@@ -158,6 +163,12 @@ function getTableFilterBuilder(
             );
             queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
             queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+            break;
+          case F_MatchMode.equals:
+            if (condition.value === null) {
+              return;
+            }
+            queryBuilder.andWhere(tableNameProp, '=', condition.value);
             break;
         }
       });

@@ -22,7 +22,7 @@ import {
 } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ReplaySubject, takeUntil, tap } from 'rxjs';
-import { TableColumn } from '../../models/core/table-column.model';
+import { TC_FilterType, TableColumn } from '../../models/core/table-column.model';
 import { AbmColumnTemplateNameDirective } from '../../directives/abm-column-template-name.directive';
 
 @Component({
@@ -52,6 +52,7 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   @ContentChildren(AbmColumnTemplateNameDirective)
   templateColumns!: QueryList<AbmColumnTemplateNameDirective>;
 
+  readonly TC_FilterType = TC_FilterType;
   readonly checkboxColumnMenuItems: MenuItem[] = [];
   readonly rows = 5;
   readonly search: FormControl;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
 import {
   HistoryEssay,
@@ -16,12 +16,15 @@ import {
 import { MessagesService } from '../../services/messages.service';
 import { BrandDbTableContext } from '../../models/business/database/brand.model';
 import { MeterDbTableContext } from '../../models/business/database/meter.model';
+import { EnumAsOptionPipe } from '../../pipes/core/enum-as-option.pipe';
+import { ResultStatus } from '../../models/business/enums/result-status.model';
 
 @Component({
   templateUrl: './history-essay.component.html',
   styleUrls: ['./history-essay.component.scss'],
 })
 export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
+  readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
   readonly title: string = 'Historial de ejecución';
   readonly cols: TableColumn<HistoryEssay>[] = [
     {
@@ -37,6 +40,8 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         showAddButton: false,
         showOperator: false,
         hideOnClear: true,
+        showApplyButton: true,
+        showClearButton: true,
       },
     },
     {
@@ -86,7 +91,25 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       template: undefined, // se inicializa en abm.component.ts
       header: 'Resultado',
       sortable: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
-      // filter: TODO filtro por opciones
+      filter: {
+        field: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
+        type: TC_FilterType.dropdown,
+        showMatchModes: false,
+        matchMode: TC_MatchMode.equals,
+        showAddButton: false,
+        showOperator: false,
+        hideOnClear: true,
+        options: this.EnumAsOptionPipe.transform(
+          'ResultStatus',
+          ResultStatus
+        ).filter(
+          ({ value }) =>
+            value === ResultStatus.Approved || value === ResultStatus.Failed
+        ),
+        showClear: true,
+        showApplyButton: false,
+        showClearButton: false,
+      },
     },
   ];
   readonly historyEssayRows$: Observable<HistoryEssay[]>;

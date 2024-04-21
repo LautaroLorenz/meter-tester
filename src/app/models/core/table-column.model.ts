@@ -1,9 +1,13 @@
 import { TemplateRef } from '@angular/core';
 
+export type TC_FilterDropdownOption = {
+  label: string;
+  value: any;
+};
+
 export enum TC_FilterType {
-  text = 'text',
   date = 'date',
-  numeric = 'numeric',
+  dropdown = 'dropdown',
 }
 
 export enum TC_MatchMode {
@@ -29,7 +33,7 @@ export type TC_Sortable = string | string[];
 
 export type TC_GlobalFilter = string | string[];
 
-export interface TC_Filter {
+export type TC_FilterBase = {
   field: string;
   type: TC_FilterType;
   matchMode: TC_MatchMode;
@@ -37,7 +41,21 @@ export interface TC_Filter {
   showAddButton: boolean;
   showOperator: boolean;
   hideOnClear: boolean;
+  showApplyButton: boolean;
+  showClearButton: boolean;
+};
+
+export interface TC_FilterDate extends TC_FilterBase {
+  type: TC_FilterType.date;
 }
+
+export interface TC_FilterDropdown extends TC_FilterBase {
+  type: TC_FilterType.dropdown;
+  options: TC_FilterDropdownOption[];
+  showClear: boolean;
+}
+
+export type TC_Filter = TC_FilterDate | TC_FilterDropdown;
 
 export enum TC_AlignHorizontal {
   Text = 'Text',

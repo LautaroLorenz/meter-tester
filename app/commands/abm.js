@@ -20,6 +20,7 @@ const electron_1 = require("electron");
 var F_MatchMode;
 (function (F_MatchMode) {
     F_MatchMode["dateIs"] = "dateIs";
+    F_MatchMode["equals"] = "equals";
 })(F_MatchMode || (F_MatchMode = {}));
 /**
  * Arma la parte de get table que tiene que ver con retornar las tablas relacionadas a la buscada (recursivamente)
@@ -115,6 +116,12 @@ function getTableFilterBuilder(queryBuilder, filters) {
                         const endDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59);
                         queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
                         queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+                        break;
+                    case F_MatchMode.equals:
+                        if (condition.value === null) {
+                            return;
+                        }
+                        queryBuilder.andWhere(tableNameProp, '=', condition.value);
                         break;
                 }
             });

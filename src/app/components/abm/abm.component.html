@@ -66,8 +66,28 @@
           [showAddButton]="col.filter.showAddButton"
           [showOperator]="col.filter.showOperator"
           [hideOnClear]="col.filter.hideOnClear"
+          [showApplyButton]="col.filter.showApplyButton"
+          [showClearButton]="col.filter.showClearButton"
           display="menu"
-        ></p-columnFilter>
+        >
+          <ng-container [ngSwitch]="col.filter.type">
+            <ng-container *ngSwitchCase="TC_FilterType.dropdown">
+              <ng-template
+                pTemplate="filter"
+                let-value
+                let-filter="filterCallback"
+              >
+                <p-dropdown
+                  [ngModel]="value"
+                  [options]="col.filter.options"
+                  (onChange)="filter($event.value)"
+                  [showClear]="col.filter.showClear"
+                  [placeholder]="'Select' | translate"
+                ></p-dropdown>
+              </ng-template>
+            </ng-container>
+          </ng-container>
+        </p-columnFilter>
       </th>
       <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
     </tr>
