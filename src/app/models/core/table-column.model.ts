@@ -43,6 +43,7 @@ export type TC_FilterBase = {
   hideOnClear: boolean;
   showApplyButton: boolean;
   showClearButton: boolean;
+  placeholder?: string;
 };
 
 export interface TC_FilterDate extends TC_FilterBase {

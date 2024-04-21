@@ -68,6 +68,7 @@
           [hideOnClear]="col.filter.hideOnClear"
           [showApplyButton]="col.filter.showApplyButton"
           [showClearButton]="col.filter.showClearButton"
+          [placeholder]="col.filter.placeholder || 'Select' | translate"
           display="menu"
         >
           <ng-container [ngSwitch]="col.filter.type">

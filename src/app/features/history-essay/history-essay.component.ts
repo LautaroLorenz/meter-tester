@@ -106,9 +106,9 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
           ({ value }) =>
             value === ResultStatus.Approved || value === ResultStatus.Failed
         ),
-        showClear: true,
+        showClear: false,
         showApplyButton: false,
-        showClearButton: false,
+        showClearButton: true,
       },
     },
   ];
