@@ -58,6 +58,7 @@ import { ContrastTestParamsComponent } from './steps/step-params/contrast-test-p
 import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/contrast-test-run.component';
 import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { MeterDetailComponent } from './details/meter-detail/meter-detail.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -114,6 +115,7 @@ const AppComponents = [
   ContrastTestParamsComponent,
   ContrastTestRunComponent,
   ContrastTestPdfReportComponent,
+  MeterDetailComponent,
 ];
 
 @NgModule({

@@ -1,0 +1,67 @@
+<div class="grid grid-nogutter">
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">Marca</span>
+    <span class="text-color font-semibold">
+      {{ meter.foreign.brand.name }}
+    </span>
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">Modelo</span>
+    <span class="text-color font-semibold">
+      {{ meter.model }}
+    </span>
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">Conexión</span>
+    <span class="text-color font-semibold">
+      {{ meter.foreign.connection.name }}
+    </span>
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">Tensión nominal (Un)</span>
+    <span class="text-color font-semibold"
+      >{{ meter.ratedVoltage }}&nbsp;[V]</span
+    >
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium"
+      >Corriente máxima (Imax)</span
+    >
+    <span class="text-color font-semibold"
+      >{{ meter.maximumCurrent }}&nbsp;[A]</span
+    >
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">Corriente nominal (In)</span>
+    <span class="text-color font-semibold"
+      >{{ meter.ratedCurrent }}&nbsp;[A]</span
+    >
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">
+      Constante de energía activa
+    </span>
+    <span class="text-color font-semibold">
+      {{ meter.activeConstantValue }}&nbsp;[{{
+        meter.foreign.activeConstantUnit.name
+      }}]
+    </span>
+  </div>
+
+  <div class="col-4 flex flex-column gap-1 p-2">
+    <span class="text-color-secondary font-medium">
+      Constante de energía reactiva
+    </span>
+    <span class="text-color font-semibold">
+      {{ meter.reactiveConstantValue }}&nbsp;[{{
+        meter.foreign.reactiveConstantUnit.name
+      }}]
+    </span>
+  </div>
+</div>

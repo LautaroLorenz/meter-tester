@@ -27,6 +27,9 @@ import { ResultStatus } from '../../models/business/enums/result-status.model';
   styleUrls: ['./history-essay.component.scss'],
 })
 export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
+  meterDetailDialogVisible = false;
+  selectedMeter: Meter | undefined;
+
   readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
   readonly title: string = 'Historial de ejecución';
   readonly cols: TableColumn<HistoryEssay>[] = [
@@ -157,8 +160,13 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       });
   }
 
-  // TODO
-  seeMeter(meter: Meter): void {
-    console.log('ver medidor', meter);
+  openMeterDialog(meter: Meter): void {
+    this.selectedMeter = meter;
+    this.meterDetailDialogVisible = true;
+  }
+
+  closeMeterDialog(): void {
+    this.meterDetailDialogVisible = false;
+    this.selectedMeter = undefined;
   }
 }

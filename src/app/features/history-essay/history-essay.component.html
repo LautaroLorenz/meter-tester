@@ -19,7 +19,7 @@
           [rounded]="true"
           [text]="true"
           icon="pi pi-eye"
-          (click)="seeMeter(item.foreign.meter)"
+          (click)="openMeterDialog(item.foreign.meter)"
         ></p-button>
         <span
           class="overflow-hidden text-overflow-ellipsis white-space-nowrap w-10rem"
@@ -47,3 +47,30 @@
   </app-abm>
 </ng-container>
 
+<p-dialog
+  [(visible)]="meterDetailDialogVisible"
+  [style]="{ minWidth: '620px', maxWidth: '1000px' }"
+  header="Detalle"
+  [modal]="true"
+  [closable]="false"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <app-meter-detail
+      *ngIf="selectedMeter"
+      [meter]="selectedMeter"
+    ></app-meter-detail>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="mt-2">
+      <button
+        pButton
+        pRipple
+        label="Aceptar"
+        class="p-button-text p-button-outlined"
+        (click)="closeMeterDialog()"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
