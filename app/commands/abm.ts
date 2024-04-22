@@ -306,21 +306,48 @@ export default {
       return numberOfElementsDeleted;
     });
 
-    ipcMain.handle('add-to-table', async (_, { tableName, element }) => {
-      try {
-        const newElementsIds = await knex(tableName).insert(element);
-        return newElementsIds;
-      } catch {
-        return null;
-      }
-    });
+    ipcMain.handle(
+      'add-to-table',
+      async (_, { tableName, element, rawProperties }) => {
+        try {
+          // Propiedades JSON como string
+          if (rawProperties.length > 0) {
+            rawProperties.forEach((rawProperty: string) => {
+              if (typeof element[rawProperty] !== 'object') {
+                return;
+              }
+              element[rawProperty] = JSON.stringify(element[rawProperty]);
+            });
+          }
 
-    ipcMain.handle('edit-from-table', async (_, { tableName, element }) => {
-      const { id } = element;
-      const numberOfElementsUpdated = await knex(tableName)
-        .update(element)
-        .where('id', id);
-      return numberOfElementsUpdated;
-    });
+          const newElementsIds = await knex(tableName).insert(element);
+          return newElementsIds;
+        } catch {
+          return null;
+        }
+      }
+    );
+
+    ipcMain.handle(
+      'edit-from-table',
+      async (_, { tableName, element, rawProperties }) => {
+        const { id } = element;
+
+        // Propiedades JSON como string
+        if (rawProperties.length > 0) {
+          rawProperties.forEach((rawProperty: string) => {
+            if (typeof element[rawProperty] !== 'object') {
+              return;
+            }
+            element[rawProperty] = JSON.stringify(element[rawProperty]);
+          });
+        }
+
+        const numberOfElementsUpdated = await knex(tableName)
+          .update(element)
+          .where('id', id);
+        return numberOfElementsUpdated;
+      }
+    );
   },
 };

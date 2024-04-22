@@ -97,7 +97,11 @@ export class BrandsComponent extends AbmPage<Brand> {
 
   private createBrand(brand: Brand) {
     this.dbService
-      .addElementToTable$(BrandDbTableContext.tableName, brand)
+      .addElementToTable$(
+        BrandDbTableContext.tableName,
+        brand,
+        BrandDbTableContext.rawProperties
+      )
       .pipe(
         first(),
         tap(() => {
@@ -112,7 +116,11 @@ export class BrandsComponent extends AbmPage<Brand> {
 
   private editBrand(brand: Brand) {
     this.dbService
-      .editElementFromTable$(BrandDbTableContext.tableName, brand)
+      .editElementFromTable$(
+        BrandDbTableContext.tableName,
+        brand,
+        BrandDbTableContext.rawProperties
+      )
       .pipe(
         first(),
         tap(() => {

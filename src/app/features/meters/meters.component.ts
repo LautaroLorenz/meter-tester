@@ -275,7 +275,11 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
 
   private createMeter(meter: Meter) {
     this.dbService
-      .addElementToTable$(MeterDbTableContext.tableName, meter)
+      .addElementToTable$(
+        MeterDbTableContext.tableName,
+        meter,
+        MeterDbTableContext.rawProperties
+      )
       .pipe(
         first(),
         tap(() => {
@@ -290,7 +294,11 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
 
   private editMeter(meter: Meter) {
     this.dbService
-      .editElementFromTable$(MeterDbTableContext.tableName, meter)
+      .editElementFromTable$(
+        MeterDbTableContext.tableName,
+        meter,
+        MeterDbTableContext.rawProperties
+      )
       .pipe(
         first(),
         tap(() => {

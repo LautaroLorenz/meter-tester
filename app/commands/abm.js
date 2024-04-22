@@ -223,8 +223,17 @@ exports.default = {
                 .whereIn('id', ids);
             return numberOfElementsDeleted;
         }));
-        electron_1.ipcMain.handle('add-to-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
+        electron_1.ipcMain.handle('add-to-table', (_, { tableName, element, rawProperties }) => __awaiter(void 0, void 0, void 0, function* () {
             try {
+                // Propiedades JSON como string
+                if (rawProperties.length > 0) {
+                    rawProperties.forEach((rawProperty) => {
+                        if (typeof element[rawProperty] !== 'object') {
+                            return;
+                        }
+                        element[rawProperty] = JSON.stringify(element[rawProperty]);
+                    });
+                }
                 const newElementsIds = yield knex(tableName).insert(element);
                 return newElementsIds;
             }
@@ -232,8 +241,17 @@ exports.default = {
                 return null;
             }
         }));
-        electron_1.ipcMain.handle('edit-from-table', (_, { tableName, element }) => __awaiter(void 0, void 0, void 0, function* () {
+        electron_1.ipcMain.handle('edit-from-table', (_, { tableName, element, rawProperties }) => __awaiter(void 0, void 0, void 0, function* () {
             const { id } = element;
+            // Propiedades JSON como string
+            if (rawProperties.length > 0) {
+                rawProperties.forEach((rawProperty) => {
+                    if (typeof element[rawProperty] !== 'object') {
+                        return;
+                    }
+                    element[rawProperty] = JSON.stringify(element[rawProperty]);
+                });
+            }
             const numberOfElementsUpdated = yield knex(tableName)
                 .update(element)
                 .where('id', id);

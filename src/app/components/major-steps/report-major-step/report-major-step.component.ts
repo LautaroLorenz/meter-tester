@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -20,11 +21,23 @@ import { ReportStepSwitchComponent } from '../../steps/result-report/report-step
 import { PdfPageComponent } from '../../steps/result-report/pdf-page/pdf-page.component';
 import { HistoryEssay } from '../../../models/business/database/history_essay.model';
 import { HistoryEssayService } from '../../../services/history-essay.service';
-import { tap, take, map, catchError, finalize } from 'rxjs';
+import {
+  tap,
+  take,
+  map,
+  catchError,
+  finalize,
+  concat,
+  reduce,
+  timer,
+  switchMap,
+} from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { NavigationService } from '../../../services/navigation.service';
 import { PageUrlName } from '../../../models/business/enums/page-name.model';
+import { StaticsService } from '../../../services/statics.service';
+import { Metric } from '../../../models/business/enums/metric.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -32,7 +45,7 @@ import { PageUrlName } from '../../../models/business/enums/page-name.model';
   styleUrls: ['./report-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportMajorStepComponent implements OnInit {
+export class ReportMajorStepComponent implements OnInit, AfterViewInit {
   @ViewChildren(ReportStepSwitchComponent)
   steps!: QueryList<ReportStepSwitchComponent>;
 
@@ -50,7 +63,8 @@ export class ReportMajorStepComponent implements OnInit {
     private readonly messagesService: MessagesService,
     private readonly cd: ChangeDetectorRef,
     private readonly historyEssayService: HistoryEssayService,
-    private readonly navigationService: NavigationService
+    private readonly navigationService: NavigationService,
+    private readonly staticsService: StaticsService
   ) {
     this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
     this.executionSteps = MajorStepsDirector.stepsByMajorStep(
@@ -65,6 +79,13 @@ export class ReportMajorStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.fileName = this.getFileName();
+  }
+
+  ngAfterViewInit(): void {
+    // las estádisticas se guardan independientemente de que el usuario guarde en el historial.
+    timer(100)
+      .pipe(switchMap(() => this.saveOnStatics$()))
+      .subscribe();
   }
 
   downloadPDF(): void {
@@ -133,6 +154,42 @@ export class ReportMajorStepComponent implements OnInit {
     return this.steps.reduce<PdfPageComponent[]>(
       (acc, { pages }) => (acc = acc.concat(pages)),
       []
+    );
+  }
+
+  /**
+   * guardar estadísticas
+   */
+  private saveOnStatics$(): Observable<number[]> {
+    // poner todos los obsersables en un array, y ejecutar todos juntos uno por uno.
+    const observables: Observable<number>[] = [];
+
+    // guardar los stands utilizados
+    const standsUsed = this.runEssayService
+      .getActiveStands(this.preparationStep)
+      .map(({ index }) => ({ standIndex: index.toString() }));
+    observables.push(
+      this.staticsService.increment$(Metric.standUsed, standsUsed)
+    );
+
+    // TODO guardar
+    // - modelos de medidores que aprobaron
+    // - modelos de medidores que desaprobaron
+    // - modelos de medidores que se usaron
+    // - ensayo que se ejecutó
+    // - steps que se ejecutaron
+
+    // almacenamiento de estadisticas generadas
+    return concat(...observables).pipe(
+      reduce((acc, value) => {
+        // Aquí puedes procesar cada respuesta y agregarla a acc
+        acc.push(value);
+        return acc;
+      }, [] as number[]),
+      catchError((err: Error) => {
+        this.messagesService.error('No se pudo guardar estadísticas');
+        return throwError(() => err);
+      })
     );
   }
 

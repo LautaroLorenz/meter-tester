@@ -88,9 +88,10 @@ export class DatabaseService<T> {
 
   addElementToTable$(
     tableName: string,
-    element: T | Omit<T, 'id' | 'foreign'>
+    element: T | Omit<T, 'id' | 'foreign'>,
+    rawProperties: string[]
   ): Observable<number> {
-    return from(this._addRowToTable(tableName, element)).pipe(
+    return from(this._addRowToTable(tableName, element, rawProperties)).pipe(
       tap((result) => {
         if (result === null) {
           throw new Error('Error al agregar el elemento a la tabla');
@@ -101,8 +102,12 @@ export class DatabaseService<T> {
     );
   }
 
-  editElementFromTable$(tableName: string, element: T): Observable<number> {
-    return from(this._editTableRow(tableName, element));
+  editElementFromTable$(
+    tableName: string,
+    element: T,
+    rawProperties: string[]
+  ): Observable<number> {
+    return from(this._editTableRow(tableName, element, rawProperties));
   }
 
   private readonly _listenGetDatabaseTableReply = (
@@ -137,13 +142,26 @@ export class DatabaseService<T> {
 
   private _addRowToTable = (
     tableName: string,
-    element: T | Omit<T, 'id' | 'foreign'>
-  ): Promise<number[] | null> => {
-    return this.ipcService.invoke('add-to-table', { tableName, element });
+    element: T | Omit<T, 'id' | 'foreign'>,
+    rawProperties: string[]
+  ): Observable<number[] | null> => {
+    return this.ipcService.invoke$('add-to-table', {
+      tableName,
+      element,
+      rawProperties,
+    });
   };
 
-  private _editTableRow = (tableName: string, element: T): Promise<number> => {
-    return this.ipcService.invoke('edit-from-table', { tableName, element });
+  private _editTableRow = (
+    tableName: string,
+    element: T,
+    rawProperties: string[]
+  ): Observable<number> => {
+    return this.ipcService.invoke$('edit-from-table', {
+      tableName,
+      element,
+      rawProperties,
+    });
   };
 
   private _getTableRow = (tableName: string, id: number): Promise<T> => {
