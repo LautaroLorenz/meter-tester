@@ -6,9 +6,6 @@ NICE TO HAVE
 - El componente de paso activo, podria tener una opción collapsed (sin textos y con tooltips)
 - La creación del ensayo "app/essay.ts" podría ser código generico que haga eliminación/creación/edición sobre elementso de un array.
 
-BUG
-- en el seed de meters no usar valores aleatorios porque se rompe el preparation step del template
-
 CORE
 - Contraseña en la base de datos para que no se pueda acceder
 
@@ -18,8 +15,6 @@ FEATURES:
   - Roles de usuarios con permisos.
 - backup
 - estadísticas
-- ejecución
-- historial
 
 EJECUCIÓN:
 - Pasos:
@@ -27,8 +22,6 @@ EJECUCIÓN:
     - Poner un warning si hay stands activos sin data para el reporte
   - Ejecución:
     - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface
-  - Agregar al historial (indicar el ID de reporte).
-  - Reporte
 
 CREACÓN
 - Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
