@@ -10,11 +10,11 @@ CORE
 - Contraseña en la base de datos para que no se pueda acceder
 
 FEATURES:
+- estadísticas
+- backup
 - login
   - ABM de usuarios
   - Roles de usuarios con permisos.
-- backup
-- estadísticas
 
 EJECUCIÓN:
 - Pasos:
