@@ -14,6 +14,11 @@
     [ngTemplateOutlet]="errorTemplate"
     [ngTemplateOutletContext]="{ $implicit: 'Mínimo ' + errors.min.min }"
   ></ng-container>
+  <ng-container
+    *ngIf="hasError('propInUse')"
+    [ngTemplateOutlet]="errorTemplate"
+    [ngTemplateOutletContext]="{ $implicit: 'Valor en uso' }"
+  ></ng-container>
 </ng-container>
 
 <ng-template #errorTemplate let-errorMessage>

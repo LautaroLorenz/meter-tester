@@ -5,6 +5,7 @@ import * as util from 'util';
 enum F_MatchMode {
   dateIs = 'dateIs',
   equals = 'equals',
+  like = 'like',
 }
 
 type F_Operator = 'and' | 'or';
@@ -19,11 +20,14 @@ interface F_DateIs extends FilterTypeBase<string> {
   matchMode: F_MatchMode.dateIs;
 }
 
-interface F_Equals extends FilterTypeBase<string | number> {
+interface F_Equals extends FilterTypeBase<number> {
   matchMode: F_MatchMode.equals;
 }
+interface F_Like extends FilterTypeBase<string> {
+  matchMode: F_MatchMode.like;
+}
 
-type FilterMetaData = F_DateIs | F_Equals;
+type FilterMetaData = F_DateIs | F_Equals | F_Like;
 
 type TableName = string;
 
@@ -129,6 +133,53 @@ function getTableOrderBuilder(
 /**
  *  Arma la parte la query del filtrado por el usuario
  */
+function applyFilter(
+  queryBuilder: Knex.QueryBuilder,
+  condition: FilterMetaData,
+  tableNameProp: string
+): void {
+  switch (condition.matchMode) {
+    case F_MatchMode.dateIs:
+      if (condition.value === null) {
+        return;
+      }
+      const dateValue = new Date(condition.value);
+      // Configura la fecha al principio del día (00:00:00)
+      const startDateValue = new Date(
+        dateValue.getFullYear(),
+        dateValue.getMonth(),
+        dateValue.getDate(),
+        0,
+        0,
+        0
+      );
+      // Configura la fecha al final del día (23:59:59)
+      const endDateValue = new Date(
+        dateValue.getFullYear(),
+        dateValue.getMonth(),
+        dateValue.getDate(),
+        23,
+        59,
+        59
+      );
+      queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
+      queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+      break;
+    case F_MatchMode.equals:
+      if (condition.value === null) {
+        return;
+      }
+      queryBuilder.andWhere(tableNameProp, '=', condition.value);
+      break;
+    case F_MatchMode.like:
+      if (condition.value === null) {
+        return;
+      }
+      queryBuilder.andWhere(tableNameProp, 'LIKE', condition.value);
+      break;
+  }
+}
+
 function getTableFilterBuilder(
   queryBuilder: Knex.QueryBuilder,
   filters: Filters
@@ -137,41 +188,10 @@ function getTableFilterBuilder(
     const [tableNameProp, metaData] = conditions;
     if (Array.isArray(metaData)) {
       metaData.forEach((condition) => {
-        switch (condition.matchMode) {
-          case F_MatchMode.dateIs:
-            if (condition.value === null) {
-              return;
-            }
-            const dateValue = new Date(condition.value);
-            // Configura la fecha al principio del día (00:00:00)
-            const startDateValue = new Date(
-              dateValue.getFullYear(),
-              dateValue.getMonth(),
-              dateValue.getDate(),
-              0,
-              0,
-              0
-            );
-            // Configura la fecha al final del día (23:59:59)
-            const endDateValue = new Date(
-              dateValue.getFullYear(),
-              dateValue.getMonth(),
-              dateValue.getDate(),
-              23,
-              59,
-              59
-            );
-            queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
-            queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
-            break;
-          case F_MatchMode.equals:
-            if (condition.value === null) {
-              return;
-            }
-            queryBuilder.andWhere(tableNameProp, '=', condition.value);
-            break;
-        }
+        applyFilter(queryBuilder, condition, tableNameProp);
       });
+    } else {
+      applyFilter(queryBuilder, metaData, tableNameProp);
     }
   });
 }

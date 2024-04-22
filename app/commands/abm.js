@@ -21,6 +21,7 @@ var F_MatchMode;
 (function (F_MatchMode) {
     F_MatchMode["dateIs"] = "dateIs";
     F_MatchMode["equals"] = "equals";
+    F_MatchMode["like"] = "like";
 })(F_MatchMode || (F_MatchMode = {}));
 /**
  * Arma la parte de get table que tiene que ver con retornar las tablas relacionadas a la buscada (recursivamente)
@@ -99,32 +100,44 @@ function getTableOrderBuilder(queryBuilder, sortField, sortOrder) {
 /**
  *  Arma la parte la query del filtrado por el usuario
  */
+function applyFilter(queryBuilder, condition, tableNameProp) {
+    switch (condition.matchMode) {
+        case F_MatchMode.dateIs:
+            if (condition.value === null) {
+                return;
+            }
+            const dateValue = new Date(condition.value);
+            // Configura la fecha al principio del día (00:00:00)
+            const startDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 0, 0, 0);
+            // Configura la fecha al final del día (23:59:59)
+            const endDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59);
+            queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
+            queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+            break;
+        case F_MatchMode.equals:
+            if (condition.value === null) {
+                return;
+            }
+            queryBuilder.andWhere(tableNameProp, '=', condition.value);
+            break;
+        case F_MatchMode.like:
+            if (condition.value === null) {
+                return;
+            }
+            queryBuilder.andWhere(tableNameProp, 'LIKE', condition.value);
+            break;
+    }
+}
 function getTableFilterBuilder(queryBuilder, filters) {
     Object.entries(filters).forEach((conditions) => {
         const [tableNameProp, metaData] = conditions;
         if (Array.isArray(metaData)) {
             metaData.forEach((condition) => {
-                switch (condition.matchMode) {
-                    case F_MatchMode.dateIs:
-                        if (condition.value === null) {
-                            return;
-                        }
-                        const dateValue = new Date(condition.value);
-                        // Configura la fecha al principio del día (00:00:00)
-                        const startDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 0, 0, 0);
-                        // Configura la fecha al final del día (23:59:59)
-                        const endDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59);
-                        queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
-                        queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
-                        break;
-                    case F_MatchMode.equals:
-                        if (condition.value === null) {
-                            return;
-                        }
-                        queryBuilder.andWhere(tableNameProp, '=', condition.value);
-                        break;
-                }
+                applyFilter(queryBuilder, condition, tableNameProp);
             });
+        }
+        else {
+            applyFilter(queryBuilder, metaData, tableNameProp);
         }
     });
 }

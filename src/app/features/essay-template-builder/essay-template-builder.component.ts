@@ -44,6 +44,7 @@ import { essayTemplateValidator } from '../../models/business/validators/essay-t
 import { Steps } from '../../models/business/enums/steps.model';
 import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
 import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
+import { propInUseValidator } from '../../models/business/validators/value-in-use-validator.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -269,9 +270,19 @@ export class EssayTemplateBuilderComponent
             id
           )
         ),
-        tap((essayTemplate) =>
-          this.form.get('essayTemplate')?.patchValue(essayTemplate)
-        ),
+        tap((essayTemplate) => {
+          this.form.get('essayTemplate')?.patchValue(essayTemplate);
+          this.form
+            .get('essayTemplate.name')
+            ?.setAsyncValidators(
+              propInUseValidator<EssayTemplate>(
+                this.dbService,
+                EssayTemplateDbTableContext.tableName,
+                'name',
+                essayTemplate.name
+              ).bind(this)
+            );
+        }),
         tap(({ id }) => this.requestTableEssayTemplateSteps(id))
       )
       .subscribe();
@@ -358,6 +369,12 @@ export class EssayTemplateBuilderComponent
           name: this.fb.control(undefined, {
             nonNullable: true,
             validators: Validators.required.bind(this),
+            asyncValidators: propInUseValidator<EssayTemplate>(
+              this.dbService,
+              EssayTemplateDbTableContext.tableName,
+              'name',
+              false
+            ).bind(this),
           }),
         }),
         essayTemplateSteps: this.fb.array<AbstractFormGroup<EssayTemplateStep>>(

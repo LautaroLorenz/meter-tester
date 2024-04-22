@@ -15,6 +15,7 @@ export enum TC_MatchMode {
   endsWith = 'endsWith', // Comprueba si el valor de la columna termina con el valor del filtro.
   contains = 'contains', // Comprueba si el valor de la columna contiene el valor del filtro.
   equals = 'equals', // Comprueba si el valor de la columna es igual al valor del filtro.
+  like = 'like',
   notEquals = 'notEquals', // Comprueba si el valor de la columna no es igual al valor del filtro.
   lt = 'lt', // Comprueba si el valor de la columna es menor que el valor del filtro.
   lte = 'lte', // Comprueba si el valor de la columna es menor o igual que el valor del filtro.
