@@ -6,8 +6,29 @@
     [columns]="cols"
     (lazyLoad)="lazyLoad($event)"
     (deleteEvent)="deleteHistoryEssay($event)"
-    actionColumnStyleClass="w-10rem"
   >
+    <!-- columnas -->
+    <ng-template
+      abmColumnTemplateName="model"
+      let-item="item"
+      let-index="index"
+    >
+      <div class="flex flex-row align-items-center gap-1">
+        <p-button
+          [outlined]="false"
+          [rounded]="true"
+          [text]="true"
+          icon="pi pi-eye"
+          (click)="seeMeter(item.foreign.meter)"
+        ></p-button>
+        <span
+          class="overflow-hidden text-overflow-ellipsis white-space-nowrap w-10rem"
+        >
+          {{ item.foreign.meter.model }}
+        </span>
+      </div>
+    </ng-template>
+
     <ng-template
       abmColumnTemplateName="saved_time"
       let-item="item"
@@ -15,6 +36,7 @@
     >
       {{ item.saved_time | date : "dd/MM/yyyy" }}
     </ng-template>
+
     <ng-template
       abmColumnTemplateName="result_status_enum"
       let-item="item"
@@ -24,3 +46,4 @@
     </ng-template>
   </app-abm>
 </ng-container>
+

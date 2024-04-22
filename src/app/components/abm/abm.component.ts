@@ -39,7 +39,6 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   @Input() detailFormValid = false;
   @Input() toolbar = true;
   @Input() deleteButton = true;
-  @Input() actionColumnStyleClass = 'w-8rem';
   @Input() abmDetailTemplate: TemplateRef<any> | null = null;
   @Input() tableColumnButtonsTemplate: TemplateRef<any> | null = null;
 

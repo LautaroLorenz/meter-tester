@@ -15,7 +15,10 @@ import {
 } from '../../models/core/table-column.model';
 import { MessagesService } from '../../services/messages.service';
 import { BrandDbTableContext } from '../../models/business/database/brand.model';
-import { MeterDbTableContext } from '../../models/business/database/meter.model';
+import {
+  Meter,
+  MeterDbTableContext,
+} from '../../models/business/database/meter.model';
 import { EnumAsOptionPipe } from '../../pipes/core/enum-as-option.pipe';
 import { ResultStatus } from '../../models/business/enums/result-status.model';
 
@@ -66,7 +69,8 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
-      field: 'foreign.meter.model',
+      templateName: 'model',
+      template: undefined, // se inicializa en abm.component.ts
       header: 'Modelo',
       sortable: `${MeterDbTableContext.tableName}.model`,
       globalFilter: `${MeterDbTableContext.tableName}.model`,
@@ -81,7 +85,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
     },
     {
       field: 'year_of_production',
-      header: 'Año de fabricación',
+      header: 'Año',
       sortable: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
       globalFilter: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
       alignHorizontal: TC_AlignHorizontal.Number,
@@ -153,5 +157,8 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       });
   }
 
-  // TODO detalle del medidor
+  // TODO
+  seeMeter(meter: Meter): void {
+    console.log('ver medidor', meter);
+  }
 }

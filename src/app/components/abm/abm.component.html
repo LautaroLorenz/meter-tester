@@ -53,10 +53,18 @@
         [pSortableColumn]="col.sortable"
         [pSortableColumnDisabled]="!col.sortable"
         [pTooltip]="col.headerTooltip"
+        [style]="col.headerStyle"
+        class="white-space-nowrap"
         tooltipPosition="top"
       >
-        {{ col.header }}
-        <p-sortIcon *ngIf="col.sortable" [field]="col.sortable"></p-sortIcon>
+        <span [ngClass]="{ 'mr-2': !!col.sortable || !!col.filter }">
+          {{ col.header }}
+        </span>
+        <p-sortIcon
+          *ngIf="col.sortable"
+          [ngClass]="{ 'mr-2': !!col.filter }"
+          [field]="col.sortable"
+        ></p-sortIcon>
         <p-columnFilter
           *ngIf="col.filter"
           [type]="col.filter.type"
@@ -90,7 +98,7 @@
           </ng-container>
         </p-columnFilter>
       </th>
-      <th aria-label="Acciones" class="{{ actionColumnStyleClass }}"></th>
+      <th aria-label="Acciones"></th>
     </tr>
   </ng-template>
   <ng-template
@@ -107,7 +115,7 @@
           [index]="rowIndex"
         ></app-table-column>
       </td>
-      <td class="p-2 text-center">
+      <td class="p-2 text-center white-space-nowrap">
         <ng-container
           [ngTemplateOutlet]="tableColumnButtonsTemplate"
           [ngTemplateOutletContext]="{ element: rowData, index: rowIndex }"

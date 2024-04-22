@@ -70,6 +70,7 @@ export interface TableColumnBase {
   sortable?: TC_Sortable;
   globalFilter?: TC_GlobalFilter;
   headerTooltip?: string;
+  headerStyle?: string;
   customStyles?: string;
 }
 
