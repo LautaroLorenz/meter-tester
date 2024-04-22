@@ -15,6 +15,7 @@ import { DirectivesModule } from '../directives/directives.module';
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { StaticsComponent } from './statics/statics.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { HistoryEssayComponent } from './history-essay/history-essay.component';
     RunEssayComponent,
     VirtualMachineComponent,
     HistoryEssayComponent,
+    StaticsComponent,
   ],
   imports: [
     CommonModule,

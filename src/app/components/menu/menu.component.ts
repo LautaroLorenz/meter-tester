@@ -17,6 +17,10 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.items = [
       {
+        label: 'Estadísticas',
+        routerLink: '/'.concat(PageUrlName.dashboard),
+      },
+      {
         label: 'Ensayos',
         items: [
           {

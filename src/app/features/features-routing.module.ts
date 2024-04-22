@@ -10,6 +10,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { StaticsComponent } from './statics/statics.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
   {
     path: PageUrlName.history,
     component: HistoryEssayComponent,
+  },
+  {
+    path: PageUrlName.dashboard,
+    component: StaticsComponent,
   },
 ];
 
