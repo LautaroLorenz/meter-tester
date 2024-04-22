@@ -36,7 +36,6 @@ export class ReportMajorStepComponent implements OnInit {
   @ViewChildren(ReportStepSwitchComponent)
   steps!: QueryList<ReportStepSwitchComponent>;
 
-  // TODO implementar canDeactivate si intenta salir y no guardó en la base de datos
   isFileDownloaded = false;
   isDownloading = false;
   isSaving = false;

@@ -54,8 +54,6 @@ export abstract class TestRunComponent<T extends EssayStep> {
         stand.patchValue({ resultStatus: ResultStatus.Approved });
       }
     });
-
-    // TODO: si todos aprobaron continuar automaticamente.
   }
 
   getCanContinue(): boolean {
@@ -116,7 +114,6 @@ export abstract class TestRunComponent<T extends EssayStep> {
     this.stepExecutionDone(this.currentStep);
   }
 
-  // TODO
   private onDeactivate(): void {
     // TODO resolver situación cuando el usuario sale de la pantalla
     // TODO esto debería estar en TestRunComponent
