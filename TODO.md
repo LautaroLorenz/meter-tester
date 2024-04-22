@@ -27,6 +27,8 @@ MEJORAS necesarias:
   - Acomodar los estilos de los parámetros de los steps, crear un componente para estandarizar, aplicar tambien en meter-detail.
 - Estadisticas
   - Estands usados: en lugar de contar la cantidad de veces que se usa, se podria sumar tiempo de uso.
+- Historial
+  - Almacenar una copia de los parametros de los pasos y luego mostrar eso como detalle en la tabla historial.
 
 MEJORAS opcionales:
 - Implementar un trello para el proyecto.
