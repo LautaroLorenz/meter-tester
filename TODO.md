@@ -25,6 +25,8 @@ MEJORAS necesarias:
 - Reporte
   - Agregar información faltante: nombre de ensayo, tiempos de ejecicón (start y end)
   - Acomodar los estilos de los parámetros de los steps, crear un componente para estandarizar, aplicar tambien en meter-detail.
+- Estadisticas
+  - Estands usados: en lugar de contar la cantidad de veces que se usa, se podria sumar tiempo de uso.
 
 MEJORAS opcionales:
 - Implementar un trello para el proyecto.
