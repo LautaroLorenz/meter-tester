@@ -1,6 +1,6 @@
 <ng-container *ngIf="toolbar">
   <p-toolbar styleClass="py-5 px-3 border-noround mb-4">
-    <div class="p-toolbar-group-left">
+    <div class="p-toolbar-group-left gap-3">
       <span class="p-input-icon-left">
         <i *ngIf="!search.getRawValue()" class="pi pi-search"></i>
         <i
@@ -19,6 +19,14 @@
           [formControl]="search"
         />
       </span>
+      <ng-container *ngIf="showClearFilterButton">
+        <p-button
+          [disabled]="clearFilterButtonDisabled"
+          [outlined]="true"
+          label="Limpiar filtros"
+          (click)="clearFilters()"
+        ></p-button>
+      </ng-container>
     </div>
     <div class="p-toolbar-group-right">
       <ng-container *ngIf="abmDetailTemplate">
@@ -67,6 +75,7 @@
         ></p-sortIcon>
         <p-columnFilter
           *ngIf="col.filter"
+          #columnFilter
           [type]="col.filter.type"
           [field]="col.filter.field"
           [showMatchModes]="col.filter.showMatchModes"

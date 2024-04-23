@@ -7,11 +7,13 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
   Output,
   QueryList,
   SimpleChanges,
   TemplateRef,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
@@ -20,9 +22,12 @@ import {
   MenuItem,
   PrimeIcons,
 } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { ReplaySubject, takeUntil, tap } from 'rxjs';
-import { TC_FilterType, TableColumn } from '../../models/core/table-column.model';
+import { ColumnFilter, Table } from 'primeng/table';
+import { Subject, takeUntil, tap } from 'rxjs';
+import {
+  TC_FilterType,
+  TableColumn,
+} from '../../models/core/table-column.model';
 import { AbmColumnTemplateNameDirective } from '../../directives/abm-column-template-name.directive';
 
 @Component({
@@ -31,7 +36,9 @@ import { AbmColumnTemplateNameDirective } from '../../directives/abm-column-temp
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
+export class AbmComponent
+  implements OnChanges, OnInit, AfterContentInit, OnDestroy
+{
   @Input() dataset: any[] = [];
   @Input() totalRecords = 0;
   @Input() columns: TableColumn[] = [];
@@ -48,6 +55,7 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   @Output() lazyLoad = new EventEmitter<LazyLoadEvent>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
+  @ViewChildren('columnFilter') columnFilters!: QueryList<ColumnFilter>;
   @ContentChildren(AbmColumnTemplateNameDirective)
   templateColumns!: QueryList<AbmColumnTemplateNameDirective>;
 
@@ -56,9 +64,11 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   readonly rows = 5;
   readonly search: FormControl;
 
+  showClearFilterButton = false;
+  clearFilterButtonDisabled = true;
   detailDialogVisible = false;
 
-  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly onDestroy$ = new Subject<void>();
 
   constructor(private readonly confirmationService: ConfirmationService) {
     this.search = new FormControl('');
@@ -72,6 +82,15 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
         this.closeDialog();
       }
     }
+    if (changes.columns) {
+      this.showClearFilterButton = this.getShowClearFilterButton(
+        changes.columns.currentValue as TableColumn[]
+      );
+    }
+  }
+
+  ngOnInit(): void {
+    this.observeLazyLoadEvent();
   }
 
   ngAfterContentInit(): void {
@@ -80,6 +99,10 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
 
   clearSearch(): void {
     this.search.setValue('');
+  }
+
+  clearFilters(): void {
+    this.columnFilters.forEach((columnFilter) => columnFilter.clearFilter());
   }
 
   filterByText(value: string): void {
@@ -125,14 +148,14 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private initFormValueChangeListeners(): void {
     this.search.valueChanges
       .pipe(
-        takeUntil(this.destroyed$),
+        takeUntil(this.onDestroy$),
         tap((value: string) => this.filterByText(value))
       )
       .subscribe();
@@ -151,5 +174,22 @@ export class AbmComponent implements OnChanges, AfterContentInit, OnDestroy {
         column.template = templateRef;
       }
     });
+  }
+
+  private getShowClearFilterButton(columns: TableColumn[]): boolean {
+    return columns.some((column) => column.filter);
+  }
+
+  private getHasFilters(): boolean {
+    return this.columnFilters?.some((columnFilter) => columnFilter.hasFilter());
+  }
+
+  private observeLazyLoadEvent(): void {
+    this.lazyLoad
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => (this.clearFilterButtonDisabled = !this.getHasFilters()))
+      )
+      .subscribe();
   }
 }

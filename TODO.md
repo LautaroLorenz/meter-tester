@@ -42,5 +42,4 @@ MEJORAS opcionales:
 - Revisar los TODO de los test para machine-device.spec.ts
 - en el método "setApprovedStatus" si todos los stands aprobaron se puede avanzar automaticamente al siguiente step.
 - un log cuando hay un error con una operación en la base de datos.
-- en el historial botón para limpiar filtros aplicados (habilitado si hay filtros aplicados)
 - más filtros en el historial.
