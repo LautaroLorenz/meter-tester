@@ -59,6 +59,8 @@ import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/co
 import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterDetailComponent } from './details/meter-detail/meter-detail.component';
+import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/stand-used-widget.component';
+import { StaticWidgetComponent } from './statics-widgets/static-widget/static-widget.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -116,6 +118,8 @@ const AppComponents = [
   ContrastTestRunComponent,
   ContrastTestPdfReportComponent,
   MeterDetailComponent,
+  StandUsedWidgetComponent,
+  StaticWidgetComponent,
 ];
 
 @NgModule({

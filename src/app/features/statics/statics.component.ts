@@ -1,8 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { takeUntil, tap, startWith, Subject, take } from 'rxjs';
+import {
+  Observable,
+  takeUntil,
+  tap,
+  startWith,
+  Subject,
+  take,
+  map,
+  concat,
+  catchError,
+  throwError,
+} from 'rxjs';
 import { StaticsService } from '../../services/statics.service';
 import { Metric } from '../../models/business/enums/metric.model';
+import { Tags } from '../../models/business/database/static.model';
+import { MessagesService } from '../../services/messages.service';
 
 @Component({
   templateUrl: './statics.component.html',
@@ -14,12 +27,16 @@ export class StaticsComponent implements OnInit, OnDestroy {
     dateBefore: FormControl<Date>;
     dateAfter: FormControl<Date>;
   }>;
+  readonly metricsDataMap: Record<Metric, Tags[]> = {
+    [Metric.standUsed]: [],
+  };
 
   private readonly onDestroy = new Subject<void>();
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly staticsService: StaticsService
+    private readonly staticsService: StaticsService,
+    private readonly messagesService: MessagesService
   ) {
     this.filtersForm = this.buildFiltersForm();
   }
@@ -59,9 +76,23 @@ export class StaticsComponent implements OnInit, OnDestroy {
   }
 
   private reloadWidgets(before: Date, after: Date): void {
-    this.staticsService
-      .getMetric$(Metric.standUsed, before, after)
-      .pipe(take(1))
-      .subscribe((response) => console.log('Metric', response));
+    const observables: Observable<Tags[]>[] = [];
+
+    observables.push(
+      this.staticsService.getMetric$(Metric.standUsed, before, after).pipe(
+        take(1),
+        map((metrics) => metrics.map(({ tags_raw }) => tags_raw)),
+        tap((response) => (this.metricsDataMap.standUsed = response))
+      )
+    );
+
+    concat(...observables)
+      .pipe(
+        catchError((err: Error) => {
+          this.messagesService.error('No se pudo obtener las estadísticas');
+          return throwError(() => err);
+        })
+      )
+      .subscribe();
   }
 }

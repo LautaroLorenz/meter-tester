@@ -13,3 +13,11 @@
     </form>
   </div>
 </p-toolbar>
+
+<div class="grid p-2">
+  <app-static-widget title="Utilización de los puestos" class="col col-6">
+    <app-stand-used-widget
+      [tags]="metricsDataMap.standUsed"
+    ></app-stand-used-widget>
+  </app-static-widget>
+</div>
