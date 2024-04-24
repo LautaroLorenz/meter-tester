@@ -1,1 +1,15 @@
 <app-page-title [title]="title"></app-page-title>
+<p-toolbar styleClass="border-noround mb-4">
+  <div class="p-toolbar-group-left">
+    <form [formGroup]="filtersForm" class="grid">
+      <div class="col col-6 flex flex-column">
+        <label for="dateBefore">Fecha desde</label>
+        <p-calendar formControlName="dateBefore" [showIcon]="true"></p-calendar>
+      </div>
+      <div class="col col-6 flex flex-column">
+        <label for="dateAfter">Fecha hasta</label>
+        <p-calendar formControlName="dateAfter" [showIcon]="true"></p-calendar>
+      </div>
+    </form>
+  </div>
+</p-toolbar>

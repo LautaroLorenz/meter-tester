@@ -17,7 +17,7 @@ import {
   TableName,
   Where,
 } from '../models/core/database.model';
-import { LazyLoadEvent } from 'primeng/api';
+import { FilterMetadata, LazyLoadEvent } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,10 @@ export class DatabaseService<T> {
     options: {
       relations?: ForeignTable[];
       conditions?: Where[];
-      lazyLoadEvent?: LazyLoadEvent;
+      lazyLoadEvent?: Omit<LazyLoadEvent, 'filters'> & {
+        // arreglar un error e primeng donde devuelve filters como FilterMetadata | FilterMetadata[], pero lo declara como únicamente FilterMetadata
+        filters?: { [s: string]: FilterMetadata | FilterMetadata[] };
+      };
       globalFilterColumns?: string[];
     } = {
       relations: [],
@@ -49,7 +52,7 @@ export class DatabaseService<T> {
   ): void {
     const { first, rows, sortField, sortOrder, globalFilter, filters } =
       options.lazyLoadEvent ?? {};
-    const lazyLoadEvent: LazyLoadEvent = {
+    const lazyLoadEvent = {
       first,
       rows,
       sortField,

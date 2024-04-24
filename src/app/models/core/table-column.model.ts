@@ -5,6 +5,11 @@ export type TC_FilterDropdownOption = {
   value: any;
 };
 
+export enum TC_Operator {
+  and = 'and',
+  or = 'or',
+}
+
 export enum TC_FilterType {
   date = 'date',
   dropdown = 'dropdown',
@@ -23,6 +28,8 @@ export enum TC_MatchMode {
   gte = 'gte', // Comprueba si el valor de la columna es mayor o igual que el valor del filtro.
   is = 'is', // Comprueba si el valor de la columna es igual al valor del filtro, alias para equals.
   dateIs = 'dateIs',
+  dateBefore = 'dateBefore',
+  dateAfter = 'dateAfter',
   isNot = 'isNot', // Comprueba si el valor de la columna no es igual al valor del filtro, alias para notEquals.
   before = 'before', // Comprueba si el valor de la fecha es anterior a la fecha del filtro.
   after = 'after', // Comprueba si el valor de la fecha es posterior a la fecha del filtro.

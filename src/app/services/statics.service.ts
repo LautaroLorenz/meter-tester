@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { DatabaseService } from './database.service';
 import {
   Static,
   StaticDbTableContext,
   Tags,
 } from '../models/business/database/static.model';
+import { TC_MatchMode, TC_Operator } from '../models/core/table-column.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,26 +28,36 @@ export class StaticsService {
     );
   }
 
-  //   getMetric$(metricValue: string, from: number): Observable<Static[]> {
-  //     this.dbService.getTable(StaticDbTableContext.tableName, {
-  //       conditions: [{
-  //         kind: WhereKind.where,
-  //         columnName: 'metric',
-  //         operator: WhereOperator.equal,
-  //         value: metricValue
-  //       }, {
-  //         kind: WhereKind.andWhere,
-  //         columnName: 'saved_time',
-  //         operator: WhereOperator.major,
-  //         value: from
-  //       }]
-  //     });
-  //     return this.dbService.getTableReply$(StaticDbTableContext.tableName).pipe(
-  //       map(({ rows }) => rows.filter(({ metric }) => metric === metricValue)),
-  //       map((rows) => rows.map((row) => ({
-  //         ...row,
-  //         tags_raw: JSON.parse(row.tags_raw as unknown as string)
-  //       })))
-  //     );
-  //   }
+  getMetric$(
+    metricValue: string,
+    before: Date,
+    after: Date
+  ): Observable<Static[]> {
+    this.dbService.getTable(
+      StaticDbTableContext.tableName,
+      {
+        lazyLoadEvent: {
+          filters: {
+            [`${StaticDbTableContext.tableName}.saved_time`]: [
+              {
+                matchMode: TC_MatchMode.dateBefore,
+                operator: TC_Operator.and,
+                value: before.getTime(),
+              },
+              {
+                matchMode: TC_MatchMode.dateAfter,
+                operator: TC_Operator.and,
+                value: after.getTime(),
+              },
+            ],
+          },
+        },
+      },
+      StaticDbTableContext.rawProperties
+    );
+    return this.dbService.getTableReply$(StaticDbTableContext.tableName).pipe(
+      take(1),
+      map(({ rows }) => rows.filter(({ metric }) => metric === metricValue))
+    );
+  }
 }

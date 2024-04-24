@@ -4,6 +4,8 @@ import * as util from 'util';
 
 enum F_MatchMode {
   dateIs = 'dateIs',
+  dateBefore = 'dateBefore',
+  dateAfter = 'dateAfter',
   equals = 'equals',
   like = 'like',
 }
@@ -16,7 +18,7 @@ type FilterTypeBase<T> = {
   value: T;
 };
 
-interface F_DateIs extends FilterTypeBase<string> {
+interface F_DateIs extends FilterTypeBase<string | number> {
   matchMode: F_MatchMode.dateIs;
 }
 
@@ -26,8 +28,14 @@ interface F_Equals extends FilterTypeBase<number> {
 interface F_Like extends FilterTypeBase<string> {
   matchMode: F_MatchMode.like;
 }
+interface F_DateBefore extends FilterTypeBase<string | number> {
+  matchMode: F_MatchMode.dateBefore;
+}
+interface F_DateAfter extends FilterTypeBase<string | number> {
+  matchMode: F_MatchMode.dateAfter;
+}
 
-type FilterMetaData = F_DateIs | F_Equals | F_Like;
+type FilterMetaData = F_DateIs | F_DateBefore | F_DateAfter | F_Equals | F_Like;
 
 type TableName = string;
 
@@ -164,6 +172,36 @@ function applyFilter(
       );
       queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
       queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+      break;
+    case F_MatchMode.dateBefore:
+      if (condition.value === null) {
+        return;
+      }
+      const dateBeforeValue = new Date(condition.value);
+      const startDateBeforeValue = new Date(
+        dateBeforeValue.getFullYear(),
+        dateBeforeValue.getMonth(),
+        dateBeforeValue.getDate(),
+        0,
+        0,
+        0
+      );
+      queryBuilder.andWhere(tableNameProp, '>=', startDateBeforeValue);
+      break;
+    case F_MatchMode.dateAfter:
+      if (condition.value === null) {
+        return;
+      }
+      const dateAfterValue = new Date(condition.value);
+      const startDateAfterValue = new Date(
+        dateAfterValue.getFullYear(),
+        dateAfterValue.getMonth(),
+        dateAfterValue.getDate(),
+        23,
+        59,
+        59
+      );
+      queryBuilder.andWhere(tableNameProp, '<=', startDateAfterValue);
       break;
     case F_MatchMode.equals:
       if (condition.value === null) {

@@ -42,6 +42,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { TimelineModule } from 'primeng/timeline';
 import { ChipModule } from 'primeng/chip';
 import { BlockUIModule } from 'primeng/blockui';
+import { CalendarModule } from 'primeng/calendar';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -84,7 +85,8 @@ const PrimeNgModules = [
   AccordionModule,
   TimelineModule,
   ChipModule,
-  BlockUIModule
+  BlockUIModule,
+  CalendarModule,
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

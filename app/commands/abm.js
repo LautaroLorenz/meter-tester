@@ -20,6 +20,8 @@ const electron_1 = require("electron");
 var F_MatchMode;
 (function (F_MatchMode) {
     F_MatchMode["dateIs"] = "dateIs";
+    F_MatchMode["dateBefore"] = "dateBefore";
+    F_MatchMode["dateAfter"] = "dateAfter";
     F_MatchMode["equals"] = "equals";
     F_MatchMode["like"] = "like";
 })(F_MatchMode || (F_MatchMode = {}));
@@ -113,6 +115,22 @@ function applyFilter(queryBuilder, condition, tableNameProp) {
             const endDateValue = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 23, 59, 59);
             queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
             queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
+            break;
+        case F_MatchMode.dateBefore:
+            if (condition.value === null) {
+                return;
+            }
+            const dateBeforeValue = new Date(condition.value);
+            const startDateBeforeValue = new Date(dateBeforeValue.getFullYear(), dateBeforeValue.getMonth(), dateBeforeValue.getDate(), 0, 0, 0);
+            queryBuilder.andWhere(tableNameProp, '>=', startDateBeforeValue);
+            break;
+        case F_MatchMode.dateAfter:
+            if (condition.value === null) {
+                return;
+            }
+            const dateAfterValue = new Date(condition.value);
+            const startDateAfterValue = new Date(dateAfterValue.getFullYear(), dateAfterValue.getMonth(), dateAfterValue.getDate(), 23, 59, 59);
+            queryBuilder.andWhere(tableNameProp, '<=', startDateAfterValue);
             break;
         case F_MatchMode.equals:
             if (condition.value === null) {
