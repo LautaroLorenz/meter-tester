@@ -11,6 +11,7 @@ import {
   TC_AlignHorizontal,
   TC_FilterType,
   TC_MatchMode,
+  TC_Operator,
   TableColumn,
 } from '../../models/core/table-column.model';
 import { MessagesService } from '../../services/messages.service';
@@ -43,11 +44,13 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         type: TC_FilterType.date,
         showMatchModes: false,
         matchMode: TC_MatchMode.dateIs,
-        showAddButton: false,
+        operator: TC_Operator.or,
+        showAddButton: true,
         showOperator: false,
         hideOnClear: true,
         showApplyButton: true,
         showClearButton: true,
+        maxConstraints: 1
       },
     },
     {
@@ -103,6 +106,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         type: TC_FilterType.dropdown,
         showMatchModes: false,
         matchMode: TC_MatchMode.equals,
+        operator: TC_Operator.and,
         showAddButton: false,
         showOperator: false,
         hideOnClear: true,
@@ -116,6 +120,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         showClear: false,
         showApplyButton: false,
         showClearButton: true,
+        maxConstraints: 1
       },
     },
   ];

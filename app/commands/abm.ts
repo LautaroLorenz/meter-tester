@@ -1,43 +1,11 @@
 import { ipcMain } from 'electron';
 import { Knex } from 'knex';
 import * as util from 'util';
-
-enum F_MatchMode {
-  dateIs = 'dateIs',
-  dateBefore = 'dateBefore',
-  dateAfter = 'dateAfter',
-  equals = 'equals',
-  like = 'like',
-}
-
-type F_Operator = 'and' | 'or';
-
-type FilterTypeBase<T> = {
-  matchMode: F_MatchMode;
-  operator: F_Operator;
-  value: T;
-};
-
-interface F_DateIs extends FilterTypeBase<string | number> {
-  matchMode: F_MatchMode.dateIs;
-}
-
-interface F_Equals extends FilterTypeBase<number> {
-  matchMode: F_MatchMode.equals;
-}
-interface F_Like extends FilterTypeBase<string> {
-  matchMode: F_MatchMode.like;
-}
-interface F_DateBefore extends FilterTypeBase<string | number> {
-  matchMode: F_MatchMode.dateBefore;
-}
-interface F_DateAfter extends FilterTypeBase<string | number> {
-  matchMode: F_MatchMode.dateAfter;
-}
-
-type FilterMetaData = F_DateIs | F_DateBefore | F_DateAfter | F_Equals | F_Like;
-
-type TableName = string;
+import {
+  F_LogicOperator,
+  Filters,
+  getFilterConditions,
+} from './filters';
 
 type ForeignTable = {
   tableName: string;
@@ -51,8 +19,6 @@ type JoinTable = {
   leftProp: string;
   rightProp: string;
 };
-
-type Filters = Record<TableName, FilterMetaData | FilterMetaData[]>;
 
 /**
  * Arma la parte de get table que tiene que ver con retornar las tablas relacionadas a la buscada (recursivamente)
@@ -139,98 +105,108 @@ function getTableOrderBuilder(
 }
 
 /**
- *  Arma la parte la query del filtrado por el usuario
+ * Arma la parte la query de filtros
  */
-function applyFilter(
-  queryBuilder: Knex.QueryBuilder,
-  condition: FilterMetaData,
-  tableNameProp: string
-): void {
-  switch (condition.matchMode) {
-    case F_MatchMode.dateIs:
-      if (condition.value === null) {
-        return;
-      }
-      const dateValue = new Date(condition.value);
-      // Configura la fecha al principio del día (00:00:00)
-      const startDateValue = new Date(
-        dateValue.getFullYear(),
-        dateValue.getMonth(),
-        dateValue.getDate(),
-        0,
-        0,
-        0
-      );
-      // Configura la fecha al final del día (23:59:59)
-      const endDateValue = new Date(
-        dateValue.getFullYear(),
-        dateValue.getMonth(),
-        dateValue.getDate(),
-        23,
-        59,
-        59
-      );
-      queryBuilder.andWhere(tableNameProp, '>=', startDateValue);
-      queryBuilder.andWhere(tableNameProp, '<=', endDateValue);
-      break;
-    case F_MatchMode.dateBefore:
-      if (condition.value === null) {
-        return;
-      }
-      const dateBeforeValue = new Date(condition.value);
-      const startDateBeforeValue = new Date(
-        dateBeforeValue.getFullYear(),
-        dateBeforeValue.getMonth(),
-        dateBeforeValue.getDate(),
-        0,
-        0,
-        0
-      );
-      queryBuilder.andWhere(tableNameProp, '>=', startDateBeforeValue);
-      break;
-    case F_MatchMode.dateAfter:
-      if (condition.value === null) {
-        return;
-      }
-      const dateAfterValue = new Date(condition.value);
-      const startDateAfterValue = new Date(
-        dateAfterValue.getFullYear(),
-        dateAfterValue.getMonth(),
-        dateAfterValue.getDate(),
-        23,
-        59,
-        59
-      );
-      queryBuilder.andWhere(tableNameProp, '<=', startDateAfterValue);
-      break;
-    case F_MatchMode.equals:
-      if (condition.value === null) {
-        return;
-      }
-      queryBuilder.andWhere(tableNameProp, '=', condition.value);
-      break;
-    case F_MatchMode.like:
-      if (condition.value === null) {
-        return;
-      }
-      queryBuilder.andWhere(tableNameProp, 'LIKE', condition.value);
-      break;
-  }
-}
-
 function getTableFilterBuilder(
   queryBuilder: Knex.QueryBuilder,
   filters: Filters
 ): void {
-  Object.entries(filters).forEach((conditions) => {
-    const [tableNameProp, metaData] = conditions;
-    if (Array.isArray(metaData)) {
-      metaData.forEach((condition) => {
-        applyFilter(queryBuilder, condition, tableNameProp);
+  queryBuilder.where((filtersBuilder) => {
+    Object.keys(filters).forEach((tableNameProp) => {
+      const metaData = filters[tableNameProp];
+      const groupConditionsMetaData = !Array.isArray(metaData)
+        ? [metaData]
+        : metaData;
+      const groupLogicOperator = groupConditionsMetaData[0].operator;
+      // Los filtros están concatenados con "and" por eso usamos "andWhere"
+      // Ejemplo "nombre" and "mascota" and "fecha"
+      filtersBuilder.andWhere((filterBuilder) => {
+        // Cada filtro tiene varias condiciones que pueden estar concatenadas con "and" o con "or".
+        // Ejemplo1 "mascotaNombre=Chucky or mascotaNombre=Trompy or mascotaNombre=Valky".
+        // Ejemplo2 "fechaBefore='29/03/2023' and fechaAfter='30/04/2023'".
+        // Por eso el operador interno de cada filtro puede ser "andWhere" o "orWhere".
+        // Se toma el operador que trae la primera condición de filtro.
+        filterBuilder.where((conditionsBuilder) =>
+          groupConditionsMetaData.forEach((groupConditionMetadata) => {
+            const filterConditions = getFilterConditions(
+              groupConditionMetadata
+            );
+            // Cada condicion de un filtro, en realidad puede ser un grupo de condiciones concatenadas con un operador
+            // Ejemplo cuando es "dateIs" se crean dos condiciones para principio y final del dia y las une con "and".
+            if (!filterConditions) {
+              return;
+            }
+            if (groupLogicOperator === F_LogicOperator.and) {
+              // Verificamos si la condición es simple
+              if (!('logicOperator' in filterConditions)) {
+                conditionsBuilder.andWhere(
+                  tableNameProp,
+                  filterConditions.comparisonOperator,
+                  filterConditions.value
+                );
+              } else {
+                // si la condición es compuesta
+                const { conditions, logicOperator } = filterConditions;
+                if (logicOperator === F_LogicOperator.and) {
+                  conditionsBuilder.andWhere((conditionBuilder) => {
+                    conditions.forEach((condition) => {
+                      conditionBuilder.andWhere(
+                        tableNameProp,
+                        condition.comparisonOperator,
+                        condition.value
+                      );
+                    });
+                  });
+                } else {
+                  conditionsBuilder.andWhere((conditionBuilder) => {
+                    conditions.forEach((condition) => {
+                      conditionBuilder.orWhere(
+                        tableNameProp,
+                        condition.comparisonOperator,
+                        condition.value
+                      );
+                    });
+                  });
+                }
+              }
+            } else {
+              // Verificamos si la condición es simple
+              if (!('logicOperator' in filterConditions)) {
+                conditionsBuilder.orWhere(
+                  tableNameProp,
+                  filterConditions.comparisonOperator,
+                  filterConditions.value
+                );
+              } else {
+                // si la condición es compuesta
+                const { conditions, logicOperator } = filterConditions;
+                if (logicOperator === F_LogicOperator.and) {
+                  conditionsBuilder.orWhere((conditionBuilder) => {
+                    conditions.forEach((condition) => {
+                      conditionBuilder.andWhere(
+                        tableNameProp,
+                        condition.comparisonOperator,
+                        condition.value
+                      );
+                    });
+                  });
+                } else {
+                  conditionsBuilder.orWhere((conditionBuilder) => {
+                    conditions.forEach((condition) => {
+                      conditionBuilder.orWhere(
+                        tableNameProp,
+                        condition.comparisonOperator,
+                        condition.value
+                      );
+                    });
+                  });
+                }
+              }
+            }
+          })
+        );
       });
-    } else {
-      applyFilter(queryBuilder, metaData, tableNameProp);
-    }
+    });
   });
 }
 

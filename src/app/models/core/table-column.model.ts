@@ -44,6 +44,7 @@ export type TC_GlobalFilter = string | string[];
 export type TC_FilterBase = {
   field: string;
   type: TC_FilterType;
+  operator: TC_Operator;
   matchMode: TC_MatchMode;
   showMatchModes: boolean;
   showAddButton: boolean;
@@ -51,6 +52,7 @@ export type TC_FilterBase = {
   hideOnClear: boolean;
   showApplyButton: boolean;
   showClearButton: boolean;
+  maxConstraints: number;
   placeholder?: string;
 };
 
