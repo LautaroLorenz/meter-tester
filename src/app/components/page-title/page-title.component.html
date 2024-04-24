@@ -12,7 +12,9 @@
       pTooltip="Volver a la página anterior"
     ></p-button>
     <p>
-      <span class="ml-2 text-xl">{{ title }}</span>
+      <span class="text-xl" [ngClass]="{ 'ml-2': showBack }">
+        {{ title }}
+      </span>
     </p>
     <ng-content select="[toolbar-left]"></ng-content>
   </div>
