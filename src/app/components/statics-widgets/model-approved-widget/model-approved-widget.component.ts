@@ -91,7 +91,7 @@ export class ModelApprovedWidgetComponent implements OnInit, OnChanges {
             borderRadius: 3,
           });
         }
-        acc.datasets[0].backgroundColor.push(colors[24]);
+        acc.datasets[0].backgroundColor.push(colors[10]);
         acc.datasets[0].data.push(dataMap[key]);
         acc.labels.push(key);
         return acc;

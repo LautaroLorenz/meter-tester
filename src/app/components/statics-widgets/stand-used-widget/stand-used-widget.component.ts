@@ -90,7 +90,7 @@ export class StandUsedWidgetComponent implements OnInit, OnChanges {
             borderRadius: 3,
           });
         }
-        acc.datasets[0].backgroundColor.push(colors[1]);
+        acc.datasets[0].backgroundColor.push(colors[79]);
         acc.datasets[0].data.push(standUsedMap[key]);
         acc.labels.push(
           `Puesto ${(Number(key) + 1).toString().padStart(2, '0')}`

@@ -16,6 +16,7 @@ import { StaticsService } from '../../services/statics.service';
 import { Metric } from '../../models/business/enums/metric.model';
 import { Tags } from '../../models/business/database/static.model';
 import { MessagesService } from '../../services/messages.service';
+import { colors } from '../../models/business/constants/colors.model';
 
 @Component({
   templateUrl: './statics.component.html',
@@ -33,6 +34,7 @@ export class StaticsComponent implements OnInit, OnDestroy {
     [Metric.meterModelApproved]: [],
     [Metric.meterModelFailed]: [],
   };
+  readonly colors = colors;
 
   private readonly onDestroy = new Subject<void>();
 
