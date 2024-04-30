@@ -14,10 +14,23 @@
   </div>
 </p-toolbar>
 
-<div class="grid p-2">
-  <app-static-widget title="Utilización de los puestos" class="col col-6">
+<div class="grid grid-nogutter">
+  <app-static-widget
+    title="Utilización de los puestos"
+    class="col col-6 pl-3 pr-2"
+  >
     <app-stand-used-widget
       [tags]="metricsDataMap.standUsed"
     ></app-stand-used-widget>
+  </app-static-widget>
+
+  <app-static-widget
+    title="Modelos que más aprobaron - Top {{ top }}"
+    class="col col-6 pl-2 pr-3"
+  >
+    <app-model-approved-widget
+      [tags]="metricsDataMap.meterModelApproved"
+      [top]="top"
+    ></app-model-approved-widget>
   </app-static-widget>
 </div>

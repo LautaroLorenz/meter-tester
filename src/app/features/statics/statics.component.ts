@@ -27,8 +27,11 @@ export class StaticsComponent implements OnInit, OnDestroy {
     dateBefore: FormControl<Date>;
     dateAfter: FormControl<Date>;
   }>;
+  readonly top = 10;
   readonly metricsDataMap: Record<Metric, Tags[]> = {
     [Metric.standUsed]: [],
+    [Metric.meterModelApproved]: [],
+    [Metric.meterModelFailed]: [],
   };
 
   private readonly onDestroy = new Subject<void>();
@@ -84,6 +87,24 @@ export class StaticsComponent implements OnInit, OnDestroy {
         map((metrics) => metrics.map(({ tags_raw }) => tags_raw)),
         tap((response) => (this.metricsDataMap.standUsed = response))
       )
+    );
+    observables.push(
+      this.staticsService
+        .getMetric$(Metric.meterModelApproved, before, after)
+        .pipe(
+          take(1),
+          map((metrics) => metrics.map(({ tags_raw }) => tags_raw)),
+          tap((response) => (this.metricsDataMap.meterModelApproved = response))
+        )
+    );
+    observables.push(
+      this.staticsService
+        .getMetric$(Metric.meterModelFailed, before, after)
+        .pipe(
+          take(1),
+          map((metrics) => metrics.map(({ tags_raw }) => tags_raw)),
+          tap((response) => (this.metricsDataMap.meterModelFailed = response))
+        )
     );
 
     concat(...observables)

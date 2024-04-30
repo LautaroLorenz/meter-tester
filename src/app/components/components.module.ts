@@ -61,6 +61,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MeterDetailComponent } from './details/meter-detail/meter-detail.component';
 import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/stand-used-widget.component';
 import { StaticWidgetComponent } from './statics-widgets/static-widget/static-widget.component';
+import { ModelApprovedWidgetComponent } from './statics-widgets/model-approved-widget/model-approved-widget.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -120,6 +121,7 @@ const AppComponents = [
   MeterDetailComponent,
   StandUsedWidgetComponent,
   StaticWidgetComponent,
+  ModelApprovedWidgetComponent,
 ];
 
 @NgModule({

@@ -38,6 +38,8 @@ import { NavigationService } from '../../../services/navigation.service';
 import { PageUrlName } from '../../../models/business/enums/page-name.model';
 import { StaticsService } from '../../../services/statics.service';
 import { Metric } from '../../../models/business/enums/metric.model';
+import { ResultStatus } from '../../../models/business/enums/result-status.model';
+import { Tags } from '../../../models/business/database/static.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -164,18 +166,53 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
     // poner todos los obsersables en un array, y ejecutar todos juntos uno por uno.
     const observables: Observable<number>[] = [];
 
-    // guardar los stands utilizados
-    const standsUsed = this.runEssayService
-      .getActiveStands(this.preparationStep)
-      .map(({ index }) => ({ standIndex: index.toString() }));
-    observables.push(
-      this.staticsService.increment$(Metric.standUsed, standsUsed)
+    const activeStands = this.runEssayService.getActiveStands(
+      this.preparationStep
     );
 
+    // Estadística: Útilización de los puestos
+    const standsUsed: Tags = activeStands.map(({ index }) => ({
+      standIndex: index.toString(),
+    }));
+    if (standsUsed.length > 0) {
+      observables.push(
+        this.staticsService.increment$(Metric.standUsed, standsUsed)
+      );
+    }
+    // Estadística:
+    // - Modelos de medidores que más aprobaron
+    // - Modelos de medidores que más desaprobaron
+    const modelApproved: Tags = [] as Record<string, string>[];
+    const modelFailed: Tags = [] as Record<string, string>[];
+    this.executionSteps.forEach((step) => {
+      const results = step.standResults;
+      results.forEach(({ resultStatus, standIndex }) => {
+        const activeStand = activeStands.find(
+          ({ index }) => index === standIndex
+        );
+        if (activeStand) {
+          const model = activeStand.stand.meter.model;
+          if (resultStatus === ResultStatus.Approved) {
+            modelApproved.push({ model });
+          }
+          if (resultStatus === ResultStatus.Failed) {
+            modelFailed.push({ model });
+          }
+        }
+      });
+    });
+    if (modelApproved.length > 0) {
+      observables.push(
+        this.staticsService.increment$(Metric.meterModelApproved, modelApproved)
+      );
+    }
+    if (modelFailed.length > 0) {
+      observables.push(
+        this.staticsService.increment$(Metric.meterModelFailed, modelFailed)
+      );
+    }
+
     // TODO guardar
-    // - modelos de medidores que aprobaron
-    // - modelos de medidores que desaprobaron
-    // - modelos de medidores que se usaron
     // - ensayo que se ejecutó
     // - steps que se ejecutaron
 
