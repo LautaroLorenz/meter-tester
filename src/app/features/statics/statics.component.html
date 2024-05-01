@@ -36,12 +36,12 @@
 </div>
 
 <!-- descomentar para ver los colores disponibles para los widgets -->
-<!-- <div
-  *ngFor="let color of colors; let index = index"
-  class="flex flex-row row-wrap gap-2 w-full"
->
-  <div style="width: 32px; height: 32px; background-color: {{ color }};">
+<div class="flex flex-row flex-wrap gap-2 w-full my-4">
+  <div
+    *ngFor="let color of colors; let index = index"
+    style="display: flex; flex: 0 0 auto; width: 38px; height: 38px; background-color: {{ color }};"
+  >
     {{ index }}
   </div>
   <div></div>
-</div> -->
+</div>
