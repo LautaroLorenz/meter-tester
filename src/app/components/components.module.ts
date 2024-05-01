@@ -62,6 +62,7 @@ import { MeterDetailComponent } from './details/meter-detail/meter-detail.compon
 import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/stand-used-widget.component';
 import { StaticWidgetComponent } from './statics-widgets/static-widget/static-widget.component';
 import { ModelApprovedWidgetComponent } from './statics-widgets/model-approved-widget/model-approved-widget.component';
+import { ModelFailedWidgetComponent } from './statics-widgets/model-failed-widget/model-failed-widget.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -122,6 +123,7 @@ const AppComponents = [
   StandUsedWidgetComponent,
   StaticWidgetComponent,
   ModelApprovedWidgetComponent,
+  ModelFailedWidgetComponent,
 ];
 
 @NgModule({
