@@ -282,6 +282,7 @@ export class EssayTemplateBuilderComponent
                 essayTemplate.name
               ).bind(this)
             );
+          this.form.get('essayTemplate.name')?.updateValueAndValidity();
         }),
         tap(({ id }) => this.requestTableEssayTemplateSteps(id))
       )
