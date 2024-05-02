@@ -61,7 +61,7 @@ export class AbmComponent
 
   readonly TC_FilterType = TC_FilterType;
   readonly checkboxColumnMenuItems: MenuItem[] = [];
-  readonly rows = 5;
+  readonly rows = 20;
   readonly search: FormControl;
 
   showClearFilterButton = false;
