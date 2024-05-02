@@ -30,6 +30,7 @@ export enum TC_MatchMode {
   dateIs = 'dateIs',
   dateBefore = 'dateBefore',
   dateAfter = 'dateAfter',
+  range = 'range',
   isNot = 'isNot', // Comprueba si el valor de la columna no es igual al valor del filtro, alias para notEquals.
   before = 'before', // Comprueba si el valor de la fecha es anterior a la fecha del filtro.
   after = 'after', // Comprueba si el valor de la fecha es posterior a la fecha del filtro.

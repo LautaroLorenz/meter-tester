@@ -106,6 +106,24 @@
                 ></p-dropdown>
               </ng-template>
             </ng-container>
+
+            <ng-container *ngSwitchCase="TC_FilterType.date">
+              <ng-container *ngIf="col.filter.matchMode === 'range'">
+                <ng-template
+                  pTemplate="filter"
+                  let-value
+                  let-filter="filterCallback"
+                >
+                  <p-calendar
+                    #calendarRange
+                    [ngModel]="value"
+                    (onSelect)="filter(calendarRange.value)"
+                    selectionMode="range"
+                    [placeholder]="'Select' | translate"
+                  ></p-calendar>
+                </ng-template>
+              </ng-container>
+            </ng-container>
           </ng-container>
         </p-columnFilter>
       </th>

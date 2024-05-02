@@ -11,6 +11,7 @@ export enum F_MatchMode {
   dateIs = 'dateIs',
   dateBefore = 'dateBefore',
   dateAfter = 'dateAfter',
+  range = 'range',
   equals = 'equals',
   like = 'like',
 }
@@ -52,10 +53,14 @@ export interface F_DateBefore extends FilterTypeBase<string | number> {
 export interface F_DateAfter extends FilterTypeBase<string | number> {
   matchMode: F_MatchMode.dateAfter;
 }
+export interface F_Range extends FilterTypeBase<[string, string]> {
+  matchMode: F_MatchMode.range;
+}
 export type FilterMetaData =
   | F_DateIs
   | F_DateBefore
   | F_DateAfter
+  | F_Range
   | F_Equals
   | F_Like;
 
@@ -132,6 +137,47 @@ export function getFilterConditions(
       return {
         comparisonOperator: F_ComparisonOperator.lte,
         value: startDateAfterValue,
+      };
+    case F_MatchMode.range:
+      if (metaData.value === null || metaData.value.length < 2) {
+        return;
+      }
+      const [beforeValue, afterValue] = metaData.value;
+      if (!beforeValue || !afterValue) {
+        return;
+      }
+      const dateBefore = new Date(beforeValue);
+      const dateAfter = new Date(afterValue);
+      // Configura la fecha al principio del día (00:00:00)
+      const startRangeDateValue = new Date(
+        dateBefore.getFullYear(),
+        dateBefore.getMonth(),
+        dateBefore.getDate(),
+        0,
+        0,
+        0
+      );
+      // Configura la fecha al final del día (23:59:59)
+      const endRangeDateValue = new Date(
+        dateAfter.getFullYear(),
+        dateAfter.getMonth(),
+        dateAfter.getDate(),
+        23,
+        59,
+        59
+      );
+      return {
+        logicOperator: F_LogicOperator.and,
+        conditions: [
+          {
+            comparisonOperator: F_ComparisonOperator.gte,
+            value: startRangeDateValue,
+          },
+          {
+            comparisonOperator: F_ComparisonOperator.lte,
+            value: endRangeDateValue,
+          },
+        ],
       };
     case F_MatchMode.equals:
       if (metaData.value === null) {

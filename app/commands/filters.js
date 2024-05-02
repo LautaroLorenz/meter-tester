@@ -13,6 +13,7 @@ var F_MatchMode;
     F_MatchMode["dateIs"] = "dateIs";
     F_MatchMode["dateBefore"] = "dateBefore";
     F_MatchMode["dateAfter"] = "dateAfter";
+    F_MatchMode["range"] = "range";
     F_MatchMode["equals"] = "equals";
     F_MatchMode["like"] = "like";
 })(F_MatchMode = exports.F_MatchMode || (exports.F_MatchMode = {}));
@@ -64,6 +65,30 @@ function getFilterConditions(metaData) {
             return {
                 comparisonOperator: F_ComparisonOperator.lte,
                 value: startDateAfterValue,
+            };
+        case F_MatchMode.range:
+            if (metaData.value === null || metaData.value.length < 2) {
+                return;
+            }
+            const [beforeValue, afterValue] = metaData.value;
+            const dateBefore = new Date(beforeValue);
+            const dateAfter = new Date(afterValue);
+            // Configura la fecha al principio del día (00:00:00)
+            const startRangeDateValue = new Date(dateBefore.getFullYear(), dateBefore.getMonth(), dateBefore.getDate(), 0, 0, 0);
+            // Configura la fecha al final del día (23:59:59)
+            const endRangeDateValue = new Date(dateAfter.getFullYear(), dateAfter.getMonth(), dateAfter.getDate(), 23, 59, 59);
+            return {
+                logicOperator: F_LogicOperator.and,
+                conditions: [
+                    {
+                        comparisonOperator: F_ComparisonOperator.gte,
+                        value: startRangeDateValue,
+                    },
+                    {
+                        comparisonOperator: F_ComparisonOperator.lte,
+                        value: endRangeDateValue,
+                    },
+                ],
             };
         case F_MatchMode.equals:
             if (metaData.value === null) {

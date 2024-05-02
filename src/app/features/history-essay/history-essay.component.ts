@@ -43,14 +43,14 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         field: `${HistoryEssayDbTableContext.tableName}.saved_time`,
         type: TC_FilterType.date,
         showMatchModes: false,
-        matchMode: TC_MatchMode.dateIs,
-        operator: TC_Operator.or,
-        showAddButton: true,
+        matchMode: TC_MatchMode.range,
+        operator: TC_Operator.and,
+        showAddButton: false,
         showOperator: false,
         hideOnClear: true,
-        showApplyButton: true,
+        showApplyButton: false,
         showClearButton: true,
-        maxConstraints: 1
+        maxConstraints: 1,
       },
     },
     {
@@ -120,7 +120,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
         showClear: false,
         showApplyButton: false,
         showClearButton: true,
-        maxConstraints: 1
+        maxConstraints: 1,
       },
     },
   ];

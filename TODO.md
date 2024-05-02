@@ -48,7 +48,6 @@ MEJORAS opcionales:
 
 PARA EL 15 de MAYO
 
-- filtro historial poner fecha desde-hasta.
 - no estoy enviando la constante del medidor.
 - los patrones no envían información, ocultar el dispositivo de la pantalla.
 - reporte poner los parámetros del ensayo
