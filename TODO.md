@@ -43,3 +43,26 @@ MEJORAS opcionales:
 - en el método "setApprovedStatus" si todos los stands aprobaron se puede avanzar automaticamente al siguiente step.
 - un log cuando hay un error con una operación en la base de datos.
 - más filtros en el historial.
+- poder elegir la cantidad de ítems por página (guardado en BBDD como una setting del usuario).
+
+
+PARA EL 15 de MAYO
+
+- no estoy enviando la constante del medidor.
+- los patrones no envían información, ocultar el dispositivo de la pantalla.
+- reporte poner los parámetros del ensayo
+  - las fases en formato tabla
+  - los parámetros pueden estar uno debajo del otro.
+
+Contraste
+- mando stop a cada puesto.
+- loop
+  - consulta constante del patrón.
+  - consultar resultados de los puestos.
+
+Arranque / Vacío
+- mando stop a cada puesto.
+- loop
+  - consultar resultados de los puestos.
+
+- mejorar el historial.
