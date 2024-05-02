@@ -71,6 +71,9 @@ function getFilterConditions(metaData) {
                 return;
             }
             const [beforeValue, afterValue] = metaData.value;
+            if (!beforeValue || !afterValue) {
+                return;
+            }
             const dateBefore = new Date(beforeValue);
             const dateAfter = new Date(afterValue);
             // Configura la fecha al principio del día (00:00:00)

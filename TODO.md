@@ -66,3 +66,5 @@ Arranque / Vacío
   - consultar resultados de los puestos.
 
 - mejorar el historial.
+  - poner los parámetros de cada paso.
+  - poner el resultado y la unidad del puesto.
