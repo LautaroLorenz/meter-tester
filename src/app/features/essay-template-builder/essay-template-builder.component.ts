@@ -10,7 +10,7 @@ import {
   map,
   Observable,
   of,
-  ReplaySubject,
+  Subject,
   switchMap,
   takeUntil,
   tap,
@@ -62,7 +62,7 @@ export class EssayTemplateBuilderComponent
   readonly form: FormGroup;
   readonly saveButtonMenuItems: MenuItem[] = [];
 
-  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly onDestroy: Subject<void> = new Subject();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -139,8 +139,8 @@ export class EssayTemplateBuilderComponent
   }
 
   ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+    this.onDestroy.next();
+    this.onDestroy.complete();
   }
 
   exit(): void {
@@ -263,7 +263,7 @@ export class EssayTemplateBuilderComponent
   private observeRoute(): void {
     this.id$
       .pipe(
-        takeUntil(this.destroyed$),
+        takeUntil(this.onDestroy),
         switchMap((id) =>
           this.dbService.getTableElement$(
             EssayTemplateDbTableContext.tableName,
@@ -276,6 +276,7 @@ export class EssayTemplateBuilderComponent
             .get('essayTemplate.name')
             ?.setAsyncValidators(
               propInUseValidator<EssayTemplate>(
+                this.onDestroy,
                 this.dbService,
                 EssayTemplateDbTableContext.tableName,
                 'name',
@@ -293,7 +294,7 @@ export class EssayTemplateBuilderComponent
     this.dbServiceEssayTemplateStep
       .getTableReply$(EssayTemplateStepDbTableContext.tableName)
       .pipe(
-        takeUntil(this.destroyed$),
+        takeUntil(this.onDestroy),
         map(({ rows, relations }) => {
           const { foreignTables } = EssayTemplateStepDbTableContext;
           return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
@@ -348,7 +349,7 @@ export class EssayTemplateBuilderComponent
     this.dbServiceSteps
       .getTableReply$(StepDbTableContext.tableName)
       .pipe(
-        takeUntil(this.destroyed$),
+        takeUntil(this.onDestroy),
         map((response) =>
           RelationsManager.mergeRelationsIntoRows<Step>(
             response.rows,
@@ -371,6 +372,7 @@ export class EssayTemplateBuilderComponent
             nonNullable: true,
             validators: Validators.required.bind(this),
             asyncValidators: propInUseValidator<EssayTemplate>(
+              this.onDestroy,
               this.dbService,
               EssayTemplateDbTableContext.tableName,
               'name',

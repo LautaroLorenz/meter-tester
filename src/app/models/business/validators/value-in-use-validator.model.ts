@@ -11,12 +11,15 @@ import {
   switchMap,
   debounceTime,
   first,
+  Subject,
+  takeUntil,
 } from 'rxjs';
 import { TableName } from '../../core/database.model';
 import { DatabaseService } from '../../../services/database.service';
 import { TC_MatchMode } from '../../core/table-column.model';
 
 export const propInUseValidator = <T>(
+  onDestroy: Subject<void>,
   dbService: DatabaseService<T>,
   tableName: TableName,
   prop: keyof T,
@@ -24,21 +27,20 @@ export const propInUseValidator = <T>(
 ): AsyncValidatorFn => {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
     return control.valueChanges.pipe(
+      takeUntil(onDestroy),
       debounceTime(1000),
       take(1),
       tap((value) => {
-        setTimeout(() => {
-          dbService.getTable(tableName, {
-            lazyLoadEvent: {
-              filters: {
-                [`${tableName}.${prop.toString()}`]: {
-                  matchMode: TC_MatchMode.like,
-                  value,
-                },
+        dbService.getTable(tableName, {
+          lazyLoadEvent: {
+            filters: {
+              [`${tableName}.${prop.toString()}`]: {
+                matchMode: TC_MatchMode.like,
+                value,
               },
-              rows: 1,
             },
-          });
+            rows: 1,
+          },
         });
       }),
       switchMap(() => dbService.getTableReply$(tableName).pipe(first())),
