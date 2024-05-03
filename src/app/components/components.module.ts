@@ -63,6 +63,7 @@ import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/st
 import { StaticWidgetComponent } from './statics-widgets/static-widget/static-widget.component';
 import { ModelApprovedWidgetComponent } from './statics-widgets/model-approved-widget/model-approved-widget.component';
 import { ModelFailedWidgetComponent } from './statics-widgets/model-failed-widget/model-failed-widget.component';
+import { PhaseTableComponent } from './phase-table/phase-table.component';
 
 const AppComponents = [
   PageTitleComponent,
@@ -124,6 +125,7 @@ const AppComponents = [
   StaticWidgetComponent,
   ModelApprovedWidgetComponent,
   ModelFailedWidgetComponent,
+  PhaseTableComponent,
 ];
 
 @NgModule({
