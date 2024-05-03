@@ -40,7 +40,6 @@ import { TableColumnComponent } from './table-column/table-column.component';
 import { ResultStatusComponent } from './result-status/result-status.component';
 import { PatternComponent } from './machine/pattern/pattern.component';
 import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-pattern.component';
-import { PatternStatusComponent } from './pattern-status/pattern-status.component';
 import { BlockUiComponent } from './block-ui/block-ui.component';
 import { BootTestBuildFormComponent } from './steps/build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PreparationBuildFormComponent } from './steps/build-steps/preparation-build-form/preparation-build-form.component';
@@ -109,7 +108,6 @@ const AppComponents = [
   ResultStatusComponent,
   PatternComponent,
   VmPatternComponent,
-  PatternStatusComponent,
   PdfPageComponent,
   BlockUiComponent,
   ReportStepSwitchComponent,

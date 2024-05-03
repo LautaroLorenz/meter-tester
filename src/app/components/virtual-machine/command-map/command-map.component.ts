@@ -66,20 +66,14 @@ export class CommandMapComponent {
     {
       device: Devices.PAT,
       deviceName: DeviceConstants[Devices.PAT],
-      commandRegex: SoftwarePatternCommands.STATUS,
-      responseCommandName: PatternResponseCommands.STATUS,
+      commandRegex: SoftwarePatternCommands.CONSTANT_A,
+      responseCommandName: PatternResponseCommands.CONSTANT,
     },
     {
       device: Devices.PAT,
       deviceName: DeviceConstants[Devices.PAT],
-      commandRegex: SoftwarePatternCommands.CONSTANT,
-      responseCommandName: PatternResponseCommands.STATUS,
-    },
-    {
-      device: Devices.PAT,
-      deviceName: DeviceConstants[Devices.PAT],
-      commandRegex: SoftwarePatternCommands.STOP,
-      responseCommandName: PatternResponseCommands.ACK,
+      commandRegex: SoftwarePatternCommands.CONSTANT_R,
+      responseCommandName: PatternResponseCommands.CONSTANT,
     },
   ];
 

@@ -4,8 +4,7 @@ export enum CalculatorResponseCommands {
 }
 
 export enum PatternResponseCommands {
-  ACK = 'ACK',
-  STATUS = 'STATUS',
+  CONSTANT = 'CONSTANT',
 }
 
 export enum SoftwareCalculatorCommands {
@@ -17,9 +16,9 @@ export enum SoftwareCalculatorCommands {
 }
 
 export enum SoftwarePatternCommands {
-  CONSTANT = 'MAR00000',
-  STATUS = 'STD00000',
-  STOP = 'STP00000',
+  // envía un único comando
+  CONSTANT_A = '|A|',
+  CONSTANT_R = '|R|',
 }
 
 export type CommandsEnum =

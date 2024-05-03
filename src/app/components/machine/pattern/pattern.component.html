@@ -1,17 +1,1 @@
-<p-panel>
-  <ng-template pTemplate="header">
-    <div
-      class="p-panel-title flex flex-row align-items-center justify-content-between flex-1"
-    >
-      <span>Patrón</span>
-      <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
-        <app-device-status [deviceStatus]="deviceStatus"></app-device-status>
-      </ng-container>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="body">
-    <ng-container *ngIf="lastStatus$ | async as lastStatus">
-      <app-pattern-status [patternStatus]="lastStatus"></app-pattern-status>
-    </ng-container>
-  </ng-template>
-</p-panel>
+<!-- No tiene componente visual -->
