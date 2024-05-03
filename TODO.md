@@ -50,9 +50,6 @@ PARA EL 15 de MAYO
 
 - no estoy enviando la constante del medidor.
 - los patrones no envían información, ocultar el dispositivo de la pantalla.
-- reporte poner los parámetros del ensayo
-  - las fases en formato tabla
-  - los parámetros pueden estar uno debajo del otro.
 
 Contraste
 - mando stop a cada puesto.
