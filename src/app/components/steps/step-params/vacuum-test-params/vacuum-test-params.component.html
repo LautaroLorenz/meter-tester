@@ -18,48 +18,40 @@
 
   <div class="grid">
     <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L1 - Tensión U1 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL1.voltage }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L2 - Tensión U2 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL2.voltage }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L3 - Tensión U3 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL3.voltage }}
-          </span>
-        </div>
-      </div>
+      <app-phase-table
+        [showTexts]="showTexts"
+        [phaseL1]="currentStep.form_control_raw.phaseL1"
+        [phaseL2]="currentStep.form_control_raw.phaseL2"
+        [phaseL3]="currentStep.form_control_raw.phaseL3"
+      ></app-phase-table>
     </div>
 
     <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Constante del medidor:</label>
-          <span class="text-color">
+      <div class="grid mx-2 mt-3">
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
+            Constante del medidor
+          </span>
+          <span class="text-color font-semibold">
             {{ currentStep.form_control_raw.meterConstant | meterConstant }}
           </span>
         </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">
-            Cant. de impulsos máx. permitida:
-          </label>
-          <span class="text-color">
+
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
+            Cant. de impulsos máx.
+          </span>
+          <span class="text-color font-semibold">
             {{ currentStep.form_control_raw.maxAllowedPulses }}
           </span>
         </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Tiempo de ejecución [s]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.durationSeconds }}
+
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
+            Tiempo de ejecución
+          </span>
+          <span class="text-color font-semibold">
+            {{ currentStep.form_control_raw.durationSeconds }}&nbsp;[s]
           </span>
         </div>
       </div>

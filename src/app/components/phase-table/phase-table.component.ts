@@ -9,7 +9,7 @@ import { Phase } from '../../models/business/interafces/phase.model';
 })
 export class PhaseTableComponent {
   @Input() showTexts!: boolean;
-  @Input() phaseL1: Phase | undefined;
-  @Input() phaseL2: Phase | undefined;
-  @Input() phaseL3: Phase | undefined;
+  @Input() phaseL1: Phase | Partial<Phase> | undefined;
+  @Input() phaseL2: Phase | Partial<Phase> | undefined;
+  @Input() phaseL3: Phase | Partial<Phase> | undefined;
 }

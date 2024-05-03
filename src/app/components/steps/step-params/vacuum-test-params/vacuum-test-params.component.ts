@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { VacuumTestEssayStep } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { StepParamsComponent } from '../../../../models/business/class/step-params-component.model';
 
@@ -8,4 +8,6 @@ import { StepParamsComponent } from '../../../../models/business/class/step-para
   styleUrls: ['./vacuum-test-params.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestParamsComponent extends StepParamsComponent<VacuumTestEssayStep> {}
+export class VacuumTestParamsComponent extends StepParamsComponent<VacuumTestEssayStep> {
+  @Input() showTexts!: boolean;
+}

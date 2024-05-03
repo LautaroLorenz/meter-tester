@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StepParamsComponent } from '../../../../models/business/class/step-params-component.model';
 import { ContrastTestEssayStep } from '../../../../models/business/interafces/steps/contrast-test-step.model';
 
@@ -8,4 +8,6 @@ import { ContrastTestEssayStep } from '../../../../models/business/interafces/st
   styleUrls: ['./contrast-test-params.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContrastTestParamsComponent extends StepParamsComponent<ContrastTestEssayStep> {}
+export class ContrastTestParamsComponent extends StepParamsComponent<ContrastTestEssayStep> {
+  @Input() showTexts!: boolean;
+}

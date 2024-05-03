@@ -68,15 +68,42 @@
   </ng-template>
   <ng-template pTemplate="body">
     <tr>
-      <td class="text-center">{{ phaseL1?.voltage }} [V]</td>
-      <td class="text-center">{{ phaseL1?.current }} [A]</td>
-      <td class="text-center">{{ phaseL1?.anglePhi }} [º]</td>
-      <td class="text-center">{{ phaseL2?.voltage }} [V]</td>
-      <td class="text-center">{{ phaseL2?.current }} [A]</td>
-      <td class="text-center">{{ phaseL2?.anglePhi }} [º]</td>
-      <td class="text-center">{{ phaseL3?.voltage }} [V]</td>
-      <td class="text-center">{{ phaseL3?.current }} [A]</td>
-      <td class="text-center">{{ phaseL3?.anglePhi }} [º]</td>
+      <td class="text-center">
+        {{ phaseL1?.voltage }}
+        <ng-container *ngIf="phaseL1?.voltage !== undefined">[V]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL1?.current }}
+        <ng-container *ngIf="phaseL1?.current !== undefined">[A]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL1?.anglePhi }}
+        <ng-container *ngIf="phaseL1?.anglePhi !== undefined">[º]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL2?.voltage }}
+        <ng-container *ngIf="phaseL2?.voltage !== undefined">[V]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL2?.current }}
+        <ng-container *ngIf="phaseL2?.current !== undefined">[A]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL2?.anglePhi }}
+        <ng-container *ngIf="phaseL2?.anglePhi !== undefined">[º]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL3?.voltage }}
+        <ng-container *ngIf="phaseL3?.voltage !== undefined">[V]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL3?.current }}
+        <ng-container *ngIf="phaseL3?.current !== undefined">[A]</ng-container>
+      </td>
+      <td class="text-center">
+        {{ phaseL3?.anglePhi }}
+        <ng-container *ngIf="phaseL3?.anglePhi !== undefined">[º]</ng-container>
+      </td>
     </tr>
   </ng-template>
 </p-table>

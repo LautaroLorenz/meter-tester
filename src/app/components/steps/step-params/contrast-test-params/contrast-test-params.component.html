@@ -18,89 +18,34 @@
 
   <div class="grid">
     <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L1 - Tensión U1 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL1.voltage }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L2 - Tensión U2 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL2.voltage }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Fase L3 - Tensión U3 [V]:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL3.voltage }}
-          </span>
-        </div>
-      </div>
+      <app-phase-table
+        [showTexts]="showTexts"
+        [phaseL1]="currentStep.form_control_raw.phaseL1"
+        [phaseL2]="currentStep.form_control_raw.phaseL2"
+        [phaseL3]="currentStep.form_control_raw.phaseL3"
+      ></app-phase-table>
     </div>
 
     <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L1 - Corriente I1 [A]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL1.current }}
+      <div class="grid mx-2 mt-3">
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
+            Máximo error permitido
+          </span>
+          <span class="text-color font-semibold">
+            {{ currentStep.form_control_raw.maxAllowedError }}&nbsp;[%]
           </span>
         </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L2 - Corriente I2 [A]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL2.current }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L3 - Corriente I3 [A]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL3.current }}
-          </span>
-        </div>
-      </div>
-    </div>
 
-    <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L1 - Ángulo &#632;1 [º]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL1.anglePhi }}
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
+            Cantidad de impulsos
+          </span>
+          <span class="text-color font-semibold">
+            {{ currentStep.form_control_raw.meterPulses }}
           </span>
         </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L2 - Ángulo &#632;2 [º]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL2.anglePhi }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Fase L3 - Ángulo &#632;3 [º]:</label
-          >
-          <span class="text-color">
-            {{ currentStep.form_control_raw.phaseL3.anglePhi }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <div class="grid">
-        <div class="flex flex-row col-12 md:col-4 gap-1">
+        <!-- <div class="flex flex-row col-12 md:col-4 gap-1">
           <label class="text-color-secondary">
             Máximo error permitido [%]:
           </label>
@@ -109,14 +54,12 @@
           </span>
         </div>
         <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary"
-            >Cantidad de impulsos:</label
-          >
+          <label class="text-color-secondary">Cantidad de impulsos:</label>
           <span class="text-color">
             {{ currentStep.form_control_raw.meterPulses }}
           </span>
         </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1"></div>
+        <div class="flex flex-row col-12 md:col-4 gap-1"></div> -->
       </div>
     </div>
   </div>
