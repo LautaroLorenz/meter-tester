@@ -1,6 +1,5 @@
 export enum CalculatorResponseCommands {
   ACK = 'ACK',
-  RESULTS = 'RESULTS',
 }
 
 export enum PatternResponseCommands {
@@ -8,15 +7,12 @@ export enum PatternResponseCommands {
 }
 
 export enum SoftwareCalculatorCommands {
-  START_CONTRAST = 'TS1xxxxx',
-  START_BOOT = 'TS2xxxxx',
-  START_VACUUM = 'TS3xxxxx',
-  STOP = 'STP00000',
-  RESULTS = 'STD00000',
+  RESULT_TS01 = 'TS01',
+  RESULT_TS02 = 'TS02',
+  STOP = 'STOP',
 }
 
 export enum SoftwarePatternCommands {
-  // envía un único comando
   CONSTANT_A = '|A|',
   CONSTANT_R = '|R|',
 }
