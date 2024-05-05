@@ -49,7 +49,6 @@ MEJORAS opcionales:
 
 PARA EL 15 de MAYO
 
-- arreglar los seeds de los medidores.
 - mejorar el historial.
   - poner los parámetros de cada paso.
   - poner el resultado y la unidad del puesto.
