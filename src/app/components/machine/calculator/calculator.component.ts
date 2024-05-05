@@ -144,12 +144,12 @@ export class CalculatorComponent extends MachineDeviceComponent {
     };
     const meterConstantUnit = this.standMeterConstantPipe.transform(
       stepMeterConstant,
-      stand.meter,
+      stand.foreign.meter,
       'OnlyUnit'
     );
     const meterConstantValue = this.standMeterConstantPipe.transform(
       stepMeterConstant,
-      stand.meter,
+      stand.foreign.meter,
       'OnlyValue'
     );
     const startChart = getStartChar(meterConstantUnit as MeterConstantUnitEnum);

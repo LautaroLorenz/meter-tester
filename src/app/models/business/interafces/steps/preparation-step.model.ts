@@ -67,9 +67,10 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<
           this.fb.nonNullable.group({
             name: undefined,
             isActive: true,
-            meter: undefined,
+            meter_id: undefined,
             serialNumber: undefined,
             yearOfProduction: undefined,
+            foreign: undefined,
           }) as AbstractFormGroup<Stand>
       );
   }

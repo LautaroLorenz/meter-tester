@@ -73,7 +73,10 @@ export class StandsResultComponent implements OnInit, OnChanges {
       },
       {
         header: 'Medidor',
-        field: (item) => ('meter' in item ? item.meter?.label : ''),
+        field: (item) =>
+          'foreign' in item && !!item.foreign?.meter
+            ? item.foreign.meter.label
+            : '',
         alignHorizontal: TC_AlignHorizontal.Text,
       },
       {
@@ -95,12 +98,12 @@ export class StandsResultComponent implements OnInit, OnChanges {
           if (this.stepMeterConstant === undefined) {
             return '';
           }
-          if (!('meter' in item) || !item.meter) {
+          if (!('foreign' in item) || !item.foreign?.meter) {
             return '';
           }
           return this.standMeterConstantPipe.transform(
             this.stepMeterConstant,
-            item.meter
+            item?.foreign.meter
           );
         },
         alignHorizontal: TC_AlignHorizontal.Alphanumeric,

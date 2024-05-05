@@ -191,7 +191,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
           ({ index }) => index === standIndex
         );
         if (activeStand) {
-          const model = activeStand.stand.meter.model;
+          const model = activeStand.stand.foreign.meter.model;
           if (resultStatus === ResultStatus.Approved) {
             modelApproved.push({ model });
           }
@@ -248,7 +248,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
             saved_time: savedTime,
             essay_name: this.runEssay.essayName,
             step_name: step.form_control_raw.name,
-            meter_id: stand.meter.id,
+            meter_id: stand.foreign.meter.id,
             serial_number: stand.serialNumber,
             year_of_production: stand.yearOfProduction,
             result_status_enum: step.standResults[index].resultStatus,

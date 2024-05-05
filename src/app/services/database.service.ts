@@ -32,6 +32,28 @@ export class DatabaseService<T> {
     this._listenGetDatabaseTableReply(ipcService);
   }
 
+  getTable$(
+    tableName: TableName,
+    options: {
+      relations?: ForeignTable[];
+      conditions?: Where[];
+      lazyLoadEvent?: Omit<LazyLoadEvent, 'filters'> & {
+        // arreglar un error e primeng donde devuelve filters como FilterMetadata | FilterMetadata[], pero lo declara como únicamente FilterMetadata
+        filters?: { [s: string]: FilterMetadata | FilterMetadata[] };
+      };
+      globalFilterColumns?: string[];
+    } = {
+      relations: [],
+      conditions: [],
+      lazyLoadEvent: {},
+      globalFilterColumns: [],
+    },
+    rawProperties: string[] = []
+  ): Observable<RequestTableResponse<T>> {
+    this.getTable(tableName, options, rawProperties);
+    return this.getTableReply$(tableName);
+  }
+
   getTable(
     tableName: TableName,
     options: {
