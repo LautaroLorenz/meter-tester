@@ -47,7 +47,7 @@ export default {
     });
 
     ipcMain.handle('close-virtual-machine', async () => {
-      if (serialPort?.isOpen) {
+      if (!serialPort?.destroyed && serialPort?.isOpen) {
         serialPort.close();
       }
       closeWindow();
@@ -56,14 +56,18 @@ export default {
 
     // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
     ipcMain.handle('virtual-machine-write', async (_, { command }) => {
-      serialPort.port?.emitData(command);
+      if (!serialPort?.destroyed && serialPort.port?.isOpen) {
+        serialPort.port.emitData(command);
+      }
     });
   },
   closeWindow,
   getMockSerialPort: () => serialPort,
   observeSoftwareWrite: (observable: Observable<string>) => {
-    observable.subscribe((command) =>
-      window?.webContents.send('handle-software-write', command)
-    );
+    observable.subscribe((command) => {
+      if (window && !window?.isDestroyed()) {
+        window.webContents.send('handle-software-write', command);
+      }
+    });
   },
 };

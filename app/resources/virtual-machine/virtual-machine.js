@@ -50,7 +50,7 @@ exports.default = {
             return;
         }));
         electron_1.ipcMain.handle('close-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
-            if (serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen) {
+            if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && (serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
                 serialPort.close();
             }
             closeWindow();
@@ -59,13 +59,19 @@ exports.default = {
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
         electron_1.ipcMain.handle('virtual-machine-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
-            (_a = serialPort.port) === null || _a === void 0 ? void 0 : _a.emitData(command);
+            if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && ((_a = serialPort.port) === null || _a === void 0 ? void 0 : _a.isOpen)) {
+                serialPort.port.emitData(command);
+            }
         }));
     },
     closeWindow,
     getMockSerialPort: () => serialPort,
     observeSoftwareWrite: (observable) => {
-        observable.subscribe((command) => window === null || window === void 0 ? void 0 : window.webContents.send('handle-software-write', command));
+        observable.subscribe((command) => {
+            if (window && !(window === null || window === void 0 ? void 0 : window.isDestroyed())) {
+                window.webContents.send('handle-software-write', command);
+            }
+        });
     },
 };
 //# sourceMappingURL=virtual-machine.js.map
