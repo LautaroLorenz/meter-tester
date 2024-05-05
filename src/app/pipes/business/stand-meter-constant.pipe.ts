@@ -17,7 +17,7 @@ export class StandMeterConstantPipe implements PipeTransform {
   transform(
     stepMeterConstant: MeterConstantEnum,
     standMeter: Meter,
-    returnType: 'OnlyValue' | 'ValueAndUnit' = 'ValueAndUnit'
+    returnType: 'OnlyValue' | 'OnlyUnit' | 'ValueAndUnit' = 'ValueAndUnit'
   ): string {
     let constantValue: number;
     let constantUnit = '';
@@ -35,6 +35,8 @@ export class StandMeterConstantPipe implements PipeTransform {
     switch (returnType) {
       case 'OnlyValue':
         return constantValue.toString();
+      case 'OnlyUnit':
+        return constantUnit;
       case 'ValueAndUnit':
         return `${constantValue} [${constantUnit}]`;
     }
