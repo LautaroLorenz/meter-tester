@@ -34,7 +34,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
 
   constructor(
     private readonly deviceService: DeviceService,
-    private readonly messagesService: MessagesService
+    protected readonly messagesService: MessagesService
   ) {}
 
   ngOnDestroy(): void {
@@ -47,7 +47,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     return CommandDirector.build(Devices.STW, this.device, ...blocks);
   }
 
-  write$(command: string): Observable<string> {
+  write$(command: string, onError?: () => void): Observable<string> {
     return this.deviceService.write$(command).pipe(
       takeUntil(this.deviceError),
       takeUntil(this.onDestroy),
@@ -55,9 +55,13 @@ export abstract class MachineDeviceComponent implements OnDestroy {
         if (error) {
           this.deviceError.next();
           this.deviceStatus$.next(DeviceStatus.Error);
-          this.messagesService.error(
-            `Error de comunicación [${DeviceConstants[this.device]}]`
-          );
+          if (onError) {
+            onError();
+          } else {
+            this.messagesService.error(
+              `Error de comunicación [${DeviceConstants[this.device]}]`
+            );
+          }
           return false;
         }
         return !!result;
