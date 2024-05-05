@@ -20,7 +20,6 @@ ERRORES
   
 
 MEJORAS necesarias:
-- arreglar los seeds de los medidores.
 - Ejecución:
   - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface.
     - revisar el método canDeactivate en TestRunComponent
@@ -30,8 +29,6 @@ MEJORAS necesarias:
   - Acomodar los estilos de los parámetros de los steps, crear un componente para estandarizar, aplicar tambien en meter-detail.
 - Estadisticas
   - Estands usados: en lugar de contar la cantidad de veces que se usa, se podria sumar tiempo de uso.
-- Historial
-  - Almacenar una copia de los parametros de los pasos y luego mostrar eso como detalle en la tabla historial.
 - Cuando falla un puesto en el calculador, la ejecución del paso no se detiene, hay que deternerla.
 
 MEJORAS opcionales:
@@ -52,20 +49,8 @@ MEJORAS opcionales:
 
 PARA EL 15 de MAYO
 
-- no estoy enviando la constante del medidor.
-- los patrones no envían información, ocultar el dispositivo de la pantalla.
-
-Contraste
-- mando stop a cada puesto.
-- loop
-  - consulta constante del patrón.
-  - consultar resultados de los puestos.
-
-Arranque / Vacío
-- mando stop a cada puesto.
-- loop
-  - consultar resultados de los puestos.
-
+- arreglar los seeds de los medidores.
 - mejorar el historial.
   - poner los parámetros de cada paso.
   - poner el resultado y la unidad del puesto.
+- resolver los ERRORES escritos en este archivo de TODO.
