@@ -30,6 +30,10 @@ import {
   TC_AlignHorizontal,
   TableColumn,
 } from '../../models/core/table-column.model';
+import {
+  ActiveConstantUnitEnum,
+  ReactiveConstantUnitEnum,
+} from '../../models/business/constants/meter-constant.model';
 
 @Component({
   templateUrl: './meters.component.html',
@@ -121,6 +125,8 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
   dropdownReactiveConstantUnitOptions: ReactiveConstantUnit[] = [];
   dropdownBrandOptions: Brand[] = [];
   dropdownConnectionOptions: Connection[] = [];
+  activeConstantValueMaxFractionDigits!: number;
+  reactiveConstantValueMaxFractionDigits!: number;
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -152,18 +158,14 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
         Validators.max(999),
       ]),
       activeConstantValue: this.fb.control(undefined, [
-        Validators.required.bind(this),
-        Validators.min(0),
-        Validators.max(99999),
+        // validaciones de acuerdo con la unidad
       ]),
       activeConstantUnit_id: this.fb.control(
         undefined,
         Validators.required.bind(this)
       ),
       reactiveConstantValue: this.fb.control(undefined, [
-        Validators.required.bind(this),
-        Validators.min(0),
-        Validators.max(99999),
+        // validaciones de acuerdo con la unidad
       ]),
       reactiveConstantUnit_id: this.fb.control(
         undefined,
@@ -255,20 +257,72 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
       .get('activeConstantUnit_id')
       ?.valueChanges.pipe(
         takeUntil(this.destroyed$),
-        filter((id) => id !== null),
-        filter((id) => id !== undefined),
-        filter(() => !this.form.get('reactiveConstantUnit_id')?.value),
-        tap((id) => this.form.get('reactiveConstantUnit_id')?.setValue(id))
+        tap((id) => {
+          if (id !== null && id !== undefined) {
+            if (!this.form.get('reactiveConstantUnit_id')?.value) {
+              this.form.get('reactiveConstantUnit_id')?.setValue(id);
+            }
+            if (id === ActiveConstantUnitEnum.impKwh) {
+              this.form
+                .get('activeConstantValue')
+                ?.setValidators([
+                  Validators.required.bind(this),
+                  Validators.min(0),
+                  Validators.max(999999),
+                ]);
+              this.activeConstantValueMaxFractionDigits = 0;
+            }
+            if (id === ActiveConstantUnitEnum.whImp) {
+              this.form
+                .get('activeConstantValue')
+                ?.setValidators([
+                  Validators.required.bind(this),
+                  Validators.min(0),
+                  Validators.max(999.9999),
+                ]);
+              this.activeConstantValueMaxFractionDigits = 4;
+            }
+            this.form.get('activeConstantValue')?.enable();
+          } else {
+            this.form.get('activeConstantValue')?.disable();
+          }
+        })
       )
       .subscribe();
     this.form
       .get('reactiveConstantUnit_id')
       ?.valueChanges.pipe(
         takeUntil(this.destroyed$),
-        filter((id) => id !== null),
-        filter((id) => id !== undefined),
-        filter(() => !this.form.get('activeConstantUnit_id')?.value),
-        tap((id) => this.form.get('activeConstantUnit_id')?.setValue(id))
+        tap((id) => {
+          if (id !== null && id !== undefined) {
+            if (!this.form.get('activeConstantUnit_id')?.value) {
+              this.form.get('activeConstantUnit_id')?.setValue(id);
+            }
+            if (id === ReactiveConstantUnitEnum.impKvarh) {
+              this.form
+                .get('reactiveConstantValue')
+                ?.setValidators([
+                  Validators.required.bind(this),
+                  Validators.min(0),
+                  Validators.max(999999),
+                ]);
+              this.reactiveConstantValueMaxFractionDigits = 0;
+            }
+            if (id === ReactiveConstantUnitEnum.varhImp) {
+              this.form
+                .get('reactiveConstantValue')
+                ?.setValidators([
+                  Validators.required.bind(this),
+                  Validators.min(0),
+                  Validators.max(999.9999),
+                ]);
+              this.reactiveConstantValueMaxFractionDigits = 4;
+            }
+            this.form.get('reactiveConstantValue')?.enable();
+          } else {
+            this.form.get('reactiveConstantValue')?.disable();
+          }
+        })
       )
       .subscribe();
   }

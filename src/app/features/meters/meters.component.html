@@ -145,6 +145,8 @@
                 [required]="true"
                 [useGrouping]="false"
                 [min]="0"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="activeConstantValueMaxFractionDigits"
               ></p-inputNumber>
               <app-input-error
                 formControlName="activeConstantValue"
@@ -189,6 +191,8 @@
                 [required]="true"
                 [useGrouping]="false"
                 [min]="0"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="reactiveConstantValueMaxFractionDigits"
               ></p-inputNumber>
               <app-input-error
                 formControlName="reactiveConstantValue"
