@@ -20,6 +20,7 @@ ERRORES
   
 
 MEJORAS necesarias:
+- Desde cada row del historial se podría ir a una pantalla reporte para toda la ejecución (mostrando todos los medidores de esa ejecución)
 - Ejecución:
   - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface.
     - revisar el método canDeactivate en TestRunComponent
