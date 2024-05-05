@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   inject,
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
@@ -12,12 +13,15 @@ import { StepStatus } from '../enums/step-status.model';
 import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 import { ActiveStand } from '../interafces/active-stand.model';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Component({
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export abstract class TestRunComponent<T extends EssayStep> {
+export abstract class TestRunComponent<T extends EssayStep>
+  implements OnDestroy
+{
   @Input() currentStep!: T;
   @Input() preparationStep!: PreparationStep;
 
@@ -26,8 +30,14 @@ export abstract class TestRunComponent<T extends EssayStep> {
   protected readonly runEssayService = inject(RunEssayService);
   protected readonly cd = inject(ChangeDetectorRef);
   protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
+  protected readonly onDestroy = new Subject<void>();
 
   abstract readonly skipEnabled: boolean;
+
+  ngOnDestroy(): void {
+    this.onDestroy.next();
+    this.onDestroy.complete();
+  }
 
   getActiveStands(): ActiveStand[] {
     return this.runEssayService.getActiveStands(this.preparationStep);
