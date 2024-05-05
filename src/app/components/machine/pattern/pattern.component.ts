@@ -20,12 +20,12 @@ export class PatternComponent extends MachineDeviceComponent {
   constant$(stepMeterConstant: MeterConstantEnum): Observable<PatternStatus> {
     const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
     return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
-      map((response) => this.mapStatusCommand(response)),
+      map((response) => this.mapConstantResponse(response)),
       tap((patternStatus) => this.lastStatus$.next(patternStatus))
     );
   }
 
-  private mapStatusCommand(command: string): PatternStatus {
+  private mapConstantResponse(command: string): PatternStatus {
     const blocks = CommandDirector.getBlocks(command);
     const constant = Number(blocks[3]);
     return { constant };

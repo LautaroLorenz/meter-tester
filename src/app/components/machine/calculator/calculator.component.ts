@@ -85,7 +85,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     return from(observables).pipe(
       concatMap((obs) => obs),
       toArray(),
-      map((responses) => this.mapResultsCommand(responses))
+      map((responses) => this.mapTSxxResponse(responses))
     );
   }
 
@@ -107,11 +107,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
     return from(observables).pipe(
       concatMap((obs) => obs),
       toArray(),
-      map((responses) => this.mapResultsCommand(responses))
+      map((responses) => this.mapTSxxResponse(responses))
     );
   }
 
-  private mapResultsCommand(commands: string[]): number[] {
+  private mapTSxxResponse(commands: string[]): number[] {
     return commands.map((command) => {
       const blocks = CommandDirector.getBlocks(command);
       const resultBlock = blocks[4];
