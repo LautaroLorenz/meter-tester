@@ -7,11 +7,11 @@ import {
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { PreparationStep } from '../interafces/steps/preparation-step.model';
-import { Stand } from '../interafces/stand.model';
 import { EssayStep } from '../interafces/essay-step.model';
 import { StepStatus } from '../enums/step-status.model';
 import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
+import { ActiveStand } from '../interafces/active-stand.model';
 
 @Component({
   template: '',
@@ -29,7 +29,7 @@ export abstract class TestRunComponent<T extends EssayStep> {
 
   abstract readonly skipEnabled: boolean;
 
-  getActiveStands(): { index: number; stand: Stand }[] {
+  getActiveStands(): ActiveStand[] {
     return this.runEssayService.getActiveStands(this.preparationStep);
   }
 
