@@ -32,6 +32,7 @@ MEJORAS necesarias:
   - Estands usados: en lugar de contar la cantidad de veces que se usa, se podria sumar tiempo de uso.
 - Historial
   - Almacenar una copia de los parametros de los pasos y luego mostrar eso como detalle en la tabla historial.
+- Cuando falla un puesto en el calculador, la ejecución del paso no se detiene, hay que deternerla.
 
 MEJORAS opcionales:
 - Implementar un trello para el proyecto.

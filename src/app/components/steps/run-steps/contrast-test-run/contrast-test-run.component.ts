@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import {
   ContrastTestEssayStep,
@@ -10,10 +15,7 @@ import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
 import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, merge, finalize, forkJoin } from 'rxjs';
-import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
-import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
-import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
+import { switchMap, Observable, tap, takeUntil, Subject, finalize } from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
@@ -27,7 +29,10 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
   styleUrls: ['./contrast-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssayStep> {
+export class ContrastTestRunComponent
+  extends TestRunComponent<ContrastTestEssayStep>
+  implements OnDestroy
+{
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
 
@@ -52,18 +57,25 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     },
   };
 
+  private stopStep = new Subject<void>();
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.stopStep.complete();
+  }
+
   onManualGeneratorAdjusted(): void {
     this.startTest();
   }
 
   onCalculatorResults(results: number[]): void {
     // update measured error
-    this.getActiveStands().forEach(({ index }) => {
-      const result: number = results[index];
+    this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
+      const result: number = results[resultIndex];
       const stand =
         this.runEssayService.getStandResult<ContrastTestStandResult>(
           this.currentStep.id,
-          index
+          standIndex
         );
       // bloqueo de resultado actual según modo de ejecución
       if (
@@ -107,56 +119,21 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
   override startTest(): void {
     // apaga el calculador por si estaba encendido
     this.calculator
-      .stop$()
+      .stop$(this.getActiveStands())
       .pipe(
-        // inicializa el patrón
-        tap(() =>
-          this.pattern.deviceStatus$.next(DeviceStatus.StartInProgress)
-        ),
-        // consulta la constante del patrón
-        switchMap(() =>
-          this.pattern
-            .constant$(
-              this.currentStep.form_control_raw.phaseL1,
-              this.currentStep.form_control_raw.phaseL2,
-              this.currentStep.form_control_raw.phaseL3
-            )
-            .pipe(
-              tap(() => this.pattern.deviceStatus$.next(DeviceStatus.Working))
-            )
-        ),
-        // enciende el calculador
-        switchMap((patternStatus: PatternStatus) =>
-          this.calculator.start$(
-            this.getStepCalculatorBlocks(patternStatus.constant),
-            this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant
-          )
-        ),
         // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
-        switchMap(() =>
-          merge(
-            // activa el device "patrón" y consultando el estado en loop
-            this.pattern.loopStatus$(),
-            // consulta resultados del calculador en loop
-            this.calculator
-              .loopResults$()
-              .pipe(tap((results) => this.onCalculatorResults(results)))
-          )
-        )
+        // obtención de sultados en loop
+        switchMap(() => this.getResultsLoop$())
       )
       .subscribe();
   }
 
   override stopTest(): void {
-    // apagar dispositivos
-    forkJoin({
-      // apagar patrón
-      pattern: this.pattern.stop$(),
-      // apagar calculador
-      calculator: this.calculator.stop$(),
-    })
+    this.stopStep.next();
+    // apagar puestos
+    this.calculator
+      .stop$(this.getActiveStands())
       .pipe(
         finalize(() => {
           // Puede continuar al siguiente step si todos los stands activos tienen
@@ -185,13 +162,27 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     this.cd.detectChanges();
   }
 
-  private getStepCalculatorBlocks(patternConstant: number): string[] {
-    const stepTypeBlock = SoftwareCalculatorCommands.START_CONTRAST;
-    const patternConstantBlock = patternConstant.toString().padStart(10, '0');
-    const pulsesBlock: string = this.currentStep.form_control_raw.meterPulses
-      .toString()
-      .padStart(8, '0');
+  private getResultsLoop$(): Observable<number[]> {
+    return this.getResults$().pipe(
+      takeUntil(this.onDestroy),
+      takeUntil(this.stopStep),
+      switchMap(() => this.getResultsLoop$())
+    );
+  }
 
-    return [stepTypeBlock, patternConstantBlock, pulsesBlock];
+  private getResults$(): Observable<number[]> {
+    return this.pattern
+      .constant$(this.currentStep.form_control_raw.meterConstant)
+      .pipe(
+        switchMap((patternStatus) =>
+          this.calculator.resultsTS01$(
+            this.getActiveStands(),
+            patternStatus.constant,
+            this.currentStep.form_control_raw.meterPulses,
+            this.currentStep.form_control_raw.meterConstant
+          )
+        ),
+        tap((results) => this.onCalculatorResults(results))
+      );
   }
 }

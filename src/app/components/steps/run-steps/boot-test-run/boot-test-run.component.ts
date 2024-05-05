@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import {
   BootTestEssayStep,
@@ -7,8 +12,7 @@ import {
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, finalize, forkJoin } from 'rxjs';
-import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
+import { tap, switchMap, finalize, Observable, takeUntil, Subject } from 'rxjs';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import {
   TC_AlignHorizontal,
@@ -16,8 +20,6 @@ import {
 } from '../../../../models/core/table-column.model';
 import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
-import { merge } from 'rxjs/internal/observable/merge';
-import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 
 @Component({
@@ -26,7 +28,10 @@ import { APP_CONFIG } from '../../../../../environments/environment';
   styleUrls: ['./boot-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
+export class BootTestRunComponent
+  extends TestRunComponent<BootTestEssayStep>
+  implements OnDestroy
+{
   @ViewChild('countTimerMin', { static: true })
   countTimerMin!: CountTimerComponent;
   @ViewChild('countTimerMax', { static: true })
@@ -46,6 +51,13 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
   };
 
   override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
+
+  private stopStep = new Subject<void>();
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.stopStep.complete();
+  }
 
   onManualGeneratorAdjusted(): void {
     this.startTest();
@@ -70,10 +82,10 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
       return;
     }
     // update measuredPulses
-    this.getActiveStands().forEach(({ index }) => {
-      const result: number = results[index];
+    this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
+      const result: number = results[resultIndex];
       this.runEssayService
-        .getStandResult<BootTestStandResult>(this.currentStep.id, index)
+        .getStandResult<BootTestStandResult>(this.currentStep.id, standIndex)
         .patchValue({ measuredPulses: result });
     });
     this.cd.detectChanges();
@@ -112,19 +124,10 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     // recetea el contador
     this.countTimerMin.reset();
     this.countTimerMax.reset();
-
     // apaga el calculador por si estaba encendido
     this.calculator
-      .stop$()
+      .stop$(this.getActiveStands())
       .pipe(
-        // enciende el calculador
-        switchMap(() =>
-          this.calculator.start$(
-            this.getStepCalculatorBlocks(),
-            this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant
-          )
-        ),
         // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador
@@ -132,33 +135,20 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
           this.countTimerMin.start();
           this.countTimerMax.start();
         }),
-        // inicializa el patrón
-        tap(() => this.pattern.deviceStatus$.next(DeviceStatus.Working)),
-        switchMap(() =>
-          merge(
-            // activa el device "patrón" y consultando el estado en loop
-            this.pattern.loopStatus$(),
-            // consulta resultados del calculador en loop
-            this.calculator
-              .loopResults$()
-              .pipe(tap((results) => this.onCalculatorResults(results)))
-          )
-        )
+        // obtención de sultados en loop
+        switchMap(() => this.getResultsLoop$())
       )
       .subscribe();
   }
 
   override stopTest(): void {
+    this.stopStep.next();
     // detener contadores
     this.countTimerMin.stop();
     this.countTimerMax.stop();
-    // apagar dispositivos
-    forkJoin({
-      // apagar patrón
-      pattern: this.pattern.stop$(),
-      // apagar calculador
-      calculator: this.calculator.stop$(),
-    })
+    // apagar puestos
+    this.calculator
+      .stop$(this.getActiveStands())
       .pipe(
         finalize(() => {
           // Puede continuar al siguiente step si todos los stands activos tienen
@@ -187,14 +177,17 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> {
     this.cd.detectChanges();
   }
 
-  private getStepCalculatorBlocks(): string[] {
-    const stepTypeBlock = SoftwareCalculatorCommands.START_BOOT;
-    const patternConstantBlock = ''.padStart(10, '0');
-    const allowedPulsesBlock: string =
-      this.currentStep.form_control_raw.allowedPulses
-        .toString()
-        .padStart(8, '0');
+  private getResultsLoop$(): Observable<number[]> {
+    return this.getResults$().pipe(
+      takeUntil(this.onDestroy),
+      takeUntil(this.stopStep),
+      switchMap(() => this.getResultsLoop$())
+    );
+  }
 
-    return [stepTypeBlock, patternConstantBlock, allowedPulsesBlock];
+  private getResults$(): Observable<number[]> {
+    return this.calculator
+      .resultsTS02$(this.getActiveStands())
+      .pipe(tap((results) => this.onCalculatorResults(results)));
   }
 }

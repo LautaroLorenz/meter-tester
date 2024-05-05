@@ -1,12 +1,16 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import {
   VacuumTestEssayStep,
   VacuumTestStandResult,
 } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
-import { SoftwareCalculatorCommands } from '../../../../models/business/enums/commands.model';
-import { merge, switchMap, tap, finalize } from 'rxjs';
+import { switchMap, tap, finalize, Observable, Subject, takeUntil } from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
@@ -16,9 +20,7 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
-import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -26,7 +28,10 @@ import { forkJoin } from 'rxjs/internal/observable/forkJoin';
   styleUrls: ['./vacuum-test-run.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep> {
+export class VacuumTestRunComponent
+  extends TestRunComponent<VacuumTestEssayStep>
+  implements OnDestroy
+{
   @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
   @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
   @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
@@ -44,6 +49,13 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
   override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
 
+  private stopStep = new Subject<void>();
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.stopStep.complete();
+  }
+
   onManualGeneratorAdjusted(): void {
     this.startTest();
   }
@@ -59,10 +71,10 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     // update measuredPulses
-    this.getActiveStands().forEach(({ index }) => {
-      const result: number = results[index];
+    this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
+      const result: number = results[resultIndex];
       this.runEssayService
-        .getStandResult<VacuumTestStandResult>(this.currentStep.id, index)
+        .getStandResult<VacuumTestStandResult>(this.currentStep.id, standIndex)
         .patchValue({ measuredPulses: result });
     });
     this.cd.detectChanges();
@@ -83,49 +95,29 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
   override startTest(): void {
     // recetea el contador
     this.countTimer.reset();
-
     // apaga el calculador por si estaba encendido
     this.calculator
-      .stop$()
+      .stop$(this.getActiveStands())
       .pipe(
-        // enciende el calculador
-        switchMap(() =>
-          this.calculator.start$(
-            this.getStepCalculatorBlocks(),
-            this.preparationStep.form_control_raw,
-            this.currentStep.form_control_raw.meterConstant
-          )
-        ),
         // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador
-        tap(() => this.countTimer.start()),
-        // inicializa el patrón
-        tap(() => this.pattern.deviceStatus$.next(DeviceStatus.Working)),
-        switchMap(() =>
-          merge(
-            // activa el device "patrón" y consultando el estado en loop
-            this.pattern.loopStatus$(),
-            // consulta resultados del calculador en loop
-            this.calculator
-              .loopResults$()
-              .pipe(tap((results) => this.onCalculatorResults(results)))
-          )
-        )
+        tap(() => {
+          this.countTimer.start();
+        }),
+        // obtención de sultados en loop
+        switchMap(() => this.getResultsLoop$())
       )
       .subscribe();
   }
 
   override stopTest(): void {
-    // detener contador
+    this.stopStep.next();
+    // detener contadores
     this.countTimer.stop();
-    // apagar dispositivos
-    forkJoin({
-      // apagar patrón
-      pattern: this.pattern.stop$(),
-      // apagar calculador
-      calculator: this.calculator.stop$(),
-    })
+    // apagar puestos
+    this.calculator
+      .stop$(this.getActiveStands())
       .pipe(
         finalize(() => {
           // Puede continuar al siguiente step si todos los stands activos tienen
@@ -154,14 +146,17 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     this.cd.detectChanges();
   }
 
-  private getStepCalculatorBlocks(): string[] {
-    const stepTypeBlock = SoftwareCalculatorCommands.START_VACUUM;
-    const patternConstantBlock = ''.padStart(10, '0');
-    const maxAllowedPulsesBlock: string =
-      this.currentStep.form_control_raw.maxAllowedPulses
-        .toString()
-        .padStart(8, '0');
+  private getResultsLoop$(): Observable<number[]> {
+    return this.getResults$().pipe(
+      takeUntil(this.onDestroy),
+      takeUntil(this.stopStep),
+      switchMap(() => this.getResultsLoop$())
+    );
+  }
 
-    return [stepTypeBlock, patternConstantBlock, maxAllowedPulsesBlock];
+  private getResults$(): Observable<number[]> {
+    return this.calculator
+      .resultsTS02$(this.getActiveStands())
+      .pipe(tap((results) => this.onCalculatorResults(results)));
   }
 }
