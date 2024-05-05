@@ -12,7 +12,6 @@ MÓDULOS:
   - validación de checksum.
 
 ERRORES
-- al editar un medidor seleccionado en un template, no se modifica en el template.
 - En la creación del ensayo, falta un warning que te avise si falta ingresar la información de un paso, la row podria tener algun efecto visual, por ejemplo sobre el botón de "ajustar parámetros" si el form está pristinte o algo asi.
 - Durante la verificación de la preparación:
   - Si un puesto esta activo los campos son requeridos durante la verificación.
