@@ -29,112 +29,112 @@ import { CommandLineConfigTypes } from '../../../../models/business/interafces/c
 export class VmCalculatorComponent extends VMDeviceComponent {
   override readonly device = Devices.CAL;
   override commandLines: CommandLine[] = [
-    {
-      id: 1,
-      name: CalculatorResponseCommands.ACK,
-      blocks: [
-        {
-          type: CommandBlockTypes.Fixed,
-          value: 'B|CAL|STW|ACK00000|Z|x',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: CalculatorResponseCommands.RESULTS,
-      enableConditions: [
-        { pattern: SoftwareCalculatorCommands.START_CONTRAST },
-      ],
-      blocks: this.generateResultCommandBlocksError(),
-    },
-    {
-      id: 3,
-      name: CalculatorResponseCommands.RESULTS,
-      enableConditions: [{ pattern: SoftwareCalculatorCommands.START_BOOT }],
-      blocks: this.generateResultCommandBlocksImpulses(),
-    },
-    {
-      id: 4,
-      name: CalculatorResponseCommands.RESULTS,
-      enableConditions: [{ pattern: SoftwareCalculatorCommands.START_VACUUM }],
-      blocks: this.generateResultCommandBlocksImpulses(),
-    },
+    ...this.stopCommands(APP_CONFIG.standsQuantiy),
+    ...this.ts01Commands(APP_CONFIG.standsQuantiy),
+    ...this.ts02Commands(APP_CONFIG.standsQuantiy),
   ];
 
-  private generateResultCommandBlocksImpulses(): CommandBlock[] {
-    const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
+  private stopCommands(standsQuantiy: number): CommandLine[] {
+    return Array(standsQuantiy)
       .fill('')
-      .map<CommandBlock[]>((_, index) => [
-        {
-          type: CommandBlockTypes.Variable,
-          startWith: `${CommandDirector.STAND}${(index + 1)
-            .toString()
-            .padStart(2, '0')}`,
-          endWith: CommandDirector.DIVIDER,
-          value: '00000',
-          variableValue: null,
-          digitsQuantity: 5,
-          padText: '0',
-          config: {
-            type: CommandLineConfigTypes.Incremental,
-            incrementQuantity: 1,
-            probabilityOfChange: 35,
-          },
-        },
-      ])
-      .reduce((acc, value) => (acc = acc.concat(value)), []);
-
-    return [
-      {
-        type: CommandBlockTypes.Fixed,
-        value: 'B|CAL|STW|',
-      },
-      ...standResult,
-    ];
+      .map((_, index) => {
+        const standNumber = (index + 1).toString().padStart(2, '0');
+        return {
+          id: index + 1,
+          name: CalculatorResponseCommands.ACK,
+          enableConditions: [{ pattern: `P${standNumber}|STOP` }],
+          blocks: [
+            {
+              type: CommandBlockTypes.Fixed,
+              value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK00000|Z|x`,
+            },
+          ],
+        };
+      });
   }
 
-  private generateResultCommandBlocksError(): CommandBlock[] {
-    const standResult: CommandBlock[] = Array(APP_CONFIG.commandStandsQuantity)
+  private ts01Commands(standsQuantiy: number): CommandLine[] {
+    return Array(standsQuantiy)
       .fill('')
-      .map<CommandBlock[]>((_, index) => [
-        {
-          type: CommandBlockTypes.Variable,
-          startWith: `${CommandDirector.STAND}${(index + 1)
-            .toString()
-            .padStart(2, '0')}`,
-          value: '+',
-          variableValue: null,
-          digitsQuantity: 1,
-          padText: '',
-          config: {
-            type: CommandLineConfigTypes.CharRandom,
-            probabilityOfChange: 5,
-            options: ['+', '-'],
-          },
-        },
-        {
-          type: CommandBlockTypes.Variable,
-          endWith: CommandDirector.DIVIDER,
-          value: '0000',
-          variableValue: null,
-          digitsQuantity: 4,
-          padText: '0',
-          config: {
-            type: CommandLineConfigTypes.Random,
-            probabilityOfChange: 25,
-            maxRandom: 9999,
-            minRandom: 0,
-          },
-        },
-      ])
-      .reduce((acc, value) => (acc = acc.concat(value)), []);
+      .map((_, index) => {
+        const standNumber = (index + 1).toString().padStart(2, '0');
+        return {
+          id: 10 + index + 1,
+          name: CalculatorResponseCommands.ACK,
+          enableConditions: [
+            {
+              pattern: `P${standNumber}|${SoftwareCalculatorCommands.RESULT_TS01}`,
+            },
+          ],
+          blocks: [
+            {
+              type: CommandBlockTypes.Fixed,
+              value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK`,
+            },
+            {
+              type: CommandBlockTypes.Variable,
+              value: ' ',
+              variableValue: null,
+              digitsQuantity: 1,
+              padText: '',
+              config: {
+                type: CommandLineConfigTypes.CharRandom,
+                probabilityOfChange: 5,
+                options: [' ', '-'],
+              },
+            },
+            {
+              type: CommandBlockTypes.Variable,
+              value: '0000',
+              variableValue: null,
+              digitsQuantity: 4,
+              padText: '0',
+              config: {
+                type: CommandLineConfigTypes.Random,
+                probabilityOfChange: 25,
+                maxRandom: 9999,
+                minRandom: 0,
+              },
+              endWith: `${CommandDirector.DIVIDER}Z${CommandDirector.DIVIDER}x`,
+            },
+          ],
+        };
+      });
+  }
 
-    return [
-      {
-        type: CommandBlockTypes.Fixed,
-        value: 'B|CAL|STW|',
-      },
-      ...standResult,
-    ];
+  private ts02Commands(standsQuantiy: number): CommandLine[] {
+    return Array(standsQuantiy)
+      .fill('')
+      .map((_, index) => {
+        const standNumber = (index + 1).toString().padStart(2, '0');
+        return {
+          id: 20 + index + 1,
+          name: CalculatorResponseCommands.ACK,
+          enableConditions: [
+            {
+              pattern: `P${standNumber}|${SoftwareCalculatorCommands.RESULT_TS02}`,
+            },
+          ],
+          blocks: [
+            {
+              type: CommandBlockTypes.Fixed,
+              value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK`,
+            },
+            {
+              type: CommandBlockTypes.Variable,
+              value: '00000',
+              variableValue: null,
+              digitsQuantity: 5,
+              padText: '0',
+              config: {
+                type: CommandLineConfigTypes.Incremental,
+                probabilityOfChange: 25,
+                incrementQuantity: 1,
+              },
+              endWith: `${CommandDirector.DIVIDER}Z${CommandDirector.DIVIDER}x`,
+            },
+          ],
+        };
+      });
   }
 }
