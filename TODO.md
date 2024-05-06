@@ -50,6 +50,7 @@ MEJORAS opcionales:
 PARA EL 15 de MAYO
 
 - mejorar el historial.
-  - poner los parámetros de cada paso.
-  - poner el resultado y la unidad del puesto.
+  - Quitar el boton de eliminar historial.
+  - Poner un botón ver que te lleve al historial completo.
+    - Dentro del historial completo se puede eliminar la ejecución entera.
 - resolver los ERRORES escritos en este archivo de TODO.
