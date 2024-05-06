@@ -11,6 +11,7 @@ import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
 import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
 import { StaticsComponent } from './statics/statics.component';
+import { HistoryEssayComponent } from './history-essay/history-essay.component';
 
 const routes: Routes = [
   {
@@ -47,6 +48,10 @@ const routes: Routes = [
   {
     path: PageUrlName.history,
     component: HistoryEssayStepStandComponent,
+  },
+  {
+    path: PageUrlName.historyEssay,
+    component: HistoryEssayComponent,
   },
   {
     path: PageUrlName.dashboard,

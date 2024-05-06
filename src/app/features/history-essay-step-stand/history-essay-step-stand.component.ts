@@ -5,7 +5,7 @@ import {
   HistoryEssayStepStandDbTableContext,
 } from '../../models/business/database/history_essay_step_stand.model';
 import { AbmPage } from '../../models/core/abm-page.model';
-import { Observable, first, filter, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import {
   TC_AlignHorizontal,
@@ -14,7 +14,6 @@ import {
   TC_Operator,
   TableColumn,
 } from '../../models/core/table-column.model';
-import { MessagesService } from '../../services/messages.service';
 import { BrandDbTableContext } from '../../models/business/database/brand.model';
 import {
   Meter,
@@ -127,8 +126,7 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
   readonly historyEssayRows$: Observable<HistoryEssayStepStand[]>;
 
   constructor(
-    private readonly dbService: DatabaseService<HistoryEssayStepStand>,
-    private readonly messagesService: MessagesService
+    private readonly dbService: DatabaseService<HistoryEssayStepStand>
   ) {
     super(dbService, HistoryEssayStepStandDbTableContext);
     this.historyEssayRows$ = this.refreshDataWhenDatabaseReply$(
@@ -142,27 +140,6 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
       lazyLoadEvent: this.lazyLoadEvent,
       globalFilterColumns: GlobalFilterManager.transform(this.cols),
     });
-  }
-
-  deleteHistoryEssay(ids: string[] = []) {
-    this.dbService
-      .deleteTableElements$(HistoryEssayStepStandDbTableContext.tableName, ids)
-      .pipe(
-        first(),
-        filter(
-          (numberOfElementsDeleted) => numberOfElementsDeleted === ids.length
-        ),
-        tap(() => {
-          this.refreshTable();
-          this.messagesService.success('Eliminado correctamente');
-        })
-      )
-      .subscribe({
-        error: () =>
-          this.messagesService.error(
-            'Verifique que ningun elemento este en uso antes de eliminar'
-          ),
-      });
   }
 
   openMeterDialog(meter: Meter): void {

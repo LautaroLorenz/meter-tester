@@ -50,7 +50,7 @@ import { PreparationEssayStep } from '../../models/business/interafces/steps/pre
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RunEssayComponent implements OnInit, OnDestroy {
-  readonly title: string = 'Ensayo';
+  readonly title: string = 'Ejecución de ensayo';
   readonly id$: Observable<number>;
   readonly runEssayForm: RunEssayForm;
 
