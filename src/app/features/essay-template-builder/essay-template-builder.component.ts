@@ -16,7 +16,6 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { ComponentCanDeactivate } from '../../guards/peding-changes.guard';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
 import {
@@ -45,6 +44,7 @@ import { Steps } from '../../models/business/enums/steps.model';
 import { StepsBuilder } from '../../models/business/class/steps-form-array-builder.model';
 import { AbstractFormGroup } from '../../models/core/abstract-form-group.model';
 import { propInUseValidator } from '../../models/business/validators/value-in-use-validator.model';
+import { ComponentCanDeactivate } from '../../models/core/guards.model';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
