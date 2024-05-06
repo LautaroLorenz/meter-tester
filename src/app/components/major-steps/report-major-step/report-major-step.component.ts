@@ -24,7 +24,6 @@ import { HistoryEssayService } from '../../../services/history-essay.service';
 import {
   tap,
   take,
-  map,
   catchError,
   finalize,
   concat,
@@ -40,6 +39,7 @@ import { StaticsService } from '../../../services/statics.service';
 import { Metric } from '../../../models/business/enums/metric.model';
 import { ResultStatus } from '../../../models/business/enums/result-status.model';
 import { Tags } from '../../../models/business/database/static.model';
+import { HistoryEssay } from '../../../models/business/database/history-essay.model';
 
 @Component({
   selector: 'app-report-major-step',
@@ -212,7 +212,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
       );
     }
 
-    // TODO guardar
+    // TODO generar estadísticas sobre
     // - ensayo que se ejecutó
     // - steps que se ejecutaron
 
@@ -233,18 +233,30 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
   /**
    * guardar ejecución en la base de datos
    */
-  private saveOnHistory$(): Observable<HistoryEssayStepStand[]> {
+  private saveOnHistory$(): Observable<{
+    historyEssay: HistoryEssay;
+    historyEssayRows: HistoryEssayStepStand[];
+  }> {
     // bloquear la UI mientras está generando el historial.
     this.isSaving = true;
     this.blockUIService.setBlocked(true);
     this.cd.detectChanges();
     const savedTime = new Date().getTime();
-    let rows: Omit<HistoryEssayStepStand, 'id' | 'foreign'>[] = [];
+    const historyEssay: Omit<HistoryEssay, 'id' | 'foreign'> = {
+      run_raw: this.runEssay,
+    };
+    let rows: Omit<
+      HistoryEssayStepStand,
+      'id' | 'history_essay_id' | 'foreign'
+    >[] = [];
     this.executionSteps.forEach((step) => {
       this.runEssayService
         .getActiveStands(this.preparationStep)
         .forEach(({ index, stand }) => {
-          const historyEssay: Omit<HistoryEssayStepStand, 'id' | 'foreign'> = {
+          const historyEssayStepStand: Omit<
+            HistoryEssayStepStand,
+            'id' | 'history_essay_id' | 'foreign'
+          > = {
             saved_time: savedTime,
             essay_name: this.runEssay.essayName,
             step_name: step.form_control_raw.name,
@@ -253,16 +265,14 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
             year_of_production: stand.yearOfProduction,
             result_status_enum: step.standResults[index].resultStatus,
           };
-          rows = rows.concat(historyEssay);
+          rows = rows.concat(historyEssayStepStand);
         });
     });
-
-    return this.historyEssayService.saveHistoryEssay$(rows).pipe(
+    return this.historyEssayService.saveHistoryEssay$(historyEssay, rows).pipe(
       take(1),
       tap(() => {
         this.messagesService.success('Guardado correctamente');
       }),
-      map(({ historyEssayRows }) => historyEssayRows),
       finalize(() => {
         this.isSaving = false;
         this.blockUIService.setBlocked(false);

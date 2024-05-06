@@ -17,6 +17,12 @@ exports.up = function (knex) {
     table.string("serial_number");
     table.string("year_of_production");
     table.string("result_status_enum").notNullable();
+    table
+      .integer("history_essay_id")
+      .notNullable()
+      .references("id")
+      .inTable("history_essay")
+      .onDelete("CASCADE");
   });
 };
 

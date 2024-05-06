@@ -1,9 +1,14 @@
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Meter, MeterDbTableContext } from './meter.model';
 import { ResultStatus } from '../enums/result-status.model';
+import {
+  HistoryEssay,
+  HistoryEssayDbTableContext,
+} from './history-essay.model';
 
 export interface HistoryEssayStepStand extends DbForeignKey {
   id: number;
+  history_essay_id: number;
   saved_time: number;
   essay_name: string;
   step_name: string;
@@ -13,6 +18,7 @@ export interface HistoryEssayStepStand extends DbForeignKey {
   result_status_enum: ResultStatus;
   foreign: {
     meter: Meter;
+    historyEssay: HistoryEssay;
   };
 }
 
@@ -25,6 +31,12 @@ export const HistoryEssayStepStandDbTableContext: DbTableContext = {
       foreignKey: 'meter_id',
       propertyName: 'meter',
       foreignTables: MeterDbTableContext.foreignTables,
+    },
+    {
+      tableName: HistoryEssayDbTableContext.tableName,
+      foreignKey: 'history_essay_id',
+      propertyName: 'historyEssay',
+      foreignTables: HistoryEssayDbTableContext.foreignTables,
     },
   ],
 };

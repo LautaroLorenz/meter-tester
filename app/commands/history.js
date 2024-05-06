@@ -28,6 +28,21 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+const historyEssayCreateOrEdit = (knex, history_essay, transaction) => __awaiter(void 0, void 0, void 0, function* () {
+    const querybuilder = knex('history_essay').transacting(transaction);
+    const historyEssayCopy = Object.assign({}, history_essay);
+    if (historyEssayCopy.id) {
+        yield querybuilder
+            .update(historyEssayCopy)
+            .where('id', historyEssayCopy.id);
+    }
+    else {
+        const [newHistoryEssayId] = yield querybuilder.insert(historyEssayCopy);
+        historyEssayCopy.id = newHistoryEssayId;
+    }
+    return historyEssayCopy;
+});
+const formatHistoryEssayRows = (historyEssayRows, historyEssayId) => historyEssayRows.map((historyEssayRow, index) => (Object.assign(Object.assign({}, historyEssayRow), { history_essay_id: historyEssayId })));
 const createNews = (knex, rows, transaction, tableName) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
     const createdRows = rows.filter(({ id }) => !id);
@@ -63,11 +78,13 @@ const createNews = (knex, rows, transaction, tableName) => __awaiter(void 0, voi
 });
 exports.default = {
     register: (knex) => {
-        electron_1.ipcMain.handle('save-history-essay', (_, { historyEssayRows }) => __awaiter(void 0, void 0, void 0, function* () {
+        electron_1.ipcMain.handle('save-history-essay', (_, { historyEssay, historyEssayRows }) => __awaiter(void 0, void 0, void 0, function* () {
             // open database transaction
             return yield knex.transaction((transaction) => __awaiter(void 0, void 0, void 0, function* () {
+                historyEssay = yield historyEssayCreateOrEdit(knex, historyEssay, transaction);
+                historyEssayRows = formatHistoryEssayRows(historyEssayRows, historyEssay.id);
                 const rowsCreated = yield createNews(knex, historyEssayRows, transaction, 'history_essay_step_stand');
-                return { rowsCreated };
+                return { historyEssay, historyEssayRows: rowsCreated };
             }));
         }));
     },
