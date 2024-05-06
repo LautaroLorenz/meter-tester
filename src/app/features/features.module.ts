@@ -14,7 +14,7 @@ import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { DirectivesModule } from '../directives/directives.module';
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
-import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
 import { StaticsComponent } from './statics/statics.component';
 
 @NgModule({
@@ -26,7 +26,7 @@ import { StaticsComponent } from './statics/statics.component';
     EssayTemplateBuilderComponent,
     RunEssayComponent,
     VirtualMachineComponent,
-    HistoryEssayComponent,
+    HistoryEssayStepStandComponent,
     StaticsComponent,
   ],
   imports: [

@@ -66,7 +66,7 @@ exports.default = {
         electron_1.ipcMain.handle('save-history-essay', (_, { historyEssayRows }) => __awaiter(void 0, void 0, void 0, function* () {
             // open database transaction
             return yield knex.transaction((transaction) => __awaiter(void 0, void 0, void 0, function* () {
-                const rowsCreated = yield createNews(knex, historyEssayRows, transaction, 'history_essay');
+                const rowsCreated = yield createNews(knex, historyEssayRows, transaction, 'history_essay_step_stand');
                 return { rowsCreated };
             }));
         }));

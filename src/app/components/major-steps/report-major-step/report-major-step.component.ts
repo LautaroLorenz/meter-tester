@@ -19,7 +19,7 @@ import { MajorSteps } from '../../../models/business/enums/major-steps.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 import { ReportStepSwitchComponent } from '../../steps/result-report/report-step-switch/report-step-switch.component';
 import { PdfPageComponent } from '../../steps/result-report/pdf-page/pdf-page.component';
-import { HistoryEssay } from '../../../models/business/database/history_essay.model';
+import { HistoryEssayStepStand } from '../../../models/business/database/history_essay_step_stand.model';
 import { HistoryEssayService } from '../../../services/history-essay.service';
 import {
   tap,
@@ -233,18 +233,18 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
   /**
    * guardar ejecución en la base de datos
    */
-  private saveOnHistory$(): Observable<HistoryEssay[]> {
+  private saveOnHistory$(): Observable<HistoryEssayStepStand[]> {
     // bloquear la UI mientras está generando el historial.
     this.isSaving = true;
     this.blockUIService.setBlocked(true);
     this.cd.detectChanges();
     const savedTime = new Date().getTime();
-    let rows: Omit<HistoryEssay, 'id' | 'foreign'>[] = [];
+    let rows: Omit<HistoryEssayStepStand, 'id' | 'foreign'>[] = [];
     this.executionSteps.forEach((step) => {
       this.runEssayService
         .getActiveStands(this.preparationStep)
         .forEach(({ index, stand }) => {
-          const historyEssay: Omit<HistoryEssay, 'id' | 'foreign'> = {
+          const historyEssay: Omit<HistoryEssayStepStand, 'id' | 'foreign'> = {
             saved_time: savedTime,
             essay_name: this.runEssay.essayName,
             step_name: step.form_control_raw.name,

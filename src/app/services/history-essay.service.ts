@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { IpcService } from './ipc.service';
-import { HistoryEssay } from '../models/business/database/history_essay.model';
+import { HistoryEssayStepStand } from '../models/business/database/history_essay_step_stand.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +10,10 @@ import { HistoryEssay } from '../models/business/database/history_essay.model';
 export class HistoryEssayService {
   constructor(private readonly ipcService: IpcService) {}
 
-  saveHistoryEssay$(historyEssayRows: Omit<HistoryEssay, 'id' | 'foreign'>[]): Observable<{
-    historyEssayRows: HistoryEssay[];
+  saveHistoryEssay$(
+    historyEssayRows: Omit<HistoryEssayStepStand, 'id' | 'foreign'>[]
+  ): Observable<{
+    historyEssayRows: HistoryEssayStepStand[];
   }> {
     return from(
       this.ipcService.invoke('save-history-essay', { historyEssayRows })

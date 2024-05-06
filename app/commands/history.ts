@@ -35,7 +35,7 @@ export default {
           knex,
           historyEssayRows,
           transaction,
-          'history_essay'
+          'history_essay_step_stand'
         );
         return { rowsCreated };
       });

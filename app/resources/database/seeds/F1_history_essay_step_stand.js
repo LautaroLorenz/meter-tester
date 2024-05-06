@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.seed = async function (knex) {
-  await knex("history_essay").insert([
+  await knex("history_essay_step_stand").insert([
     {
       id: 1,
       saved_time: 1713565304894,

@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
 import {
-  HistoryEssay,
-  HistoryEssayDbTableContext,
-} from '../../models/business/database/history_essay.model';
+  HistoryEssayStepStand,
+  HistoryEssayStepStandDbTableContext,
+} from '../../models/business/database/history_essay_step_stand.model';
 import { AbmPage } from '../../models/core/abm-page.model';
 import { Observable, first, filter, tap } from 'rxjs';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
@@ -24,23 +24,23 @@ import { EnumAsOptionPipe } from '../../pipes/core/enum-as-option.pipe';
 import { ResultStatus } from '../../models/business/enums/result-status.model';
 
 @Component({
-  templateUrl: './history-essay.component.html',
-  styleUrls: ['./history-essay.component.scss'],
+  templateUrl: './history-essay-step-stand.component.html',
+  styleUrls: ['./history-essay-step-stand.component.scss'],
 })
-export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
+export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStand> {
   meterDetailDialogVisible = false;
   selectedMeter: Meter | undefined;
 
   readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
   readonly title: string = 'Historial de ejecución';
-  readonly cols: TableColumn<HistoryEssay>[] = [
+  readonly cols: TableColumn<HistoryEssayStepStand>[] = [
     {
       templateName: 'saved_time',
       template: undefined, // se inicializa en abm.component.ts
       header: 'Realizado',
-      sortable: `${HistoryEssayDbTableContext.tableName}.saved_time`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.saved_time`,
       filter: {
-        field: `${HistoryEssayDbTableContext.tableName}.saved_time`,
+        field: `${HistoryEssayStepStandDbTableContext.tableName}.saved_time`,
         type: TC_FilterType.date,
         showMatchModes: false,
         matchMode: TC_MatchMode.range,
@@ -56,15 +56,15 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
     {
       field: 'essay_name',
       header: 'Ensayo',
-      sortable: `${HistoryEssayDbTableContext.tableName}.essay_name`,
-      globalFilter: `${HistoryEssayDbTableContext.tableName}.essay_name`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.essay_name`,
+      globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.essay_name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'step_name',
       header: 'Paso',
-      sortable: `${HistoryEssayDbTableContext.tableName}.step_name`,
-      globalFilter: `${HistoryEssayDbTableContext.tableName}.step_name`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.step_name`,
+      globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.step_name`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
@@ -85,24 +85,24 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
     {
       field: 'serial_number',
       header: 'Número de serie',
-      sortable: `${HistoryEssayDbTableContext.tableName}.serial_number`,
-      globalFilter: `${HistoryEssayDbTableContext.tableName}.serial_number`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.serial_number`,
+      globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.serial_number`,
       alignHorizontal: TC_AlignHorizontal.Text,
     },
     {
       field: 'year_of_production',
       header: 'Año',
-      sortable: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
-      globalFilter: `${HistoryEssayDbTableContext.tableName}.year_of_production`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.year_of_production`,
+      globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.year_of_production`,
       alignHorizontal: TC_AlignHorizontal.Number,
     },
     {
       templateName: 'result_status_enum',
       template: undefined, // se inicializa en abm.component.ts
       header: 'Resultado',
-      sortable: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
+      sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_status_enum`,
       filter: {
-        field: `${HistoryEssayDbTableContext.tableName}.result_status_enum`,
+        field: `${HistoryEssayStepStandDbTableContext.tableName}.result_status_enum`,
         type: TC_FilterType.dropdown,
         showMatchModes: false,
         matchMode: TC_MatchMode.equals,
@@ -124,21 +124,21 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
       },
     },
   ];
-  readonly historyEssayRows$: Observable<HistoryEssay[]>;
+  readonly historyEssayRows$: Observable<HistoryEssayStepStand[]>;
 
   constructor(
-    private readonly dbService: DatabaseService<HistoryEssay>,
+    private readonly dbService: DatabaseService<HistoryEssayStepStand>,
     private readonly messagesService: MessagesService
   ) {
-    super(dbService, HistoryEssayDbTableContext);
+    super(dbService, HistoryEssayStepStandDbTableContext);
     this.historyEssayRows$ = this.refreshDataWhenDatabaseReply$(
-      HistoryEssayDbTableContext.tableName
+      HistoryEssayStepStandDbTableContext.tableName
     );
   }
 
   override refreshTable(): void {
-    this.dbService.getTable(HistoryEssayDbTableContext.tableName, {
-      relations: HistoryEssayDbTableContext.foreignTables,
+    this.dbService.getTable(HistoryEssayStepStandDbTableContext.tableName, {
+      relations: HistoryEssayStepStandDbTableContext.foreignTables,
       lazyLoadEvent: this.lazyLoadEvent,
       globalFilterColumns: GlobalFilterManager.transform(this.cols),
     });
@@ -146,7 +146,7 @@ export class HistoryEssayComponent extends AbmPage<HistoryEssay> {
 
   deleteHistoryEssay(ids: string[] = []) {
     this.dbService
-      .deleteTableElements$(HistoryEssayDbTableContext.tableName, ids)
+      .deleteTableElements$(HistoryEssayStepStandDbTableContext.tableName, ids)
       .pipe(
         first(),
         filter(

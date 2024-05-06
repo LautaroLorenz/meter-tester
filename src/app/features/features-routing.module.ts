@@ -9,7 +9,7 @@ import { PendingChangesGuard } from '../guards/peding-changes.guard';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { RunEssayComponent } from './run-essay/run-essay.component';
 import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
-import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
 import { StaticsComponent } from './statics/statics.component';
 
 const routes: Routes = [
@@ -46,7 +46,7 @@ const routes: Routes = [
   },
   {
     path: PageUrlName.history,
-    component: HistoryEssayComponent,
+    component: HistoryEssayStepStandComponent,
   },
   {
     path: PageUrlName.dashboard,
