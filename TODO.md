@@ -16,15 +16,15 @@ ERRORES
 - Durante la verificación de la preparación:
   - Si un puesto esta activo los campos son requeridos durante la verificación.
   - Al menos un puesto debe estar activo.
+- Ejecución:
+  - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface. Revisar el método canDeactivate en TestRunComponent
+  - Si entras a ejecución en modo simulador y salis, empieza a arrojar errores de timeout.
   
 
 MEJORAS necesarias:
 - descripciones de los pasos
   - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
   - Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
-- Ejecución:
-  - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface.
-    - revisar el método canDeactivate en TestRunComponent
   - separar el historial de comandos a una ventana a parte que se pueda abrir independientemente del simulador.
 - Reporte
   - Agregar información faltante: nombre de ensayo, tiempos de ejecicón (start y end)
