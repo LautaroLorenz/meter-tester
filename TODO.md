@@ -19,7 +19,9 @@ ERRORES
   
 
 MEJORAS necesarias:
-- Desde cada row del historial se podría ir a una pantalla reporte para toda la ejecución (mostrando todos los medidores de esa ejecución), se podría poner un "ejecución id" en el historial entonces se armaría el reporte con todas las que tienen el mismo ejecución id.
+- descripciones de los pasos
+  - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
+  - Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
 - Ejecución:
   - Al momento de apagar los componentes de la maquina se puede usar BLOCK UI de primeng para bloquear la interface.
     - revisar el método canDeactivate en TestRunComponent
@@ -32,13 +34,10 @@ MEJORAS necesarias:
 - Cuando falla un puesto en el calculador, la ejecución del paso no se detiene, hay que deternerla.
 
 MEJORAS opcionales:
-- Implementar un trello para el proyecto.
 - Implementar drag y drop para ordenar los pasos
-- Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
 - Verificación y preparación podrian ser opcionales. si no hay preparación, no hay reporte.
 - El componente que muestra el paso activo durante la ejecución, podria tener una opción collapsed (sin textos y con tooltips).
 - La creación del ensayo "app/essay.ts" podría ser código generico que haga eliminación/creación/edición sobre elementso de un array.
-- Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
 - Mejorar como se muestran los reportes.
 - Revisar los TODO de los test para machine-device.spec.ts
 - en el método "setApprovedStatus" si todos los stands aprobaron se puede avanzar automaticamente al siguiente step.
