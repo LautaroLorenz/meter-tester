@@ -21,6 +21,8 @@ import { ActiveStand } from '../models/business/interafces/active-stand.model';
   providedIn: 'root',
 })
 export class RunEssayService {
+  canDeactivate: (() => Observable<boolean>) | null | undefined;
+
   private _majorStepStatusMap$!: ReplaySubject<Record<MajorSteps, StepStatus>>;
   private _runEssay$!: ReplaySubject<RunEssay>;
   private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;

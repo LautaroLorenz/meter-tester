@@ -15,13 +15,23 @@ import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
 import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { switchMap, Observable, tap, takeUntil, Subject, finalize } from 'rxjs';
+import {
+  switchMap,
+  Observable,
+  tap,
+  takeUntil,
+  Subject,
+  finalize,
+  map,
+  of,
+} from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
 } from '../../../../models/core/table-column.model';
 import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
+import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 
 @Component({
   selector: 'app-contrast-test-run',
@@ -109,6 +119,25 @@ export class ContrastTestRunComponent
     }
   }
 
+  override abort(): Observable<boolean> {
+    this.stopStep.next();
+    this.deviceService.abort();
+    if (
+      [
+        DeviceStatus.Working,
+        DeviceStatus.StartInProgress,
+        DeviceStatus.StopInProgress,
+      ].includes(this.calculator.deviceStatus$.value)
+    ) {
+      this.blockUIService.setBlocked(true);
+      return this.calculator.stop$(this.getActiveStands()).pipe(
+        map(() => true),
+        tap(() => this.blockUIService.setBlocked(false))
+      );
+    }
+    return of(true);
+  }
+
   override isFailCondition(result: ContrastTestStandResult): boolean {
     return (
       Math.abs(result.measuredError) >
@@ -121,6 +150,7 @@ export class ContrastTestRunComponent
     this.calculator
       .stop$(this.getActiveStands())
       .pipe(
+        takeUntil(this.stopStep),
         // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // obtención de sultados en loop

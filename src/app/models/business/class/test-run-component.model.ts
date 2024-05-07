@@ -4,6 +4,7 @@ import {
   Component,
   Input,
   OnDestroy,
+  OnInit,
   inject,
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
@@ -14,13 +15,16 @@ import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 import { ActiveStand } from '../interafces/active-stand.model';
 import { Subject } from 'rxjs/internal/Subject';
+import { Observable } from 'rxjs';
+import { BlockUIService } from '../../../services/block-ui.service';
+import { DeviceService } from '../../../services/device.service';
 
 @Component({
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class TestRunComponent<T extends EssayStep>
-  implements OnDestroy
+  implements OnInit, OnDestroy
 {
   @Input() currentStep!: T;
   @Input() preparationStep!: PreparationStep;
@@ -30,11 +34,18 @@ export abstract class TestRunComponent<T extends EssayStep>
   protected readonly runEssayService = inject(RunEssayService);
   protected readonly cd = inject(ChangeDetectorRef);
   protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
+  protected readonly blockUIService = inject(BlockUIService);
+  protected readonly deviceService = inject(DeviceService);
   protected readonly onDestroy = new Subject<void>();
 
   abstract readonly skipEnabled: boolean;
 
+  ngOnInit(): void {
+    this.runEssayService.canDeactivate = this.abort.bind(this);
+  }
+
   ngOnDestroy(): void {
+    this.runEssayService.canDeactivate = null;
     this.onDestroy.next();
     this.onDestroy.complete();
   }
@@ -124,10 +135,7 @@ export abstract class TestRunComponent<T extends EssayStep>
     this.stepExecutionDone(this.currentStep);
   }
 
-  private onDeactivate(): void {
-    // TODO resolver situación cuando el usuario sale de la pantalla
-    // TODO esto debería estar en TestRunComponent
-  }
+  abstract abort(): Observable<boolean>;
 
   abstract isFailCondition(...args: any[]): boolean;
 

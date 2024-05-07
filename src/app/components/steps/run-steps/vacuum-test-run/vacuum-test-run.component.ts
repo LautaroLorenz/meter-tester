@@ -10,7 +10,16 @@ import {
 } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
-import { switchMap, tap, finalize, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  switchMap,
+  tap,
+  finalize,
+  Observable,
+  Subject,
+  takeUntil,
+  of,
+  map,
+} from 'rxjs';
 import {
   TC_AlignHorizontal,
   TableColumn,
@@ -21,6 +30,7 @@ import { ResultStatus } from '../../../../models/business/enums/result-status.mo
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { APP_CONFIG } from '../../../../../environments/environment';
+import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 
 @Component({
   selector: 'app-vacuum-test-run',
@@ -87,6 +97,26 @@ export class VacuumTestRunComponent
     }
   }
 
+  override abort(): Observable<boolean> {
+    this.stopStep.next();
+    this.countTimer.stop();
+    this.deviceService.abort();  
+    if (
+      [
+        DeviceStatus.Working,
+        DeviceStatus.StartInProgress,
+        DeviceStatus.StopInProgress,
+      ].includes(this.calculator.deviceStatus$.value)
+    ) {
+      this.blockUIService.setBlocked(true);
+      return this.calculator.stop$(this.getActiveStands()).pipe(
+        map(() => true),
+        tap(() => this.blockUIService.setBlocked(false))
+      );
+    }
+    return of(true);
+  }
+
   override isFailCondition(result: VacuumTestStandResult): boolean {
     const maxAllowedPulses = this.currentStep.form_control_raw.maxAllowedPulses;
     return result.measuredPulses > maxAllowedPulses;
@@ -99,6 +129,7 @@ export class VacuumTestRunComponent
     this.calculator
       .stop$(this.getActiveStands())
       .pipe(
+        takeUntil(this.stopStep),
         // cambia el estado de los resultados
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador

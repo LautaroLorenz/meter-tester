@@ -12,6 +12,7 @@ import { VirtualMachineComponent } from './virtual-machine/virtual-machine.compo
 import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
 import { StaticsComponent } from './statics/statics.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { RunEssayGuard } from '../guards/run-essay.guard';
 
 const routes: Routes = [
   {
@@ -39,7 +40,7 @@ const routes: Routes = [
   {
     path: PageUrlName.runEssay,
     component: RunEssayComponent,
-    // canDeactivate: [DevicesTurnOffGuard] // TODO
+    canDeactivate: [RunEssayGuard],
   },
   {
     path: PageUrlName.virtualMachine,

@@ -6,6 +6,7 @@ import {
   Subject,
   concatMap,
   tap,
+  takeUntil,
 } from 'rxjs';
 import { IpcService } from './ipc.service';
 import { CommandInvokeResponse } from '../models/business/interafces/command-invoke-response.model';
@@ -25,12 +26,15 @@ export class DeviceService {
 
   private _readQueueCommands$ = new BehaviorSubject<string[]>([]);
 
+  private _abort$ = new Subject<void>();
+
   constructor(private readonly ipcService: IpcService) {
     this.queue
       .pipe(
         tap(({ command }) => this.addCommandToReadQueue(command)),
         concatMap(({ request, response }) =>
           request.pipe(
+            takeUntil(this._abort$),
             tap((result) => {
               response.next(result);
               response.complete();
@@ -69,6 +73,11 @@ export class DeviceService {
     );
     this.queue.next({ command, request, response });
     return response.asObservable();
+  }
+
+  abort(): void {
+    this._abort$.next();
+    this._readQueueCommands$.next([]);
   }
 
   private addCommandToReadQueue(command: string): void {
