@@ -55,6 +55,25 @@ export class CountTimerComponent implements OnDestroy, OnChanges {
     }
   }
 
+  get color(): string {
+    let color;
+    switch (this.timerStatus) {
+      case 'Contando':
+        color = 'primary-color';
+        break;
+      case 'Detenido':
+        color = 'yellow-400';
+        break;
+      case 'No iniciado':
+        color = 'surface-ground';
+        break;
+      case 'Finalizado':
+        color = 'green-400';
+        break;
+    }
+    return `var(--${color})`;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.durationSeconds) {
       this.reset();
