@@ -20,7 +20,7 @@ MEJORAS necesarias:
 - descripciones de los pasos
   - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
   - Poner textos de ayuda de los pasos, mas visibles en lugar de helps en los inputs.
-  - separar el historial de comandos a una ventana a parte que se pueda abrir independientemente del simulador.
+- Separar el historial de comandos a una ventana a parte que se pueda abrir independientemente del simulador.
 - Reporte
   - Agregar información faltante: nombre de ensayo, tiempos de ejecicón (start y end)
   - Acomodar los estilos de los parámetros de los steps, crear un componente para estandarizar, aplicar tambien en meter-detail.
