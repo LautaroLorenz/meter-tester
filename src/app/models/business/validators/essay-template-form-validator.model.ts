@@ -1,5 +1,6 @@
 import {
   AbstractControl,
+  FormArray,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
@@ -10,48 +11,36 @@ import {
   ErrorCodes,
   concatErrorByCode,
 } from '../constants/error-codes-constant.model';
+import { AbstractFormGroup } from '../../core/abstract-form-group.model';
+import { EssayTemplateStep } from '../database/essay-template-step.model';
+import { Steps } from '../enums/steps.model';
 
 const name = (essayTemplate: Partial<EssayTemplate>): boolean => {
   return !essayTemplate.name || essayTemplate.name.length === 0;
 };
-
-// const atLeastOneStep = (steps: EssayTemplateStep[]): boolean => {
-//   return steps.length === 0;
-// };
-
-// const reportAtEnd = (steps: EssayTemplateStep[]): boolean => {
-//   const hasReport = steps.some(
-//     ({ step_id }) => step_id === StepIdEnum.ReportStep
-//   );
-//   const reportIndex = steps.findIndex(
-//     ({ step_id }) => step_id === StepIdEnum.ReportStep
-//   );
-//   return hasReport && reportIndex < steps.length - 1;
-// };
+const adjustStepParams = (
+  essayTemplateSteps: FormArray<AbstractFormGroup<EssayTemplateStep>>
+): boolean => {
+  const steps = essayTemplateSteps.controls.filter(
+    (step) => step.value.step_id !== Steps.Preparation
+  );
+  return steps.some((step) => step.invalid);
+};
 
 export function essayTemplateValidator(): ValidatorFn {
   return (form: AbstractControl): ValidationErrors | null => {
     const formGroup = form as FormGroup<EssayTemplateFormGroup>;
     let errors: ValidationErrors = {};
 
-    const {
-      // essayTemplateSteps,
-      essayTemplate,
-    } = formGroup.controls;
+    const { essayTemplateSteps, essayTemplate } = formGroup.controls;
     const essay: Partial<EssayTemplate> = essayTemplate.getRawValue();
-    // const steps: EssayTemplateStep[] = essayTemplateSteps.getRawValue();
 
     if (name(essay)) {
       errors = concatErrorByCode(ErrorCodes.name, errors);
     }
-
-    // if (atLeastOneStep(steps)) {
-    //   errors = { ...errors, [EssayErrorCodeEnum.AtLeastOneStep]: EssayErrorMessages[EssayErrorCodeEnum.AtLeastOneStep] };
-    // }
-
-    // if (reportAtEnd(steps)) {
-    //   errors = { ...errors, [EssayErrorCodeEnum.ReportAtEnd]: EssayErrorMessages[EssayErrorCodeEnum.ReportAtEnd] };
-    // }
+    if (adjustStepParams(essayTemplateSteps)) {
+      errors = concatErrorByCode(ErrorCodes.adjustStepParams, errors);
+    }
 
     return Object.keys(errors) ? errors : null;
   };

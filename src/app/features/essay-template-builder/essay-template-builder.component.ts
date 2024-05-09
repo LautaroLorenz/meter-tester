@@ -228,6 +228,10 @@ export class EssayTemplateBuilderComponent
     }
   }
 
+  hasInvalidStepParams(index: number): boolean {
+    return this.stepsFormArray.at(index).invalid;
+  }
+
   private addDefaultEssayTemplateStepsControl(steps: Step[]): void {
     if (!steps) {
       return;
