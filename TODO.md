@@ -1,7 +1,6 @@
 MÓDULOS:
 - estadísticas
   - revisar comentarios que dejé en report major step
-- backup
 - login
   - ABM de usuarios
   - Roles de usuarios con permisos.
