@@ -1,11 +1,6 @@
 MÓDULOS:
 - estadísticas
   - revisar comentarios que dejé en report major step
-- login
-  - ABM de usuarios
-  - Roles de usuarios con permisos.
-- Base de datos
-  - Contraseña en la base de datos para que no se pueda acceder
 - ejecución
   - conexión con el USB PRODUCT_ID + VENDOR_ID.
   - validación de checksum.
