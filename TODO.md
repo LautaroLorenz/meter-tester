@@ -11,6 +11,9 @@ MÓDULOS:
   - conexión con el USB PRODUCT_ID + VENDOR_ID.
   - validación de checksum.
 
+ERRORES
+- el caso de uso de ejecución "abort" fallá, sigue intentando comunicación luego de salir de la página. Requiere análisis en profundidad.
+
 MEJORAS necesarias:
 - descripciones de los pasos
   - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.
