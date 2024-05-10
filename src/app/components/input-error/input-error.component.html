@@ -19,6 +19,13 @@
     [ngTemplateOutlet]="errorTemplate"
     [ngTemplateOutletContext]="{ $implicit: 'Valor en uso' }"
   ></ng-container>
+  <ng-container
+    *ngIf="hasError('standIsActive')"
+    [ngTemplateOutlet]="errorTemplate"
+    [ngTemplateOutletContext]="{
+      $implicit: 'Debes completar todos los campos'
+    }"
+  ></ng-container>
 </ng-container>
 
 <ng-template #errorTemplate let-errorMessage>

@@ -1,5 +1,9 @@
 <ng-container
-  *ngFor="let strandFormGroup of standsFormArray.controls; let last = last"
+  *ngFor="
+    let strandFormGroup of standsFormArray.controls;
+    let index = index;
+    let last = last
+  "
 >
   <ng-container [formGroup]="strandFormGroup">
     <div [class.mb-4]="!last">
@@ -18,6 +22,10 @@
             ></p-button>
           </div>
         </ng-template>
+
+        <div class="mb-2">
+          <app-input-error [formGroup]="strandFormGroup"></app-input-error>
+        </div>
 
         <div class="formgrid grid">
           <ng-container *ngIf="meters$ | async as meters">

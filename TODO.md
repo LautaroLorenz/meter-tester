@@ -11,11 +11,6 @@ MÓDULOS:
   - conexión con el USB PRODUCT_ID + VENDOR_ID.
   - validación de checksum.
 
-ERRORES
-- Durante la verificación de la preparación:
-  - Si un puesto esta activo los campos son requeridos durante la verificación.
-  - Al menos un puesto debe estar activo.
-
 MEJORAS necesarias:
 - descripciones de los pasos
   - Agregar una explicación de lo que hace cada Paso en el botón de Agregar paso.

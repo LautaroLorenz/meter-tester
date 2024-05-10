@@ -1,13 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+} from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { Observable, map, takeUntil, tap } from 'rxjs';
-import { DecimalPipe } from '@angular/common';
 import { StepBuildFormComponent } from '../../../../models/business/class/step-build-form-component.model';
-import { PreparationFormBuilder, PreparationStep } from '../../../../models/business/interafces/steps/preparation-step.model';
-import { Stand, StandMeter } from '../../../../models/business/interafces/stand.model';
+import {
+  PreparationFormBuilder,
+  PreparationStep,
+} from '../../../../models/business/interafces/steps/preparation-step.model';
+import {
+  Stand,
+  StandMeter,
+} from '../../../../models/business/interafces/stand.model';
 import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
 import { DatabaseService } from '../../../../services/database.service';
-import { Meter, MeterDbTableContext } from '../../../../models/business/database/meter.model';
+import {
+  Meter,
+  MeterDbTableContext,
+} from '../../../../models/business/database/meter.model';
 import { YearOfProductionConstants } from '../../../../models/business/constants/year-of-production-constant.model';
 import { RelationsManager } from '../../../../models/core/relations-manager.model';
 
@@ -17,18 +30,26 @@ import { RelationsManager } from '../../../../models/core/relations-manager.mode
   styleUrls: ['./preparation-build-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreparationBuildFormComponent extends StepBuildFormComponent<PreparationStep> {
+export class PreparationBuildFormComponent
+  extends StepBuildFormComponent<PreparationStep>
+  implements AfterViewInit
+{
   meters$!: Observable<StandMeter[]>;
 
   readonly YearOfProductionConstants = YearOfProductionConstants;
 
   private readonly dbServiceMeters = inject(DatabaseService<Meter>);
-  private readonly decimalPipe = inject(DecimalPipe);
 
   get standsFormArray(): FormArray<AbstractFormGroup<Stand>> {
     return this.form.get('form_control_raw') as FormArray<
       AbstractFormGroup<Stand>
     >;
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isVerification) {
+      this.formValidChange.emit(this.form.valid);
+    }
   }
 
   copyStandToAll(strandFormGroup: AbstractFormGroup<Stand>): void {
@@ -116,9 +137,7 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
   private setStandsName(): void {
     this.standsFormArray.controls.forEach((group, index) => {
-      const name = `Puesto ${
-        this.decimalPipe.transform(index + 1, '2.0') ?? ''
-      }`;
+      const name = `Puesto ${(index + 1).toString().padStart(2, '0')}`;
       group.get('name')?.setValue(name);
     });
   }

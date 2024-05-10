@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor,
+  FormGroupDirective,
   NG_VALUE_ACCESSOR,
   NgControl,
   ValidationErrors,
@@ -40,6 +41,7 @@ export class InputErrorComponent
   constructor(private _injector: Injector, private cd: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
+    // si es un control
     const formControl = this._injector.get(NgControl, null);
     formControl?.statusChanges
       ?.pipe(takeUntil(this.onDestroy))
@@ -49,6 +51,15 @@ export class InputErrorComponent
         this.dirty = formControl.dirty;
         this.cd.detectChanges();
       });
+
+    // si es un grupo de controles
+    const formGroup = this._injector.get(FormGroupDirective, null);
+    formGroup?.statusChanges?.pipe(takeUntil(this.onDestroy)).subscribe(() => {
+      this.invalid = formGroup.invalid;
+      this.errors = formGroup.errors;
+      this.dirty = formGroup.dirty;
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {

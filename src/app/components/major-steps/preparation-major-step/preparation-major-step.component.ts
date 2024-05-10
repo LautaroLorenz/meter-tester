@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+} from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { RunEssayService } from '../../../services/run-essay.service';
@@ -13,9 +17,10 @@ import { APP_CONFIG } from '../../../../environments/environment';
   styleUrls: ['./preparation-major-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreparationMajorStepComponent implements OnInit {
+export class PreparationMajorStepComponent implements AfterViewInit {
   preparationStep: EssayStep | undefined;
   isPreparationDone = false;
+  formValid = false;
 
   readonly StepStatus = StepStatus;
 
@@ -31,7 +36,7 @@ export class PreparationMajorStepComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.skip();
   }
 
@@ -64,6 +69,9 @@ export class PreparationMajorStepComponent implements OnInit {
 
   private skip(): void {
     if (!APP_CONFIG.skipSteps.preparationMajorStep) {
+      return;
+    }
+    if (!this.formValid) {
       return;
     }
 

@@ -7,10 +7,10 @@ import {
 } from '../constants/error-codes-constant.model';
 
 const isActive = (standFormGroup: AbstractFormGroup<Stand>): boolean => {
-  if (standFormGroup.get('isActive')?.value === true) {
-    const { meter, serialNumber, yearOfProduction } =
-      standFormGroup.getRawValue();
-    if (!meter || !serialNumber || !yearOfProduction) {
+  const { meter_id, serialNumber, yearOfProduction, isActive } =
+    standFormGroup.getRawValue();
+  if (isActive === true) {
+    if (!meter_id || !serialNumber || !yearOfProduction) {
       return true;
     }
   }
