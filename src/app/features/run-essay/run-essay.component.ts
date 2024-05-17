@@ -15,7 +15,6 @@ import {
   switchMap,
   takeUntil,
   tap,
-  first,
 } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { DatabaseService } from '../../services/database.service';
@@ -37,11 +36,6 @@ import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { RelationsManager } from '../../models/core/relations-manager.model';
 import { RunEssayService } from '../../services/run-essay.service';
 import { APP_CONFIG } from '../../../environments/environment';
-import {
-  Meter,
-  MeterDbTableContext,
-} from '../../models/business/database/meter.model';
-import { PreparationEssayStep } from '../../models/business/interafces/steps/preparation-step.model';
 
 @Component({
   selector: 'app-run-essay',
@@ -61,7 +55,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
-    private readonly dbServiceMeter: DatabaseService<Meter>,
     private readonly route: ActivatedRoute,
     private readonly navigationService: NavigationService,
     public readonly runEssayService: RunEssayService
@@ -141,40 +134,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         ),
         map((essayTemplateSteps) =>
           essayTemplateSteps.sort((a, b) => a.order - b.order)
-        ),
-        // Obtener los medidores para asignarlos a los stands del preparation step
-        switchMap((essayTemplateSteps) =>
-          this.dbServiceMeter
-            .getTable$(MeterDbTableContext.tableName, {
-              relations: MeterDbTableContext.foreignTables,
-            })
-            .pipe(
-              first(),
-              map(({ rows, relations }) =>
-                RelationsManager.mergeRelationsIntoRows<Meter>(
-                  rows,
-                  relations,
-                  MeterDbTableContext.foreignTables
-                )
-              ),
-              tap((meters) => {
-                // asignar los medidores al preparation step
-                const preprationStep: PreparationEssayStep =
-                  essayTemplateSteps[0] as PreparationEssayStep;
-                preprationStep.form_control_raw.forEach((stand) => {
-                  const meter = meters.find(({ id }) => stand.meter_id === id);
-                  if (meter) {
-                    stand.foreign = {
-                      meter: {
-                        ...meter,
-                        label: `${meter.foreign.brand.name} - ${meter.model}`,
-                      },
-                    };
-                  }
-                });
-              }),
-              map(() => essayTemplateSteps)
-            )
         ),
         tap((essayTemplateSteps) =>
           this.runEssayService.buildSteps(essayTemplateSteps)
