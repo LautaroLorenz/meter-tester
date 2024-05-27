@@ -15,7 +15,7 @@ export const HelpTextStepsMap: Record<number, HelpText> = {
     message: ''
   },
   [Steps.VacuumTest]: {
-    title: 'En esta prueba, los medidores no deben emitir más impulsos de los permitidos durante el tiempo especificado. Si los impulsos exceden el máximo permitido, la prueba no se considerará superada.',
+    title: 'En esta prueba, los medidores no deben emitir más impulsos de los permitidos durante el tiempo especificado.<br> Si los impulsos exceden el máximo permitido, la prueba no se considerará superada.',
     message: ''
   },
 };

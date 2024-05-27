@@ -8,15 +8,11 @@
 >
   <ng-container *ngFor="let step of userSelectableStepOptions">
     <div class="grid mb-2">
-      <p-button
-        class="col-10 p-0"
-        [outlined]="true"
-        (click)="stepSelected(step)"
-      >
+      <p-button class="col-10" [outlined]="true" (click)="stepSelected(step)">
         <i class="pi pi-plus"></i>
         <span class="ml-2">{{ step.name }}</span>
       </p-button>
-      <div class="col-2 p-0">
+      <div class="col-2">
         <app-help-text
           [title]="HelpTextStepsMap[step.id].title"
           [message]="HelpTextStepsMap[step.id].message"
