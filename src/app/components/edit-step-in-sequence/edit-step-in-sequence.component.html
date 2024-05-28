@@ -13,6 +13,11 @@
         <span class="text-xl text-700">{{
           initialValue.foreign.step?.name
         }}</span>
+        <app-help-text
+          *ngIf="initialValue.foreign.step"
+          [title]="HelpTextStepsMap[initialValue.foreign.step.id].title"
+          [message]="HelpTextStepsMap[initialValue.foreign.step.id].message"
+        ></app-help-text>
       </div>
     </ng-container>
   </ng-template>

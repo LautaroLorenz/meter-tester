@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Step } from '../../models/business/database/step.model';
+import { HelpTextStepsMap } from '../../models/business/constants/help-texts-constant.model';
 
 @Component({
   selector: 'app-add-step-to-sequence',
@@ -23,6 +24,7 @@ export class AddStepToSequenceComponent implements OnChanges {
   @Output() selectedStep = new EventEmitter<Step>();
 
   userSelectableStepOptions!: Step[];
+  readonly HelpTextStepsMap = HelpTextStepsMap;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.stepOptions) {

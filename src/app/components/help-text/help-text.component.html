@@ -1,0 +1,17 @@
+<p-button
+  *ngIf="title || message"
+  (click)="op.toggle($event)"
+  icon="pi pi-question-circle"
+  [text]="true"
+  severity="secondary "
+/>
+<p-overlayPanel #op>
+  <span *ngIf="title" class="block w-25rem text-lg text-900">
+    Ayuda: {{ title }}
+  </span>
+  <span
+    *ngIf="message"
+    [innerHTML]="message"
+    class="p-text-secondary block mt-3 w-25rem"
+  ></span>
+</p-overlayPanel>
