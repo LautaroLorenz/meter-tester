@@ -6,11 +6,7 @@
   severity="secondary "
 />
 <p-overlayPanel #op>
-  <span
-    *ngIf="title"
-    [innerHTML]="title"
-    class="p-text-secondary block w-25rem"
-  ></span>
+  <span *ngIf="title" class="block w-25rem"> Ayuda: {{ title }} </span>
   <span
     *ngIf="message"
     [innerHTML]="message"
