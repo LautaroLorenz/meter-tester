@@ -16,4 +16,7 @@ export interface Environment {
 
   // activa la maquina virtual
   virtualMachine: boolean;
+  
+  // activa el historial de logs
+  logsHistory: boolean;
 }

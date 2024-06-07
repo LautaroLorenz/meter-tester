@@ -9,6 +9,7 @@ import machine from './resources/machine/machine';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 import { APP_CONFIG } from './environment/environment';
 import * as KnexLib from 'knex';
+import commandHistory from './resources/command-history/command-history';
 
 function registerIpc(knex: any) {
   database.register();
@@ -36,6 +37,11 @@ if (environment.virtualMachine) {
     machine.setSerialPort(serialPort);
   });
 }
+
+if(environment.logsHistory) {
+  commandHistory.register();
+}
+
 
 function createWindow(): BrowserWindow {
   const size = screen.getPrimaryDisplay().workAreaSize;

@@ -26,6 +26,7 @@ import { VMDeviceComponent } from '../../models/business/class/virtual-machine-d
 import { Random } from '../../models/core/random.model';
 import { CommandLineDirector } from '../../models/business/class/command-line-director.model';
 import { take } from 'rxjs/operators';
+import { CommandHistoryService } from '../../services/command-history.service';
 
 @Component({
   templateUrl: './virtual-machine.component.html',
@@ -48,11 +49,11 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
   readonly VMResponseTypes = VMResponseTypes;
 
   private onDestroy = new Subject<void>();
-
   constructor(
     private readonly virtualMachineService: VirtualMachineService,
     private readonly fb: FormBuilder,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    public readonly commandHistoryService: CommandHistoryService
   ) {
     this.configForm = this.buildConfigForm();
   }
@@ -66,7 +67,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     const delay = this.getSendDelayByConfig();
     setTimeout(() => {
       this.ngZone.run(() => {
-        this.commandHistory.add(command);
+        this.commandHistoryService.addCommand(command);
         this.virtualMachineService
           .write$(command + '\n')
           .pipe(take(1))
@@ -84,7 +85,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     this.virtualMachineService.handleSoftwareToMachine$
       .pipe(takeUntil(this.onDestroy))
       .subscribe((command) => {
-        this.commandHistory.add(command);
+        this.commandHistoryService.addCommand(command);
         if (
           this.configForm.getRawValue().responseType ===
           VMResponseTypes.Automatic
@@ -116,10 +117,12 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     if (!device) {
       return;
     }
+
+    const commandHistory = this.commandHistoryService.history;
     const commandLine = CommandLineDirector.findCommandLine(
       commandMap,
       device.commandLines,
-      this.commandHistory.history$.value
+      commandHistory
     );
     if (!commandLine) {
       return;

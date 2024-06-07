@@ -6,7 +6,7 @@ export const APP_CONFIG: Environment = {
   standsQuantiy: 10,
   commandStandsQuantity: 20,
   skipSteps: {
-    manualGeneratorConfirm: true,
+    manualGeneratorConfirm: false,
     photocellAdjustmentRequest: true,
     verificationMajorStep: true,
     preparationMajorStep: true,
@@ -15,4 +15,5 @@ export const APP_CONFIG: Environment = {
     contrastTestRun: true,
   },
   virtualMachine: true,
+  logsHistory: true,
 };

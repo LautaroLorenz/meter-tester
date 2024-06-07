@@ -75,7 +75,7 @@
       [disabled]="!history.length"
       label="Limpiar"
       [outlined]="true"
-      (onClick)="clear()"
+      (onClick)="commandHistoryService.clearHistory()"
     ></p-button>
   </div>
 </ng-container>

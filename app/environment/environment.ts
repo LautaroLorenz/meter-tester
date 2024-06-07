@@ -5,6 +5,7 @@ export interface Config {
   production: boolean;
   virtualMachine: boolean;
   inspector: boolean;
+  logsHistory: boolean;
 }
 
 export function APP_CONFIG(isDev: boolean): Config {
