@@ -32,7 +32,7 @@ export default {
                 CommandDirector.getFrom(responseCommand)
             ),
             timeout({
-              first: 10000,
+              first: 6000,
               with: () => {
                 throw new Error('Timeout');
               },
