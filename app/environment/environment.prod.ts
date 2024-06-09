@@ -4,5 +4,5 @@ export const APP_CONFIG: Config = {
   production: true,
   virtualMachine: false,
   inspector: false,
-  logsHistory: true,
+  logsHistory: false,
 };
