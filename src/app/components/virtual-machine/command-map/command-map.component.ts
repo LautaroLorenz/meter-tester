@@ -42,6 +42,12 @@ export class CommandMapComponent {
     {
       device: Devices.CAL,
       deviceName: DeviceConstants[Devices.CAL],
+      commandRegex: SoftwareCalculatorCommands.RESET,
+      responseCommandName: CalculatorResponseCommands.ACK,
+    },
+    {
+      device: Devices.CAL,
+      deviceName: DeviceConstants[Devices.CAL],
       commandRegex: SoftwareCalculatorCommands.RESULT_TS01,
       responseCommandName: CalculatorResponseCommands.ACK,
     },
