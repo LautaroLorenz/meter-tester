@@ -17,10 +17,6 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.items = [
       {
-        label: 'Estadísticas',
-        routerLink: '/'.concat(PageUrlName.dashboard),
-      },
-      {
         label: 'Ensayos',
         items: [
           {
@@ -67,6 +63,10 @@ export class MenuComponent implements OnInit {
       //   label: 'Terminal',
       //   routerLink: '/'.concat(PageUrlName.terminal),
       // },
+      {
+        label: 'Estadísticas',
+        routerLink: '/'.concat(PageUrlName.dashboard),
+      },
     ];
   }
 }
