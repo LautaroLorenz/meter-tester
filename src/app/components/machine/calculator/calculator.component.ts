@@ -19,6 +19,7 @@ import { CommandResultResponse } from '../../../models/business/interafces/stand
 })
 export class CalculatorComponent extends MachineDeviceComponent {
     @Input() resultDecimalsQuantity!: number;
+    @Input() visibility: 'visible' | 'hidden' = 'visible';
 
     override readonly device = Devices.CAL;
 
