@@ -82,8 +82,8 @@ exports.default = {
         serialPort.pipe(parser);
     },
     createSearialPort: () => __awaiter(void 0, void 0, void 0, function* () {
-        const PRODUCT_ID = ''; // TODO
-        const VENDOR_ID = ''; // TODO
+        const PRODUCT_ID = '7523'; // TODO
+        const VENDOR_ID = '1a86'; // TODO
         const ports = yield serialport_1.SerialPort.list();
         const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
         if (!port) {
@@ -91,6 +91,32 @@ exports.default = {
         }
         return new serialport_1.SerialPort({ path: port.path, baudRate: 9600 });
     }),
+    observeSoftwareWrite: (observable) => {
+        observable.subscribe((command) => __awaiter(void 0, void 0, void 0, function* () {
+            // escribir por el puerto USB
+            const buffer = Buffer.from(command, 'ascii');
+            // const checksum = getChecksumByte(buffer);
+            // const checksumBuffer = decimalChecksumToBuffer(checksum);
+            // const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
+            // TODO esta linea no va
+            // FIXME arreglar la maquina virtual cunado escribo el comando
+            const commandBuffer = buffer;
+            const coludBeSent = yield new Promise((resolve) => {
+                serialPort.write(commandBuffer, (err) => {
+                    if (err !== null && err !== undefined) {
+                        console.error('No se pudo enviar el comando', err);
+                        resolve(false);
+                    }
+                });
+                serialPort.drain((err) => {
+                    if (err !== null && err !== undefined) {
+                        console.error('No se pudo esperar a que se envie el comando', err);
+                    }
+                    resolve(err === null || err === undefined);
+                });
+            });
+        }));
+    },
     onSoftwareWrite$: _onSoftwareWrite$.asObservable()
 };
 //# sourceMappingURL=machine.js.map

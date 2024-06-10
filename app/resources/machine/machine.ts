@@ -1,7 +1,7 @@
 import { WebContents, ipcMain } from 'electron';
 import { SerialPort, DelimiterParser } from 'serialport';
 import { BindingInterface } from '@serialport/bindings-interface';
-import { BehaviorSubject, Subject, filter, firstValueFrom, from, tap, timeout } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter, firstValueFrom, from, tap, timeout } from 'rxjs';
 import { SerialPortStream } from '@serialport/stream';
 import { CommandDirector } from './command-director';
 
@@ -87,14 +87,40 @@ export default {
         serialPort.pipe(parser);
     },
     createSearialPort: async () => {
-        const PRODUCT_ID = ''; // TODO
-        const VENDOR_ID = ''; // TODO
+        const PRODUCT_ID = '7523'; // TODO
+        const VENDOR_ID = '1a86'; // TODO
         const ports = await SerialPort.list();
         const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
         if (!port) {
             throw new Error('No se pudo abrir el puerto USB');
         }
         return new SerialPort({ path: port.path, baudRate: 9600 });
+    },
+    observeSoftwareWrite: (observable: Observable<string>) => {
+        observable.subscribe(async (command) => {
+            // escribir por el puerto USB
+            const buffer = Buffer.from(command, 'ascii');
+            // const checksum = getChecksumByte(buffer);
+            // const checksumBuffer = decimalChecksumToBuffer(checksum);
+            // const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
+            // TODO esta linea no va
+            // FIXME arreglar la maquina virtual cunado escribo el comando
+            const commandBuffer = buffer;
+            const coludBeSent = await new Promise((resolve) => {
+                serialPort.write(commandBuffer, (err) => {
+                    if (err !== null && err !== undefined) {
+                        console.error('No se pudo enviar el comando', err);
+                        resolve(false);
+                    }
+                });
+                serialPort.drain((err) => {
+                    if (err !== null && err !== undefined) {
+                        console.error('No se pudo esperar a que se envie el comando', err);
+                    }
+                    resolve(err === null || err === undefined);
+                });
+            });
+        });
     },
     onSoftwareWrite$: _onSoftwareWrite$.asObservable()
 };

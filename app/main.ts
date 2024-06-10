@@ -33,6 +33,7 @@ if (environment.virtualMachine) {
     machine.setSerialPort(virtualMachine.getMockSerialPort());
 } else {
     machine.createSearialPort().then((serialPort) => {
+        machine.observeSoftwareWrite(machine.onSoftwareWrite$);
         machine.setSerialPort(serialPort);
     });
 }

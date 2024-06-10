@@ -7,7 +7,7 @@ import {
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
-import { Observable, map, tap, from, toArray, concatMap } from 'rxjs';
+import { Observable, map, tap, from, toArray, concatMap, delay } from 'rxjs';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import {
   MeterConstantEnum,
@@ -31,6 +31,8 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
   readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
+  private readonly resultsDelayMs = 500;
+
   stop$(activeStands: ActiveStand[]): Observable<string[]> {
     const observables = activeStands.map(({ index }) => {
       const standNumber = (index + 1).toString().padStart(2, '0');
@@ -50,6 +52,26 @@ export class CalculatorComponent extends MachineDeviceComponent {
       concatMap((obs) => obs),
       toArray(),
       tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
+    );
+  }
+
+  reset$(activeStands: ActiveStand[]): Observable<string[]> {
+    const observables = activeStands.map(({ index }) => {
+      const standNumber = (index + 1).toString().padStart(2, '0');
+      const standBlock = `P${standNumber}`;
+      const command = this.buildCommand(
+        standBlock,
+        SoftwareCalculatorCommands.RESET
+      );
+      return this.write$(command, () =>
+        this.messagesService.error(
+          `Error de comunicación puesto [${standNumber}]`
+        )
+      );
+    });
+    return from(observables).pipe(
+      concatMap((obs) => obs),
+      toArray()
     );
   }
 
@@ -83,6 +105,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     });
     this.deviceStatus$.next(DeviceStatus.Working);
     return from(observables).pipe(
+      delay(this.resultsDelayMs),
       concatMap((obs) => obs),
       toArray(),
       map((responses) => this.mapTSxxResponse(responses))
@@ -105,6 +128,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     });
     this.deviceStatus$.next(DeviceStatus.Working);
     return from(observables).pipe(
+      delay(this.resultsDelayMs),
       concatMap((obs) => obs),
       toArray(),
       map((responses) => this.mapTSxxResponse(responses))

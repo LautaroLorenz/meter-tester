@@ -96,8 +96,6 @@ export class ContrastTestRunComponent
       }
       // nuevo estado de resulado
       const resultStatus =
-        // si llegó un valor diferente del actual
-        stand.getRawValue().measuredError !== result &&
         // si el modo es bloqueo de resultado
         this.stepRunMode === StepRunMode.finalResultLock
           ? ResultStatus.Locked
@@ -151,7 +149,9 @@ export class ContrastTestRunComponent
       .stop$(this.getActiveStands())
       .pipe(
         takeUntil(this.stopStep),
-        // cambia el estado de los resultados
+        // cambia el estado de los resultados en el calculador
+        switchMap(() => this.calculator.reset$(this.getActiveStands())),
+        // cambia el estado de los resultados en la pantalla
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // obtención de sultados en loop
         switchMap(() => this.getResultsLoop$())

@@ -160,7 +160,9 @@ export class BootTestRunComponent
       .stop$(this.getActiveStands())
       .pipe(
         takeUntil(this.stopStep),
-        // cambia el estado de los resultados
+        // cambia el estado de los resultados en el calculador
+        switchMap(() => this.calculator.reset$(this.getActiveStands())),
+        // cambia el estado de los resultados en la pantalla
         tap(() => this.restartResults(ResultStatus.WorkInProgress)),
         // inicializa el contador
         tap(() => {
