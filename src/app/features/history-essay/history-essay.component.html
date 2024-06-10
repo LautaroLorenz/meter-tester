@@ -1,32 +1,33 @@
-<app-page-title [title]="title" [showBack]="true" (backEvent)="exit()">
-  <ng-container toolbar-left>
-    <div class="text-xl text-700 ml-3">
-      {{ historyEssay?.run_raw?.essayName }}
-    </div>
-    <div class="text-xl text-700 ml-3">
-      {{ historyEssay?.run_raw?.startDate | date : "dd/MM/yyyy" }}
-    </div>
-  </ng-container>
+<app-page-title
+    [title]="title"
+    [showBack]="true"
+    (backEvent)="exit()">
+    <ng-container toolbar-left>
+        <div class="text-xl text-700 ml-3">
+            {{ historyEssay?.run_raw?.essayName }}
+        </div>
+        <div class="text-xl text-700 ml-3">
+            {{ historyEssay?.run_raw?.startDate | date: 'dd/MM/yyyy' }}
+        </div>
+    </ng-container>
 
-  <ng-container toolbar-right>
-    <button
-      pButton
-      pRipple
-      label="Eliminar"
-      icon="pi pi-trash"
-      class="p-button p-button-outlined p-button-danger"
-      (click)="deleteHistoryEssay()"
-    ></button>
-  </ng-container>
+    <ng-container toolbar-right>
+        <button
+            pButton
+            pRipple
+            label="Eliminar"
+            icon="pi pi-trash"
+            class="p-button p-button-outlined p-button-danger"
+            (click)="deleteHistoryEssay()"></button>
+    </ng-container>
 </app-page-title>
 
 <ng-container *ngIf="preparationStep && executionSteps">
-  <div class="report flex flex-column gap-4 align-items-center mt-4">
-    <ng-container *ngFor="let essayStep of executionSteps">
-      <app-report-step-switch
-        [essayStep]="essayStep"
-        [preparationStep]="preparationStep"
-      ></app-report-step-switch>
-    </ng-container>
-  </div>
+    <div class="report flex flex-column gap-4 align-items-center mt-4">
+        <ng-container *ngFor="let essayStep of executionSteps">
+            <app-report-step-switch
+                [essayStep]="essayStep"
+                [preparationStep]="preparationStep"></app-report-step-switch>
+        </ng-container>
+    </div>
 </ng-container>

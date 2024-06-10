@@ -6,26 +6,23 @@ import { HistoryEssayStepStand } from '../models/business/database/history_essay
 import { HistoryEssay } from '../models/business/database/history-essay.model';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class HistoryEssayService {
-  constructor(private readonly ipcService: IpcService) {}
+    constructor(private readonly ipcService: IpcService) {}
 
-  saveHistoryEssay$(
-    historyEssay: Omit<HistoryEssay, 'id' | 'foreign'>,
-    historyEssayRows: Omit<
-      HistoryEssayStepStand,
-      'id' | 'history_essay_id' | 'foreign'
-    >[]
-  ): Observable<{
-    historyEssay: HistoryEssay;
-    historyEssayRows: HistoryEssayStepStand[];
-  }> {
-    return from(
-      this.ipcService.invoke('save-history-essay', {
-        historyEssay,
-        historyEssayRows,
-      })
-    );
-  }
+    saveHistoryEssay$(
+        historyEssay: Omit<HistoryEssay, 'id' | 'foreign'>,
+        historyEssayRows: Omit<HistoryEssayStepStand, 'id' | 'history_essay_id' | 'foreign'>[]
+    ): Observable<{
+        historyEssay: HistoryEssay;
+        historyEssayRows: HistoryEssayStepStand[];
+    }> {
+        return from(
+            this.ipcService.invoke('save-history-essay', {
+                historyEssay,
+                historyEssayRows
+            })
+        );
+    }
 }

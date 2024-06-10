@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Devices } from '../enums/devices.model';
 import { MachineDeviceComponent } from './machine-device.model';
 import { DeviceService } from '../../../services/device.service';
@@ -16,449 +11,390 @@ import { DeviceStatus } from '../enums/device-status.model';
 import { CommandDirector } from './command-director.model';
 
 function buildCommand(to: Devices | string, action: string): string {
-  return `${to}${CommandDirector.DIVIDER}${action}`;
+    return `${to}${CommandDirector.DIVIDER}${action}`;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function logTimeHelper(): string {
-  const date = new Date();
-  return `Time[${date.getSeconds()}.${date.getMilliseconds()}]`;
+    const date = new Date();
+    return `Time[${date.getSeconds()}.${date.getMilliseconds()}]`;
 }
 
 @Component({
-  template: `Device One`,
-  selector: 'app-device-one',
+    template: `Device One`,
+    selector: 'app-device-one'
 })
 class DeviceOneComponent extends MachineDeviceComponent {
-  override device = Devices.CAL;
+    override device = Devices.CAL;
 }
 
 @Component({
-  template: `Device Two`,
-  selector: 'app-device-two',
+    template: `Device Two`,
+    selector: 'app-device-two'
 })
 class DeviceTwoComponent extends MachineDeviceComponent {
-  override device = Devices.PAT;
+    override device = Devices.PAT;
 }
 
 @Component({
-  template: `
-    <app-device-one #deviceOne></app-device-one>
-    <app-device-two #deviceTwo></app-device-two>
-  `,
+    template: `
+        <app-device-one #deviceOne></app-device-one>
+        <app-device-two #deviceTwo></app-device-two>
+    `
 })
 class HostComponent {
-  @ViewChild('deviceOne', { static: true })
-  deviceOne!: DeviceOneComponent;
-  @ViewChild('deviceTwo', { static: true })
-  deviceTwo!: DeviceOneComponent;
+    @ViewChild('deviceOne', { static: true })
+    deviceOne!: DeviceOneComponent;
+    @ViewChild('deviceTwo', { static: true })
+    deviceTwo!: DeviceOneComponent;
 }
 
 describe('Machine Device', () => {
-  let hostComponent: HostComponent;
-  let hostFixture: ComponentFixture<HostComponent>;
+    let hostComponent: HostComponent;
+    let hostFixture: ComponentFixture<HostComponent>;
 
-  let deviceOne: DeviceOneComponent;
-  let deviceTwo: DeviceTwoComponent;
-  let ipcService: IpcService;
-  let deviceService: DeviceService;
-  const ipcRendererSpy = jasmine.createSpyObj('ipcRenderer', ['invoke']);
-  const responseDelay = 250;
+    let deviceOne: DeviceOneComponent;
+    let deviceTwo: DeviceTwoComponent;
+    let ipcService: IpcService;
+    let deviceService: DeviceService;
+    const ipcRendererSpy = jasmine.createSpyObj('ipcRenderer', ['invoke']);
+    const responseDelay = 250;
 
-  // El loopDelay es menor que el responseDelay, de esa manera aseguramos que el software
-  // intentará enviar un nuevo comando más rápido de lo que la máquina responde. La prueba es exaustiva
-  // porque el softaware debe ser lo suficientemente robusto, como para que de alguna manera, no sobreexija
-  // a la máquina. Lo que conseguimos descartando los intentos de envio cunado hay un comando de loop encolado.
-  const loopDelay = responseDelay / 2;
+    // El loopDelay es menor que el responseDelay, de esa manera aseguramos que el software
+    // intentará enviar un nuevo comando más rápido de lo que la máquina responde. La prueba es exaustiva
+    // porque el softaware debe ser lo suficientemente robusto, como para que de alguna manera, no sobreexija
+    // a la máquina. Lo que conseguimos descartando los intentos de envio cunado hay un comando de loop encolado.
+    const loopDelay = responseDelay / 2;
 
-  // Estas son las respuetas que emite ipcMain.invoke cuando la máquina responde un comando
-  ipcRendererSpy.invoke.and.callFake((channel: string, ...args: any[]) => {
-    if (channel !== 'software-write') {
-      throw new Error('channel incorrecto');
-    }
-    const command: string = args[0].command;
-    const to = command.split(CommandDirector.DIVIDER)[0];
-    const action = command.split(CommandDirector.DIVIDER)[1];
-    const response = {
-      result: `response ${buildCommand(to, action)}`,
-    };
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(response);
-      }, responseDelay);
+    // Estas son las respuetas que emite ipcMain.invoke cuando la máquina responde un comando
+    ipcRendererSpy.invoke.and.callFake((channel: string, ...args: any[]) => {
+        if (channel !== 'software-write') {
+            throw new Error('channel incorrecto');
+        }
+        const command: string = args[0].command;
+        const to = command.split(CommandDirector.DIVIDER)[0];
+        const action = command.split(CommandDirector.DIVIDER)[1];
+        const response = {
+            result: `response ${buildCommand(to, action)}`
+        };
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(response);
+            }, responseDelay);
+        });
     });
-  });
 
-  const spyResponse = jasmine
-    .createSpy('spyResponse')
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .and.callFake((..._args: any[]) => {});
+    const spyResponse = jasmine
+        .createSpy('spyResponse')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .and.callFake((..._args: any[]) => {});
 
-  const spyCommandQueue = jasmine
-    .createSpy('spyCommandQueue')
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .and.callFake((..._args: any[]) => {});
+    const spyCommandQueue = jasmine
+        .createSpy('spyCommandQueue')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .and.callFake((..._args: any[]) => {});
 
-  beforeEach(async () => {
-    window.require = () => ({ ipcRenderer: ipcRendererSpy });
+    beforeEach(async () => {
+        window.require = () => ({ ipcRenderer: ipcRendererSpy });
 
-    await TestBed.configureTestingModule({
-      declarations: [HostComponent, DeviceOneComponent, DeviceTwoComponent],
-      providers: [DeviceService, MessagesService, MessageService, IpcService],
-    }).compileComponents();
+        await TestBed.configureTestingModule({
+            declarations: [HostComponent, DeviceOneComponent, DeviceTwoComponent],
+            providers: [DeviceService, MessagesService, MessageService, IpcService]
+        }).compileComponents();
 
-    hostFixture = TestBed.createComponent(HostComponent);
-    hostComponent = hostFixture.componentInstance;
-    hostFixture.detectChanges();
+        hostFixture = TestBed.createComponent(HostComponent);
+        hostComponent = hostFixture.componentInstance;
+        hostFixture.detectChanges();
 
-    ipcService = TestBed.inject(IpcService);
-    deviceService = TestBed.inject(DeviceService);
-    deviceOne = hostComponent.deviceOne;
-    deviceTwo = hostComponent.deviceTwo;
-  });
-
-  afterEach(() => {
-    ipcRendererSpy.invoke.calls.reset();
-    spyResponse.calls.reset();
-    spyCommandQueue.calls.reset();
-  });
-
-  it('se puede enviar un comando y esperar la respuesta', (done) => {
-    spyOn(ipcService, 'invoke$').and.returnValue(
-      of({ result: 'commmand response' }).pipe(delay(250))
-    );
-
-    deviceOne.write$('command').subscribe((response) => {
-      expect(response).toEqual('commmand response');
-      done();
+        ipcService = TestBed.inject(IpcService);
+        deviceService = TestBed.inject(DeviceService);
+        deviceOne = hostComponent.deviceOne;
+        deviceTwo = hostComponent.deviceTwo;
     });
-  });
 
-  it('se puede serializar el envio de comandos cuando se intentan enviar en paralelo', fakeAsync(() => {
-    // Spy para saber como se emiten los comandos
-    const spyIpcServiceInvoke$ = spyOn(ipcService, 'invoke$').and.callThrough();
-    const spyDeviceWrite$ = spyOn(deviceService, 'write$').and.callThrough();
+    afterEach(() => {
+        ipcRendererSpy.invoke.calls.reset();
+        spyResponse.calls.reset();
+        spyCommandQueue.calls.reset();
+    });
 
-    const commands = {
-      start: buildCommand(deviceOne.device, 'start'),
-      result: buildCommand(deviceOne.device, 'result'),
-      stop: buildCommand(deviceOne.device, 'stop'),
-    };
+    it('se puede enviar un comando y esperar la respuesta', (done) => {
+        spyOn(ipcService, 'invoke$').and.returnValue(of({ result: 'commmand response' }).pipe(delay(250)));
 
-    // Emitimos todos los comandos al mismo tiempo utilizando merge
-    merge(
-      deviceOne.write$(commands.start),
-      deviceOne.write$(commands.result),
-      deviceOne.write$(commands.stop)
-    ).subscribe(spyResponse);
+        deviceOne.write$('command').subscribe((response) => {
+            expect(response).toEqual('commmand response');
+            done();
+        });
+    });
 
-    // Comprobaremos que el operador merge realice todas las llamadas write$ en paralelo:
-    // ----------------------------------------------------------------------------------
-    // las llamadas pasan por la class MachineDevice método write$
-    expect(spyDeviceWrite$).toHaveBeenCalledTimes(3);
-    expect(spyDeviceWrite$.calls.allArgs()).toEqual([
-      [commands.start],
-      [commands.result],
-      [commands.stop],
-    ]);
-    // las llamadas pasan por el servicio deviceService método write$, agregando el channel
-    expect(spyIpcServiceInvoke$).toHaveBeenCalledTimes(3);
-    expect(spyIpcServiceInvoke$.calls.allArgs()).toEqual([
-      ['software-write', { command: commands.start }],
-      ['software-write', { command: commands.result }],
-      ['software-write', { command: commands.stop }],
-    ]);
+    it('se puede serializar el envio de comandos cuando se intentan enviar en paralelo', fakeAsync(() => {
+        // Spy para saber como se emiten los comandos
+        const spyIpcServiceInvoke$ = spyOn(ipcService, 'invoke$').and.callThrough();
+        const spyDeviceWrite$ = spyOn(deviceService, 'write$').and.callThrough();
 
-    // Comprobamos que gracias a que los comandos fueron encolados con el concatMap en deviceService
-    // a ipcRenderer.invoke le llegaran de a uno en uno, a medida que invoke resuelva las respuestas
-    // ---------------------------------------------------------------------------------------------
+        const commands = {
+            start: buildCommand(deviceOne.device, 'start'),
+            result: buildCommand(deviceOne.device, 'result'),
+            stop: buildCommand(deviceOne.device, 'stop')
+        };
 
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(1);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.start
-    );
-    expect(spyResponse.calls.all().length).toEqual(0);
-    // avanzamos el tiempo hasta que ipcRenderer.invoke resuelve la promesa con la respuesta del comando
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(1);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.start}`,
-    ]);
+        // Emitimos todos los comandos al mismo tiempo utilizando merge
+        merge(
+            deviceOne.write$(commands.start),
+            deviceOne.write$(commands.result),
+            deviceOne.write$(commands.stop)
+        ).subscribe(spyResponse);
 
-    // luego de respondido el primer comando, se procesa el segundo comando
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(2);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.result
-    );
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(2);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.result}`,
-    ]);
+        // Comprobaremos que el operador merge realice todas las llamadas write$ en paralelo:
+        // ----------------------------------------------------------------------------------
+        // las llamadas pasan por la class MachineDevice método write$
+        expect(spyDeviceWrite$).toHaveBeenCalledTimes(3);
+        expect(spyDeviceWrite$.calls.allArgs()).toEqual([[commands.start], [commands.result], [commands.stop]]);
+        // las llamadas pasan por el servicio deviceService método write$, agregando el channel
+        expect(spyIpcServiceInvoke$).toHaveBeenCalledTimes(3);
+        expect(spyIpcServiceInvoke$.calls.allArgs()).toEqual([
+            ['software-write', { command: commands.start }],
+            ['software-write', { command: commands.result }],
+            ['software-write', { command: commands.stop }]
+        ]);
 
-    // luego de respondido el segundo comando, se procesa el tercer comando
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(3);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.stop
-    );
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(3);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.stop}`,
-    ]);
-  }));
+        // Comprobamos que gracias a que los comandos fueron encolados con el concatMap en deviceService
+        // a ipcRenderer.invoke le llegaran de a uno en uno, a medida que invoke resuelva las respuestas
+        // ---------------------------------------------------------------------------------------------
 
-  it('se puede serializar el envio de comandos en la secuencia ->start->result->stop', fakeAsync(() => {
-    const commands = {
-      start: buildCommand(deviceOne.device, 'start'),
-      result: buildCommand(deviceOne.device, 'result'),
-      stop: buildCommand(deviceOne.device, 'stop'),
-    };
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(1);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.start);
+        expect(spyResponse.calls.all().length).toEqual(0);
+        // avanzamos el tiempo hasta que ipcRenderer.invoke resuelve la promesa con la respuesta del comando
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(1);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.start}`]);
 
-    // Hacemos un start y luego un stop
-    deviceTwo
-      .write$(commands.start)
-      .pipe(
-        tap(spyResponse),
-        switchMap(() => deviceTwo.write$(commands.result)),
-        tap(spyResponse),
-        switchMap(() => deviceTwo.write$(commands.stop)),
-        tap(spyResponse)
-      )
-      .subscribe();
+        // luego de respondido el primer comando, se procesa el segundo comando
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(2);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.result);
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(2);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.result}`]);
 
-    // Comprobaremos que los comandos se envian secuencialmente
-    // --------------------------------------------------------
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(1);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.start
-    );
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(1);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.start}`,
-    ]);
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(2);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.result
-    );
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(2);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.result}`,
-    ]);
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(3);
-    expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(
-      commands.stop
-    );
-    tick(responseDelay);
-    expect(spyResponse.calls.all().length).toEqual(3);
-    expect(spyResponse.calls.mostRecent().args).toEqual([
-      `response ${commands.stop}`,
-    ]);
-  }));
+        // luego de respondido el segundo comando, se procesa el tercer comando
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(3);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.stop);
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(3);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.stop}`]);
+    }));
 
-  it('se puede realizar un loop de envio de comandos', fakeAsync(() => {
-    const commands = {
-      start: buildCommand(deviceOne.device, 'start'),
-      result: buildCommand(deviceOne.device, 'result'),
-      stop: buildCommand(deviceOne.device, 'stop'),
-    };
+    it('se puede serializar el envio de comandos en la secuencia ->start->result->stop', fakeAsync(() => {
+        const commands = {
+            start: buildCommand(deviceOne.device, 'start'),
+            result: buildCommand(deviceOne.device, 'result'),
+            stop: buildCommand(deviceOne.device, 'stop')
+        };
 
-    // cola de comandos (solo lectura)
-    deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
-
-    // Generación del loop: start->[device status Working]->loopWrite(result)
-    deviceOne
-      .write$(commands.start)
-      .pipe(
-        tap(spyResponse),
-        tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Working)),
-        switchMap(() =>
-          deviceOne
-            .loopWrite$(
-              commands.result,
-              loopDelay,
-              () => deviceOne.deviceStatus$.value === DeviceStatus.Working
+        // Hacemos un start y luego un stop
+        deviceTwo
+            .write$(commands.start)
+            .pipe(
+                tap(spyResponse),
+                switchMap(() => deviceTwo.write$(commands.result)),
+                tap(spyResponse),
+                switchMap(() => deviceTwo.write$(commands.stop)),
+                tap(spyResponse)
             )
-            .pipe(tap(spyResponse))
-        )
-      )
-      .subscribe();
+            .subscribe();
 
-    // Detención del loop: stop->[device status StopInProgress]->stop loop write->[device status Connected]
-    setTimeout(() => {
-      of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
-        .pipe(
-          switchMap(() => deviceOne.write$(commands.stop)),
-          tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Stopped))
-        )
-        .subscribe(spyResponse);
-    }, responseDelay * 4);
+        // Comprobaremos que los comandos se envian secuencialmente
+        // --------------------------------------------------------
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(1);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.start);
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(1);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.start}`]);
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(2);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.result);
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(2);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.result}`]);
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(3);
+        expect(ipcRendererSpy.invoke.calls.mostRecent().args[1].command).toEqual(commands.stop);
+        tick(responseDelay);
+        expect(spyResponse.calls.all().length).toEqual(3);
+        expect(spyResponse.calls.mostRecent().args).toEqual([`response ${commands.stop}`]);
+    }));
 
-    // Comprobamos la cola de comandos a medida que avanza el tiempo:
-    // --------------------------------------------------------------
+    it('se puede realizar un loop de envio de comandos', fakeAsync(() => {
+        const commands = {
+            start: buildCommand(deviceOne.device, 'start'),
+            result: buildCommand(deviceOne.device, 'result'),
+            stop: buildCommand(deviceOne.device, 'stop')
+        };
 
-    // la cola de comandos tiene para procesar un start
-    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
-      commands.start,
-    ]);
-    // aún no llega ninguna respuesta
-    expect(spyResponse.calls.all().length).toEqual(0);
+        // cola de comandos (solo lectura)
+        deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
 
-    tick(responseDelay);
-    // la cola de comandos queda vacia
-    expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
+        // Generación del loop: start->[device status Working]->loopWrite(result)
+        deviceOne
+            .write$(commands.start)
+            .pipe(
+                tap(spyResponse),
+                tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Working)),
+                switchMap(() =>
+                    deviceOne
+                        .loopWrite$(
+                            commands.result,
+                            loopDelay,
+                            () => deviceOne.deviceStatus$.value === DeviceStatus.Working
+                        )
+                        .pipe(tap(spyResponse))
+                )
+            )
+            .subscribe();
 
-    tick(responseDelay);
-    // llega respuesta del comando anterior
-    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
-      `response ${commands.start}`
-    );
-    // (Empieza loop) ingresa en cola un nuevo comando result
-    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
-      commands.result,
-    ]);
+        // Detención del loop: stop->[device status StopInProgress]->stop loop write->[device status Connected]
+        setTimeout(() => {
+            of(deviceOne.deviceStatus$.next(DeviceStatus.StopInProgress))
+                .pipe(
+                    switchMap(() => deviceOne.write$(commands.stop)),
+                    tap(() => deviceOne.deviceStatus$.next(DeviceStatus.Stopped))
+                )
+                .subscribe(spyResponse);
+        }, responseDelay * 4);
 
-    tick(responseDelay);
-    // llega respuesta del comando anterior
-    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
-      `response ${commands.result}`
-    );
-    // (Ciclo loop) ingresa en cola un nuevo comando result
-    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
-      commands.result,
-    ]);
+        // Comprobamos la cola de comandos a medida que avanza el tiempo:
+        // --------------------------------------------------------------
 
-    tick(responseDelay);
-    // llega respuesta del comando anterior
-    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
-      `response ${commands.result}`
-    );
-    // Ingresa en cola un stop
-    // (Ciclo loop) ingresa en cola un nuevo comando result
-    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([
-      commands.stop,
-      commands.result,
-    ]);
+        // la cola de comandos tiene para procesar un start
+        expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.start]);
+        // aún no llega ninguna respuesta
+        expect(spyResponse.calls.all().length).toEqual(0);
 
-    tick(responseDelay);
-    // llega respuesta del comando anterior
-    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
-      `response ${commands.result}`
-    );
-    // Se detuvo el loop, así que solo queda por procesar el stop
-    expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.stop]);
+        tick(responseDelay);
+        // la cola de comandos queda vacia
+        expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
 
-    tick(responseDelay);
-    expect(spyResponse.calls.mostRecent().args[0]).toEqual(
-      `response ${commands.stop}`
-    );
-    // la cola de comandos queda vacía
-    expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
+        tick(responseDelay);
+        // llega respuesta del comando anterior
+        expect(spyResponse.calls.mostRecent().args[0]).toEqual(`response ${commands.start}`);
+        // (Empieza loop) ingresa en cola un nuevo comando result
+        expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.result]);
 
-    // la cantidad de comandos enviados y respuestas recibidas coincide:
-    expect(ipcRendererSpy.invoke.calls.all().length).toEqual(
-      spyResponse.calls.all().length
-    );
-  }));
+        tick(responseDelay);
+        // llega respuesta del comando anterior
+        expect(spyResponse.calls.mostRecent().args[0]).toEqual(`response ${commands.result}`);
+        // (Ciclo loop) ingresa en cola un nuevo comando result
+        expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.result]);
 
-  it('dos dispositivos compiten por enviar comandos cada uno con su respectivo loop', fakeAsync(() => {
-    const deviceOneCommands = {
-      result: buildCommand(deviceOne.device, 'result'),
-      middle: buildCommand(deviceOne.device, 'middle'),
-    };
-    const deviceTwoCommands = {
-      result: buildCommand(deviceTwo.device, 'result'),
-      middle: buildCommand(deviceTwo.device, 'middle'),
-    };
+        tick(responseDelay);
+        // llega respuesta del comando anterior
+        expect(spyResponse.calls.mostRecent().args[0]).toEqual(`response ${commands.result}`);
+        // Ingresa en cola un stop
+        // (Ciclo loop) ingresa en cola un nuevo comando result
+        expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.stop, commands.result]);
 
-    // cola de comandos (solo lectura)
-    deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
+        tick(responseDelay);
+        // llega respuesta del comando anterior
+        expect(spyResponse.calls.mostRecent().args[0]).toEqual(`response ${commands.result}`);
+        // Se detuvo el loop, así que solo queda por procesar el stop
+        expect(spyCommandQueue.calls.mostRecent().args[0]).toEqual([commands.stop]);
 
-    // Control de loops
-    const runDeviceOneLoop$ = new BehaviorSubject<boolean>(true);
-    const runDeviceTwoLoop$ = new BehaviorSubject<boolean>(true);
+        tick(responseDelay);
+        expect(spyResponse.calls.mostRecent().args[0]).toEqual(`response ${commands.stop}`);
+        // la cola de comandos queda vacía
+        expect(spyCommandQueue.calls.mostRecent().args[0].length).toEqual(0);
 
-    // Inicialización de loops
-    deviceOne
-      .loopWrite$(
-        deviceOneCommands.result,
-        // hacemos que un loop sea el doble de rápido que el otro con un delay de la mitad
-        // aún así ambos deberían poder procesar sus comandos
-        loopDelay / 2,
-        () => runDeviceOneLoop$.value
-      )
-      .pipe(
-        tap(spyResponse),
-        tap((response) =>
-          // verificamos que por el loop one llegan las respuestas del device one
-          expect(response).toEqual(`response ${deviceOneCommands.result}`)
-        )
-      )
-      .subscribe();
+        // la cantidad de comandos enviados y respuestas recibidas coincide:
+        expect(ipcRendererSpy.invoke.calls.all().length).toEqual(spyResponse.calls.all().length);
+    }));
 
-    deviceTwo
-      .loopWrite$(
-        deviceTwoCommands.result,
-        loopDelay,
-        () => runDeviceTwoLoop$.value
-      )
-      .pipe(
-        tap(spyResponse),
-        tap((response) =>
-          // verificamos que por el loop two llegan las respuestas del device two
-          expect(response).toEqual(`response ${deviceTwoCommands.result}`)
-        )
-      )
-      .subscribe();
+    it('dos dispositivos compiten por enviar comandos cada uno con su respectivo loop', fakeAsync(() => {
+        const deviceOneCommands = {
+            result: buildCommand(deviceOne.device, 'result'),
+            middle: buildCommand(deviceOne.device, 'middle')
+        };
+        const deviceTwoCommands = {
+            result: buildCommand(deviceTwo.device, 'result'),
+            middle: buildCommand(deviceTwo.device, 'middle')
+        };
 
-    // en medio del procesamiento de loops incertamos un comando directo en la cola, para ver si se procesa
-    setTimeout(() => {
-      deviceOne
-        .write$(deviceOneCommands.middle)
-        .pipe(tap(spyResponse))
-        .subscribe((response) =>
-          expect(response).toEqual(`response ${deviceOneCommands.middle}`)
-        );
+        // cola de comandos (solo lectura)
+        deviceService.readQueueCommands$.pipe(tap(spyCommandQueue)).subscribe();
 
-      deviceTwo
-        .write$(deviceTwoCommands.middle)
-        .pipe(tap(spyResponse))
-        .subscribe((response) =>
-          expect(response).toEqual(`response ${deviceTwoCommands.middle}`)
-        );
-    }, responseDelay * 4);
+        // Control de loops
+        const runDeviceOneLoop$ = new BehaviorSubject<boolean>(true);
+        const runDeviceTwoLoop$ = new BehaviorSubject<boolean>(true);
 
-    // Detenemos primero un loop y luego el otro
-    setTimeout(() => {
-      runDeviceOneLoop$.next(false);
-      setTimeout(() => {
-        runDeviceTwoLoop$.next(false);
-      }, responseDelay * 2);
-    }, responseDelay * 3);
+        // Inicialización de loops
+        deviceOne
+            .loopWrite$(
+                deviceOneCommands.result,
+                // hacemos que un loop sea el doble de rápido que el otro con un delay de la mitad
+                // aún así ambos deberían poder procesar sus comandos
+                loopDelay / 2,
+                () => runDeviceOneLoop$.value
+            )
+            .pipe(
+                tap(spyResponse),
+                tap((response) =>
+                    // verificamos que por el loop one llegan las respuestas del device one
+                    expect(response).toEqual(`response ${deviceOneCommands.result}`)
+                )
+            )
+            .subscribe();
 
-    tick(responseDelay * 10);
+        deviceTwo
+            .loopWrite$(deviceTwoCommands.result, loopDelay, () => runDeviceTwoLoop$.value)
+            .pipe(
+                tap(spyResponse),
+                tap((response) =>
+                    // verificamos que por el loop two llegan las respuestas del device two
+                    expect(response).toEqual(`response ${deviceTwoCommands.result}`)
+                )
+            )
+            .subscribe();
 
-    // Comprobamos que apesar de que un loop es el doble de rapido que el otro
-    // ambos dispositivos pudieron enviar sus comandos "result", ademas
-    // en el medio de los loops ambos dispotivios enviaron un comando "middle" fuera del loop
-    expect(spyResponse.calls.allArgs()).toEqual([
-      [`response ${deviceOneCommands.result}`],
-      [`response ${deviceTwoCommands.result}`],
-      [`response ${deviceOneCommands.result}`],
-      [`response ${deviceTwoCommands.result}`],
-      [`response ${deviceOneCommands.middle}`],
-      [`response ${deviceTwoCommands.middle}`],
-      [`response ${deviceTwoCommands.result}`],
-    ]);
-  }));
+        // en medio del procesamiento de loops incertamos un comando directo en la cola, para ver si se procesa
+        setTimeout(() => {
+            deviceOne
+                .write$(deviceOneCommands.middle)
+                .pipe(tap(spyResponse))
+                .subscribe((response) => expect(response).toEqual(`response ${deviceOneCommands.middle}`));
 
-  // it('' => {
-  // TODO probar que pasa con el deviceStatus y el write$ y el loopWrite$ si invoke da error
-  // })
+            deviceTwo
+                .write$(deviceTwoCommands.middle)
+                .pipe(tap(spyResponse))
+                .subscribe((response) => expect(response).toEqual(`response ${deviceTwoCommands.middle}`));
+        }, responseDelay * 4);
 
-  // it('' => {
-  // TODO probar la diferencia entre stop whileFn vs stop en el subcrive con takeUntil y takeWhile
-  // })
+        // Detenemos primero un loop y luego el otro
+        setTimeout(() => {
+            runDeviceOneLoop$.next(false);
+            setTimeout(() => {
+                runDeviceTwoLoop$.next(false);
+            }, responseDelay * 2);
+        }, responseDelay * 3);
+
+        tick(responseDelay * 10);
+
+        // Comprobamos que apesar de que un loop es el doble de rapido que el otro
+        // ambos dispositivos pudieron enviar sus comandos "result", ademas
+        // en el medio de los loops ambos dispotivios enviaron un comando "middle" fuera del loop
+        expect(spyResponse.calls.allArgs()).toEqual([
+            [`response ${deviceOneCommands.result}`],
+            [`response ${deviceTwoCommands.result}`],
+            [`response ${deviceOneCommands.result}`],
+            [`response ${deviceTwoCommands.result}`],
+            [`response ${deviceOneCommands.middle}`],
+            [`response ${deviceTwoCommands.middle}`],
+            [`response ${deviceTwoCommands.result}`]
+        ]);
+    }));
+
+    // it('' => {
+    // TODO probar que pasa con el deviceStatus y el write$ y el loopWrite$ si invoke da error
+    // })
+
+    // it('' => {
+    // TODO probar la diferencia entre stop whileFn vs stop en el subcrive con takeUntil y takeWhile
+    // })
 });

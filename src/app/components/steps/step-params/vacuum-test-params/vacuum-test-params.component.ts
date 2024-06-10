@@ -3,11 +3,11 @@ import { VacuumTestEssayStep } from '../../../../models/business/interafces/step
 import { StepParamsComponent } from '../../../../models/business/class/step-params-component.model';
 
 @Component({
-  selector: 'app-vacuum-test-params',
-  templateUrl: './vacuum-test-params.component.html',
-  styleUrls: ['./vacuum-test-params.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-vacuum-test-params',
+    templateUrl: './vacuum-test-params.component.html',
+    styleUrls: ['./vacuum-test-params.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VacuumTestParamsComponent extends StepParamsComponent<VacuumTestEssayStep> {
-  @Input() showTexts!: boolean;
+    @Input() showTexts!: boolean;
 }

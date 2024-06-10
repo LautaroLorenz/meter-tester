@@ -1,59 +1,54 @@
 <!-- Parámetros del paso -->
 <app-contrast-test-params
-  [currentStep]="currentStep"
-  [toggleable]="true"
-  [showTexts]="true"
-></app-contrast-test-params>
+    [currentStep]="currentStep"
+    [toggleable]="true"
+    [showTexts]="true"></app-contrast-test-params>
 
 <!-- Generador manual -->
 <div class="mt-4">
-  <app-manual-generator
-    (adjustmentDone)="onManualGeneratorAdjusted()"
-  ></app-manual-generator>
+    <app-manual-generator (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
 </div>
 
 <!-- Execution mode -->
 <div class="mt-4 execution-mode-panel">
-  <p-panel header="Ejecución">
-    <p-selectButton
-      [options]="StepRunModes"
-      [(ngModel)]="stepRunMode"
-      optionLabel="label"
-      optionValue="value"
-    ></p-selectButton>
-  </p-panel>
+    <p-panel header="Ejecución">
+        <p-selectButton
+            [options]="StepRunModes"
+            [(ngModel)]="stepRunMode"
+            optionLabel="label"
+            optionValue="value"></p-selectButton>
+    </p-panel>
 </div>
 
 <!-- Calculador -->
 <div class="mt-4">
-  <app-calculator #calculator [resultDecimalsQuantity]="2">
-    <app-stands-result
-      [preparationStep]="preparationStep"
-      [results]="currentStep.standResults"
-      [resultsColumn]="resultsColumn"
-      [stepMeterConstant]="currentStep.form_control_raw.meterConstant"
-    ></app-stands-result>
-  </app-calculator>
+    <app-calculator
+        #calculator
+        [resultDecimalsQuantity]="2">
+        <app-stands-result
+            [preparationStep]="preparationStep"
+            [results]="currentStep.standResults"
+            [resultsColumn]="resultsColumn"
+            [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+    </app-calculator>
 </div>
 
 <!-- Patrón -->
 <div class="mt-4">
-  <app-pattern #pattern></app-pattern>
+    <app-pattern #pattern></app-pattern>
 </div>
 
 <!-- Actions -->
 <div class="flex justify-content-end mt-4 mb-8 gap-3">
-  <p-button
-    label="Reintentar"
-    [outlined]="true"
-    [disabled]="!canContinue"
-    (click)="restart()"
-  ></p-button>
+    <p-button
+        label="Reintentar"
+        [outlined]="true"
+        [disabled]="!canContinue"
+        (click)="restart()"></p-button>
 
-  <p-button
-    label="Continuar"
-    [outlined]="false"
-    [disabled]="!canContinue"
-    (click)="stepExecutionDone(this.currentStep)"
-  ></p-button>
+    <p-button
+        label="Continuar"
+        [outlined]="false"
+        [disabled]="!canContinue"
+        (click)="stepExecutionDone(this.currentStep)"></p-button>
 </div>

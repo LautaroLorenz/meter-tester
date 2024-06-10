@@ -1,19 +1,16 @@
 <ng-container [ngSwitch]="essayStep.step_id">
-  <app-vacuum-test-pdf-report
-    *ngSwitchCase="Steps.VacuumTest"
-    [essayStep]="essayStep | stepAs"
-    [preparationStep]="preparationStep"
-  ></app-vacuum-test-pdf-report>
+    <app-vacuum-test-pdf-report
+        *ngSwitchCase="Steps.VacuumTest"
+        [essayStep]="essayStep | stepAs"
+        [preparationStep]="preparationStep"></app-vacuum-test-pdf-report>
 
-  <app-boot-test-pdf-report
-    *ngSwitchCase="Steps.BootTest"
-    [essayStep]="essayStep | stepAs"
-    [preparationStep]="preparationStep"
-  ></app-boot-test-pdf-report>
+    <app-boot-test-pdf-report
+        *ngSwitchCase="Steps.BootTest"
+        [essayStep]="essayStep | stepAs"
+        [preparationStep]="preparationStep"></app-boot-test-pdf-report>
 
-  <app-contrast-test-pdf-report
-    *ngSwitchCase="Steps.ContrastTest"
-    [essayStep]="essayStep | stepAs"
-    [preparationStep]="preparationStep"
-  ></app-contrast-test-pdf-report>
+    <app-contrast-test-pdf-report
+        *ngSwitchCase="Steps.ContrastTest"
+        [essayStep]="essayStep | stepAs"
+        [preparationStep]="preparationStep"></app-contrast-test-pdf-report>
 </ng-container>

@@ -1,12 +1,12 @@
 import { DbForeignKey, DbTableContext } from '../../core/database.model';
 
 export interface EssayTemplate extends DbForeignKey {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
 }
 
 export const EssayTemplateDbTableContext: DbTableContext = {
-  tableName: 'essay_templates',
-  rawProperties: [],
-  foreignTables: [],
+    tableName: 'essay_templates',
+    rawProperties: [],
+    foreignTables: []
 };

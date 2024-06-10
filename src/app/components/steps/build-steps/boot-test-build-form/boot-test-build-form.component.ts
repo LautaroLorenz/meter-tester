@@ -6,23 +6,19 @@ import { StepBuildFormComponent } from '../../../../models/business/class/step-b
 import { MeterConstants } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
-  selector: 'app-boot-test-build-form',
-  templateUrl: './boot-test-build-form.component.html',
-  styleUrls: ['./boot-test-build-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-boot-test-build-form',
+    templateUrl: './boot-test-build-form.component.html',
+    styleUrls: ['./boot-test-build-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestStep> {
-  readonly MeterConstants = MeterConstants;
+    readonly MeterConstants = MeterConstants;
 
-  override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
-    return new BootTestFormBuilder().build(fb)
-      .form as AbstractFormGroup<BootTestStep>;
-  }
+    override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
+        return new BootTestFormBuilder().build(fb).form as AbstractFormGroup<BootTestStep>;
+    }
 
-  override buildVerificationForm(
-    fb: FormBuilder
-  ): AbstractFormGroup<BootTestStep> {
-    return new BootTestFormBuilder().build(fb).withVerificationProps()
-      .form as AbstractFormGroup<BootTestStep>;
-  }
+    override buildVerificationForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
+        return new BootTestFormBuilder().build(fb).withVerificationProps().form as AbstractFormGroup<BootTestStep>;
+    }
 }

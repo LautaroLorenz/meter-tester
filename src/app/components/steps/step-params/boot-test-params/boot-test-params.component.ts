@@ -3,11 +3,11 @@ import { StepParamsComponent } from '../../../../models/business/class/step-para
 import { BootTestEssayStep } from '../../../../models/business/interafces/steps/boot-test-step.model';
 
 @Component({
-  selector: 'app-boot-test-params',
-  templateUrl: './boot-test-params.component.html',
-  styleUrls: ['./boot-test-params.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-boot-test-params',
+    templateUrl: './boot-test-params.component.html',
+    styleUrls: ['./boot-test-params.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BootTestParamsComponent extends StepParamsComponent<BootTestEssayStep> {
-  @Input() showTexts!: boolean;
+    @Input() showTexts!: boolean;
 }

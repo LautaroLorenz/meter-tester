@@ -1,12 +1,13 @@
 <app-await-user-confirm
-  headerText="Generador"
-  confirmButtonText="Generador ajustado"
-  confirmButtonIcon="pi-wrench"
-  afterConfirmationChipText="Ajuste realizado"
-  afterConfirmationChipIcon="pi-check"
-  (userConfirm)="adjustmentDone.emit()"
->
-  <p messageTemplate class="m-0">
-    Ajuste el generador manualmente, para poder continuar
-  </p>
+    headerText="Generador"
+    confirmButtonText="Generador ajustado"
+    confirmButtonIcon="pi-wrench"
+    afterConfirmationChipText="Ajuste realizado"
+    afterConfirmationChipIcon="pi-check"
+    (userConfirm)="adjustmentDone.emit()">
+    <p
+        messageTemplate
+        class="m-0">
+        Ajuste el generador manualmente, para poder continuar
+    </p>
 </app-await-user-confirm>

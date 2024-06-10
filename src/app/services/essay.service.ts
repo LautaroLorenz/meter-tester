@@ -6,21 +6,21 @@ import { EssayTemplateStep } from '../models/business/database/essay-template-st
 import { EssayTemplate } from '../models/business/database/essay-template.model';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class EssayService {
-  constructor(private readonly ipcService: IpcService) {}
+    constructor(private readonly ipcService: IpcService) {}
 
-  saveEssayTemplate$(
-    essayTemplate: EssayTemplate,
-    essayTemplateSteps: EssayTemplateStep[]
-  ): Observable<{
-    essayTemplate: EssayTemplate;
-    essayTemplateSteps: EssayTemplateStep[];
-  }> {
-    return this.ipcService.invoke$('save-essay-template', {
-      essayTemplate,
-      essayTemplateSteps,
-    });
-  }
+    saveEssayTemplate$(
+        essayTemplate: EssayTemplate,
+        essayTemplateSteps: EssayTemplateStep[]
+    ): Observable<{
+        essayTemplate: EssayTemplate;
+        essayTemplateSteps: EssayTemplateStep[];
+    }> {
+        return this.ipcService.invoke$('save-essay-template', {
+            essayTemplate,
+            essayTemplateSteps
+        });
+    }
 }

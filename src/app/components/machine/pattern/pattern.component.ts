@@ -7,36 +7,36 @@ import { CommandDirector } from '../../../models/business/class/command-director
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 
 @Component({
-  selector: 'app-pattern',
-  templateUrl: './pattern.component.html',
-  styleUrls: ['./pattern.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-pattern',
+    templateUrl: './pattern.component.html',
+    styleUrls: ['./pattern.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PatternComponent extends MachineDeviceComponent {
-  override readonly device = Devices.PAT;
+    override readonly device = Devices.PAT;
 
-  readonly lastStatus$ = new ReplaySubject<PatternStatus>(1);
+    readonly lastStatus$ = new ReplaySubject<PatternStatus>(1);
 
-  constant$(stepMeterConstant: MeterConstantEnum): Observable<PatternStatus> {
-    const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
-    return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
-      map((response) => this.mapConstantResponse(response)),
-      tap((patternStatus) => this.lastStatus$.next(patternStatus))
-    );
-  }
-
-  private mapConstantResponse(command: string): PatternStatus {
-    const blocks = CommandDirector.getBlocks(command);
-    const constant = Number(blocks[3]);
-    return { constant };
-  }
-
-  private getStepConstantBlock(stepMeterConstant: MeterConstantEnum): string {
-    switch (stepMeterConstant) {
-      case MeterConstantEnum.Active:
-        return 'A';
-      case MeterConstantEnum.Reactive:
-        return 'R';
+    constant$(stepMeterConstant: MeterConstantEnum): Observable<PatternStatus> {
+        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
+        return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
+            map((response) => this.mapConstantResponse(response)),
+            tap((patternStatus) => this.lastStatus$.next(patternStatus))
+        );
     }
-  }
+
+    private mapConstantResponse(command: string): PatternStatus {
+        const blocks = CommandDirector.getBlocks(command);
+        const constant = Number(blocks[3]);
+        return { constant };
+    }
+
+    private getStepConstantBlock(stepMeterConstant: MeterConstantEnum): string {
+        switch (stepMeterConstant) {
+            case MeterConstantEnum.Active:
+                return 'A';
+            case MeterConstantEnum.Reactive:
+                return 'R';
+        }
+    }
 }

@@ -1,4 +1,4 @@
 export interface HelpText {
-  title: string;
-  message: string;
+    title: string;
+    message: string;
 }

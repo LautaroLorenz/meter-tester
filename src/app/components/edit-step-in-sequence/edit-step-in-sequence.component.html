@@ -1,58 +1,51 @@
 <p-dialog
-  [(visible)]="dialogOpened"
-  [style]="{ minWidth: '800px', width: '80vw', maxWidth: '1000px', }"
-  [modal]="true"
-  styleClass="p-fluid"
-  (onHide)="dialogHide.emit()"
->
-  <ng-template pTemplate="header">
-    <ng-container *ngIf="!!initialValue">
-      <div class="flex flex-row gap-2 align-items-center">
-        <span class="p-dialog-title">Ajustar parámetros</span>
-        <span>-</span>
-        <span class="text-xl text-700">{{
-          initialValue.foreign.step?.name
-        }}</span>
-        <app-help-text
-          *ngIf="initialValue.foreign.step"
-          [title]="HelpTextStepsMap[initialValue.foreign.step.id].title"
-          [message]="HelpTextStepsMap[initialValue.foreign.step.id].message"
-        ></app-help-text>
-      </div>
-    </ng-container>
-  </ng-template>
+    [(visible)]="dialogOpened"
+    [style]="{ minWidth: '800px', width: '80vw', maxWidth: '1000px' }"
+    [modal]="true"
+    styleClass="p-fluid"
+    (onHide)="dialogHide.emit()">
+    <ng-template pTemplate="header">
+        <ng-container *ngIf="!!initialValue">
+            <div class="flex flex-row gap-2 align-items-center">
+                <span class="p-dialog-title">Ajustar parámetros</span>
+                <span>-</span>
+                <span class="text-xl text-700">{{ initialValue.foreign.step?.name }}</span>
+                <app-help-text
+                    *ngIf="initialValue.foreign.step"
+                    [title]="HelpTextStepsMap[initialValue.foreign.step.id].title"
+                    [message]="HelpTextStepsMap[initialValue.foreign.step.id].message"></app-help-text>
+            </div>
+        </ng-container>
+    </ng-template>
 
-  <ng-template pTemplate="content">
-    <ng-container *ngIf="!!initialValue && dialogOpened">
-      <app-build-step-switch
-        [essayTemplateStep]="initialValue"
-        [isVerification]="false"
-        (formValidChange)="this.formValid = $event"
-        (formValueChange)="this.formValue = $event"
-      ></app-build-step-switch>
-    </ng-container>
-  </ng-template>
+    <ng-template pTemplate="content">
+        <ng-container *ngIf="!!initialValue && dialogOpened">
+            <app-build-step-switch
+                [essayTemplateStep]="initialValue"
+                [isVerification]="false"
+                (formValidChange)="this.formValid = $event"
+                (formValueChange)="this.formValue = $event"></app-build-step-switch>
+        </ng-container>
+    </ng-template>
 
-  <ng-template pTemplate="footer">
-    <div class="mt-2">
-      <button
-        pButton
-        pRipple
-        label="Cancelar"
-        icon="pi pi-times"
-        class="p-button-text p-button-outlined"
-        (click)="closeDialog()"
-      ></button>
+    <ng-template pTemplate="footer">
+        <div class="mt-2">
+            <button
+                pButton
+                pRipple
+                label="Cancelar"
+                icon="pi pi-times"
+                class="p-button-text p-button-outlined"
+                (click)="closeDialog()"></button>
 
-      <button
-        pButton
-        pRipple
-        label="Aceptar"
-        icon="pi pi-check"
-        class="p-button p-button-outlined"
-        (click)="acceptChanges()"
-        [disabled]="!formValid"
-      ></button>
-    </div>
-  </ng-template>
+            <button
+                pButton
+                pRipple
+                label="Aceptar"
+                icon="pi pi-check"
+                class="p-button p-button-outlined"
+                (click)="acceptChanges()"
+                [disabled]="!formValid"></button>
+        </div>
+    </ng-template>
 </p-dialog>

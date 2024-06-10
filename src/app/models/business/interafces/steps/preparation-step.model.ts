@@ -12,73 +12,60 @@ import { standFormGroupValidator } from '../../validators/stand-form-group-valid
 export type PreparationFormControlRaw = Stand[];
 
 export interface PreparationStep extends EssayTemplateStep {
-  step_id: Steps.Preparation;
-  form_control_raw: PreparationFormControlRaw;
+    step_id: Steps.Preparation;
+    form_control_raw: PreparationFormControlRaw;
 }
 
-export type PreparationEssayStep = PreparationStep &
-  Pick<EssayStep, 'verifiedStatus'>;
+export type PreparationEssayStep = PreparationStep & Pick<EssayStep, 'verifiedStatus'>;
 
-export class PreparationFormBuilder extends AbstractStepFormBuilder<
-  PreparationStep,
-  PreparationEssayStep
-> {
-  override build(fb: FormBuilder): PreparationFormBuilder {
-    this.fb = fb;
+export class PreparationFormBuilder extends AbstractStepFormBuilder<PreparationStep, PreparationEssayStep> {
+    override build(fb: FormBuilder): PreparationFormBuilder {
+        this.fb = fb;
 
-    this.form = fb.nonNullable.group({
-      id: undefined,
-      order: undefined,
-      essay_template_id: undefined,
-      step_id: undefined,
-      form_control_raw: fb.nonNullable.array(
-        this.buildStandsArray(APP_CONFIG.standsQuantiy)
-      ),
-      foreign: undefined,
-    }) as AbstractFormGroup<PreparationStep>;
+        this.form = fb.nonNullable.group({
+            id: undefined,
+            order: undefined,
+            essay_template_id: undefined,
+            step_id: undefined,
+            form_control_raw: fb.nonNullable.array(this.buildStandsArray(APP_CONFIG.standsQuantiy)),
+            foreign: undefined
+        }) as AbstractFormGroup<PreparationStep>;
 
-    return this;
-  }
+        return this;
+    }
 
-  override withExecutionProps(
-    this: PreparationFormBuilder
-  ): PreparationFormBuilder {
-    const typedForm = this.form as AbstractFormGroup<PreparationStep>;
+    override withExecutionProps(this: PreparationFormBuilder): PreparationFormBuilder {
+        const typedForm = this.form as AbstractFormGroup<PreparationStep>;
 
-    this.form = this.fb.nonNullable.group({
-      ...typedForm.controls,
-      verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
-    }) as AbstractFormGroup<PreparationEssayStep>;
+        this.form = this.fb.nonNullable.group({
+            ...typedForm.controls,
+            verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)]
+        }) as AbstractFormGroup<PreparationEssayStep>;
 
-    return this;
-  }
+        return this;
+    }
 
-  override withVerificationProps(
-    this: PreparationFormBuilder
-  ): PreparationFormBuilder {
-    const stands: FormArray<AbstractFormGroup<Stand>> = this.form.controls
-      .form_control_raw as FormArray;
-    stands.controls.forEach((standControl) =>
-      standControl.setValidators(standFormGroupValidator().bind(this))
-    );
+    override withVerificationProps(this: PreparationFormBuilder): PreparationFormBuilder {
+        const stands: FormArray<AbstractFormGroup<Stand>> = this.form.controls.form_control_raw as FormArray;
+        stands.controls.forEach((standControl) => standControl.setValidators(standFormGroupValidator().bind(this)));
 
-    return this;
-  }
+        return this;
+    }
 
-  // generate stand array based on APP_CONFIG variable
-  private buildStandsArray(standsQuantiy: number): AbstractFormGroup<Stand>[] {
-    return Array(standsQuantiy)
-      .fill(undefined)
-      .map(
-        () =>
-          this.fb.nonNullable.group({
-            name: undefined,
-            isActive: true,
-            meter_id: undefined,
-            serialNumber: undefined,
-            yearOfProduction: undefined,
-            foreign: undefined,
-          }) as AbstractFormGroup<Stand>
-      );
-  }
+    // generate stand array based on APP_CONFIG variable
+    private buildStandsArray(standsQuantiy: number): AbstractFormGroup<Stand>[] {
+        return Array(standsQuantiy)
+            .fill(undefined)
+            .map(
+                () =>
+                    this.fb.nonNullable.group({
+                        name: undefined,
+                        isActive: true,
+                        meter_id: undefined,
+                        serialNumber: undefined,
+                        yearOfProduction: undefined,
+                        foreign: undefined
+                    }) as AbstractFormGroup<Stand>
+            );
+    }
 }

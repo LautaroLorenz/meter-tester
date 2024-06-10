@@ -4,17 +4,17 @@ import { EssayStep } from '../../models/business/interafces/essay-step.model';
 import { EssayTemplateStep } from '../../models/business/database/essay-template-step.model';
 
 @Component({
-  selector: 'app-verify-step-in-sequence',
-  templateUrl: './verify-step-in-sequence.component.html',
-  styleUrls: ['./verify-step-in-sequence.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-verify-step-in-sequence',
+    templateUrl: './verify-step-in-sequence.component.html',
+    styleUrls: ['./verify-step-in-sequence.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VerifyStepInSequenceComponent extends EditDialogComponent<EssayStep> {
-  override afterSuperChanges(): void {
-    this.formValue = this.initialValue;
-  }
+    override afterSuperChanges(): void {
+        this.formValue = this.initialValue;
+    }
 
-  onStepValueChange(value: EssayTemplateStep): void {
-    this.formValue = value as EssayStep;
-  }
+    onStepValueChange(value: EssayTemplateStep): void {
+        this.formValue = value as EssayStep;
+    }
 }

@@ -1,67 +1,54 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommandLine } from '../../../models/business/interafces/command-line.model';
 import { CommandLineDirector } from '../../../models/business/class/command-line-director.model';
-import {
-  TC_AlignHorizontal,
-  TableColumn,
-} from '../../../models/core/table-column.model';
+import { TC_AlignHorizontal, TableColumn } from '../../../models/core/table-column.model';
 import { CommandBlockTypes } from '../../../models/business/interafces/command-block.model';
 
 @Component({
-  selector: 'app-command-line',
-  templateUrl: './command-line.component.html',
-  styleUrls: ['./command-line.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-command-line',
+    templateUrl: './command-line.component.html',
+    styleUrls: ['./command-line.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommandLineComponent {
-  @Input() commandLines!: CommandLine[];
+    @Input() commandLines!: CommandLine[];
 
-  @Output() refresh = new EventEmitter<number>();
-  @Output() send = new EventEmitter<number>();
+    @Output() refresh = new EventEmitter<number>();
+    @Output() send = new EventEmitter<number>();
 
-  readonly columns: TableColumn[] = [
-    {
-      header: 'ID',
-      field: 'id',
-      alignHorizontal: TC_AlignHorizontal.Text,
-    },
-    {
-      header: 'Comando',
-      field: 'name',
-      alignHorizontal: TC_AlignHorizontal.Text,
-    },
-    {
-      header: 'Valor',
-      field: CommandLineDirector.getValue.bind(this),
-      alignHorizontal: TC_AlignHorizontal.Text,
-      customStyles: 'word-break: break-word; font-family: monospace;',
-    },
-    {
-      /**
-       * Busca en el historial de comandos un regex que coincida con esta condición para saber si debe enviarse como respuesta
-       */
-      header: 'Condición de activación',
-      field: (commandLine: CommandLine) => {
-        if (!commandLine.enableConditions) {
-          return 'Activo por default';
+    readonly columns: TableColumn[] = [
+        {
+            header: 'ID',
+            field: 'id',
+            alignHorizontal: TC_AlignHorizontal.Text
+        },
+        {
+            header: 'Comando',
+            field: 'name',
+            alignHorizontal: TC_AlignHorizontal.Text
+        },
+        {
+            header: 'Valor',
+            field: CommandLineDirector.getValue.bind(this),
+            alignHorizontal: TC_AlignHorizontal.Text,
+            customStyles: 'word-break: break-word; font-family: monospace;'
+        },
+        {
+            /**
+             * Busca en el historial de comandos un regex que coincida con esta condición para saber si debe enviarse como respuesta
+             */
+            header: 'Condición de activación',
+            field: (commandLine: CommandLine) => {
+                if (!commandLine.enableConditions) {
+                    return 'Activo por default';
+                }
+                return commandLine.enableConditions.map(({ pattern }) => `${pattern}`).join('<br/>');
+            },
+            alignHorizontal: TC_AlignHorizontal.Text
         }
-        return commandLine.enableConditions
-          .map(({ pattern }) => `${pattern}`)
-          .join('<br/>');
-      },
-      alignHorizontal: TC_AlignHorizontal.Text,
-    },
-  ];
+    ];
 
-  isValueRefresh(commandLine: CommandLine): boolean {
-    return commandLine.blocks.some(
-      ({ type }) => type === CommandBlockTypes.Variable
-    );
-  }
+    isValueRefresh(commandLine: CommandLine): boolean {
+        return commandLine.blocks.some(({ type }) => type === CommandBlockTypes.Variable);
+    }
 }

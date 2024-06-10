@@ -5,11 +5,11 @@ import { AppModule } from './app/app.module';
 import { APP_CONFIG } from './environments/environment';
 
 if (APP_CONFIG.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
 platformBrowserDynamic()
-  .bootstrapModule(AppModule, {
-    preserveWhitespaces: false
-  })
-  .catch(err => console.error(err));
+    .bootstrapModule(AppModule, {
+        preserveWhitespaces: false
+    })
+    .catch((err) => console.error(err));

@@ -1,41 +1,39 @@
 <app-page-title [title]="title"></app-page-title>
 <ng-container *ngIf="essayTemplates$ | async as essayTemplates">
-  <app-abm
-    [dataset]="essayTemplates"
-    [totalRecords]="totalRecords"
-    [columns]="cols"
-    [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
-    (deleteEvent)="deleteEssayTemplates($event)"
-    (lazyLoad)="lazyLoad($event)"
-  >
-    <ng-container toolbar-group-right>
-      <p-button
-        label="Nuevo"
-        icon="pi pi-plus"
-        styleClass="ml-2"
-        [outlined]="true"
-        routerLink="/nuevo-template-ensayo"
-      ></p-button>
-    </ng-container>
-    <ng-template #tableColumnButtonsTemplate let-element="element">
-      <button
-        pButton
-        pRipple
-        icon="pi pi-play"
-        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-        routerLink="/ejecutar-ensayo"
-        pTooltip="Ejecutar ensayo"
-        tooltipPosition="left"
-        [queryParams]="{ id: element.id }"
-      ></button>
-      <button
-        pButton
-        pRipple
-        icon="pi pi-pencil"
-        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-        routerLink="/editar-template-ensayo"
-        [queryParams]="{ id: element.id }"
-      ></button>
-    </ng-template>
-  </app-abm>
+    <app-abm
+        [dataset]="essayTemplates"
+        [totalRecords]="totalRecords"
+        [columns]="cols"
+        [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
+        (deleteEvent)="deleteEssayTemplates($event)"
+        (lazyLoad)="lazyLoad($event)">
+        <ng-container toolbar-group-right>
+            <p-button
+                label="Nuevo"
+                icon="pi pi-plus"
+                styleClass="ml-2"
+                [outlined]="true"
+                routerLink="/nuevo-template-ensayo"></p-button>
+        </ng-container>
+        <ng-template
+            #tableColumnButtonsTemplate
+            let-element="element">
+            <button
+                pButton
+                pRipple
+                icon="pi pi-play"
+                class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+                routerLink="/ejecutar-ensayo"
+                pTooltip="Ejecutar ensayo"
+                tooltipPosition="left"
+                [queryParams]="{ id: element.id }"></button>
+            <button
+                pButton
+                pRipple
+                icon="pi pi-pencil"
+                class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+                routerLink="/editar-template-ensayo"
+                [queryParams]="{ id: element.id }"></button>
+        </ng-template>
+    </app-abm>
 </ng-container>

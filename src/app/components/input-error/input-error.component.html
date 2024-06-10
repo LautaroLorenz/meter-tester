@@ -1,33 +1,30 @@
 <ng-container *ngIf="invalid && dirty && errors">
-  <ng-container
-    *ngIf="hasError('required')"
-    [ngTemplateOutlet]="errorTemplate"
-    [ngTemplateOutletContext]="{ $implicit: 'Requerido' }"
-  ></ng-container>
-  <ng-container
-    *ngIf="hasError('max')"
-    [ngTemplateOutlet]="errorTemplate"
-    [ngTemplateOutletContext]="{ $implicit: 'Máximo ' + errors.max.max }"
-  ></ng-container>
-  <ng-container
-    *ngIf="hasError('min')"
-    [ngTemplateOutlet]="errorTemplate"
-    [ngTemplateOutletContext]="{ $implicit: 'Mínimo ' + errors.min.min }"
-  ></ng-container>
-  <ng-container
-    *ngIf="hasError('propInUse')"
-    [ngTemplateOutlet]="errorTemplate"
-    [ngTemplateOutletContext]="{ $implicit: 'Valor en uso' }"
-  ></ng-container>
-  <ng-container
-    *ngIf="hasError('standIsActive')"
-    [ngTemplateOutlet]="errorTemplate"
-    [ngTemplateOutletContext]="{
-      $implicit: 'Debes completar todos los campos'
-    }"
-  ></ng-container>
+    <ng-container
+        *ngIf="hasError('required')"
+        [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{ $implicit: 'Requerido' }"></ng-container>
+    <ng-container
+        *ngIf="hasError('max')"
+        [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{ $implicit: 'Máximo ' + errors.max.max }"></ng-container>
+    <ng-container
+        *ngIf="hasError('min')"
+        [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{ $implicit: 'Mínimo ' + errors.min.min }"></ng-container>
+    <ng-container
+        *ngIf="hasError('propInUse')"
+        [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{ $implicit: 'Valor en uso' }"></ng-container>
+    <ng-container
+        *ngIf="hasError('standIsActive')"
+        [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{
+            $implicit: 'Debes completar todos los campos',
+        }"></ng-container>
 </ng-container>
 
-<ng-template #errorTemplate let-errorMessage>
-  <small class="text-red-500">{{ errorMessage }}</small>
+<ng-template
+    #errorTemplate
+    let-errorMessage>
+    <small class="text-red-500">{{ errorMessage }}</small>
 </ng-template>

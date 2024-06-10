@@ -3,78 +3,78 @@ import { VMCommandMap } from '../../../models/business/interafces/vm-command-map
 import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import {
-  CalculatorResponseCommands,
-  PatternResponseCommands,
-  SoftwareCalculatorCommands,
-  SoftwarePatternCommands,
+    CalculatorResponseCommands,
+    PatternResponseCommands,
+    SoftwareCalculatorCommands,
+    SoftwarePatternCommands
 } from '../../../models/business/enums/commands.model';
 import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 
 @Component({
-  selector: 'app-command-map',
-  templateUrl: './command-map.component.html',
-  styleUrls: ['./command-map.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-command-map',
+    templateUrl: './command-map.component.html',
+    styleUrls: ['./command-map.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommandMapComponent {
-  readonly columns = [
-    {
-      header: 'Dispositivo',
-      field: 'deviceName',
-    },
-    {
-      header: 'Recibe comando [Regex]',
-      field: 'commandRegex',
-    },
-    {
-      header: 'Responde comando',
-      field: 'responseCommandName',
-    },
-  ];
+    readonly columns = [
+        {
+            header: 'Dispositivo',
+            field: 'deviceName'
+        },
+        {
+            header: 'Recibe comando [Regex]',
+            field: 'commandRegex'
+        },
+        {
+            header: 'Responde comando',
+            field: 'responseCommandName'
+        }
+    ];
 
-  readonly map: VMCommandMap[] = [
-    {
-      device: Devices.CAL,
-      deviceName: DeviceConstants[Devices.CAL],
-      commandRegex: SoftwareCalculatorCommands.STOP,
-      responseCommandName: CalculatorResponseCommands.ACK,
-    },
-    {
-      device: Devices.CAL,
-      deviceName: DeviceConstants[Devices.CAL],
-      commandRegex: SoftwareCalculatorCommands.RESET,
-      responseCommandName: CalculatorResponseCommands.ACK,
-    },
-    {
-      device: Devices.CAL,
-      deviceName: DeviceConstants[Devices.CAL],
-      commandRegex: SoftwareCalculatorCommands.RESULT_TS01,
-      responseCommandName: CalculatorResponseCommands.ACK,
-    },
-    {
-      device: Devices.CAL,
-      deviceName: DeviceConstants[Devices.CAL],
-      commandRegex: SoftwareCalculatorCommands.RESULT_TS02,
-      responseCommandName: CalculatorResponseCommands.ACK,
-    },
-    {
-      device: Devices.PAT,
-      deviceName: DeviceConstants[Devices.PAT],
-      commandRegex: SoftwarePatternCommands.CONSTANT_A,
-      responseCommandName: PatternResponseCommands.CONSTANT,
-    },
-    {
-      device: Devices.PAT,
-      deviceName: DeviceConstants[Devices.PAT],
-      commandRegex: SoftwarePatternCommands.CONSTANT_R,
-      responseCommandName: PatternResponseCommands.CONSTANT,
-    },
-  ];
+    readonly map: VMCommandMap[] = [
+        {
+            device: Devices.CAL,
+            deviceName: DeviceConstants[Devices.CAL],
+            commandRegex: SoftwareCalculatorCommands.STOP,
+            responseCommandName: CalculatorResponseCommands.ACK
+        },
+        {
+            device: Devices.CAL,
+            deviceName: DeviceConstants[Devices.CAL],
+            commandRegex: SoftwareCalculatorCommands.RESET,
+            responseCommandName: CalculatorResponseCommands.ACK
+        },
+        {
+            device: Devices.CAL,
+            deviceName: DeviceConstants[Devices.CAL],
+            commandRegex: SoftwareCalculatorCommands.RESULT_TS01,
+            responseCommandName: CalculatorResponseCommands.ACK
+        },
+        {
+            device: Devices.CAL,
+            deviceName: DeviceConstants[Devices.CAL],
+            commandRegex: SoftwareCalculatorCommands.RESULT_TS02,
+            responseCommandName: CalculatorResponseCommands.ACK
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.PAT],
+            commandRegex: SoftwarePatternCommands.CONSTANT_A,
+            responseCommandName: PatternResponseCommands.CONSTANT
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.PAT],
+            commandRegex: SoftwarePatternCommands.CONSTANT_R,
+            responseCommandName: PatternResponseCommands.CONSTANT
+        }
+    ];
 
-  get(command: string): VMCommandMap | undefined {
-    const deviceTo: Devices = CommandDirector.getTo(command);
-    return this.map
-      .filter(({ device }) => device === deviceTo)
-      .find(({ commandRegex }) => command.includes(commandRegex));
-  }
+    get(command: string): VMCommandMap | undefined {
+        const deviceTo: Devices = CommandDirector.getTo(command);
+        return this.map
+            .filter(({ device }) => device === deviceTo)
+            .find(({ commandRegex }) => command.includes(commandRegex));
+    }
 }
