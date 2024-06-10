@@ -54,8 +54,8 @@ exports.default = {
     register: () => {
         // envió de comando: STW -> Máquina
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
-            _onSoftwareWrite$.next(command);
             addCommandLog(command);
+            _onSoftwareWrite$.next(command);
             try {
                 const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
                     first: 6000,

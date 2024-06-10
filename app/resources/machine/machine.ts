@@ -49,8 +49,8 @@ export default {
     register: () => {
         // envió de comando: STW -> Máquina
         ipcMain.handle('software-write', async (_, { command }) => {
-            _onSoftwareWrite$.next(command);
             addCommandLog(command);
+            _onSoftwareWrite$.next(command);
 
             try {
                 const response = await firstValueFrom(

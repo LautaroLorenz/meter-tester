@@ -57,7 +57,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
                 return {
-                    id: index + 1,
+                    id: 10 + index + 1,
                     name: CalculatorResponseCommands.ACK,
                     enableConditions: [{ pattern: `P${standNumber}|RSET` }],
                     blocks: [
@@ -76,7 +76,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
                 return {
-                    id: 10 + index + 1,
+                    id: 20 + index + 1,
                     name: CalculatorResponseCommands.ACK,
                     enableConditions: [
                         {
@@ -125,7 +125,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
                 return {
-                    id: 20 + index + 1,
+                    id: 30 + index + 1,
                     name: CalculatorResponseCommands.ACK,
                     enableConditions: [
                         {
