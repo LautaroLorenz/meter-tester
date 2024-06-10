@@ -113,15 +113,17 @@ export class CalculatorComponent extends MachineDeviceComponent {
         return commands.map((command) => {
             const blocks = CommandDirector.getBlocks(command);
             const resultBlock = blocks[4];
-            let resultValue = Number(resultBlock.substring(4));
+            const resultBlockValue = resultBlock.substring(4);
+
+            // los resultados sin números no se procesan
+            if (isNaN(Number(resultBlockValue)) || resultBlockValue.trim() === '') {
+                return undefined;
+            }
+
+            let resultValue = Number(resultBlockValue);
             const resultSignal = resultBlock.substring(3, 4);
             if (resultSignal === '-') {
                 resultValue = resultValue * -1;
-            }
-
-            // los resultados sin números no se procesan
-            if (isNaN(Number(resultValue))) {
-                return undefined;
             }
 
             const decimals = Math.pow(10, this.resultDecimalsQuantity);
