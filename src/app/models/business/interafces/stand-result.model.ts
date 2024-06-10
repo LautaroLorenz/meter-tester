@@ -7,3 +7,5 @@ export interface StandResult {
 }
 
 export type StandStandResult = Stand | StandResult;
+
+export type CommandResultResponse = number | undefined;

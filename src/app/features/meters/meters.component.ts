@@ -40,7 +40,7 @@ import {
   styleUrls: ['./meters.component.scss'],
 })
 export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
-  readonly title: string = 'Administración de medidores';
+  readonly title: string = 'Administración de modelos';
   readonly cols: TableColumn<Meter>[] = [
     {
       field: 'foreign.brand.name',

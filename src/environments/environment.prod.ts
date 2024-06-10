@@ -15,4 +15,5 @@ export const APP_CONFIG: Environment = {
     contrastTestRun: false,
   },
   virtualMachine: false,
+  logsHistory: false,
 };

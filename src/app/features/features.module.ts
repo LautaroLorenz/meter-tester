@@ -16,6 +16,7 @@ import { VirtualMachineComponent } from './virtual-machine/virtual-machine.compo
 import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
 import { StaticsComponent } from './statics/statics.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
+import { CommandHistoryComponent } from './command-history/command-history.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { HistoryEssayComponent } from './history-essay/history-essay.component';
     HistoryEssayStepStandComponent,
     StaticsComponent,
     HistoryEssayComponent,
+    CommandHistoryComponent,
   ],
   imports: [
     CommonModule,

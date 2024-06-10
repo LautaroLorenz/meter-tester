@@ -68,22 +68,28 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     if (APP_CONFIG.virtualMachine) {
       void this.runEssayService.openVirtualMachine();
     }
+    if (APP_CONFIG.logsHistory) {
+      void this.runEssayService.openLogsHistory();
+    }
 
     this.runEssayService.reset();
     this.observeRoute();
     this.observeTables();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (APP_CONFIG.virtualMachine) {
       void this.runEssayService.closeVirtualMachine();
+    }
+    if (APP_CONFIG.logsHistory) {
+      void this.runEssayService.closeLogsHistory();
     }
 
     this.onDestroy.next();
     this.onDestroy.complete();
   }
 
-  exit() {
+  exit(): void {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   }
 

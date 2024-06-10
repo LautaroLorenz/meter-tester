@@ -1,173 +1,143 @@
-import {
-  Component,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil, tap } from 'rxjs';
-import { CommandHistoryComponent } from '../../components/virtual-machine/command-history/command-history.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
-  VMCommandRefreshTypeConstant,
-  VMDelayTypesConstant,
-  VMResponseTypesConstant,
+    VMCommandRefreshTypeConstant,
+    VMDelayTypesConstant,
+    VMResponseTypesConstant
 } from '../../models/business/constants/virtual-machine-contant.model';
 import {
-  CommandRefreshType,
-  VMDelayTypes,
-  VMResponseTypes,
+    CommandRefreshType,
+    VMDelayTypes,
+    VMResponseTypes
 } from '../../models/business/enums/virtual-machine-config.model';
 import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
 import { VMDeviceComponent } from '../../models/business/class/virtual-machine-device.model';
 import { Random } from '../../models/core/random.model';
 import { CommandLineDirector } from '../../models/business/class/command-line-director.model';
 import { take } from 'rxjs/operators';
+import { CommandHistoryService } from '../../services/command-history.service';
 
 @Component({
-  templateUrl: './virtual-machine.component.html',
-  styleUrls: ['./virtual-machine.component.scss'],
+    templateUrl: './virtual-machine.component.html',
+    styleUrls: ['./virtual-machine.component.scss']
 })
 export class VirtualMachineComponent implements OnInit, OnDestroy {
-  @ViewChild('commandHistory', { static: true })
-  commandHistory!: CommandHistoryComponent;
-  @ViewChild('commandMap', { static: true })
-  commandMap!: CommandMapComponent;
-  @ViewChildren(VMDeviceComponent)
-  vmDevices!: QueryList<VMDeviceComponent>;
+    @ViewChild('commandMap', { static: true })
+    commandMap!: CommandMapComponent;
+    @ViewChildren(VMDeviceComponent)
+    vmDevices!: QueryList<VMDeviceComponent>;
 
-  configForm: FormGroup;
+    configForm: FormGroup;
 
-  readonly VMResponseTypesConstant = VMResponseTypesConstant;
-  readonly VMDelayTypesConstant = VMDelayTypesConstant;
-  readonly VMCommandRefreshTypeConstant = VMCommandRefreshTypeConstant;
-  readonly VMDelayTypes = VMDelayTypes;
-  readonly VMResponseTypes = VMResponseTypes;
+    readonly VMResponseTypesConstant = VMResponseTypesConstant;
+    readonly VMDelayTypesConstant = VMDelayTypesConstant;
+    readonly VMCommandRefreshTypeConstant = VMCommandRefreshTypeConstant;
+    readonly VMDelayTypes = VMDelayTypes;
+    readonly VMResponseTypes = VMResponseTypes;
 
-  private onDestroy = new Subject<void>();
-
-  constructor(
-    private readonly virtualMachineService: VirtualMachineService,
-    private readonly fb: FormBuilder,
-    private readonly ngZone: NgZone
-  ) {
-    this.configForm = this.buildConfigForm();
-  }
-
-  ngOnInit(): void {
-    this.observeSoftware();
-    this.observeConfig();
-  }
-
-  virtualMachineWrite(command: string): void {
-    const delay = this.getSendDelayByConfig();
-    setTimeout(() => {
-      this.ngZone.run(() => {
-        this.commandHistory.add(command);
-        this.virtualMachineService
-          .write$(command + '\n')
-          .pipe(take(1))
-          .subscribe();
-      });
-    }, delay);
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy.next();
-    this.onDestroy.complete();
-  }
-
-  private observeSoftware(): void {
-    this.virtualMachineService.handleSoftwareToMachine$
-      .pipe(takeUntil(this.onDestroy))
-      .subscribe((command) => {
-        this.commandHistory.add(command);
-        if (
-          this.configForm.getRawValue().responseType ===
-          VMResponseTypes.Automatic
-        ) {
-          this.sendAutomaticResponse(command);
-        }
-      });
-  }
-
-  private buildConfigForm(): FormGroup {
-    return this.fb.group({
-      responseType: [VMResponseTypes.Automatic],
-      delayType: [VMDelayTypes.Range],
-      fixedDelay: [250],
-      minDelay: [50],
-      maxDelay: [500],
-      commandRefreshType: [CommandRefreshType.Automatic],
-    });
-  }
-
-  private sendAutomaticResponse(command: string): void {
-    const commandMap = this.commandMap.get(command);
-    if (!commandMap) {
-      return;
-    }
-    const device = this.vmDevices.find(
-      ({ device }) => device === commandMap.device
-    );
-    if (!device) {
-      return;
-    }
-    const commandLine = CommandLineDirector.findCommandLine(
-      commandMap,
-      device.commandLines,
-      this.commandHistory.history$.value
-    );
-    if (!commandLine) {
-      return;
-    }
-
-    // enviar respuesta
-    this.virtualMachineWrite(CommandLineDirector.getValue(commandLine));
-
-    // refrescar valor automáticamente
-    if (
-      this.configForm.getRawValue().commandRefreshType ===
-      CommandRefreshType.Automatic
+    private onDestroy = new Subject<void>();
+    constructor(
+        private readonly virtualMachineService: VirtualMachineService,
+        private readonly fb: FormBuilder,
+        public readonly commandHistoryService: CommandHistoryService
     ) {
-      device.refreshCommand(commandLine);
-    }
-  }
-
-  private getSendDelayByConfig(): number {
-    const { responseType, delayType, fixedDelay, minDelay, maxDelay } =
-      this.configForm.getRawValue();
-
-    if (responseType === VMResponseTypes.Manual) {
-      return 0;
+        this.configForm = this.buildConfigForm();
     }
 
-    switch (delayType as VMDelayTypes) {
-      case VMDelayTypes.Off:
-        return 0;
-      case VMDelayTypes.Fixed:
-        return fixedDelay as number;
-      case VMDelayTypes.Range:
-        return Random.range(minDelay as number, maxDelay as number);
+    ngOnInit(): void {
+        this.observeSoftware();
+        this.observeConfig();
     }
-  }
 
-  private observeConfig(): void {
-    this.configForm.valueChanges
-      .pipe(
-        takeUntil(this.onDestroy),
-        tap((value) =>
-          localStorage.setItem('virtual-machine-config', JSON.stringify(value))
-        )
-      )
-      .subscribe();
-
-    const savedConfig = localStorage.getItem('virtual-machine-config');
-    if (savedConfig) {
-      this.configForm.setValue(JSON.parse(savedConfig) as Record<string, any>);
+    virtualMachineWrite(command: string): void {
+        const delay = this.getSendDelayByConfig();
+        setTimeout(() => {
+            this.virtualMachineService
+                .write$(command + '\n')
+                .pipe(take(1))
+                .subscribe();
+        }, delay);
     }
-  }
+
+    ngOnDestroy(): void {
+        this.onDestroy.next();
+        this.onDestroy.complete();
+    }
+
+    private observeSoftware(): void {
+        this.virtualMachineService.handleSoftwareToMachine$.pipe(takeUntil(this.onDestroy)).subscribe((command) => {
+            if (this.configForm.getRawValue().responseType === VMResponseTypes.Automatic) {
+                this.sendAutomaticResponse(command);
+            }
+        });
+    }
+
+    private buildConfigForm(): FormGroup {
+        return this.fb.group({
+            responseType: [VMResponseTypes.Automatic],
+            delayType: [VMDelayTypes.Range],
+            fixedDelay: [250],
+            minDelay: [50],
+            maxDelay: [500],
+            commandRefreshType: [CommandRefreshType.Automatic]
+        });
+    }
+
+    private sendAutomaticResponse(command: string): void {
+        const commandMap = this.commandMap.get(command);
+        if (!commandMap) {
+            return;
+        }
+        const device = this.vmDevices.find(({ device }) => device === commandMap.device);
+        if (!device) {
+            return;
+        }
+
+        const commandHistory = this.commandHistoryService.history;
+        const commandLine = CommandLineDirector.findCommandLine(commandMap, device.commandLines, commandHistory);
+        if (!commandLine) {
+            return;
+        }
+
+        // enviar respuesta
+        this.virtualMachineWrite(CommandLineDirector.getValue(commandLine));
+
+        // refrescar valor automáticamente
+        if (this.configForm.getRawValue().commandRefreshType === CommandRefreshType.Automatic) {
+            device.refreshCommand(commandLine);
+        }
+    }
+
+    private getSendDelayByConfig(): number {
+        const { responseType, delayType, fixedDelay, minDelay, maxDelay } = this.configForm.getRawValue();
+
+        if (responseType === VMResponseTypes.Manual) {
+            return 0;
+        }
+
+        switch (delayType as VMDelayTypes) {
+            case VMDelayTypes.Off:
+                return 0;
+            case VMDelayTypes.Fixed:
+                return fixedDelay as number;
+            case VMDelayTypes.Range:
+                return Random.range(minDelay as number, maxDelay as number);
+        }
+    }
+
+    private observeConfig(): void {
+        this.configForm.valueChanges
+            .pipe(
+                takeUntil(this.onDestroy),
+                tap((value) => localStorage.setItem('virtual-machine-config', JSON.stringify(value)))
+            )
+            .subscribe();
+
+        const savedConfig = localStorage.getItem('virtual-machine-config');
+        if (savedConfig) {
+            this.configForm.setValue(JSON.parse(savedConfig) as Record<string, any>);
+        }
+    }
 }

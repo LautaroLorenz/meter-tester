@@ -9,134 +9,115 @@ import { MessagesService } from './services/messages.service';
 import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  isVirtualMachinePage = false;
+    isVirtualMachinePage = false;
+    isCommandHistoryPage = false;
 
-  constructor(
-    private readonly router: Router,
-    private readonly titleService: Title,
-    private readonly blockUIService: BlockUIService,
-    private readonly ipcService: IpcService,
-    private readonly messagesService: MessagesService,
-    private readonly primeNgConfig: PrimeNGConfig
-  ) {}
+    constructor(
+        private readonly router: Router,
+        private readonly titleService: Title,
+        private readonly blockUIService: BlockUIService,
+        private readonly ipcService: IpcService,
+        private readonly messagesService: MessagesService,
+        private readonly primeNgConfig: PrimeNGConfig
+    ) {}
 
-  get blocked$(): Observable<boolean> {
-    return this.blockUIService.blocked$;
-  }
+    get blocked$(): Observable<boolean> {
+        return this.blockUIService.blocked$;
+    }
 
-  ngOnInit(): void {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        take(1)
-      )
-      .subscribe((event) => {
-        this.isVirtualMachinePage =
-          (event as NavigationEnd).url === `/${PageUrlName.virtualMachine}`;
-        if (this.isVirtualMachinePage) {
-          this.titleService.setTitle('Máquina virtual');
-        }
-      });
+    ngOnInit(): void {
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                take(1)
+            )
+            .subscribe((event) => {
+                this.isVirtualMachinePage = (event as NavigationEnd).url === `/${PageUrlName.virtualMachine}`;
+                this.isCommandHistoryPage = (event as NavigationEnd).url === `/${PageUrlName.commandHistory}`;
+                if (this.isVirtualMachinePage) {
+                    this.titleService.setTitle('Máquina virtual');
+                }
+                if (this.isCommandHistoryPage) {
+                    this.titleService.setTitle('Historial de comandos');
+                }
+            });
 
-    timer(3000)
-      .pipe(
-        take(1),
-        switchMap(() =>
-          this.ipcService.invoke$('get-database-connection-status')
-        )
-      )
-      .subscribe(({ status, created, updated, updatedError, location }) => {
-        if (!status) {
-          this.messagesService.error('Error de conexión a la base de datos');
-        }
-        if (created) {
-          this.messagesService.info('Base de datos creada', true);
-        }
-        if (updated) {
-          this.messagesService.info('Base de datos actualizada', true);
-        }
-        if (updatedError) {
-          this.messagesService.error('Error actualizando base de datos');
-        }
-        if (location) {
-          // console.log(location);
-        }
-      });
+        timer(3000)
+            .pipe(
+                take(1),
+                switchMap(() => this.ipcService.invoke$('get-database-connection-status'))
+            )
+            .subscribe(({ status, created, updated, updatedError, location }) => {
+                if (!status) {
+                    this.messagesService.error('Error de conexión a la base de datos');
+                }
+                if (created) {
+                    this.messagesService.info('Base de datos creada', true);
+                }
+                if (updated) {
+                    this.messagesService.info('Base de datos actualizada', true);
+                }
+                if (updatedError) {
+                    this.messagesService.error('Error actualizando base de datos');
+                }
+                if (location) {
+                    // console.log(location);
+                }
+            });
 
-    this.primeNgConfig.setTranslation({
-      startsWith: 'Comienza con',
-      contains: 'Contiene',
-      notContains: 'No contiene',
-      endsWith: 'Termina con',
-      equals: 'Igual',
-      notEquals: 'No igual',
-      noFilter: 'Sin filtro',
-      lt: 'Menor que',
-      lte: 'Menor o igual que',
-      gt: 'Mayor que',
-      gte: 'Mayor o igual que',
-      is: 'Es',
-      isNot: 'No es',
-      before: 'Antes',
-      after: 'Después',
-      clear: 'Limpiar',
-      apply: 'Aplicar',
-      matchAll: 'Coincidir todo',
-      matchAny: 'Coincidir cualquier',
-      addRule: 'Agregar regla',
-      removeRule: 'Eliminar regla',
-      accept: 'Sí',
-      reject: 'No',
-      choose: 'Elegir',
-      upload: 'Subir',
-      cancel: 'Cancelar',
-      dayNames: [
-        'Domingo',
-        'Lunes',
-        'Martes',
-        'Miércoles',
-        'Jueves',
-        'Viernes',
-        'Sábado',
-      ],
-      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-      dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-      monthNames: [
-        'Enero',
-        'Febrero',
-        'Marzo',
-        'Abril',
-        'Mayo',
-        'Junio',
-        'Julio',
-        'Agosto',
-        'Septiembre',
-        'Octubre',
-        'Noviembre',
-        'Diciembre',
-      ],
-      monthNamesShort: [
-        'Ene',
-        'Feb',
-        'Mar',
-        'Abr',
-        'May',
-        'Jun',
-        'Jul',
-        'Ago',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dic',
-      ],
-      today: 'Hoy',
-      weekHeader: 'Semana',
-      dateFormat: 'dd/mm/yy',
-    });
-  }
+        this.primeNgConfig.setTranslation({
+            startsWith: 'Comienza con',
+            contains: 'Contiene',
+            notContains: 'No contiene',
+            endsWith: 'Termina con',
+            equals: 'Igual',
+            notEquals: 'No igual',
+            noFilter: 'Sin filtro',
+            lt: 'Menor que',
+            lte: 'Menor o igual que',
+            gt: 'Mayor que',
+            gte: 'Mayor o igual que',
+            is: 'Es',
+            isNot: 'No es',
+            before: 'Antes',
+            after: 'Después',
+            clear: 'Limpiar',
+            apply: 'Aplicar',
+            matchAll: 'Coincidir todo',
+            matchAny: 'Coincidir cualquier',
+            addRule: 'Agregar regla',
+            removeRule: 'Eliminar regla',
+            accept: 'Sí',
+            reject: 'No',
+            choose: 'Elegir',
+            upload: 'Subir',
+            cancel: 'Cancelar',
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+            monthNames: [
+                'Enero',
+                'Febrero',
+                'Marzo',
+                'Abril',
+                'Mayo',
+                'Junio',
+                'Julio',
+                'Agosto',
+                'Septiembre',
+                'Octubre',
+                'Noviembre',
+                'Diciembre'
+            ],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            today: 'Hoy',
+            weekHeader: 'Semana',
+            dateFormat: 'dd/mm/yy'
+        });
+    }
 }

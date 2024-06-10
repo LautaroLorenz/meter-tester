@@ -1,24 +1,37 @@
 <div class="container flex flex-column align-items-center p-5">
-  <div class="flex gap-5 flex-column">
-    <div #report class="report flex flex-column gap-4">
-      <ng-container *ngFor="let essayStep of executionSteps">
-        <app-report-step-switch
-          [essayStep]="essayStep"
-          [preparationStep]="preparationStep"
-        ></app-report-step-switch>
-      </ng-container>
-    </div>
+    <div class="flex gap-5 flex-column">
+        <div
+            #report
+            class="report flex flex-column gap-4">
+            <ng-container *ngFor="let essayStep of executionSteps">
+                <app-report-step-switch
+                    [essayStep]="essayStep"
+                    [preparationStep]="preparationStep"></app-report-step-switch>
+            </ng-container>
+        </div>
 
-    <div class="flex justify-content-end mb-8 gap-3">
-      <p-button [disabled]="isSaving" (click)="exit()" [outlined]="true">
-        Salir sin guardar
-      </p-button>
-      <p-button [disabled]="isDownloading" (click)="downloadPDF()">
-        Descargar PDF
-      </p-button>
-      <p-button [disabled]="isSaving" (click)="saveAndExit()">
-        Guardar y salir
-      </p-button>
+        <div class="flex justify-content-end mb-8 gap-3">
+            <p-button
+                [disabled]="isSaving"
+                (click)="exit()"
+                [outlined]="true">
+                Salir sin guardar
+            </p-button>
+            <p-button
+                [disabled]="isDownloading"
+                (click)="downloadPDF()">
+                Descargar PDF
+            </p-button>
+            <p-button
+                [disabled]="isSaving"
+                (click)="saveAndExit()">
+                Guardar y salir
+            </p-button>
+        </div>
     </div>
-  </div>
 </div>
+
+<app-calculator
+    #calculator
+    visibility="hidden">
+</app-calculator>

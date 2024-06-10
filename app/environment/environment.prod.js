@@ -5,5 +5,6 @@ exports.APP_CONFIG = {
     production: true,
     virtualMachine: false,
     inspector: false,
+    logsHistory: false,
 };
 //# sourceMappingURL=environment.prod.js.map

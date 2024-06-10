@@ -10,6 +10,7 @@ export enum SoftwareCalculatorCommands {
   RESULT_TS01 = 'TS01',
   RESULT_TS02 = 'TS02',
   STOP = 'STOP',
+  RESET = 'RSET',
 }
 
 export enum SoftwarePatternCommands {

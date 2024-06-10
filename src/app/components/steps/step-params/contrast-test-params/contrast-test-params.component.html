@@ -30,6 +30,15 @@
       <div class="grid mx-2 mt-3">
         <div class="col-4 flex flex-column gap-1 p-2">
           <span class="text-color-secondary font-medium">
+            Constante del medidor
+          </span>
+          <span class="text-color font-semibold">
+            {{ currentStep.form_control_raw.meterConstant | meterConstant }}
+          </span>
+        </div>
+        
+        <div class="col-4 flex flex-column gap-1 p-2">
+          <span class="text-color-secondary font-medium">
             Máximo error permitido
           </span>
           <span class="text-color font-semibold">
@@ -45,21 +54,6 @@
             {{ currentStep.form_control_raw.meterPulses }}
           </span>
         </div>
-        <!-- <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">
-            Máximo error permitido [%]:
-          </label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.maxAllowedError }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1">
-          <label class="text-color-secondary">Cantidad de impulsos:</label>
-          <span class="text-color">
-            {{ currentStep.form_control_raw.meterPulses }}
-          </span>
-        </div>
-        <div class="flex flex-row col-12 md:col-4 gap-1"></div> -->
       </div>
     </div>
   </div>

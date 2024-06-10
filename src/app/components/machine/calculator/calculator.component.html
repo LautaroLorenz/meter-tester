@@ -1,15 +1,15 @@
-<p-panel>
-  <ng-template pTemplate="header">
-    <div
-      class="p-panel-title flex flex-row align-items-center justify-content-between flex-1"
-    >
-      <span>Calculador</span>
-      <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
-        <app-device-status [deviceStatus]="deviceStatus"></app-device-status>
-      </ng-container>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="body">
-    <ng-content></ng-content>
-  </ng-template>
-</p-panel>
+<ng-container *ngIf="visibility === 'visible'">
+    <p-panel>
+        <ng-template pTemplate="header">
+            <div class="p-panel-title flex flex-row align-items-center justify-content-between flex-1">
+                <span>Calculador</span>
+                <ng-container *ngIf="deviceStatus$ | async as deviceStatus">
+                    <app-device-status [deviceStatus]="deviceStatus"></app-device-status>
+                </ng-container>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <ng-content></ng-content>
+        </ng-template>
+    </p-panel>
+</ng-container>
