@@ -74,6 +74,9 @@ export default {
         });
 
         ipcMain.handle('subscribe-to-history', (event) => {
+            if (logsSenders.some(({ id }) => event.sender.id === id)) {
+                return;
+            }
             logsSenders.push(event.sender);
             return;
         });
