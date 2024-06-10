@@ -1,20 +1,20 @@
 export enum VMResponseTypes {
-  Automatic,
-  Manual,
+    Automatic,
+    Manual
 }
 
 export enum VMDelayTypes {
-  Off,
-  Fixed,
-  Range,
+    Off,
+    Fixed,
+    Range
 }
 
 export enum CommandRefreshType {
-  Automatic,
-  Manual,
+    Automatic,
+    Manual
 }
 
 export interface NumberRange {
-  min: number;
-  max: number;
+    min: number;
+    max: number;
 }

@@ -3,29 +3,29 @@ import { Observable, Subject } from 'rxjs';
 import { IpcService } from './ipc.service';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class VirtualMachineService {
-  private readonly _onSoftwareToMachine$: Subject<string>;
+    private readonly _onSoftwareToMachine$: Subject<string>;
 
-  constructor(private readonly ipcService: IpcService) {
-    this._onSoftwareToMachine$ = new Subject();
-    this.observe();
-  }
+    constructor(private readonly ipcService: IpcService) {
+        this._onSoftwareToMachine$ = new Subject();
+        this.observe();
+    }
 
-  get handleSoftwareToMachine$(): Subject<string> {
-    return this._onSoftwareToMachine$;
-  }
+    get handleSoftwareToMachine$(): Subject<string> {
+        return this._onSoftwareToMachine$;
+    }
 
-  write$(command: string): Observable<void> {
-    return this.ipcService.invoke$('virtual-machine-write', {
-      command,
-    });
-  }
+    write$(command: string): Observable<void> {
+        return this.ipcService.invoke$('virtual-machine-write', {
+            command
+        });
+    }
 
-  private observe(): void {
-    this.ipcService.on('handle-software-write', (_: any, command: string) => {
-      this._onSoftwareToMachine$.next(command);
-    });
-  }
+    private observe(): void {
+        this.ipcService.on('handle-software-write', (_: any, command: string) => {
+            this._onSoftwareToMachine$.next(command);
+        });
+    }
 }

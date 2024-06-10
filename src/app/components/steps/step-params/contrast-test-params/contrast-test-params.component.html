@@ -1,60 +1,54 @@
 <p-panel [toggleable]="toggleable">
-  <ng-template pTemplate="header">
-    <div class="flex gap-2 align-items-center">
-      <ng-container *ngIf="showCompleteName">
-        <span
-          class="p-panel-title text-color-secondary"
-          [ngStyle]="{ order: 1 }"
-        >
-          {{ currentStep.foreign.step?.name }}
-        </span>
-        <span [ngStyle]="{ order: 2 }">-</span>
-      </ng-container>
-      <span class="p-panel-title" [ngStyle]="{ order: 3 }">
-        {{ currentStep.form_control_raw.name }}
-      </span>
-    </div>
-  </ng-template>
-
-  <div class="grid">
-    <div class="col-12">
-      <app-phase-table
-        [showTexts]="showTexts"
-        [phaseL1]="currentStep.form_control_raw.phaseL1"
-        [phaseL2]="currentStep.form_control_raw.phaseL2"
-        [phaseL3]="currentStep.form_control_raw.phaseL3"
-      ></app-phase-table>
-    </div>
-
-    <div class="col-12">
-      <div class="grid mx-2 mt-3">
-        <div class="col-4 flex flex-column gap-1 p-2">
-          <span class="text-color-secondary font-medium">
-            Constante del medidor
-          </span>
-          <span class="text-color font-semibold">
-            {{ currentStep.form_control_raw.meterConstant | meterConstant }}
-          </span>
+    <ng-template pTemplate="header">
+        <div class="flex gap-2 align-items-center">
+            <ng-container *ngIf="showCompleteName">
+                <span
+                    class="p-panel-title text-color-secondary"
+                    [ngStyle]="{ order: 1 }">
+                    {{ currentStep.foreign.step?.name }}
+                </span>
+                <span [ngStyle]="{ order: 2 }">-</span>
+            </ng-container>
+            <span
+                class="p-panel-title"
+                [ngStyle]="{ order: 3 }">
+                {{ currentStep.form_control_raw.name }}
+            </span>
         </div>
-        
-        <div class="col-4 flex flex-column gap-1 p-2">
-          <span class="text-color-secondary font-medium">
-            Máximo error permitido
-          </span>
-          <span class="text-color font-semibold">
-            {{ currentStep.form_control_raw.maxAllowedError }}&nbsp;[%]
-          </span>
+    </ng-template>
+
+    <div class="grid">
+        <div class="col-12">
+            <app-phase-table
+                [showTexts]="showTexts"
+                [phaseL1]="currentStep.form_control_raw.phaseL1"
+                [phaseL2]="currentStep.form_control_raw.phaseL2"
+                [phaseL3]="currentStep.form_control_raw.phaseL3"></app-phase-table>
         </div>
 
-        <div class="col-4 flex flex-column gap-1 p-2">
-          <span class="text-color-secondary font-medium">
-            Cantidad de impulsos
-          </span>
-          <span class="text-color font-semibold">
-            {{ currentStep.form_control_raw.meterPulses }}
-          </span>
+        <div class="col-12">
+            <div class="grid mx-2 mt-3">
+                <div class="col-4 flex flex-column gap-1 p-2">
+                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
+                    <span class="text-color font-semibold">
+                        {{ currentStep.form_control_raw.meterConstant | meterConstant }}
+                    </span>
+                </div>
+
+                <div class="col-4 flex flex-column gap-1 p-2">
+                    <span class="text-color-secondary font-medium"> Máximo error permitido </span>
+                    <span class="text-color font-semibold">
+                        {{ currentStep.form_control_raw.maxAllowedError }}&nbsp;[%]
+                    </span>
+                </div>
+
+                <div class="col-4 flex flex-column gap-1 p-2">
+                    <span class="text-color-secondary font-medium"> Cantidad de impulsos </span>
+                    <span class="text-color font-semibold">
+                        {{ currentStep.form_control_raw.meterPulses }}
+                    </span>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </p-panel>

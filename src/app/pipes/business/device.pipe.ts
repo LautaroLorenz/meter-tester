@@ -4,12 +4,12 @@ import { Devices } from '../../models/business/enums/devices.model';
 import { DeviceConstants } from '../../models/business/constants/devices-constant.model';
 
 @Pipe({
-  name: 'deviceConstant',
+    name: 'deviceConstant'
 })
 export class DeviceConstantPipe implements PipeTransform {
-  readonly DeviceConstants = DeviceConstants;
+    readonly DeviceConstants = DeviceConstants;
 
-  transform(value: Devices): string {
-    return DeviceConstants[value];
-  }
+    transform(value: Devices): string {
+        return DeviceConstants[value];
+    }
 }

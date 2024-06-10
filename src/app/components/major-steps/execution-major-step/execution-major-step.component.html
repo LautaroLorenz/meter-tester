@@ -1,28 +1,17 @@
 <div class="px-6 pt-6">
-  <ng-container *ngIf="currentStep$ | async as currentStep">
-    <ng-container
-      *ngIf="
-        currentStep.photocellAdjustmentStatus ===
-        PhotocellAdjustmentStatus.Pending
-      "
-    >
-      <app-photocell-adjusment-request
-        [meterConstant]="currentStep.form_control_raw.meterConstant"
-        (adjustmentDone)="photocellAdjustmentDone(currentStep.id)"
-      ></app-photocell-adjusment-request>
-    </ng-container>
+    <ng-container *ngIf="currentStep$ | async as currentStep">
+        <ng-container *ngIf="currentStep.photocellAdjustmentStatus === PhotocellAdjustmentStatus.Pending">
+            <app-photocell-adjusment-request
+                [meterConstant]="currentStep.form_control_raw.meterConstant"
+                (adjustmentDone)="photocellAdjustmentDone(currentStep.id)"></app-photocell-adjusment-request>
+        </ng-container>
 
-    <ng-container
-      *ngIf="
-        currentStep.photocellAdjustmentStatus !==
-          PhotocellAdjustmentStatus.Pending && preparationStep
-      "
-    >
-      <app-run-step-switch
-        [currentStepId]="currentStep.id"
-        [currentStep]="currentStep"
-        [preparationStep]="preparationStep"
-      ></app-run-step-switch>
+        <ng-container
+            *ngIf="currentStep.photocellAdjustmentStatus !== PhotocellAdjustmentStatus.Pending && preparationStep">
+            <app-run-step-switch
+                [currentStepId]="currentStep.id"
+                [currentStep]="currentStep"
+                [preparationStep]="preparationStep"></app-run-step-switch>
+        </ng-container>
     </ng-container>
-  </ng-container>
 </div>

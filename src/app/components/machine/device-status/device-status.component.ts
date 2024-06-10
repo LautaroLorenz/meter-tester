@@ -2,43 +2,43 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 
 @Component({
-  selector: 'app-device-status',
-  templateUrl: './device-status.component.html',
-  styleUrls: ['./device-status.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-device-status',
+    templateUrl: './device-status.component.html',
+    styleUrls: ['./device-status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeviceStatusComponent {
-  @Input() deviceStatus!: DeviceStatus;
+    @Input() deviceStatus!: DeviceStatus;
 
-  get severity(): 'success' | 'info' | 'warning' | 'danger' | null | undefined {
-    switch (this.deviceStatus) {
-      case DeviceStatus.Stopped:
-      case DeviceStatus.Unknown:
-        return null;
-      case DeviceStatus.StopInProgress:
-      case DeviceStatus.StartInProgress:
-        return 'info';
-      case DeviceStatus.Working:
-        return 'success';
-      case DeviceStatus.Error:
-        return 'danger';
+    get severity(): 'success' | 'info' | 'warning' | 'danger' | null | undefined {
+        switch (this.deviceStatus) {
+            case DeviceStatus.Stopped:
+            case DeviceStatus.Unknown:
+                return null;
+            case DeviceStatus.StopInProgress:
+            case DeviceStatus.StartInProgress:
+                return 'info';
+            case DeviceStatus.Working:
+                return 'success';
+            case DeviceStatus.Error:
+                return 'danger';
+        }
     }
-  }
 
-  get text(): string {
-    switch (this.deviceStatus) {
-      case DeviceStatus.Unknown:
-        return 'Sin verificar';
-      case DeviceStatus.Stopped:
-        return 'Detenido';
-      case DeviceStatus.Working:
-        return 'Trabajando';
-      case DeviceStatus.Error:
-        return 'Error';
-      case DeviceStatus.StopInProgress:
-        return 'Realizando stop';
-      case DeviceStatus.StartInProgress:
-        return 'Realizando start';
+    get text(): string {
+        switch (this.deviceStatus) {
+            case DeviceStatus.Unknown:
+                return 'Sin verificar';
+            case DeviceStatus.Stopped:
+                return 'Detenido';
+            case DeviceStatus.Working:
+                return 'Trabajando';
+            case DeviceStatus.Error:
+                return 'Error';
+            case DeviceStatus.StopInProgress:
+                return 'Realizando stop';
+            case DeviceStatus.StartInProgress:
+                return 'Realizando start';
+        }
     }
-  }
 }

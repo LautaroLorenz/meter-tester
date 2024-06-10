@@ -11,23 +11,23 @@ import { EnumAsOptionPipe } from './core/enum-as-option.pipe';
 import { TranslateEnumPipe } from './core/translate-enum.pipe';
 
 const AppPipes = [
-  DotStringAsObjectPipe,
-  CastAbstractControlToFormGroupPipe,
-  FormatDatePipe,
-  MeterConstantPipe,
-  DeviceConstantPipe,
-  StandMeterConstantPipe,
-  StepAsPipe,
-  EnumAsOptionPipe,
-  TranslateEnumPipe,
+    DotStringAsObjectPipe,
+    CastAbstractControlToFormGroupPipe,
+    FormatDatePipe,
+    MeterConstantPipe,
+    DeviceConstantPipe,
+    StandMeterConstantPipe,
+    StepAsPipe,
+    EnumAsOptionPipe,
+    TranslateEnumPipe
 ];
 
 const CommonPipes = [DecimalPipe, DatePipe];
 
 @NgModule({
-  declarations: [AppPipes],
-  imports: [CommonModule],
-  exports: [AppPipes, CommonPipes],
-  providers: [AppPipes, CommonPipes],
+    declarations: [AppPipes],
+    imports: [CommonModule],
+    exports: [AppPipes, CommonPipes],
+    providers: [AppPipes, CommonPipes]
 })
 export class PipesModule {}

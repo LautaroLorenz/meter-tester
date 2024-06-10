@@ -25,7 +25,10 @@ export class RunEssayService {
     private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;
     private _runEssayForm!: RunEssayForm;
 
-    constructor(private readonly fb: FormBuilder, private readonly ipcService: IpcService) {
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly ipcService: IpcService
+    ) {
         this._majorStepStatusMap$ = new ReplaySubject(1);
         this._runEssay$ = new ReplaySubject(1);
     }

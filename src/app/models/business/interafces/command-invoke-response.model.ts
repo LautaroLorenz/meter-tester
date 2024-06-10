@@ -1,4 +1,4 @@
 export interface CommandInvokeResponse {
-  result?: string;
-  error?: Error;
+    result?: string;
+    error?: Error;
 }

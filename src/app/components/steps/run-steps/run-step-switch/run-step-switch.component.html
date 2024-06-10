@@ -1,25 +1,22 @@
 <ng-container *ngIf="reloaded">
-  <ng-container [ngSwitch]="currentStep.step_id">
-    <app-vacuum-test-run
-      *ngSwitchCase="Steps.VacuumTest"
-      [currentStep]="currentStep | stepAs"
-      [preparationStep]="preparationStep | stepAs"
-    ></app-vacuum-test-run>
-  </ng-container>
+    <ng-container [ngSwitch]="currentStep.step_id">
+        <app-vacuum-test-run
+            *ngSwitchCase="Steps.VacuumTest"
+            [currentStep]="currentStep | stepAs"
+            [preparationStep]="preparationStep | stepAs"></app-vacuum-test-run>
+    </ng-container>
 
-  <ng-container [ngSwitch]="currentStep.step_id">
-    <app-boot-test-run
-      *ngSwitchCase="Steps.BootTest"
-      [currentStep]="currentStep | stepAs"
-      [preparationStep]="preparationStep | stepAs"
-    ></app-boot-test-run>
-  </ng-container>
+    <ng-container [ngSwitch]="currentStep.step_id">
+        <app-boot-test-run
+            *ngSwitchCase="Steps.BootTest"
+            [currentStep]="currentStep | stepAs"
+            [preparationStep]="preparationStep | stepAs"></app-boot-test-run>
+    </ng-container>
 
-  <ng-container [ngSwitch]="currentStep.step_id">
-    <app-contrast-test-run
-      *ngSwitchCase="Steps.ContrastTest"
-      [currentStep]="currentStep | stepAs"
-      [preparationStep]="preparationStep | stepAs"
-    ></app-contrast-test-run>
-  </ng-container>
+    <ng-container [ngSwitch]="currentStep.step_id">
+        <app-contrast-test-run
+            *ngSwitchCase="Steps.ContrastTest"
+            [currentStep]="currentStep | stepAs"
+            [preparationStep]="preparationStep | stepAs"></app-contrast-test-run>
+    </ng-container>
 </ng-container>

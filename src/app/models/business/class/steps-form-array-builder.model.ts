@@ -10,70 +10,66 @@ import { StepFormBuilder } from './step-form-builder.model';
 import { Steps } from '../enums/steps.model';
 
 export class StepsBuilder {
-  private static builder: StepFormBuilder<EssayTemplateStep, EssayStep>;
+    private static builder: StepFormBuilder<EssayTemplateStep, EssayStep>;
 
-  static buildTemplateSteps<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    formArray: FormArray<AbstractFormGroup<T>>,
-    steps: T[]
-  ): void {
-    formArray.clear();
-    steps.forEach((templateStep) =>
-      this.buildTemplateStep(fb, formArray, templateStep)
-    );
-  }
-
-  static buildTemplateStep<T extends EssayTemplateStep>(
-    fb: FormBuilder,
-    formArray: FormArray<AbstractFormGroup<T>>,
-    templateStep: T
-  ): void {
-    this.setBuilder(templateStep.step_id);
-    this.builder.build(fb);
-    this.builder.form.patchValue(templateStep);
-    formArray.push(this.builder.form as AbstractFormGroup<T>);
-  }
-
-  static buildEssaySteps<T extends EssayStep, K extends EssayTemplateStep>(
-    fb: FormBuilder,
-    formArray: FormArray<AbstractFormGroup<T>>,
-    steps: K[]
-  ): void {
-    formArray.clear();
-    steps.forEach((templateStep) =>
-      this.buildEssayStep(fb, formArray, templateStep)
-    );
-  }
-
-  static buildEssayStep<T extends EssayStep, K extends EssayTemplateStep>(
-    fb: FormBuilder,
-    formArray: FormArray<AbstractFormGroup<T>>,
-    templateStep: K
-  ): void {
-    this.setBuilder(templateStep.step_id);
-    this.builder.build(fb).withExecutionProps();
-    this.builder.form.patchValue(templateStep);
-    formArray.push(this.builder.form as AbstractFormGroup<T>);
-  }
-
-  private static setBuilder(stepType: Steps): void {
-    let builderAny: any;
-    switch (stepType) {
-      case Steps.Preparation:
-        builderAny = new PreparationFormBuilder();
-        break;
-      case Steps.BootTest:
-        builderAny = new BootTestFormBuilder();
-        break;
-      case Steps.ContrastTest:
-        builderAny = new ContrastTestFormBuilder();
-        break;
-      case Steps.VacuumTest:
-        builderAny = new VacuumTestFormBuilder();
-        break;
-      default:
-        throw new Error('Builder not found');
+    static buildTemplateSteps<T extends EssayTemplateStep>(
+        fb: FormBuilder,
+        formArray: FormArray<AbstractFormGroup<T>>,
+        steps: T[]
+    ): void {
+        formArray.clear();
+        steps.forEach((templateStep) => this.buildTemplateStep(fb, formArray, templateStep));
     }
-    this.builder = builderAny as StepFormBuilder<EssayTemplateStep, EssayStep>;
-  }
+
+    static buildTemplateStep<T extends EssayTemplateStep>(
+        fb: FormBuilder,
+        formArray: FormArray<AbstractFormGroup<T>>,
+        templateStep: T
+    ): void {
+        this.setBuilder(templateStep.step_id);
+        this.builder.build(fb);
+        this.builder.form.patchValue(templateStep);
+        formArray.push(this.builder.form as AbstractFormGroup<T>);
+    }
+
+    static buildEssaySteps<T extends EssayStep, K extends EssayTemplateStep>(
+        fb: FormBuilder,
+        formArray: FormArray<AbstractFormGroup<T>>,
+        steps: K[]
+    ): void {
+        formArray.clear();
+        steps.forEach((templateStep) => this.buildEssayStep(fb, formArray, templateStep));
+    }
+
+    static buildEssayStep<T extends EssayStep, K extends EssayTemplateStep>(
+        fb: FormBuilder,
+        formArray: FormArray<AbstractFormGroup<T>>,
+        templateStep: K
+    ): void {
+        this.setBuilder(templateStep.step_id);
+        this.builder.build(fb).withExecutionProps();
+        this.builder.form.patchValue(templateStep);
+        formArray.push(this.builder.form as AbstractFormGroup<T>);
+    }
+
+    private static setBuilder(stepType: Steps): void {
+        let builderAny: any;
+        switch (stepType) {
+            case Steps.Preparation:
+                builderAny = new PreparationFormBuilder();
+                break;
+            case Steps.BootTest:
+                builderAny = new BootTestFormBuilder();
+                break;
+            case Steps.ContrastTest:
+                builderAny = new ContrastTestFormBuilder();
+                break;
+            case Steps.VacuumTest:
+                builderAny = new VacuumTestFormBuilder();
+                break;
+            default:
+                throw new Error('Builder not found');
+        }
+        this.builder = builderAny as StepFormBuilder<EssayTemplateStep, EssayStep>;
+    }
 }

@@ -1,23 +1,21 @@
 <div
-  class="content"
-  [ngClass]="{
-    current: isCurrent,
-    done: isDone,
-    pending: isPending,
-    'head-border-top': !!bodyTemplate,
-    'head-border-all': !bodyTemplate
-  }"
->
-  <app-step-timeline-badge
-    [index]="index"
-    [status]="status"
-    size="large"
-  ></app-step-timeline-badge>
-  <span class="step-name text-sm">{{ MajorStepsMap[majorStep] }}</span>
+    class="content"
+    [ngClass]="{
+        current: isCurrent,
+        done: isDone,
+        pending: isPending,
+        'head-border-top': !!bodyTemplate,
+        'head-border-all': !bodyTemplate,
+    }">
+    <app-step-timeline-badge
+        [index]="index"
+        [status]="status"
+        size="large"></app-step-timeline-badge>
+    <span class="step-name text-sm">{{ MajorStepsMap[majorStep] }}</span>
 </div>
 
 <ng-container *ngIf="bodyTemplate && isCurrent">
-  <div class="body">
-    <ng-container *ngTemplateOutlet="bodyTemplate"></ng-container>
-  </div>
+    <div class="body">
+        <ng-container *ngTemplateOutlet="bodyTemplate"></ng-container>
+    </div>
 </ng-container>

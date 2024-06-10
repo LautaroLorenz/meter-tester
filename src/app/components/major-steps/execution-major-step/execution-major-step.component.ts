@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { ExecutionDirector } from '../../../models/business/class/execution-director.model';
 import { RunEssayService } from '../../../services/run-essay.service';
@@ -12,163 +6,141 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
-import {
-  FormatDateMode,
-  FormatDatePipe,
-} from '../../../pipes/core/fomat-date.pipe';
+import { FormatDateMode, FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
 
 @Component({
-  selector: 'app-execution-major-step',
-  templateUrl: './execution-major-step.component.html',
-  styleUrls: ['./execution-major-step.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-execution-major-step',
+    templateUrl: './execution-major-step.component.html',
+    styleUrls: ['./execution-major-step.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
-  executionSteps: EssayStep[] | undefined;
-  preparationStep: EssayStep | undefined;
-  currentStep: EssayStep | undefined;
+    executionSteps: EssayStep[] | undefined;
+    preparationStep: EssayStep | undefined;
+    currentStep: EssayStep | undefined;
 
-  readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
-  readonly onDestroy = new Subject<void>();
+    readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
+    readonly onDestroy = new Subject<void>();
 
-  private readonly formatDate = inject(FormatDatePipe);
+    private readonly formatDate = inject(FormatDatePipe);
 
-  constructor(private readonly runEssayService: RunEssayService) {}
+    constructor(private readonly runEssayService: RunEssayService) {}
 
-  get executionSteps$(): Observable<EssayStep[]> {
-    return this.runEssayService.executionSteps$.pipe(
-      tap((executionSteps) => (this.executionSteps = executionSteps))
-    );
-  }
-
-  get preparationStep$(): Observable<PreparationEssayStep> {
-    return this.runEssayService.preparationStep$.pipe(
-      tap((preparationStep) => (this.preparationStep = preparationStep))
-    ) as Observable<PreparationEssayStep>;
-  }
-
-  get currentStep$(): Observable<EssayStep | undefined> {
-    return this.runEssayService.currentStep$.pipe(
-      tap((currentStep) => (this.currentStep = currentStep))
-    );
-  }
-
-  ngOnInit(): void {
-    forkJoin({
-      executionSteps: this.executionSteps$.pipe(take(1)),
-      preparationStep: this.preparationStep$.pipe(take(1)),
-    }).subscribe(({ executionSteps, preparationStep }) => {
-      this.initExecutionsProps(executionSteps, preparationStep);
-      this.start();
-    });
-
-    this.observeExecutionSteps();
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy.next();
-    this.onDestroy.complete();
-  }
-
-  photocellAdjustmentDone(stepId: number): void {
-    this.runEssayService
-      .getEssayStep(stepId)
-      .get('photocellAdjustmentStatus')
-      ?.setValue(PhotocellAdjustmentStatus.Done);
-  }
-
-  private start(): void {
-    if (!this.executionSteps?.length) {
-      return;
+    get executionSteps$(): Observable<EssayStep[]> {
+        return this.runEssayService.executionSteps$.pipe(
+            tap((executionSteps) => (this.executionSteps = executionSteps))
+        );
     }
 
-    this.runEssayService
-      .getEssayStep(this.executionSteps[0].id)
-      .get('executedStatus')
-      ?.setValue(StepStatus.Current);
-  }
+    get preparationStep$(): Observable<PreparationEssayStep> {
+        return this.runEssayService.preparationStep$.pipe(
+            tap((preparationStep) => (this.preparationStep = preparationStep))
+        ) as Observable<PreparationEssayStep>;
+    }
 
-  private initExecutionsProps(
-    essaySteps: EssayStep[],
-    preparationStep: PreparationEssayStep
-  ): void {
-    essaySteps.forEach((essayStep, index) => {
-      // estado de la ejecución
-      this.runEssayService
-        .getEssayStep(essayStep.id)
-        .get('executedStatus')
-        ?.setValue(StepStatus.Pending);
+    get currentStep$(): Observable<EssayStep | undefined> {
+        return this.runEssayService.currentStep$.pipe(tap((currentStep) => (this.currentStep = currentStep)));
+    }
 
-      // estado del ajuste de fotocélulas
-      const photocellAdjustmentStatus =
-        ExecutionDirector.getInitialPhotocellAdjustmentStatus(
-          essaySteps,
-          index
-        );
-      this.runEssayService
-        .getEssayStep(essayStep.id)
-        .get('photocellAdjustmentStatus')
-        ?.setValue(photocellAdjustmentStatus);
+    ngOnInit(): void {
+        forkJoin({
+            executionSteps: this.executionSteps$.pipe(take(1)),
+            preparationStep: this.preparationStep$.pipe(take(1))
+        }).subscribe(({ executionSteps, preparationStep }) => {
+            this.initExecutionsProps(executionSteps, preparationStep);
+            this.start();
+        });
 
-      // estado del resultado de los stands activos
-      essayStep.standResults.forEach((_, standIndex) => {
-        const standResultStatus = ExecutionDirector.getInitialStandResultStatus(
-          preparationStep,
-          standIndex
-        );
+        this.observeExecutionSteps();
+    }
+
+    ngOnDestroy(): void {
+        this.onDestroy.next();
+        this.onDestroy.complete();
+    }
+
+    photocellAdjustmentDone(stepId: number): void {
+        this.runEssayService
+            .getEssayStep(stepId)
+            .get('photocellAdjustmentStatus')
+            ?.setValue(PhotocellAdjustmentStatus.Done);
+    }
+
+    private start(): void {
+        if (!this.executionSteps?.length) {
+            return;
+        }
 
         this.runEssayService
-          .getStandResult(essayStep.id, standIndex)
-          .get('resultStatus')
-          ?.setValue(standResultStatus);
-      });
-    });
-  }
+            .getEssayStep(this.executionSteps[0].id)
+            .get('executedStatus')
+            ?.setValue(StepStatus.Current);
+    }
 
-  private observeExecutionSteps(): void {
-    this.executionSteps$
-      .pipe(
-        takeUntil(this.onDestroy),
-        tap((steps) => {
-          // si todos los steps se ejecutaron, avanzar al siguiente major step
-          if (this.isAllStepsDone(steps)) {
-            // FIXME no funciona en el modo skip de todos los steps
-            // this.runEssayService.runEssayForm.patchValue({
-            //   endDate: this.formatDate.transform(
-            //     new Date(),
-            //     FormatDateMode.fromClientToDatabase
-            //   ) as string,
-            // });
-            this.runEssayService.nextMajorStep();
-          }
-          // si un step paso a Executed Done, avanzar con la ejecución del próximo
-          if (this.isAnyCurrentStep(steps)) {
-            const nextExecutionStep = steps.find(
-              ({ executedStatus }) => executedStatus === StepStatus.Pending
-            );
-            if (!nextExecutionStep) {
-              this.runEssayService.nextMajorStep();
-              return;
-            }
+    private initExecutionsProps(essaySteps: EssayStep[], preparationStep: PreparationEssayStep): void {
+        essaySteps.forEach((essayStep, index) => {
+            // estado de la ejecución
+            this.runEssayService.getEssayStep(essayStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
+
+            // estado del ajuste de fotocélulas
+            const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(essaySteps, index);
             this.runEssayService
-              .getEssayStep(nextExecutionStep.id)
-              .get('executedStatus')
-              ?.setValue(StepStatus.Current);
-          }
-        })
-      )
-      .subscribe();
-  }
+                .getEssayStep(essayStep.id)
+                .get('photocellAdjustmentStatus')
+                ?.setValue(photocellAdjustmentStatus);
 
-  private isAllStepsDone(executionSteps: EssayStep[]): boolean {
-    return executionSteps.every(
-      ({ executedStatus }) => executedStatus === StepStatus.Done
-    );
-  }
+            // estado del resultado de los stands activos
+            essayStep.standResults.forEach((_, standIndex) => {
+                const standResultStatus = ExecutionDirector.getInitialStandResultStatus(preparationStep, standIndex);
 
-  private isAnyCurrentStep(executionSteps: EssayStep[]): boolean {
-    return executionSteps.every(
-      ({ executedStatus }) => executedStatus !== StepStatus.Current
-    );
-  }
+                this.runEssayService
+                    .getStandResult(essayStep.id, standIndex)
+                    .get('resultStatus')
+                    ?.setValue(standResultStatus);
+            });
+        });
+    }
+
+    private observeExecutionSteps(): void {
+        this.executionSteps$
+            .pipe(
+                takeUntil(this.onDestroy),
+                tap((steps) => {
+                    // si todos los steps se ejecutaron, avanzar al siguiente major step
+                    if (this.isAllStepsDone(steps)) {
+                        // FIXME no funciona en el modo skip de todos los steps
+                        // this.runEssayService.runEssayForm.patchValue({
+                        //   endDate: this.formatDate.transform(
+                        //     new Date(),
+                        //     FormatDateMode.fromClientToDatabase
+                        //   ) as string,
+                        // });
+                        this.runEssayService.nextMajorStep();
+                    }
+                    // si un step paso a Executed Done, avanzar con la ejecución del próximo
+                    if (this.isAnyCurrentStep(steps)) {
+                        const nextExecutionStep = steps.find(
+                            ({ executedStatus }) => executedStatus === StepStatus.Pending
+                        );
+                        if (!nextExecutionStep) {
+                            this.runEssayService.nextMajorStep();
+                            return;
+                        }
+                        this.runEssayService
+                            .getEssayStep(nextExecutionStep.id)
+                            .get('executedStatus')
+                            ?.setValue(StepStatus.Current);
+                    }
+                })
+            )
+            .subscribe();
+    }
+
+    private isAllStepsDone(executionSteps: EssayStep[]): boolean {
+        return executionSteps.every(({ executedStatus }) => executedStatus === StepStatus.Done);
+    }
+
+    private isAnyCurrentStep(executionSteps: EssayStep[]): boolean {
+        return executionSteps.every(({ executedStatus }) => executedStatus !== StepStatus.Current);
+    }
 }

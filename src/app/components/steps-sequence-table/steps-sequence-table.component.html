@@ -1,15 +1,15 @@
 <app-abm
-  [dataset]="essayTemplateSteps"
-  [columns]="EssayTemplateStepTableColumns"
-  [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
-  [toolbar]="false"
-  [paginator]="false"
-  [deleteButton]="false"
->
-  <ng-template #tableColumnButtonsTemplate let-element="element">
-    <ng-container
-      [ngTemplateOutlet]="actionsTemplate"
-      [ngTemplateOutletContext]="{ element }"
-    ></ng-container>
-  </ng-template>
+    [dataset]="essayTemplateSteps"
+    [columns]="EssayTemplateStepTableColumns"
+    [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
+    [toolbar]="false"
+    [paginator]="false"
+    [deleteButton]="false">
+    <ng-template
+        #tableColumnButtonsTemplate
+        let-element="element">
+        <ng-container
+            [ngTemplateOutlet]="actionsTemplate"
+            [ngTemplateOutletContext]="{ element }"></ng-container>
+    </ng-template>
 </app-abm>

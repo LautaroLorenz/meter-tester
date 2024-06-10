@@ -5,20 +5,20 @@ import { PageNotFoundComponent } from './features/page-not-found/page-not-found.
 import { PageUrlName } from './models/business/enums/page-name.model';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: PageUrlName.availableTest,
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    component: PageNotFoundComponent,
-    pathMatch: 'full',
-  },
+    {
+        path: '',
+        redirectTo: PageUrlName.availableTest,
+        pathMatch: 'full'
+    },
+    {
+        path: '**',
+        component: PageNotFoundComponent,
+        pathMatch: 'full'
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {}), FeaturesRoutingModule],
-  exports: [RouterModule],
+    imports: [RouterModule.forRoot(routes, {}), FeaturesRoutingModule],
+    exports: [RouterModule]
 })
 export class AppRoutingModule {}

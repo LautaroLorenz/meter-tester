@@ -1,35 +1,37 @@
 <p-table
-  styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
-  [columns]="columns"
-  [value]="value"
->
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th *ngFor="let col of columns">
-        {{ col.header }}
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template
-    pTemplate="body"
-    let-rowData
-    let-columns="columns"
-    let-rowIndex="rowIndex"
-  >
-    <tr>
-      <td *ngFor="let col of columns">
-        <app-table-column
-          [tableColumn]="col"
-          [data]="rowData"
-          [index]="rowIndex"
-        ></app-table-column>
-      </td>
-    </tr>
-  </ng-template>
+    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+    [columns]="columns"
+    [value]="value">
+    <ng-template
+        pTemplate="header"
+        let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{ col.header }}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex">
+        <tr>
+            <td *ngFor="let col of columns">
+                <app-table-column
+                    [tableColumn]="col"
+                    [data]="rowData"
+                    [index]="rowIndex"></app-table-column>
+            </td>
+        </tr>
+    </ng-template>
 </p-table>
 
-<ng-template #resultStatusColumnTmp let-item="item" let-index="index">
-  <div class="flex justify-content-center">
-    <app-result-status [resultStatus]="item.resultStatus"></app-result-status>
-  </div>
+<ng-template
+    #resultStatusColumnTmp
+    let-item="item"
+    let-index="index">
+    <div class="flex justify-content-center">
+        <app-result-status [resultStatus]="item.resultStatus"></app-result-status>
+    </div>
 </ng-template>

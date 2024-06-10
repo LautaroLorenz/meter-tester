@@ -1,4 +1,4 @@
 export enum StepRunMode {
-  continuousResultUpdate = 'continuousResultUpdate',
-  finalResultLock = 'finalResultLock',
+    continuousResultUpdate = 'continuousResultUpdate',
+    finalResultLock = 'finalResultLock'
 }

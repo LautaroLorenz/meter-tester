@@ -1,53 +1,53 @@
 export interface TableRelationsMap {
-  [tableName: TableName]: any[];
+    [tableName: TableName]: any[];
 }
 
 export interface RequestTableResponse<T> {
-  tableNameReply: string;
-  rows: T[];
-  relations: TableRelationsMap;
-  totalRecords: number;
+    tableNameReply: string;
+    rows: T[];
+    relations: TableRelationsMap;
+    totalRecords: number;
 }
 
 export interface DbForeignKey {
-  foreign: {
-    [property: string]: any;
-  };
+    foreign: {
+        [property: string]: any;
+    };
 }
 
 export type TableName = string;
 
 export interface DbTableContext {
-  tableName: TableName;
-  foreignTables: ForeignTable[];
-  rawProperties: string[];
+    tableName: TableName;
+    foreignTables: ForeignTable[];
+    rawProperties: string[];
 }
 
 export interface ForeignTable {
-  tableName: TableName;
-  foreignKey: string;
-  propertyName: string;
-  foreignTables?: ForeignTable[];
+    tableName: TableName;
+    foreignKey: string;
+    propertyName: string;
+    foreignTables?: ForeignTable[];
 }
 
 export enum WhereKind {
-  where = 'where',
-  andWhere = 'andWhere',
-  orWhere = 'orWhere',
+    where = 'where',
+    andWhere = 'andWhere',
+    orWhere = 'orWhere'
 }
 
 export enum WhereOperator {
-  major = '>',
-  minor = '<',
-  like = 'like',
-  in = 'in',
-  notIn = 'not in',
-  equal = '=',
+    major = '>',
+    minor = '<',
+    like = 'like',
+    in = 'in',
+    notIn = 'not in',
+    equal = '='
 }
 
 export interface Where {
-  kind: WhereKind;
-  columnName: string;
-  operator: WhereOperator;
-  value: any;
+    kind: WhereKind;
+    columnName: string;
+    operator: WhereOperator;
+    value: any;
 }

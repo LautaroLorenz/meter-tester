@@ -1,5 +1,5 @@
 export enum Metric {
-  standUsed = 'standUsed',
-  meterModelApproved = 'meterModelApproved',
-  meterModelFailed = 'meterModelFailed',
+    standUsed = 'standUsed',
+    meterModelApproved = 'meterModelApproved',
+    meterModelFailed = 'meterModelFailed'
 }

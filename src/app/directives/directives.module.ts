@@ -3,15 +3,12 @@ import { CommonModule } from '@angular/common';
 import { InputFocusedDirective } from './input-focused.directive';
 import { AbmColumnTemplateNameDirective } from './abm-column-template-name.directive';
 
-const EmetsyDirectives = [
-  InputFocusedDirective,
-  AbmColumnTemplateNameDirective,
-];
+const EmetsyDirectives = [InputFocusedDirective, AbmColumnTemplateNameDirective];
 
 @NgModule({
-  declarations: [EmetsyDirectives],
-  imports: [CommonModule],
-  exports: [EmetsyDirectives],
-  providers: [],
+    declarations: [EmetsyDirectives],
+    imports: [CommonModule],
+    exports: [EmetsyDirectives],
+    providers: []
 })
 export class DirectivesModule {}

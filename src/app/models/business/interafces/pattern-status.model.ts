@@ -1,3 +1,3 @@
 export interface PatternStatus {
-  constant: number;
+    constant: number;
 }

@@ -3,11 +3,11 @@ import { EssayTemplateStep } from '../database/essay-template-step.model';
 import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 
 export interface EssayTemplateForm {
-  id: FormControl<number | undefined>;
-  name: FormControl<string | undefined>;
+    id: FormControl<number | undefined>;
+    name: FormControl<string | undefined>;
 }
 
 export interface EssayTemplateFormGroup {
-  essayTemplate: FormGroup<EssayTemplateForm>;
-  essayTemplateSteps: FormArray<AbstractFormGroup<EssayTemplateStep>>;
+    essayTemplate: FormGroup<EssayTemplateForm>;
+    essayTemplateSteps: FormArray<AbstractFormGroup<EssayTemplateStep>>;
 }

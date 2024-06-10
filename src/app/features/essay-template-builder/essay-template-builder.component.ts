@@ -3,41 +3,20 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
-import {
-  catchError,
-  filter,
-  first,
-  map,
-  Observable,
-  of,
-  Subject,
-  switchMap,
-  takeUntil,
-  tap,
-  throwError,
-} from 'rxjs';
+import { catchError, filter, first, map, Observable, of, Subject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
 import { MessagesService } from '../../services/messages.service';
+import { Step, StepDbTableContext } from '../../models/business/database/step.model';
+import { EssayTemplate, EssayTemplateDbTableContext } from '../../models/business/database/essay-template.model';
 import {
-  Step,
-  StepDbTableContext,
-} from '../../models/business/database/step.model';
-import {
-  EssayTemplate,
-  EssayTemplateDbTableContext,
-} from '../../models/business/database/essay-template.model';
-import {
-  EssayTemplateStep,
-  EssayTemplateStepDbTableContext,
+    EssayTemplateStep,
+    EssayTemplateStepDbTableContext
 } from '../../models/business/database/essay-template-step.model';
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { PageUrlName } from '../../models/business/enums/page-name.model';
 import { EssayService } from '../../services/essay.service';
 import { RelationsManager } from '../../models/core/relations-manager.model';
-import {
-  EssayTemplateForm,
-  EssayTemplateFormGroup,
-} from '../../models/business/interafces/essay-template-form.model';
+import { EssayTemplateForm, EssayTemplateFormGroup } from '../../models/business/interafces/essay-template-form.model';
 import { NavigationService } from '../../services/navigation.service';
 import { essayTemplateValidator } from '../../models/business/validators/essay-template-form-validator.model';
 import { Steps } from '../../models/business/enums/steps.model';
@@ -47,421 +26,383 @@ import { propInUseValidator } from '../../models/business/validators/value-in-us
 import { ComponentCanDeactivate } from '../../models/core/guards.model';
 
 @Component({
-  templateUrl: './essay-template-builder.component.html',
-  styleUrls: ['./essay-template-builder.component.scss'],
+    templateUrl: './essay-template-builder.component.html',
+    styleUrls: ['./essay-template-builder.component.scss']
 })
-export class EssayTemplateBuilderComponent
-  implements OnInit, OnDestroy, ComponentCanDeactivate
-{
-  addStepToSequenceDialogOpened = false;
-  selectedEssayTemplateStep: EssayTemplateStep | undefined;
-  steps: Step[] | undefined;
+export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
+    addStepToSequenceDialogOpened = false;
+    selectedEssayTemplateStep: EssayTemplateStep | undefined;
+    steps: Step[] | undefined;
 
-  readonly title: string = 'Detalle de Ensayo';
-  readonly id$: Observable<number>;
-  readonly form: FormGroup;
-  readonly saveButtonMenuItems: MenuItem[] = [];
+    readonly title: string = 'Detalle de Ensayo';
+    readonly id$: Observable<number>;
+    readonly form: FormGroup;
+    readonly saveButtonMenuItems: MenuItem[] = [];
 
-  private readonly onDestroy: Subject<void> = new Subject();
+    private readonly onDestroy: Subject<void> = new Subject();
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly navigationService: NavigationService,
-    private readonly fb: FormBuilder,
-    private readonly dbServiceSteps: DatabaseService<Step>,
-    private readonly messagesService: MessagesService,
-    private readonly essayService: EssayService,
-    private readonly dbService: DatabaseService<EssayTemplate>,
-    private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
-    private readonly confirmationService: ConfirmationService
-  ) {
-    this.form = this.buildForm();
-    this.saveButtonMenuItems = this.getSaveButtonMenuItems();
-    this.id$ = this.getId$();
-  }
+    constructor(
+        private readonly route: ActivatedRoute,
+        private readonly navigationService: NavigationService,
+        private readonly fb: FormBuilder,
+        private readonly dbServiceSteps: DatabaseService<Step>,
+        private readonly messagesService: MessagesService,
+        private readonly essayService: EssayService,
+        private readonly dbService: DatabaseService<EssayTemplate>,
+        private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
+        private readonly confirmationService: ConfirmationService
+    ) {
+        this.form = this.buildForm();
+        this.saveButtonMenuItems = this.getSaveButtonMenuItems();
+        this.id$ = this.getId$();
+    }
 
-  get saveButtonDisabled(): boolean {
-    return !this.form.valid || this.form.pristine;
-  }
+    get saveButtonDisabled(): boolean {
+        return !this.form.valid || this.form.pristine;
+    }
 
-  get stepsFormArray(): FormArray<AbstractFormGroup<EssayTemplateStep>> {
-    return this.form.get('essayTemplateSteps') as FormArray<
-      AbstractFormGroup<EssayTemplateStep>
-    >;
-  }
+    get stepsFormArray(): FormArray<AbstractFormGroup<EssayTemplateStep>> {
+        return this.form.get('essayTemplateSteps') as FormArray<AbstractFormGroup<EssayTemplateStep>>;
+    }
 
-  get stepsSequenceTable(): EssayTemplateStep[] {
-    return (this.stepsFormArray?.controls ?? [])
-      .filter(({ value: { step_id } }) => step_id !== Steps.Preparation)
-      .map(({ value }) => value) as EssayTemplateStep[];
-  }
+    get stepsSequenceTable(): EssayTemplateStep[] {
+        return (this.stepsFormArray?.controls ?? [])
+            .filter(({ value: { step_id } }) => step_id !== Steps.Preparation)
+            .map(({ value }) => value) as EssayTemplateStep[];
+    }
 
-  get preparationStep(): EssayTemplateStep | undefined {
-    return (this.stepsFormArray?.controls ?? [])
-      .find(({ value: { step_id } }) => step_id === Steps.Preparation)
-      ?.getRawValue() as EssayTemplateStep;
-  }
+    get preparationStep(): EssayTemplateStep | undefined {
+        return (this.stepsFormArray?.controls ?? [])
+            .find(({ value: { step_id } }) => step_id === Steps.Preparation)
+            ?.getRawValue() as EssayTemplateStep;
+    }
 
-  @HostListener('window:beforeunload')
-  canDeactivate(): Observable<boolean> {
-    return of(this.form.dirty).pipe(
-      first(),
-      switchMap((confirm) => {
-        if (!confirm) {
-          return of(true);
-        } else {
-          return new Observable<boolean>((observer) => {
-            this.confirmationService.confirm({
-              message: 'Salir sin guardar',
-              header: '¿Confirma qué quiere salir sin guardar?',
-              icon: PrimeIcons.EXCLAMATION_TRIANGLE,
-              defaultFocus: 'reject',
-              acceptButtonStyleClass: 'p-button-outlined',
-              accept: () => {
-                observer.next(true);
-                observer.complete();
-              },
-              reject: () => {
-                observer.next(false);
-                observer.complete();
-              },
-            });
-          });
+    @HostListener('window:beforeunload')
+    canDeactivate(): Observable<boolean> {
+        return of(this.form.dirty).pipe(
+            first(),
+            switchMap((confirm) => {
+                if (!confirm) {
+                    return of(true);
+                } else {
+                    return new Observable<boolean>((observer) => {
+                        this.confirmationService.confirm({
+                            message: 'Salir sin guardar',
+                            header: '¿Confirma qué quiere salir sin guardar?',
+                            icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+                            defaultFocus: 'reject',
+                            acceptButtonStyleClass: 'p-button-outlined',
+                            accept: () => {
+                                observer.next(true);
+                                observer.complete();
+                            },
+                            reject: () => {
+                                observer.next(false);
+                                observer.complete();
+                            }
+                        });
+                    });
+                }
+            })
+        );
+    }
+
+    ngOnInit(): void {
+        this.observeRoute();
+        this.observeTables();
+        this.requestToolsTables();
+    }
+
+    ngOnDestroy() {
+        this.onDestroy.next();
+        this.onDestroy.complete();
+    }
+
+    exit(): void {
+        this.navigationService.back({ targetPage: PageUrlName.availableTest });
+    }
+
+    save(): void {
+        this.save$().subscribe();
+    }
+
+    deleteEssayTemplateStepControl(index: number): void {
+        this.confirmationService.confirm({
+            message: '¿Eliminar fila de la tabla?',
+            header: 'Confirmar borrado',
+            icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+            defaultFocus: 'reject',
+            acceptButtonStyleClass: 'p-button-outlined',
+            accept: () => {
+                this.stepsFormArray.removeAt(index);
+                this.recalculateEssayTemplateStepsOrder();
+                this.stepsFormArray.markAsDirty();
+            }
+        });
+    }
+
+    moveDownByIndex(indexFrom: number): void {
+        if (indexFrom === null) {
+            return;
         }
-      })
-    );
-  }
-
-  ngOnInit(): void {
-    this.observeRoute();
-    this.observeTables();
-    this.requestToolsTables();
-  }
-
-  ngOnDestroy() {
-    this.onDestroy.next();
-    this.onDestroy.complete();
-  }
-
-  exit(): void {
-    this.navigationService.back({ targetPage: PageUrlName.availableTest });
-  }
-
-  save(): void {
-    this.save$().subscribe();
-  }
-
-  deleteEssayTemplateStepControl(index: number): void {
-    this.confirmationService.confirm({
-      message: '¿Eliminar fila de la tabla?',
-      header: 'Confirmar borrado',
-      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
-      defaultFocus: 'reject',
-      acceptButtonStyleClass: 'p-button-outlined',
-      accept: () => {
-        this.stepsFormArray.removeAt(index);
+        if (indexFrom === this.stepsFormArray.length - 1) {
+            return;
+        }
+        const indexTo = indexFrom + 1;
+        const temp = this.stepsFormArray.at(indexFrom);
+        this.stepsFormArray.removeAt(indexFrom);
+        this.stepsFormArray.insert(indexTo, temp);
         this.recalculateEssayTemplateStepsOrder();
         this.stepsFormArray.markAsDirty();
-      },
-    });
-  }
-
-  moveDownByIndex(indexFrom: number): void {
-    if (indexFrom === null) {
-      return;
     }
-    if (indexFrom === this.stepsFormArray.length - 1) {
-      return;
+
+    moveUpByIndex(indexFrom: number): void {
+        if (indexFrom === null) {
+            return;
+        }
+        if (indexFrom === 0) {
+            return;
+        }
+        const indexTo = indexFrom - 1;
+        const temp = this.stepsFormArray.at(indexFrom);
+        this.stepsFormArray.removeAt(indexFrom);
+        this.stepsFormArray.insert(indexTo, temp);
+        this.recalculateEssayTemplateStepsOrder();
+        this.stepsFormArray.markAsDirty();
     }
-    const indexTo = indexFrom + 1;
-    const temp = this.stepsFormArray.at(indexFrom);
-    this.stepsFormArray.removeAt(indexFrom);
-    this.stepsFormArray.insert(indexTo, temp);
-    this.recalculateEssayTemplateStepsOrder();
-    this.stepsFormArray.markAsDirty();
-  }
 
-  moveUpByIndex(indexFrom: number): void {
-    if (indexFrom === null) {
-      return;
+    saveEditedStepInSequenceChanges(essayTemplateStep: Partial<EssayTemplateStep>): void {
+        if (!this.selectedEssayTemplateStep) {
+            return;
+        }
+        if (typeof this.selectedEssayTemplateStep.order !== 'number') {
+            return;
+        }
+        this.stepsFormArray.at(this.selectedEssayTemplateStep.order).patchValue(essayTemplateStep);
+        this.stepsFormArray.markAsDirty();
     }
-    if (indexFrom === 0) {
-      return;
+
+    addEssayTemplateStepControlByStep(step: Step, { markForCheck } = { markForCheck: true }): void {
+        const essayTemplateStep: Partial<EssayTemplateStep> = {
+            step_id: step.id,
+            foreign: {
+                step: { ...step }
+            }
+        };
+        this.addEssayTemplateStepControl(essayTemplateStep as EssayTemplateStep);
+
+        if (markForCheck) {
+            this.stepsFormArray.markAsDirty();
+        }
     }
-    const indexTo = indexFrom - 1;
-    const temp = this.stepsFormArray.at(indexFrom);
-    this.stepsFormArray.removeAt(indexFrom);
-    this.stepsFormArray.insert(indexTo, temp);
-    this.recalculateEssayTemplateStepsOrder();
-    this.stepsFormArray.markAsDirty();
-  }
 
-  saveEditedStepInSequenceChanges(
-    essayTemplateStep: Partial<EssayTemplateStep>
-  ): void {
-    if (!this.selectedEssayTemplateStep) {
-      return;
+    hasInvalidStepParams(index: number): boolean {
+        return this.stepsFormArray.at(index).invalid;
     }
-    if (typeof this.selectedEssayTemplateStep.order !== 'number') {
-      return;
+
+    private addDefaultEssayTemplateStepsControl(steps: Step[]): void {
+        if (!steps) {
+            return;
+        }
+        if (this.stepsFormArray.length > 0) {
+            return;
+        }
+        const defaultEssayTemplateSteps = steps.filter((step) => [Steps.Preparation].includes(step.id));
+        defaultEssayTemplateSteps.forEach((step) =>
+            this.addEssayTemplateStepControlByStep(step, { markForCheck: false })
+        );
     }
-    this.stepsFormArray
-      .at(this.selectedEssayTemplateStep.order)
-      .patchValue(essayTemplateStep);
-    this.stepsFormArray.markAsDirty();
-  }
 
-  addEssayTemplateStepControlByStep(
-    step: Step,
-    { markForCheck } = { markForCheck: true }
-  ): void {
-    const essayTemplateStep: Partial<EssayTemplateStep> = {
-      step_id: step.id,
-      foreign: {
-        step: { ...step },
-      },
-    };
-    this.addEssayTemplateStepControl(essayTemplateStep as EssayTemplateStep);
-
-    if (markForCheck) {
-      this.stepsFormArray.markAsDirty();
+    private addEssayTemplateStepControl(essayTemplateStep: EssayTemplateStep): void {
+        StepsBuilder.buildTemplateStep(this.fb, this.stepsFormArray, essayTemplateStep);
+        this.recalculateEssayTemplateStepsOrder();
     }
-  }
 
-  hasInvalidStepParams(index: number): boolean {
-    return this.stepsFormArray.at(index).invalid;
-  }
-
-  private addDefaultEssayTemplateStepsControl(steps: Step[]): void {
-    if (!steps) {
-      return;
+    private recalculateEssayTemplateStepsOrder(): void {
+        this.stepsFormArray.controls.forEach((stepControls, index) => {
+            stepControls.get('order')?.setValue(index);
+        });
     }
-    if (this.stepsFormArray.length > 0) {
-      return;
-    }
-    const defaultEssayTemplateSteps = steps.filter((step) =>
-      [Steps.Preparation].includes(step.id)
-    );
-    defaultEssayTemplateSteps.forEach((step) =>
-      this.addEssayTemplateStepControlByStep(step, { markForCheck: false })
-    );
-  }
 
-  private addEssayTemplateStepControl(
-    essayTemplateStep: EssayTemplateStep
-  ): void {
-    StepsBuilder.buildTemplateStep(
-      this.fb,
-      this.stepsFormArray,
-      essayTemplateStep
-    );
-    this.recalculateEssayTemplateStepsOrder();
-  }
-
-  private recalculateEssayTemplateStepsOrder(): void {
-    this.stepsFormArray.controls.forEach((stepControls, index) => {
-      stepControls.get('order')?.setValue(index);
-    });
-  }
-
-  private observeRoute(): void {
-    this.id$
-      .pipe(
-        takeUntil(this.onDestroy),
-        switchMap((id) =>
-          this.dbService.getTableElement$(
-            EssayTemplateDbTableContext.tableName,
-            id
-          )
-        ),
-        tap((essayTemplate) => {
-          this.form.get('essayTemplate')?.patchValue(essayTemplate);
-          this.form
-            .get('essayTemplate.name')
-            ?.setAsyncValidators(
-              propInUseValidator<EssayTemplate>(
-                this.onDestroy,
-                this.dbService,
-                EssayTemplateDbTableContext.tableName,
-                'name',
-                essayTemplate.name
-              ).bind(this)
-            );
-          this.form.get('essayTemplate.name')?.updateValueAndValidity();
-        }),
-        tap(({ id }) => this.requestTableEssayTemplateSteps(id))
-      )
-      .subscribe();
-  }
-
-  private observeTables(): void {
-    this.dbServiceEssayTemplateStep
-      .getTableReply$(EssayTemplateStepDbTableContext.tableName)
-      .pipe(
-        takeUntil(this.onDestroy),
-        map(({ rows, relations }) => {
-          const { foreignTables } = EssayTemplateStepDbTableContext;
-          return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
-            rows,
-            relations,
-            foreignTables
-          );
-        }),
-        map((essayTemplateSteps) =>
-          essayTemplateSteps.sort((a, b) => a.order - b.order)
-        ),
-        tap((essayTemplateSteps) =>
-          StepsBuilder.buildTemplateSteps(
-            this.fb,
-            this.stepsFormArray,
-            essayTemplateSteps
-          )
-        )
-      )
-      .subscribe();
-  }
-
-  private requestTableEssayTemplateSteps(essayTemplateId: number): void {
-    const { foreignTables } = EssayTemplateStepDbTableContext;
-    const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
-    const foreignTablesFiltered = foreignTables.filter(
-      (ft) => ft.tableName !== essayTemplateTableName
-    );
-    const getTableOptions = {
-      relations: foreignTablesFiltered,
-      conditions: [
-        {
-          kind: WhereKind.where,
-          columnName: 'essay_template_id',
-          operator: WhereOperator.equal,
-          value: essayTemplateId,
-        },
-      ],
-    };
-    this.dbServiceEssayTemplateStep.getTable(
-      EssayTemplateStepDbTableContext.tableName,
-      getTableOptions,
-      EssayTemplateStepDbTableContext.rawProperties
-    );
-  }
-
-  private requestToolsTables(): void {
-    this.dbServiceSteps.getTable(StepDbTableContext.tableName, {
-      relations: StepDbTableContext.foreignTables,
-    });
-
-    this.dbServiceSteps
-      .getTableReply$(StepDbTableContext.tableName)
-      .pipe(
-        takeUntil(this.onDestroy),
-        map((response) =>
-          RelationsManager.mergeRelationsIntoRows<Step>(
-            response.rows,
-            response.relations,
-            StepDbTableContext.foreignTables
-          )
-        ),
-        tap((response) => (this.steps = response)),
-        tap((response) => this.addDefaultEssayTemplateStepsControl(response))
-      )
-      .subscribe();
-  }
-
-  private buildForm(): FormGroup {
-    return this.fb.group<EssayTemplateFormGroup>(
-      {
-        essayTemplate: this.fb.group<EssayTemplateForm>({
-          id: this.fb.control(undefined, { nonNullable: true }),
-          name: this.fb.control(undefined, {
-            nonNullable: true,
-            validators: Validators.required.bind(this),
-            asyncValidators: propInUseValidator<EssayTemplate>(
-              this.onDestroy,
-              this.dbService,
-              EssayTemplateDbTableContext.tableName,
-              'name',
-              false
-            ).bind(this),
-          }),
-        }),
-        essayTemplateSteps: this.fb.array<AbstractFormGroup<EssayTemplateStep>>(
-          []
-        ),
-      },
-      { validators: essayTemplateValidator() }
-    );
-  }
-
-  private getId$(): Observable<number> {
-    return this.route.queryParams.pipe(
-      filter(({ id }) => !!id),
-      map(({ id }) => id as number)
-    );
-  }
-
-  private save$(): Observable<{
-    essayTemplate: EssayTemplate;
-    essayTemplateSteps: EssayTemplateStep[];
-  }> {
-    return of(this.form.valid).pipe(
-      first(),
-      filter((valid) => valid),
-      map(() => this.form.getRawValue()),
-      switchMap(({ essayTemplate, essayTemplateSteps }) =>
-        this.essayService.saveEssayTemplate$(
-          essayTemplate as EssayTemplate,
-          essayTemplateSteps as EssayTemplateStep[]
-        )
-      ),
-      tap((savedFormValue) => {
-        this.messagesService.success('Guardado correctamente');
-        this.form.reset(savedFormValue);
-      }),
-      catchError((e) => {
-        this.messagesService.error('No se pudo guardar');
-        return throwError(() => new Error(e as string));
-      })
-    );
-  }
-
-  private getSaveButtonMenuItems(): MenuItem[] {
-    return [
-      {
-        label: 'Guardar y Salir',
-        icon: PrimeIcons.SAVE,
-        command: () =>
-          this.save$()
-            .pipe(tap(() => this.exit()))
-            .subscribe(),
-      },
-      {
-        label: 'Guardar y Ejecutar',
-        icon: PrimeIcons.PLAY,
-        command: () =>
-          this.save$()
+    private observeRoute(): void {
+        this.id$
             .pipe(
-              tap(({ essayTemplate: { id } }) =>
-                this.navigationService.go(PageUrlName.runEssay, {
-                  queryParams: { id },
-                })
-              )
+                takeUntil(this.onDestroy),
+                switchMap((id) => this.dbService.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
+                tap((essayTemplate) => {
+                    this.form.get('essayTemplate')?.patchValue(essayTemplate);
+                    this.form
+                        .get('essayTemplate.name')
+                        ?.setAsyncValidators(
+                            propInUseValidator<EssayTemplate>(
+                                this.onDestroy,
+                                this.dbService,
+                                EssayTemplateDbTableContext.tableName,
+                                'name',
+                                essayTemplate.name
+                            ).bind(this)
+                        );
+                    this.form.get('essayTemplate.name')?.updateValueAndValidity();
+                }),
+                tap(({ id }) => this.requestTableEssayTemplateSteps(id))
             )
-            .subscribe(),
-      },
-      {
-        label: 'Guardar y Crear otro',
-        icon: PrimeIcons.PLUS,
-        command: () =>
-          this.save$()
+            .subscribe();
+    }
+
+    private observeTables(): void {
+        this.dbServiceEssayTemplateStep
+            .getTableReply$(EssayTemplateStepDbTableContext.tableName)
             .pipe(
-              tap(() =>
-                this.navigationService.go(PageUrlName.newEssayTemplate, {
-                  forceReload: true,
-                })
-              )
+                takeUntil(this.onDestroy),
+                map(({ rows, relations }) => {
+                    const { foreignTables } = EssayTemplateStepDbTableContext;
+                    return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(rows, relations, foreignTables);
+                }),
+                map((essayTemplateSteps) => essayTemplateSteps.sort((a, b) => a.order - b.order)),
+                tap((essayTemplateSteps) =>
+                    StepsBuilder.buildTemplateSteps(this.fb, this.stepsFormArray, essayTemplateSteps)
+                )
             )
-            .subscribe(),
-      },
-    ];
-  }
+            .subscribe();
+    }
+
+    private requestTableEssayTemplateSteps(essayTemplateId: number): void {
+        const { foreignTables } = EssayTemplateStepDbTableContext;
+        const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
+        const foreignTablesFiltered = foreignTables.filter((ft) => ft.tableName !== essayTemplateTableName);
+        const getTableOptions = {
+            relations: foreignTablesFiltered,
+            conditions: [
+                {
+                    kind: WhereKind.where,
+                    columnName: 'essay_template_id',
+                    operator: WhereOperator.equal,
+                    value: essayTemplateId
+                }
+            ]
+        };
+        this.dbServiceEssayTemplateStep.getTable(
+            EssayTemplateStepDbTableContext.tableName,
+            getTableOptions,
+            EssayTemplateStepDbTableContext.rawProperties
+        );
+    }
+
+    private requestToolsTables(): void {
+        this.dbServiceSteps.getTable(StepDbTableContext.tableName, {
+            relations: StepDbTableContext.foreignTables
+        });
+
+        this.dbServiceSteps
+            .getTableReply$(StepDbTableContext.tableName)
+            .pipe(
+                takeUntil(this.onDestroy),
+                map((response) =>
+                    RelationsManager.mergeRelationsIntoRows<Step>(
+                        response.rows,
+                        response.relations,
+                        StepDbTableContext.foreignTables
+                    )
+                ),
+                tap((response) => (this.steps = response)),
+                tap((response) => this.addDefaultEssayTemplateStepsControl(response))
+            )
+            .subscribe();
+    }
+
+    private buildForm(): FormGroup {
+        return this.fb.group<EssayTemplateFormGroup>(
+            {
+                essayTemplate: this.fb.group<EssayTemplateForm>({
+                    id: this.fb.control(undefined, { nonNullable: true }),
+                    name: this.fb.control(undefined, {
+                        nonNullable: true,
+                        validators: Validators.required.bind(this),
+                        asyncValidators: propInUseValidator<EssayTemplate>(
+                            this.onDestroy,
+                            this.dbService,
+                            EssayTemplateDbTableContext.tableName,
+                            'name',
+                            false
+                        ).bind(this)
+                    })
+                }),
+                essayTemplateSteps: this.fb.array<AbstractFormGroup<EssayTemplateStep>>([])
+            },
+            { validators: essayTemplateValidator() }
+        );
+    }
+
+    private getId$(): Observable<number> {
+        return this.route.queryParams.pipe(
+            filter(({ id }) => !!id),
+            map(({ id }) => id as number)
+        );
+    }
+
+    private save$(): Observable<{
+        essayTemplate: EssayTemplate;
+        essayTemplateSteps: EssayTemplateStep[];
+    }> {
+        return of(this.form.valid).pipe(
+            first(),
+            filter((valid) => valid),
+            map(() => this.form.getRawValue()),
+            switchMap(({ essayTemplate, essayTemplateSteps }) =>
+                this.essayService.saveEssayTemplate$(
+                    essayTemplate as EssayTemplate,
+                    essayTemplateSteps as EssayTemplateStep[]
+                )
+            ),
+            tap((savedFormValue) => {
+                this.messagesService.success('Guardado correctamente');
+                this.form.reset(savedFormValue);
+            }),
+            catchError((e) => {
+                this.messagesService.error('No se pudo guardar');
+                return throwError(() => new Error(e as string));
+            })
+        );
+    }
+
+    private getSaveButtonMenuItems(): MenuItem[] {
+        return [
+            {
+                label: 'Guardar y Salir',
+                icon: PrimeIcons.SAVE,
+                command: () =>
+                    this.save$()
+                        .pipe(tap(() => this.exit()))
+                        .subscribe()
+            },
+            {
+                label: 'Guardar y Ejecutar',
+                icon: PrimeIcons.PLAY,
+                command: () =>
+                    this.save$()
+                        .pipe(
+                            tap(({ essayTemplate: { id } }) =>
+                                this.navigationService.go(PageUrlName.runEssay, {
+                                    queryParams: { id }
+                                })
+                            )
+                        )
+                        .subscribe()
+            },
+            {
+                label: 'Guardar y Crear otro',
+                icon: PrimeIcons.PLUS,
+                command: () =>
+                    this.save$()
+                        .pipe(
+                            tap(() =>
+                                this.navigationService.go(PageUrlName.newEssayTemplate, {
+                                    forceReload: true
+                                })
+                            )
+                        )
+                        .subscribe()
+            }
+        ];
+    }
 }

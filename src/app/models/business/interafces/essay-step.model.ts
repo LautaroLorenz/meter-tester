@@ -4,8 +4,8 @@ import { StepStatus } from '../enums/step-status.model';
 import { StandResult } from './stand-result.model';
 
 export interface EssayStep extends EssayTemplateStep {
-  verifiedStatus: StepStatus;
-  executedStatus: StepStatus;
-  standResults: StandResult[];
-  photocellAdjustmentStatus: PhotocellAdjustmentStatus;
+    verifiedStatus: StepStatus;
+    executedStatus: StepStatus;
+    standResults: StandResult[];
+    photocellAdjustmentStatus: PhotocellAdjustmentStatus;
 }

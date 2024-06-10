@@ -1,6 +1,6 @@
 export enum MajorSteps {
-  Verification = 'Verification',
-  Preparation = 'Preparation',
-  Execution = 'Execution',
-  Report = 'Report',
+    Verification = 'Verification',
+    Preparation = 'Preparation',
+    Execution = 'Execution',
+    Report = 'Report'
 }

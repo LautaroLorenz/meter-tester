@@ -1,27 +1,27 @@
 import { CommandBlockConfig } from './command-block-config.model';
 
 export enum CommandBlockTypes {
-  Fixed,
-  Variable,
+    Fixed,
+    Variable
 }
 
 interface CommandBlockBase {
-  type: CommandBlockTypes;
-  value: string;
+    type: CommandBlockTypes;
+    value: string;
 }
 
 interface CommandBlockFixed extends CommandBlockBase {
-  type: CommandBlockTypes.Fixed;
+    type: CommandBlockTypes.Fixed;
 }
 
 interface CommandBlockVariable extends CommandBlockBase {
-  type: CommandBlockTypes.Variable;
-  startWith?: string;
-  endWith?: string;
-  variableValue: null | string | number;
-  digitsQuantity: number;
-  padText: string;
-  config: CommandBlockConfig;
+    type: CommandBlockTypes.Variable;
+    startWith?: string;
+    endWith?: string;
+    variableValue: null | string | number;
+    digitsQuantity: number;
+    padText: string;
+    config: CommandBlockConfig;
 }
 
 export type CommandBlock = CommandBlockFixed | CommandBlockVariable;

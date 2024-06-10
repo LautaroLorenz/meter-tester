@@ -6,23 +6,19 @@ import { MeterConstants } from '../../../../models/business/constants/meter-cons
 import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
 
 @Component({
-  selector: 'app-vacuum-test-build-form',
-  templateUrl: './vacuum-test-build-form.component.html',
-  styleUrls: ['./vacuum-test-build-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-vacuum-test-build-form',
+    templateUrl: './vacuum-test-build-form.component.html',
+    styleUrls: ['./vacuum-test-build-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VacuumTestBuildFormComponent extends StepBuildFormComponent<VacuumTestStep> {
-  readonly MeterConstants = MeterConstants;
+    readonly MeterConstants = MeterConstants;
 
-  override buildForm(fb: FormBuilder): AbstractFormGroup<VacuumTestStep> {
-    return new VacuumTestFormBuilder().build(fb)
-      .form as AbstractFormGroup<VacuumTestStep>;
-  }
+    override buildForm(fb: FormBuilder): AbstractFormGroup<VacuumTestStep> {
+        return new VacuumTestFormBuilder().build(fb).form as AbstractFormGroup<VacuumTestStep>;
+    }
 
-  override buildVerificationForm(
-    fb: FormBuilder
-  ): AbstractFormGroup<VacuumTestStep> {
-    return new VacuumTestFormBuilder().build(fb).withVerificationProps()
-      .form as AbstractFormGroup<VacuumTestStep>;
-  }
+    override buildVerificationForm(fb: FormBuilder): AbstractFormGroup<VacuumTestStep> {
+        return new VacuumTestFormBuilder().build(fb).withVerificationProps().form as AbstractFormGroup<VacuumTestStep>;
+    }
 }

@@ -1,13 +1,14 @@
 <app-await-user-confirm
-  headerText="Fotocélulas"
-  confirmButtonText="Fotocélulas ajustadas"
-  confirmButtonIcon="pi-wrench"
-  afterConfirmationChipText="Ajuste realizado"
-  afterConfirmationChipIcon="pi-check"
-  (userConfirm)="adjustmentDone.emit()"
->
-  <p messageTemplate class="m-0">
-    Ajuste las fotocélulas para ensayo de energía
-    <strong>{{ meterConstant | meterConstant }}</strong>
-  </p>
+    headerText="Fotocélulas"
+    confirmButtonText="Fotocélulas ajustadas"
+    confirmButtonIcon="pi-wrench"
+    afterConfirmationChipText="Ajuste realizado"
+    afterConfirmationChipIcon="pi-check"
+    (userConfirm)="adjustmentDone.emit()">
+    <p
+        messageTemplate
+        class="m-0">
+        Ajuste las fotocélulas para ensayo de energía
+        <strong>{{ meterConstant | meterConstant }}</strong>
+    </p>
 </app-await-user-confirm>

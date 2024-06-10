@@ -13,140 +13,89 @@ import { StepStatus } from '../../enums/step-status.model';
 import { PhotocellAdjustmentStatus } from '../../enums/photocell-adjustment-status.model';
 
 export interface VacuumTestFormControlRaw {
-  name: string;
-  meterConstant: MeterConstantEnum;
-  phaseL1: Pick<Phase, 'voltage'>;
-  phaseL2: Pick<Phase, 'voltage'>;
-  phaseL3: Pick<Phase, 'voltage'>;
-  maxAllowedPulses: number;
-  durationSeconds: number;
+    name: string;
+    meterConstant: MeterConstantEnum;
+    phaseL1: Pick<Phase, 'voltage'>;
+    phaseL2: Pick<Phase, 'voltage'>;
+    phaseL3: Pick<Phase, 'voltage'>;
+    maxAllowedPulses: number;
+    durationSeconds: number;
 }
 
 export interface VacuumTestStep extends EssayTemplateStep {
-  step_id: Steps.VacuumTest;
-  form_control_raw: VacuumTestFormControlRaw;
+    step_id: Steps.VacuumTest;
+    form_control_raw: VacuumTestFormControlRaw;
 }
 
 export interface VacuumTestStandResult extends StandResult {
-  measuredPulses: number;
+    measuredPulses: number;
 }
 
 export type VacuumTestEssayStep = VacuumTestStep &
-  Omit<EssayStep, 'form_control_raw'> & {
-    standResults: VacuumTestStandResult[];
-  };
+    Omit<EssayStep, 'form_control_raw'> & {
+        standResults: VacuumTestStandResult[];
+    };
 
-export class VacuumTestFormBuilder extends AbstractStepFormBuilder<
-  VacuumTestStep,
-  VacuumTestEssayStep
-> {
-  override build(fb: FormBuilder): VacuumTestFormBuilder {
-    this.fb = fb;
-    this.form = fb.nonNullable.group({
-      id: undefined,
-      order: undefined,
-      essay_template_id: undefined,
-      step_id: [undefined, Validators.required.bind(this)],
-      form_control_raw: fb.nonNullable.group({
-        name: undefined,
-        meterConstant: [undefined, Validators.required.bind(this)],
-        phaseL1: fb.nonNullable.group({
-          voltage: [
-            undefined,
-            [
-              Validators.required.bind(this),
-              Validators.min(0),
-              Validators.max(500),
-            ],
-          ],
-        }),
-        phaseL2: fb.nonNullable.group({
-          voltage: [
-            undefined,
-            [
-              Validators.required.bind(this),
-              Validators.min(0),
-              Validators.max(500),
-            ],
-          ],
-        }),
-        phaseL3: fb.nonNullable.group({
-          voltage: [
-            undefined,
-            [
-              Validators.required.bind(this),
-              Validators.min(0),
-              Validators.max(500),
-            ],
-          ],
-        }),
-        maxAllowedPulses: [
-          undefined,
-          [
-            Validators.required.bind(this),
-            Validators.min(0),
-            Validators.max(99),
-          ],
-        ],
-        durationSeconds: [
-          undefined,
-          [
-            Validators.required.bind(this),
-            Validators.min(0),
-            Validators.max(9999),
-          ],
-        ],
-      }),
-      foreign: undefined,
-    }) as AbstractFormGroup<VacuumTestStep>;
+export class VacuumTestFormBuilder extends AbstractStepFormBuilder<VacuumTestStep, VacuumTestEssayStep> {
+    override build(fb: FormBuilder): VacuumTestFormBuilder {
+        this.fb = fb;
+        this.form = fb.nonNullable.group({
+            id: undefined,
+            order: undefined,
+            essay_template_id: undefined,
+            step_id: [undefined, Validators.required.bind(this)],
+            form_control_raw: fb.nonNullable.group({
+                name: undefined,
+                meterConstant: [undefined, Validators.required.bind(this)],
+                phaseL1: fb.nonNullable.group({
+                    voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
+                }),
+                phaseL2: fb.nonNullable.group({
+                    voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
+                }),
+                phaseL3: fb.nonNullable.group({
+                    voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
+                }),
+                maxAllowedPulses: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(99)]],
+                durationSeconds: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(9999)]]
+            }),
+            foreign: undefined
+        }) as AbstractFormGroup<VacuumTestStep>;
 
-    return this;
-  }
+        return this;
+    }
 
-  override withExecutionProps(
-    this: VacuumTestFormBuilder
-  ): VacuumTestFormBuilder {
-    const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
+    override withExecutionProps(this: VacuumTestFormBuilder): VacuumTestFormBuilder {
+        const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
 
-    this.form = this.fb.nonNullable.group({
-      ...typedForm.controls,
-      verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
-      executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
-      photocellAdjustmentStatus: [
-        PhotocellAdjustmentStatus.Unknown,
-        Validators.required.bind(this),
-      ],
-      standResults: this.fb.nonNullable.array(
-        this.buildStandResultsArray(APP_CONFIG.standsQuantiy)
-      ),
-    }) as AbstractFormGroup<VacuumTestEssayStep>;
+        this.form = this.fb.nonNullable.group({
+            ...typedForm.controls,
+            verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
+            executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
+            photocellAdjustmentStatus: [PhotocellAdjustmentStatus.Unknown, Validators.required.bind(this)],
+            standResults: this.fb.nonNullable.array(this.buildStandResultsArray(APP_CONFIG.standsQuantiy))
+        }) as AbstractFormGroup<VacuumTestEssayStep>;
 
-    return this;
-  }
+        return this;
+    }
 
-  override withVerificationProps(
-    this: VacuumTestFormBuilder
-  ): VacuumTestFormBuilder {
-    const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
-    typedForm
-      .get('form_control_raw.name')
-      ?.setValidators(Validators.required.bind(this));
-    return this;
-  }
+    override withVerificationProps(this: VacuumTestFormBuilder): VacuumTestFormBuilder {
+        const typedForm = this.form as AbstractFormGroup<VacuumTestStep>;
+        typedForm.get('form_control_raw.name')?.setValidators(Validators.required.bind(this));
+        return this;
+    }
 
-  // generate stand results array based on APP_CONFIG variable
-  private buildStandResultsArray(
-    standsQuantiy: number
-  ): AbstractFormGroup<VacuumTestStandResult>[] {
-    return Array(standsQuantiy)
-      .fill(undefined)
-      .map(
-        (_, index) =>
-          this.fb.nonNullable.group({
-            standIndex: index,
-            measuredPulses: undefined,
-            resultStatus: ResultStatus.Unknown,
-          }) as AbstractFormGroup<VacuumTestStandResult>
-      );
-  }
+    // generate stand results array based on APP_CONFIG variable
+    private buildStandResultsArray(standsQuantiy: number): AbstractFormGroup<VacuumTestStandResult>[] {
+        return Array(standsQuantiy)
+            .fill(undefined)
+            .map(
+                (_, index) =>
+                    this.fb.nonNullable.group({
+                        standIndex: index,
+                        measuredPulses: undefined,
+                        resultStatus: ResultStatus.Unknown
+                    }) as AbstractFormGroup<VacuumTestStandResult>
+            );
+    }
 }

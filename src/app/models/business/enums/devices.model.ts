@@ -1,6 +1,6 @@
 export enum Devices {
-  STW = 'STW',
-  CAL = 'CAL',
-  GEN = 'GEN',
-  PAT = 'PAT',
+    STW = 'STW',
+    CAL = 'CAL',
+    GEN = 'GEN',
+    PAT = 'PAT'
 }

@@ -1,126 +1,124 @@
-<form novalidate [formGroup]="form" class="pb-8">
-  <app-page-title [title]="title" [showBack]="true" (backEvent)="exit()">
-    <ng-container toolbar-right>
-      <div class="flex align-items-center">
-        <div class="mr-2">
-          <app-validator-messages
-            *ngIf="form.errors && form.dirty"
-            [errors]="form.errors"
-          ></app-validator-messages>
-        </div>
+<form
+    novalidate
+    [formGroup]="form"
+    class="pb-8">
+    <app-page-title
+        [title]="title"
+        [showBack]="true"
+        (backEvent)="exit()">
+        <ng-container toolbar-right>
+            <div class="flex align-items-center">
+                <div class="mr-2">
+                    <app-validator-messages
+                        *ngIf="form.errors && form.dirty"
+                        [errors]="form.errors"></app-validator-messages>
+                </div>
 
-        <p-splitButton
-          label="Guardar"
-          styleClass="p-button-success"
-          [disabled]="saveButtonDisabled"
-          [model]="saveButtonMenuItems"
-          appendTo="body"
-          (onClick)="save()"
-        ></p-splitButton>
-      </div>
+                <p-splitButton
+                    label="Guardar"
+                    styleClass="p-button-success"
+                    [disabled]="saveButtonDisabled"
+                    [model]="saveButtonMenuItems"
+                    appendTo="body"
+                    (onClick)="save()"></p-splitButton>
+            </div>
+        </ng-container>
+    </app-page-title>
+
+    <ng-container formGroupName="essayTemplate">
+        <p-toolbar styleClass="border-noround mb-4">
+            <div class="p-toolbar-group-right">
+                <div class="flex flex-column gap-2">
+                    <label for="name"> Nombre<span class="ml-1 text-red-300">*</span> </label>
+                    <input
+                        pInputText
+                        id="name"
+                        formControlName="name" />
+                    <app-input-error formControlName="name"></app-input-error>
+                </div>
+            </div>
+
+            <div class="p-toolbar-group-left gap-3">
+                <ng-container *ngIf="preparationStep">
+                    <p-button
+                        [outlined]="true"
+                        [rounded]="false"
+                        icon="pi pi-file-edit"
+                        label="Configurar preparación"
+                        tooltipPosition="bottom"
+                        (click)="selectedEssayTemplateStep = preparationStep"></p-button>
+                </ng-container>
+
+                <ng-container *ngIf="steps">
+                    <p-button
+                        label="Agregar paso"
+                        icon="pi pi-plus"
+                        [outlined]="true"
+                        (click)="addStepToSequenceDialogOpened = true"></p-button>
+                </ng-container>
+            </div>
+        </p-toolbar>
     </ng-container>
-  </app-page-title>
 
-  <ng-container formGroupName="essayTemplate">
-    <p-toolbar styleClass="border-noround mb-4">
-      <div class="p-toolbar-group-right">
-        <div class="flex flex-column gap-2">
-          <label for="name">
-            Nombre<span class="ml-1 text-red-300">*</span>
-          </label>
-          <input pInputText id="name" formControlName="name" />
-          <app-input-error formControlName="name"></app-input-error>
-        </div>
-      </div>
+    <app-steps-sequence-table
+        [essayTemplateSteps]="stepsSequenceTable"
+        [actionsTemplate]="actionsTemplate">
+        <ng-template
+            #actionsTemplate
+            let-element="element">
+            <p-button
+                icon="pi pi-arrow-down"
+                [outlined]="true"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="Bajar orden de ejecución"
+                tooltipPosition="bottom"
+                [showDelay]="1250"
+                [disabled]="element.order === stepsSequenceTable.length"
+                [tooltipDisabled]="element.order === stepsSequenceTable.length"
+                (click)="moveDownByIndex(element.order)"></p-button>
 
-      <div class="p-toolbar-group-left gap-3">
-        <ng-container *ngIf="preparationStep">
-          <p-button
-            [outlined]="true"
-            [rounded]="false"
-            icon="pi pi-file-edit"
-            label="Configurar preparación"
-            tooltipPosition="bottom"
-            (click)="selectedEssayTemplateStep = preparationStep"
-          ></p-button>
-        </ng-container>
+            <p-button
+                icon="pi pi-arrow-up"
+                [outlined]="true"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="Subir orden de ejecución"
+                tooltipPosition="bottom"
+                [showDelay]="1250"
+                [disabled]="element.order === 1"
+                [tooltipDisabled]="element.order === 1"
+                (click)="moveUpByIndex(element.order)"></p-button>
 
-        <ng-container *ngIf="steps">
-          <p-button
-            label="Agregar paso"
-            icon="pi pi-plus"
-            [outlined]="true"
-            (click)="addStepToSequenceDialogOpened = true"
-          ></p-button>
-        </ng-container>
-      </div>
-    </p-toolbar>
-  </ng-container>
+            <button
+                pButton
+                pRipple
+                icon="pi pi-file-edit"
+                class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+                [class.p-button-warning]="hasInvalidStepParams(element.order)"
+                pTooltip="Ajustar parámetros"
+                tooltipPosition="bottom"
+                (click)="selectedEssayTemplateStep = element"></button>
 
-  <app-steps-sequence-table
-    [essayTemplateSteps]="stepsSequenceTable"
-    [actionsTemplate]="actionsTemplate"
-  >
-    <ng-template #actionsTemplate let-element="element">
-      <p-button
-        icon="pi pi-arrow-down"
-        [outlined]="true"
-        [rounded]="true"
-        [text]="true"
-        pTooltip="Bajar orden de ejecución"
-        tooltipPosition="bottom"
-        [showDelay]="1250"
-        [disabled]="element.order === stepsSequenceTable.length"
-        [tooltipDisabled]="element.order === stepsSequenceTable.length"
-        (click)="moveDownByIndex(element.order)"
-      ></p-button>
-
-      <p-button
-        icon="pi pi-arrow-up"
-        [outlined]="true"
-        [rounded]="true"
-        [text]="true"
-        pTooltip="Subir orden de ejecución"
-        tooltipPosition="bottom"
-        [showDelay]="1250"
-        [disabled]="element.order === 1"
-        [tooltipDisabled]="element.order === 1"
-        (click)="moveUpByIndex(element.order)"
-      ></p-button>
-
-      <button
-        pButton
-        pRipple
-        icon="pi pi-file-edit"
-        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
-        [class.p-button-warning]="hasInvalidStepParams(element.order)"
-        pTooltip="Ajustar parámetros"
-        tooltipPosition="bottom"
-        (click)="selectedEssayTemplateStep = element"
-      ></button>
-
-      <button
-        pButton
-        pRipple
-        icon="pi pi-trash"
-        class="p-button-outlined p-button-rounded p-button-text p-button-danger"
-        pTooltip="Remover paso"
-        (click)="deleteEssayTemplateStepControl(element.order)"
-      ></button>
-    </ng-template>
-  </app-steps-sequence-table>
+            <button
+                pButton
+                pRipple
+                icon="pi pi-trash"
+                class="p-button-outlined p-button-rounded p-button-text p-button-danger"
+                pTooltip="Remover paso"
+                (click)="deleteEssayTemplateStepControl(element.order)"></button>
+        </ng-template>
+    </app-steps-sequence-table>
 </form>
 
 <ng-container *ngIf="steps">
-  <app-add-step-to-sequence
-    [(dialogOpened)]="addStepToSequenceDialogOpened"
-    [stepOptions]="steps"
-    (selectedStep)="addEssayTemplateStepControlByStep($event)"
-  ></app-add-step-to-sequence>
+    <app-add-step-to-sequence
+        [(dialogOpened)]="addStepToSequenceDialogOpened"
+        [stepOptions]="steps"
+        (selectedStep)="addEssayTemplateStepControlByStep($event)"></app-add-step-to-sequence>
 </ng-container>
 
 <app-edit-step-in-sequence
-  [initialValue]="selectedEssayTemplateStep"
-  (valueChange)="saveEditedStepInSequenceChanges($event)"
-  (dialogHide)="selectedEssayTemplateStep = undefined"
-></app-edit-step-in-sequence>
+    [initialValue]="selectedEssayTemplateStep"
+    (valueChange)="saveEditedStepInSequenceChanges($event)"
+    (dialogHide)="selectedEssayTemplateStep = undefined"></app-edit-step-in-sequence>

@@ -19,28 +19,28 @@ import { HistoryEssayComponent } from './history-essay/history-essay.component';
 import { CommandHistoryComponent } from './command-history/command-history.component';
 
 @NgModule({
-  declarations: [
-    PageNotFoundComponent,
-    BrandsComponent,
-    MetersComponent,
-    AvailableTestComponent,
-    EssayTemplateBuilderComponent,
-    RunEssayComponent,
-    VirtualMachineComponent,
-    HistoryEssayStepStandComponent,
-    StaticsComponent,
-    HistoryEssayComponent,
-    CommandHistoryComponent,
-  ],
-  imports: [
-    CommonModule,
-    FeaturesRoutingModule,
-    TranslateModule.forChild(),
-    ComponentsModule,
-    ReactiveFormsModule,
-    PipesModule,
-    DirectivesModule,
-  ],
-  providers: [],
+    declarations: [
+        PageNotFoundComponent,
+        BrandsComponent,
+        MetersComponent,
+        AvailableTestComponent,
+        EssayTemplateBuilderComponent,
+        RunEssayComponent,
+        VirtualMachineComponent,
+        HistoryEssayStepStandComponent,
+        StaticsComponent,
+        HistoryEssayComponent,
+        CommandHistoryComponent
+    ],
+    imports: [
+        CommonModule,
+        FeaturesRoutingModule,
+        TranslateModule.forChild(),
+        ComponentsModule,
+        ReactiveFormsModule,
+        PipesModule,
+        DirectivesModule
+    ],
+    providers: []
 })
 export class FeaturesModule {}

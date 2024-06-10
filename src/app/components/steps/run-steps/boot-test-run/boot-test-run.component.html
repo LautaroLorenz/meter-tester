@@ -1,66 +1,60 @@
 <!-- Parámetros del paso -->
 <app-boot-test-params
-  [currentStep]="currentStep"
-  [toggleable]="true"
-  [showTexts]="true"
-></app-boot-test-params>
+    [currentStep]="currentStep"
+    [toggleable]="true"
+    [showTexts]="true"></app-boot-test-params>
 
 <!-- Generador manual -->
 <div class="mt-4">
-  <app-manual-generator
-    (adjustmentDone)="onManualGeneratorAdjusted()"
-  ></app-manual-generator>
+    <app-manual-generator (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
 </div>
 
 <!-- Temporizadores -->
 <div class="mt-4">
-  <!-- Tiempo mínimo -->
-  <app-count-timer
-    #countTimerMin
-    visibility="hidden"
-    [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
-    (finishCount)="onMinTimerCountdownFinish()"
-  ></app-count-timer>
+    <!-- Tiempo mínimo -->
+    <app-count-timer
+        #countTimerMin
+        visibility="hidden"
+        [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
+        (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
 
-  <!-- Tiempo máximo -->
-  <app-count-timer
-    #countTimerMax
-    visibility="visible"
-    [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
-    (finishCount)="onMaxTimerCountdownFinish()"
-  ></app-count-timer>
+    <!-- Tiempo máximo -->
+    <app-count-timer
+        #countTimerMax
+        visibility="visible"
+        [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
+        (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
 </div>
 
 <!-- Calculador -->
 <div class="mt-4">
-  <app-calculator #calculator [resultDecimalsQuantity]="0">
-    <app-stands-result
-      [preparationStep]="preparationStep"
-      [results]="currentStep.standResults"
-      [resultsColumn]="resultsColumn"
-      [stepMeterConstant]="currentStep.form_control_raw.meterConstant"
-    ></app-stands-result>
-  </app-calculator>
+    <app-calculator
+        #calculator
+        [resultDecimalsQuantity]="0">
+        <app-stands-result
+            [preparationStep]="preparationStep"
+            [results]="currentStep.standResults"
+            [resultsColumn]="resultsColumn"
+            [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+    </app-calculator>
 </div>
 
 <!-- Patrón -->
 <div class="mt-4">
-  <app-pattern #pattern></app-pattern>
+    <app-pattern #pattern></app-pattern>
 </div>
 
 <!-- Actions -->
 <div class="flex justify-content-end mt-4 mb-8 gap-3">
-  <p-button
-    label="Reintentar"
-    [outlined]="true"
-    [disabled]="!canContinue"
-    (click)="restart()"
-  ></p-button>
+    <p-button
+        label="Reintentar"
+        [outlined]="true"
+        [disabled]="!canContinue"
+        (click)="restart()"></p-button>
 
-  <p-button
-    label="Continuar"
-    [outlined]="false"
-    [disabled]="!canContinue"
-    (click)="stepExecutionDone(this.currentStep)"
-  ></p-button>
+    <p-button
+        label="Continuar"
+        [outlined]="false"
+        [disabled]="!canContinue"
+        (click)="stepExecutionDone(this.currentStep)"></p-button>
 </div>

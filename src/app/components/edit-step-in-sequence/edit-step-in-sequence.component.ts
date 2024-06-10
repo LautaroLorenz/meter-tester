@@ -4,11 +4,11 @@ import { EditDialogComponent } from '../../models/core/edit-dialog.model';
 import { HelpTextStepsMap } from '../../models/business/constants/help-texts-constant.model';
 
 @Component({
-  selector: 'app-edit-step-in-sequence',
-  templateUrl: './edit-step-in-sequence.component.html',
-  styleUrls: ['./edit-step-in-sequence.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-edit-step-in-sequence',
+    templateUrl: './edit-step-in-sequence.component.html',
+    styleUrls: ['./edit-step-in-sequence.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditStepInSequenceComponent extends EditDialogComponent<EssayTemplateStep> {
-  readonly HelpTextStepsMap = HelpTextStepsMap;
+    readonly HelpTextStepsMap = HelpTextStepsMap;
 }
