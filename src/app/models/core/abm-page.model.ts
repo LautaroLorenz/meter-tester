@@ -1,8 +1,11 @@
-import { map, Observable, tap, startWith } from 'rxjs';
+import { map, Observable, tap, startWith, take } from 'rxjs';
 import { DatabaseService } from '../../services/database.service';
-import { DbTableContext, TableRelationsMap } from './database.model';
+import { DbTableContext, RequestTableResponse, TableRelationsMap } from './database.model';
 import { RelationsManager } from './relations-manager.model';
 import { LazyLoadEvent } from 'primeng/api';
+import { inject } from '@angular/core';
+import { BlockUIService } from '../../services/block-ui.service';
+import { ExcelExportService } from '../../services/excel-export.service';
 
 export abstract class AbmPage<T> {
     protected totalRecords = 0;
@@ -10,6 +13,10 @@ export abstract class AbmPage<T> {
     protected lazyLoadEvent: LazyLoadEvent = {};
     private readonly _dbService: DatabaseService<T>;
     private readonly _dbTableConnection: DbTableContext;
+    private readonly excelExportService = inject(ExcelExportService);
+    private readonly blockUIService = inject(BlockUIService);
+
+    abstract readonly excelExportFileName: string;
 
     constructor(dbService: DatabaseService<T>, dbTableConnection: DbTableContext) {
         this._dbService = dbService;
@@ -40,9 +47,22 @@ export abstract class AbmPage<T> {
         this.refreshTable();
     }
 
+    protected export(): void {
+        this.blockUIService.setBlocked(true);
+        this.exportQuery$().pipe(take(1)).subscribe((result) => {
+            const excelData = this.exportDataTransform(result);
+            this.excelExportService.exportAsExcelFile(excelData, this.excelExportFileName);
+            this.blockUIService.setBlocked(false);
+        });
+    }
+
     private _setRelations(relations: TableRelationsMap): void {
         this._relations = { ...this._relations, ...relations };
     }
 
     abstract refreshTable(): void;
+
+    abstract exportQuery$(): Observable<RequestTableResponse<T>>;
+
+    abstract exportDataTransform(data: RequestTableResponse<T>): any[];
 }

@@ -6,6 +6,7 @@ import { MessagesService } from '../../services/messages.service';
 import { DatabaseService } from '../../services/database.service';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import { TableColumn, TC_AlignHorizontal } from '../../models/core/table-column.model';
+import { RequestTableResponse } from '../../models/core/database.model';
 
 @Component({
     templateUrl: './available-test.component.html',
@@ -23,6 +24,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> {
         }
     ];
     readonly essayTemplates$: Observable<EssayTemplate[]>;
+    readonly excelExportFileName = 'ensayos';
 
     constructor(
         private readonly dbService: DatabaseService<EssayTemplate>,
@@ -32,7 +34,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> {
         this.essayTemplates$ = this.refreshDataWhenDatabaseReply$(EssayTemplateDbTableContext.tableName);
     }
 
-    deleteEssayTemplates(ids: string[] = []) {
+    deleteEssayTemplates(ids: string[] = []): void {
         this.dbService
             .deleteTableElements$(EssayTemplateDbTableContext.tableName, ids)
             .pipe(
@@ -54,5 +56,23 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> {
             lazyLoadEvent: this.lazyLoadEvent,
             globalFilterColumns: GlobalFilterManager.transform(this.cols)
         });
+    }
+
+    override exportQuery$(): Observable<RequestTableResponse<EssayTemplate>> {
+        return this.dbService.getTable$(EssayTemplateDbTableContext.tableName, {
+            relations: EssayTemplateDbTableContext.foreignTables,
+            // traemos la última búsqueda, sin paginar
+            lazyLoadEvent: {
+                ...this.lazyLoadEvent,
+                first: 0,
+                rows: undefined
+            },
+            globalFilterColumns: GlobalFilterManager.transform(this.cols)
+        });
+    }
+
+    override exportDataTransform(data: RequestTableResponse<EssayTemplate>): any[] {
+        // TODO
+        return [];
     }
 }

@@ -18,6 +18,9 @@ import { BrandDbTableContext } from '../../models/business/database/brand.model'
 import { Meter, MeterDbTableContext } from '../../models/business/database/meter.model';
 import { EnumAsOptionPipe } from '../../pipes/core/enum-as-option.pipe';
 import { ResultStatus } from '../../models/business/enums/result-status.model';
+import { RequestTableResponse } from '../../models/core/database.model';
+import { DatePipe } from '@angular/common';
+import { TranslateEnumPipe } from '../../pipes/core/translate-enum.pipe';
 
 @Component({
     templateUrl: './history-essay-step-stand.component.html',
@@ -131,6 +134,10 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
         }
     ];
     readonly historyEssayRows$: Observable<HistoryEssayStepStand[]>;
+    readonly excelExportFileName = 'historial de ejecución';
+
+    private datePipe = inject(DatePipe);
+    private translateEnumPipe = inject(TranslateEnumPipe);
 
     constructor(private readonly dbService: DatabaseService<HistoryEssayStepStand>) {
         super(dbService, HistoryEssayStepStandDbTableContext);
@@ -143,6 +150,34 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
             lazyLoadEvent: this.lazyLoadEvent,
             globalFilterColumns: GlobalFilterManager.transform(this.cols)
         });
+    }
+
+    override exportQuery$(): Observable<RequestTableResponse<HistoryEssayStepStand>> {
+        return this.dbService.getTable$(HistoryEssayStepStandDbTableContext.tableName, {
+            relations: HistoryEssayStepStandDbTableContext.foreignTables,
+            // traemos la última búsqueda, sin paginar
+            lazyLoadEvent: {
+                ...this.lazyLoadEvent,
+                first: 0,
+                rows: undefined
+            },
+            globalFilterColumns: GlobalFilterManager.transform(this.cols)
+        });
+    }
+
+    override exportDataTransform(data: RequestTableResponse<HistoryEssayStepStand>): any[] {
+        return data.rows.map((row) => ({
+            'Realizado': this.datePipe.transform(row.saved_time, 'dd/MM/yyyy'),
+            'Ensayo': row.essay_name,
+            'Paso': row.step_name,
+            'Marca': row.foreign.meter.foreign.brand.name,
+            'Modelo': row.foreign.meter.model,
+            'Número de serie': row.serial_number,
+            'Año de fabricación': row.year_of_production,
+            'Resultado': this.translateEnumPipe.transform(row.result_status_enum, 'ResultStatus'),
+            'Valor medido': row.result_value,
+            'Unidad': row.result_unit
+        }));
     }
 
     openMeterDialog(meter: Meter): void {

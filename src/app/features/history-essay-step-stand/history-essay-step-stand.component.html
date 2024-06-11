@@ -7,6 +7,15 @@
         [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
         [deleteButton]="false"
         (lazyLoad)="lazyLoad($event)">
+        <ng-container toolbar-group-right>
+            <p-button
+                label="Exportar"
+                icon="pi pi-file-export"
+                styleClass="ml-2"
+                [outlined]="true"
+                (click)="export()"></p-button>
+        </ng-container>
+
         <!-- columnas -->
         <ng-template
             abmColumnTemplateName="model"

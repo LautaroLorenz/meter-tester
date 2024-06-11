@@ -7,6 +7,7 @@ import { MessagesService } from '../../services/messages.service';
 import { AbmPage } from '../../models/core/abm-page.model';
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import { TC_AlignHorizontal, TableColumn } from '../../models/core/table-column.model';
+import { RequestTableResponse } from '../../models/core/database.model';
 
 @Component({
     templateUrl: './brands.component.html',
@@ -25,6 +26,7 @@ export class BrandsComponent extends AbmPage<Brand> {
     ];
     readonly form: FormGroup;
     readonly brands$: Observable<Brand[]>;
+    readonly excelExportFileName = 'marcas';
 
     constructor(
         private readonly dbService: DatabaseService<Brand>,
@@ -40,7 +42,7 @@ export class BrandsComponent extends AbmPage<Brand> {
         });
     }
 
-    deleteBrands(ids: string[] = []) {
+    deleteBrands(ids: string[] = []): void {
         this.dbService
             .deleteTableElements$(BrandDbTableContext.tableName, ids)
             .pipe(
@@ -56,12 +58,12 @@ export class BrandsComponent extends AbmPage<Brand> {
             });
     }
 
-    setFormValues(brand: Brand) {
+    setFormValues(brand: Brand): void {
         this.form.reset();
         this.form.patchValue(brand);
     }
 
-    saveBrand() {
+    saveBrand(): void {
         if (!this.form.valid) {
             return;
         }
@@ -82,9 +84,27 @@ export class BrandsComponent extends AbmPage<Brand> {
         });
     }
 
+    override exportQuery$(): Observable<RequestTableResponse<Brand>> {
+        return this.dbService.getTable$(BrandDbTableContext.tableName, {
+            relations: BrandDbTableContext.foreignTables,
+            // traemos la última búsqueda, sin paginar
+            lazyLoadEvent: {
+                ...this.lazyLoadEvent,
+                first: 0,
+                rows: undefined
+            },
+            globalFilterColumns: GlobalFilterManager.transform(this.cols)
+        });
+    }
+
+    override exportDataTransform(data: RequestTableResponse<Brand>): any[] {
+        // TODO
+        return [];
+    }
+
     private readonly updateDropdownOptions = (): void => {};
 
-    private createBrand(brand: Brand) {
+    private createBrand(brand: Brand): void {
         this.dbService
             .addElementToTable$(BrandDbTableContext.tableName, brand, BrandDbTableContext.rawProperties)
             .pipe(
@@ -99,7 +119,7 @@ export class BrandsComponent extends AbmPage<Brand> {
             });
     }
 
-    private editBrand(brand: Brand) {
+    private editBrand(brand: Brand): void {
         this.dbService
             .editElementFromTable$(BrandDbTableContext.tableName, brand, BrandDbTableContext.rawProperties)
             .pipe(

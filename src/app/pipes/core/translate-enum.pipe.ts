@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
     name: 'translateEnum'
 })
 export class TranslateEnumPipe implements PipeTransform {
-    translate = inject(TranslateService);
+    private translate = inject(TranslateService);
 
     transform(enumKey: string, enumName: string): string {
         return this.translate.instant(`${enumName}.${enumKey}`) as string;
