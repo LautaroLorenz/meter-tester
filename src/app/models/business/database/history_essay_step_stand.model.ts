@@ -2,6 +2,7 @@ import { DbForeignKey, DbTableContext } from '../../core/database.model';
 import { Meter, MeterDbTableContext } from './meter.model';
 import { ResultStatus } from '../enums/result-status.model';
 import { HistoryEssay, HistoryEssayDbTableContext } from './history-essay.model';
+import { StepResultUnitEnum } from '../constants/step-result-unit.model';
 
 export interface HistoryEssayStepStand extends DbForeignKey {
     id: number;
@@ -13,6 +14,8 @@ export interface HistoryEssayStepStand extends DbForeignKey {
     serial_number: string;
     year_of_production: string;
     result_status_enum: ResultStatus;
+    result_value: number;
+    result_unit: StepResultUnitEnum;
     foreign: {
         meter: Meter;
         historyEssay: HistoryEssay;

@@ -33,6 +33,7 @@ import { ResultStatus } from '../../../models/business/enums/result-status.model
 import { Tags } from '../../../models/business/database/static.model';
 import { HistoryEssay } from '../../../models/business/database/history-essay.model';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
+import { StepResultUnit, StepResultUnitEnum } from '../../../models/business/constants/step-result-unit.model';
 
 @Component({
     selector: 'app-report-major-step',
@@ -219,6 +220,14 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         let rows: Omit<HistoryEssayStepStand, 'id' | 'history_essay_id' | 'foreign'>[] = [];
         this.executionSteps.forEach((step) => {
             this.runEssayService.getActiveStands(this.preparationStep).forEach(({ index, stand }) => {
+                let resultValue!: number;
+                const result = step.standResults[index];
+                if ('measuredPulses' in result) {
+                    resultValue = result.measuredPulses as number;
+                }
+                if ('measuredError' in result) {
+                    resultValue = result.measuredError as number;
+                }
                 const historyEssayStepStand: Omit<HistoryEssayStepStand, 'id' | 'history_essay_id' | 'foreign'> = {
                     saved_time: savedTime,
                     essay_name: this.runEssay.essayName,
@@ -226,7 +235,9 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
                     meter_id: stand.foreign.meter.id,
                     serial_number: stand.serialNumber,
                     year_of_production: stand.yearOfProduction,
-                    result_status_enum: step.standResults[index].resultStatus
+                    result_status_enum: step.standResults[index].resultStatus,
+                    result_unit: StepResultUnit[step.step_id] as StepResultUnitEnum,
+                    result_value: resultValue
                 };
                 rows = rows.concat(historyEssayStepStand);
             });

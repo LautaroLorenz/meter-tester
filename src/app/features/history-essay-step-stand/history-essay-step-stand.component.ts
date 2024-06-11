@@ -114,6 +114,20 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
                 showClearButton: true,
                 maxConstraints: 1
             }
+        },
+        {
+            field: 'result_value',
+            header: 'Valor medido',
+            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
+            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
+            alignHorizontal: TC_AlignHorizontal.Number
+        },
+        {
+            field: 'result_unit',
+            header: 'Unidad',
+            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
+            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
+            alignHorizontal: TC_AlignHorizontal.Text
         }
     ];
     readonly historyEssayRows$: Observable<HistoryEssayStepStand[]>;
