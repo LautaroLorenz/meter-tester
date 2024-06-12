@@ -21,6 +21,8 @@ export class TableColumnComponent<T> implements OnInit {
     value!: string;
     template!: TemplateRef<TableColumnTemplateContext<any>>;
     alignHorizontal!: TC_AlignHorizontal;
+    hasValue = false;
+    hasTemplate = false;
 
     readonly TC_AlignHorizontal = TC_AlignHorizontal;
 
@@ -28,10 +30,12 @@ export class TableColumnComponent<T> implements OnInit {
 
     ngOnInit(): void {
         if ('field' in this.tableColumn) {
+            this.hasValue = true;
             this.value = this.getColValue(this.data, this.tableColumn);
             this.alignHorizontal = this.tableColumn.alignHorizontal;
         }
         if ('template' in this.tableColumn && this.tableColumn.template) {
+            this.hasTemplate = true;
             this.template = this.tableColumn.template;
         }
     }
