@@ -32,12 +32,12 @@ export const propInUseValidator = <T extends Record<string, any>>(
             switchMap(() => dbService.getTableReply$(tableName).pipe(first())),
             map(({ rows }) => {
                 // si el valor no está en uso
-                if(rows.length === 0) {
+                if (rows.length === 0) {
                     return null;
                 }
                 // si el valor está en uso por si mismo (es una edición)
                 const [row] = rows;
-                if(('id' in row) && currentId !== undefined && row.id === currentId) {
+                if (('id' in row) && currentId !== undefined && row.id === currentId) {
                     return null;
                 }
                 // el valor está en uso por un elemento diferente del actual

@@ -357,6 +357,18 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
             tap((savedFormValue) => {
                 this.messagesService.success('Guardado correctamente');
                 this.form.reset(savedFormValue);
+                this.form
+                    .get('essayTemplate.name')
+                    ?.setAsyncValidators(
+                        propInUseValidator<EssayTemplate>(
+                            this.onDestroy,
+                            this.dbService,
+                            EssayTemplateDbTableContext.tableName,
+                            'name',
+                            savedFormValue.essayTemplate.id
+                        ).bind(this)
+                    );
+                this.form.get('essayTemplate.name')?.updateValueAndValidity();
             }),
             catchError((e) => {
                 this.messagesService.error('No se pudo guardar');
