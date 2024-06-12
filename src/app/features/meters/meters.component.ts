@@ -19,6 +19,7 @@ import { Connection, ConnectionDbTableContext } from '../../models/business/data
 import { GlobalFilterManager } from '../../models/core/global-filter-manager.model';
 import { TC_AlignHorizontal, TableColumn } from '../../models/core/table-column.model';
 import { ActiveConstantUnitEnum, ReactiveConstantUnitEnum } from '../../models/business/constants/meter-constant.model';
+import { RequestTableResponse } from '../../models/core/database.model';
 
 @Component({
     templateUrl: './meters.component.html',
@@ -103,6 +104,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
     ];
     readonly form: FormGroup;
     readonly meters$: Observable<Meter[]>;
+    readonly excelExportFileName = 'medidores';
 
     dropdownActiveConstantUnitOptions: ActiveConstantUnit[] = [];
     dropdownReactiveConstantUnitOptions: ReactiveConstantUnit[] = [];
@@ -154,12 +156,12 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
         this.initFormValueChangeListeners();
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.destroyed$.next(true);
         this.destroyed$.complete();
     }
 
-    deleteMeters(ids: string[] = []) {
+    deleteMeters(ids: string[] = []): void {
         this.dbService
             .deleteTableElements$(MeterDbTableContext.tableName, ids)
             .pipe(
@@ -175,12 +177,12 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             });
     }
 
-    setFormValues(meter: Meter) {
+    setFormValues(meter: Meter): void {
         this.form.reset();
         this.form.patchValue(meter);
     }
 
-    saveMeter() {
+    saveMeter(): void {
         if (!this.form.valid) {
             return;
         }
@@ -199,6 +201,24 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             lazyLoadEvent: this.lazyLoadEvent,
             globalFilterColumns: GlobalFilterManager.transform(this.cols)
         });
+    }
+
+    override exportQuery$(): Observable<RequestTableResponse<Meter>> {
+        return this.dbService.getTable$(MeterDbTableContext.tableName, {
+            relations: MeterDbTableContext.foreignTables,
+            // traemos la última búsqueda, sin paginar
+            lazyLoadEvent: {
+                ...this.lazyLoadEvent,
+                first: 0,
+                rows: undefined
+            },
+            globalFilterColumns: GlobalFilterManager.transform(this.cols)
+        });
+    }
+
+    override exportDataTransform(data: RequestTableResponse<Meter>): any[] {
+        // TODO
+        return [];
     }
 
     private readonly updateDropdownOptions = (): void => {
@@ -299,7 +319,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             .subscribe();
     }
 
-    private createMeter(meter: Meter) {
+    private createMeter(meter: Meter): void {
         this.dbService
             .addElementToTable$(MeterDbTableContext.tableName, meter, MeterDbTableContext.rawProperties)
             .pipe(
@@ -314,7 +334,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             });
     }
 
-    private editMeter(meter: Meter) {
+    private editMeter(meter: Meter): void {
         this.dbService
             .editElementFromTable$(MeterDbTableContext.tableName, meter, MeterDbTableContext.rawProperties)
             .pipe(

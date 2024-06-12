@@ -13,6 +13,8 @@ exports.seed = async function (knex) {
       serial_number: 111,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 0,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -24,6 +26,8 @@ exports.seed = async function (knex) {
       serial_number: 222,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 1,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -35,6 +39,8 @@ exports.seed = async function (knex) {
       serial_number: 333,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 0,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -46,6 +52,8 @@ exports.seed = async function (knex) {
       serial_number: 777,
       year_of_production: 2003,
       result_status_enum: "Failed",
+      result_value: 1,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -57,6 +65,8 @@ exports.seed = async function (knex) {
       serial_number: 111,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: -5.6,
+      result_unit: '%',
       history_essay_id: 1,
     },
     {
@@ -68,6 +78,8 @@ exports.seed = async function (knex) {
       serial_number: 222,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 8.78,
+      result_unit: '%',
       history_essay_id: 1,
     },
     {
@@ -79,6 +91,8 @@ exports.seed = async function (knex) {
       serial_number: 333,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 22.5,
+      result_unit: '%',
       history_essay_id: 1,
     },
     {
@@ -90,6 +104,8 @@ exports.seed = async function (knex) {
       serial_number: 777,
       year_of_production: 2003,
       result_status_enum: "Failed",
+      result_value: 13.15,
+      result_unit: '%',
       history_essay_id: 1,
     },
     {
@@ -101,6 +117,8 @@ exports.seed = async function (knex) {
       serial_number: 111,
       year_of_production: 2024,
       result_status_enum: "Approved",
+      result_value: 1,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -112,6 +130,8 @@ exports.seed = async function (knex) {
       serial_number: 222,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 4,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -123,6 +143,8 @@ exports.seed = async function (knex) {
       serial_number: 333,
       year_of_production: 2024,
       result_status_enum: "Failed",
+      result_value: 2,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
     {
@@ -134,6 +156,8 @@ exports.seed = async function (knex) {
       serial_number: 777,
       year_of_production: 2003,
       result_status_enum: "Failed",
+      result_value: 2,
+      result_unit: 'Impulsos',
       history_essay_id: 1,
     },
   ]);
