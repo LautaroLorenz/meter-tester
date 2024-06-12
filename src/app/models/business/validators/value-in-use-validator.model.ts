@@ -4,12 +4,12 @@ import { TableName } from '../../core/database.model';
 import { DatabaseService } from '../../../services/database.service';
 import { TC_MatchMode } from '../../core/table-column.model';
 
-export const propInUseValidator = <T>(
+export const propInUseValidator = <T extends Record<string, any>>(
     onDestroy: Subject<void>,
     dbService: DatabaseService<T>,
     tableName: TableName,
     prop: keyof T,
-    skipSelf: any // su propio valor no cuenta como estar en uso
+    currentId: number | undefined // su propio valor no cuenta como estar en uso
 ): AsyncValidatorFn => {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
         return control.valueChanges.pipe(
@@ -31,10 +31,17 @@ export const propInUseValidator = <T>(
             }),
             switchMap(() => dbService.getTableReply$(tableName).pipe(first())),
             map(({ rows }) => {
-                if (rows.length > 0 && ((!!skipSelf && rows[0][prop] !== skipSelf) || !skipSelf)) {
-                    return { propInUse: true };
+                // si el valor no está en uso
+                if(rows.length === 0) {
+                    return null;
                 }
-                return null;
+                // si el valor está en uso por si mismo (es una edición)
+                const [row] = rows;
+                if(('id' in row) && currentId !== undefined && row.id === currentId) {
+                    return null;
+                }
+                // el valor está en uso por un elemento diferente del actual
+                return { propInUse: true };
             })
         );
     };

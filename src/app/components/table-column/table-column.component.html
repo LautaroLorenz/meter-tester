@@ -1,4 +1,4 @@
-<ng-container *ngIf="value">
+<ng-container *ngIf="hasValue">
     <div
         class="flex"
         [style]="tableColumn.customStyles"
@@ -10,7 +10,7 @@
         }"></div>
 </ng-container>
 
-<ng-container *ngIf="template">
+<ng-container *ngIf="hasTemplate">
     <ng-container
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="{ item: data, index: index }"></ng-container>

@@ -39,7 +39,7 @@ export class InputErrorComponent implements ControlValueAccessor, AfterViewInit,
     constructor(
         private _injector: Injector,
         private cd: ChangeDetectorRef
-    ) {}
+    ) { }
 
     ngAfterViewInit(): void {
         // si es un control
@@ -51,14 +51,16 @@ export class InputErrorComponent implements ControlValueAccessor, AfterViewInit,
             this.cd.detectChanges();
         });
 
-        // si es un grupo de controles
-        const formGroup = this._injector.get(FormGroupDirective, null);
-        formGroup?.statusChanges?.pipe(takeUntil(this.onDestroy)).subscribe(() => {
-            this.invalid = formGroup.invalid;
-            this.errors = formGroup.errors;
-            this.dirty = formGroup.dirty;
-            this.cd.detectChanges();
-        });
+        if (!formControl) {
+            // si es un grupo de controles
+            const formGroup = this._injector.get(FormGroupDirective, null);
+            formGroup?.statusChanges?.pipe(takeUntil(this.onDestroy)).subscribe(() => {
+                this.invalid = formGroup.invalid;
+                this.errors = formGroup.errors;
+                this.dirty = formGroup.dirty;
+                this.cd.detectChanges();
+            });
+        }
     }
 
     ngOnDestroy(): void {
@@ -73,9 +75,9 @@ export class InputErrorComponent implements ControlValueAccessor, AfterViewInit,
         return !!this.errors[key];
     }
 
-    writeValue(): void {}
+    writeValue(): void { }
 
-    registerOnChange(): void {}
+    registerOnChange(): void { }
 
-    registerOnTouched(): void {}
+    registerOnTouched(): void { }
 }

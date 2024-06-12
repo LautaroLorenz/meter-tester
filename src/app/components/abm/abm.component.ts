@@ -97,7 +97,7 @@ export class AbmComponent implements OnChanges, OnInit, AfterContentInit, OnDest
         this.primeNgTable?.filterGlobal(value, 'contains');
     }
 
-    deleteElement(element: any) {
+    deleteElement(element: any): void {
         this.confirmationService.confirm({
             message: '¿Eliminar fila de la tabla?',
             header: 'Confirmar borrado',
@@ -110,11 +110,11 @@ export class AbmComponent implements OnChanges, OnInit, AfterContentInit, OnDest
         });
     }
 
-    editElement(element: any) {
+    editElement(element: any): void {
         this.openDialog(element);
     }
 
-    createElement() {
+    createElement(): void {
         this.openDialog({});
     }
 
@@ -127,15 +127,15 @@ export class AbmComponent implements OnChanges, OnInit, AfterContentInit, OnDest
         this.openDetailEvent.emit(element);
     }
 
-    saveElement() {
+    saveElement(): void {
         this.saveDetailEvent.emit();
     }
 
-    closeDialog() {
+    closeDialog(): void {
         this.detailDialogVisible = false;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.onDestroy$.next();
         this.onDestroy$.complete();
     }

@@ -96,6 +96,20 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
             alignHorizontal: TC_AlignHorizontal.Number
         },
         {
+            field: 'result_value',
+            header: 'Valor obtenido',
+            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
+            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
+            alignHorizontal: TC_AlignHorizontal.Number
+        },
+        {
+            field: 'result_unit',
+            header: 'Unidad',
+            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
+            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
+            alignHorizontal: TC_AlignHorizontal.Text
+        },
+        {
             templateName: 'result_status_enum',
             template: undefined, // se inicializa en abm.component.ts
             header: 'Resultado',
@@ -117,20 +131,6 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
                 showClearButton: true,
                 maxConstraints: 1
             }
-        },
-        {
-            field: 'result_value',
-            header: 'Valor medido',
-            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
-            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
-            alignHorizontal: TC_AlignHorizontal.Number
-        },
-        {
-            field: 'result_unit',
-            header: 'Unidad',
-            sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
-            globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_unit`,
-            alignHorizontal: TC_AlignHorizontal.Text
         }
     ];
     readonly historyEssayRows$: Observable<HistoryEssayStepStand[]>;
@@ -174,9 +174,9 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
             'Modelo': row.foreign.meter.model,
             'Número de serie': row.serial_number,
             'Año de fabricación': row.year_of_production,
-            'Resultado': this.translateEnumPipe.transform(row.result_status_enum, 'ResultStatus'),
-            'Valor medido': row.result_value,
-            'Unidad': row.result_unit
+            'Valor obtenido': row.result_value,
+            'Unidad': row.result_unit,
+            'Resultado': this.translateEnumPipe.transform(row.result_status_enum, 'ResultStatus')
         }));
     }
 
