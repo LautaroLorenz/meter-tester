@@ -239,7 +239,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
                                 this.dbService,
                                 EssayTemplateDbTableContext.tableName,
                                 'name',
-                                essayTemplate.name
+                                essayTemplate.id
                             ).bind(this)
                         );
                     this.form.get('essayTemplate.name')?.updateValueAndValidity();
@@ -323,7 +323,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
                             this.dbService,
                             EssayTemplateDbTableContext.tableName,
                             'name',
-                            false
+                            undefined
                         ).bind(this)
                     })
                 }),
