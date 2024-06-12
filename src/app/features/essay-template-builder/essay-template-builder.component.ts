@@ -113,7 +113,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
         this.requestToolsTables();
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.onDestroy.next();
         this.onDestroy.complete();
     }
