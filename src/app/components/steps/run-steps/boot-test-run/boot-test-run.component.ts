@@ -72,7 +72,11 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         // update measuredPulses
         this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
             const result: CommandResultResponse = results[resultIndex];
+            // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
+                this.runEssayService
+                    .getStandResult<BootTestStandResult>(this.currentStep.id, standIndex)
+                    .patchValue({ measuredPulses: undefined });
                 return;
             }
             this.runEssayService
