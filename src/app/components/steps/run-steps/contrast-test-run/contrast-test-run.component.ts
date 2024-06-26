@@ -54,11 +54,13 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     onCalculatorResults(results: CommandResultResponse[]): void {
         // update measured error
         this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
+            const stand = this.runEssayService.getStandResult<ContrastTestStandResult>(this.currentStep.id, standIndex);
             const result: CommandResultResponse = results[resultIndex];
+            // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
+                stand.patchValue({ measuredError: undefined });
                 return;
             }
-            const stand = this.runEssayService.getStandResult<ContrastTestStandResult>(this.currentStep.id, standIndex);
             // bloqueo de resultado actual según modo de ejecución
             if (
                 this.stepRunMode === StepRunMode.finalResultLock &&

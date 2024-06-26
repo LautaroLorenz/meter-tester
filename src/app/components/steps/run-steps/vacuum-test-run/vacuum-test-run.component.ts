@@ -61,7 +61,11 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         // update measuredPulses
         this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
             const result: CommandResultResponse = results[resultIndex];
+            // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
+                this.runEssayService
+                    .getStandResult<VacuumTestStandResult>(this.currentStep.id, standIndex)
+                    .patchValue({ measuredPulses: undefined });
                 return;
             }
             this.runEssayService
