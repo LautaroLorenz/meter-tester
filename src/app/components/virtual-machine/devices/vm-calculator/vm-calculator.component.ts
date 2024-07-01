@@ -26,14 +26,14 @@ import { CommandLineConfigTypes } from '../../../../models/business/interafces/c
 export class VmCalculatorComponent extends VMDeviceComponent {
     override readonly device = Devices.CAL;
     override commandLines: CommandLine[] = [
-        ...this.stopCommands(APP_CONFIG.standsQuantiy),
-        ...this.resetCommands(APP_CONFIG.standsQuantiy),
-        ...this.ts01Commands(APP_CONFIG.standsQuantiy),
-        ...this.ts02Commands(APP_CONFIG.standsQuantiy)
+        ...this.stopCommands(APP_CONFIG.standsQuantity),
+        ...this.resetCommands(APP_CONFIG.standsQuantity),
+        ...this.ts01Commands(APP_CONFIG.standsQuantity),
+        ...this.ts02Commands(APP_CONFIG.standsQuantity)
     ];
 
-    private stopCommands(standsQuantiy: number): CommandLine[] {
-        return Array(standsQuantiy)
+    private stopCommands(standsQuantity: number): CommandLine[] {
+        return Array(standsQuantity)
             .fill('')
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
@@ -51,8 +51,8 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             });
     }
 
-    private resetCommands(standsQuantiy: number): CommandLine[] {
-        return Array(standsQuantiy)
+    private resetCommands(standsQuantity: number): CommandLine[] {
+        return Array(standsQuantity)
             .fill('')
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
@@ -70,8 +70,8 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             });
     }
 
-    private ts01Commands(standsQuantiy: number): CommandLine[] {
-        return Array(standsQuantiy)
+    private ts01Commands(standsQuantity: number): CommandLine[] {
+        return Array(standsQuantity)
             .fill('')
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
@@ -119,8 +119,8 @@ export class VmCalculatorComponent extends VMDeviceComponent {
             });
     }
 
-    private ts02Commands(standsQuantiy: number): CommandLine[] {
-        return Array(standsQuantiy)
+    private ts02Commands(standsQuantity: number): CommandLine[] {
+        return Array(standsQuantity)
             .fill('')
             .map((_, index) => {
                 const standNumber = (index + 1).toString().padStart(2, '0');
