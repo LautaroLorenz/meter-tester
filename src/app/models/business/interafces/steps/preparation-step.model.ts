@@ -27,7 +27,7 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<PreparationS
             order: undefined,
             essay_template_id: undefined,
             step_id: undefined,
-            form_control_raw: fb.nonNullable.array(this.buildStandsArray(APP_CONFIG.standsQuantiy)),
+            form_control_raw: fb.nonNullable.array(this.buildStandsArray(APP_CONFIG.standsQuantity)),
             foreign: undefined
         }) as AbstractFormGroup<PreparationStep>;
 
@@ -53,8 +53,8 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<PreparationS
     }
 
     // generate stand array based on APP_CONFIG variable
-    private buildStandsArray(standsQuantiy: number): AbstractFormGroup<Stand>[] {
-        return Array(standsQuantiy)
+    private buildStandsArray(standsQuantity: number): AbstractFormGroup<Stand>[] {
+        return Array(standsQuantity)
             .fill(undefined)
             .map(
                 () =>

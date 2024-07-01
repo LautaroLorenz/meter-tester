@@ -82,7 +82,7 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<ContrastTes
             verifiedStatus: [StepStatus.Pending, Validators.required.bind(this)],
             executedStatus: [StepStatus.Pending, Validators.required.bind(this)],
             photocellAdjustmentStatus: [PhotocellAdjustmentStatus.Unknown, Validators.required.bind(this)],
-            standResults: this.fb.nonNullable.array(this.buildStandResultsArray(APP_CONFIG.standsQuantiy))
+            standResults: this.fb.nonNullable.array(this.buildStandResultsArray(APP_CONFIG.standsQuantity))
         }) as AbstractFormGroup<ContrastTestEssayStep>;
 
         return this;
@@ -95,8 +95,8 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<ContrastTes
     }
 
     // generate stand results array based on APP_CONFIG variable
-    private buildStandResultsArray(standsQuantiy: number): AbstractFormGroup<ContrastTestStandResult>[] {
-        return Array(standsQuantiy)
+    private buildStandResultsArray(standsQuantity: number): AbstractFormGroup<ContrastTestStandResult>[] {
+        return Array(standsQuantity)
             .fill(undefined)
             .map(
                 (_, index) =>

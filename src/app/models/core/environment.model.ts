@@ -6,7 +6,7 @@ export interface Environment {
     environment: string;
 
     // cantidad de puestos que tiene la máquina
-    standsQuantiy: number;
+    standsQuantity: number;
 
     // cantidad de puestos que se envian en los comandos
     commandStandsQuantity: number;
