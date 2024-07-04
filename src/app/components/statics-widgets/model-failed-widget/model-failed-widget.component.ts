@@ -95,7 +95,7 @@ export class ModelFailedWidgetComponent implements OnInit, OnChanges {
             (acc, key) => {
                 if (!acc.datasets.length) {
                     acc.datasets.push({
-                        label: 'Porcentaje de desaprobados',
+                        label: 'Porcentaje de desaprobación',
                         backgroundColor: [],
                         data: [],
                         borderRadius: 3
