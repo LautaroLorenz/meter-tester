@@ -64,6 +64,7 @@ import { ModelApprovedWidgetComponent } from './statics-widgets/model-approved-w
 import { ModelFailedWidgetComponent } from './statics-widgets/model-failed-widget/model-failed-widget.component';
 import { PhaseTableComponent } from './phase-table/phase-table.component';
 import { HelpTextComponent } from './help-text/help-text.component';
+import { ModelTestedWidgetComponent } from './statics-widgets/model-tested-widget/model-tested-widget.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -124,6 +125,7 @@ const AppComponents = [
     StaticWidgetComponent,
     ModelApprovedWidgetComponent,
     ModelFailedWidgetComponent,
+    ModelTestedWidgetComponent,
     PhaseTableComponent,
     HelpTextComponent
 ];

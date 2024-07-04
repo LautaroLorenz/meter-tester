@@ -4,12 +4,12 @@ import { BarChartData } from '../../../models/business/interafces/chart/bars.mod
 import { colors } from '../../../models/business/constants/colors.model';
 
 @Component({
-    selector: 'app-model-approved-widget',
-    templateUrl: './model-approved-widget.component.html',
-    styleUrls: ['./model-approved-widget.component.scss'],
+    selector: 'app-model-tested-widget',
+    templateUrl: './model-tested-widget.component.html',
+    styleUrls: ['./model-tested-widget.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ModelApprovedWidgetComponent implements OnInit, OnChanges {
+export class ModelTestedWidgetComponent implements OnInit, OnChanges {
     @Input() approvedTags!: Tags[];
     @Input() failedTags!: Tags[];
     @Input() top!: number;
@@ -66,42 +66,33 @@ export class ModelApprovedWidgetComponent implements OnInit, OnChanges {
     }
 
     private recalculate(approvedTags: Tags[], failedTags: Tags[]): void {
-        const approvedMap: Record<string, number> = {};
-        const failedMap: Record<string, number> = {};
+        const dataMap: Record<string, number> = {};
 
         approvedTags.forEach((tag) => {
             const unionTags = tag as unknown as { model: string }[];
             unionTags.forEach(({ model }) => {
-                approvedMap[model] = approvedMap[model] + 1 || 1;
+                dataMap[model] = dataMap[model] + 1 || 1;
             });
         });
 
         failedTags.forEach((tag) => {
             const unionTags = tag as unknown as { model: string }[];
             unionTags.forEach(({ model }) => {
-                failedMap[model] = failedMap[model] + 1 || 1;
+                dataMap[model] = dataMap[model] + 1 || 1;
             });
-        });
-
-        const dataMap: Record<string, number> = {};
-        Object.keys(approvedMap).forEach((model) => {
-            const approvedCount = approvedMap[model] || 0;
-            const failedCount = failedMap[model] || 0;
-            const totalCount = approvedCount + failedCount;
-            dataMap[model] = (approvedCount / totalCount) * 100;
         });
 
         this.data = Object.keys(dataMap).reduce<BarChartData>(
             (acc, key) => {
                 if (!acc.datasets.length) {
                     acc.datasets.push({
-                        label: 'Porcentaje de aprobación',
+                        label: 'Número de pruebas',
                         backgroundColor: [],
                         data: [],
                         borderRadius: 3
                     });
                 }
-                acc.datasets[0].backgroundColor.push(colors[10]);
+                acc.datasets[0].backgroundColor.push(colors[35]);
                 acc.datasets[0].data.push(dataMap[key]);
                 acc.labels.push(key);
                 return acc;
@@ -123,16 +114,13 @@ export class ModelApprovedWidgetComponent implements OnInit, OnChanges {
             };
         }
 
-        // sorted data
         const onlyData = elements.datasets[0].data.map((counter, index) => ({
             counter,
             index
         }));
 
-        // Ordenar el nuevo array según los valores de data
         onlyData.sort((a, b) => b.counter - a.counter);
 
-        // Extraer los datos ordenados y las etiquetas correspondientes
         const sortedData = onlyData.map(({ index }) => elements.datasets[0].data[index]);
         const sortedLabels = onlyData.map(({ index }) => elements.labels[index]);
 
