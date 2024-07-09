@@ -48,6 +48,14 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.runEssayService.getEssayStep(essayStep.id).get('executedStatus')?.setValue(StepStatus.Done);
     }
 
+    stepExecutionSkipped(essayStep: EssayStep): void {
+        this.runEssayService.getEssayStep(essayStep.id).get('executedStatus')?.setValue(StepStatus.Skipped);
+    }
+
+    stepExecutionSkip(essayStep: EssayStep): void {
+        this.abort().subscribe(() => this.stepExecutionSkipped(essayStep));
+    }
+
     /**
      * Todos los stands que no fallarón, aprueban
      */

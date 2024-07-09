@@ -14,6 +14,11 @@
     color: #ffffff;
   }
 
+  &.skipped {
+    background-color: var(--yellow-400);
+    color: #ffffff;
+  }
+
   &.pending {
     background-color: var(--surface-200);
     color: var(--surface-500);
