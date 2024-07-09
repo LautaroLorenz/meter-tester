@@ -10,6 +10,7 @@ import { Subject } from 'rxjs/internal/Subject';
 import { Observable } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
+import { ConfirmationService, PrimeIcons } from 'primeng/api';
 
 @Component({
     template: '',
@@ -26,6 +27,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
     protected readonly blockUIService = inject(BlockUIService);
     protected readonly deviceService = inject(DeviceService);
+    protected readonly confirmationService = inject(ConfirmationService);
     protected readonly onDestroy = new Subject<void>();
 
     abstract readonly skipEnabled: boolean;
@@ -53,7 +55,16 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     stepExecutionSkip(essayStep: EssayStep): void {
-        this.abort().subscribe(() => this.stepExecutionSkipped(essayStep));
+        this.confirmationService.confirm({
+            message: 'Al omitir la ejecución del paso, el mismo no se mostrará en el reporte.',
+            header: 'Confirmar omitir ejecución de este paso',
+            icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+            defaultFocus: 'reject',
+            acceptButtonStyleClass: 'p-button-warning',
+            accept: () => {
+                this.abort().subscribe(() => this.stepExecutionSkipped(essayStep));
+            }
+        });
     }
 
     /**
