@@ -1,5 +1,6 @@
 export enum StepStatus {
     Pending = 'Pending',
     Current = 'Current',
-    Done = 'Done'
+    Done = 'Done',
+    Skipped = 'Skipped'
 }

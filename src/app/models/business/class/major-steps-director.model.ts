@@ -23,7 +23,7 @@ export class MajorStepsDirector {
 
     static checkMajorStepStatus(steps: EssayStep[] | EssayStep, status: StepStatus, prop: keyof EssayStep): boolean {
         if (Array.isArray(steps)) {
-            return steps.every((step) => step[prop] === status);
+            return steps.every((step) => step[prop] === status || step[prop] === StepStatus.Skipped);
         }
 
         return steps[prop] === status;

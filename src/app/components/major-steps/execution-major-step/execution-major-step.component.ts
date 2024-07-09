@@ -6,7 +6,7 @@ import { StepStatus } from '../../../models/business/enums/step-status.model';
 import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
-import { FormatDateMode, FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
+import { FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
 
 @Component({
     selector: 'app-execution-major-step',
@@ -137,7 +137,7 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
     }
 
     private isAllStepsDone(executionSteps: EssayStep[]): boolean {
-        return executionSteps.every(({ executedStatus }) => executedStatus === StepStatus.Done);
+        return executionSteps.every(({ executedStatus }) => executedStatus === StepStatus.Done || executedStatus === StepStatus.Skipped);
     }
 
     private isAnyCurrentStep(executionSteps: EssayStep[]): boolean {

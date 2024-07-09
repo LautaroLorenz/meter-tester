@@ -10,6 +10,7 @@ import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { EssayStep } from '../../models/business/interafces/essay-step.model';
 import { PreparationEssayStep } from '../../models/business/interafces/steps/preparation-step.model';
+import { StepStatus } from '../../models/business/enums/step-status.model';
 
 @Component({
     templateUrl: './history-essay.component.html',
@@ -106,7 +107,7 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
                 tap((historyEssay) => {
                     this.historyEssay = historyEssay;
                     this.preparationStep = historyEssay.run_raw.essaySteps[0] as PreparationEssayStep;
-                    this.executionSteps = historyEssay.run_raw.essaySteps.slice(1);
+                    this.executionSteps = historyEssay.run_raw.essaySteps.slice(1).filter(({ executedStatus }) => executedStatus === StepStatus.Done);
                 })
             )
             .subscribe();

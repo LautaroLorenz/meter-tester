@@ -34,6 +34,7 @@ import { Tags } from '../../../models/business/database/static.model';
 import { HistoryEssay } from '../../../models/business/database/history-essay.model';
 import { CalculatorComponent } from '../../machine/calculator/calculator.component';
 import { StepResultUnit, StepResultUnitEnum } from '../../../models/business/constants/step-result-unit.model';
+import { StepStatus } from '../../../models/business/enums/step-status.model';
 
 @Component({
     selector: 'app-report-major-step',
@@ -64,7 +65,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         private readonly staticsService: StaticsService
     ) {
         this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
-        this.executionSteps = MajorStepsDirector.stepsByMajorStep(this.runEssay.essaySteps, MajorSteps.Execution);
+        this.executionSteps = MajorStepsDirector.stepsByMajorStep(this.runEssay.essaySteps, MajorSteps.Execution).filter(({ executedStatus }) => executedStatus === StepStatus.Done);
         this.preparationStep = MajorStepsDirector.stepsByMajorStep(
             this.runEssay.essaySteps,
             MajorSteps.Preparation
@@ -72,6 +73,9 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+        if (!this.executionSteps?.length) {
+            this.exit();
+        }
         this.fileName = this.getFileName();
         // reseteamos el valor que se esta mostrando para cada puesto en el calculador
         this.calculator.reset$(this.runEssayService.getActiveStands(this.preparationStep)).subscribe();

@@ -25,6 +25,10 @@ export class MajorStepTimelineItemComponent {
         return this.status === StepStatus.Done;
     }
 
+    get isSkipped(): boolean {
+        return this.status === StepStatus.Skipped;
+    }
+
     get isPending(): boolean {
         return this.status === StepStatus.Pending;
     }

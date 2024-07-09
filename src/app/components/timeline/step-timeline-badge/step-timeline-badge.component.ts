@@ -41,6 +41,10 @@ export class StepTimelineBadgeComponent {
         return this.status === StepStatus.Done;
     }
 
+    get isSkipped(): boolean {
+        return this.status === StepStatus.Skipped;
+    }
+
     get isCurrent(): boolean {
         return this.status === StepStatus.Current;
     }

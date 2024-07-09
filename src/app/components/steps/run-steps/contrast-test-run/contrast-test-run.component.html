@@ -41,6 +41,12 @@
 <!-- Actions -->
 <div class="flex justify-content-end mt-4 mb-8 gap-3">
     <p-button
+        label="Saltear"
+        [outlined]="true"
+        severity="warning"
+        (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+    <p-button
         label="Reintentar"
         [outlined]="true"
         [disabled]="!canContinue"
