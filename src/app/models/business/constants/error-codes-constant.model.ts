@@ -11,7 +11,8 @@ export enum ErrorCodes {
     name = 'name',
     AtLeastOneStep = 'AtLeastOneStep',
     standIsActive = 'standIsActive',
-    adjustStepParams = 'adjustStepParams'
+    adjustStepParams = 'adjustStepParams',
+    AtLeastOneStandActive = 'AtLeastOneStandActive'
 }
 
 const ErrorCodesMessage: Record<ErrorCodes, { code: string; message: string }> = {
@@ -30,5 +31,9 @@ const ErrorCodesMessage: Record<ErrorCodes, { code: string; message: string }> =
     [ErrorCodes.adjustStepParams]: {
         code: 'Ajustar parámetros',
         message: 'Debes ajustar los parámetros de uno o más pasos'
-    }
+    },
+    [ErrorCodes.AtLeastOneStandActive]: {
+        code: 'Al menos un puesto activo',
+        message: 'Al menos un puesto debe estar activo'
+    },
 };

@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AbstractFormGroup } from '../../core/abstract-form-group.model';
 import { Stand } from '../interafces/stand.model';
 import { ErrorCodes, concatErrorByCode } from '../constants/error-codes-constant.model';
@@ -22,6 +22,20 @@ export function standFormGroupValidator(): ValidatorFn {
             errors = concatErrorByCode(ErrorCodes.standIsActive, errors);
         }
 
-        return Object.keys(errors) ? errors : null;
+        return Object.keys(errors).length ? errors : null;
+    };
+}
+
+export function atLeastOneStandActiveValidator(): ValidatorFn {
+    return (form: AbstractControl): ValidationErrors | null => {
+        const standFormGroups = form as FormArray<AbstractFormGroup<Stand>>;
+        let errors: ValidationErrors = {};
+
+        // si ningún puesto está activo
+        if (standFormGroups.controls.every((standFormGroup) => !standFormGroup.get('isActive')?.value === true)) {
+            errors = concatErrorByCode(ErrorCodes.AtLeastOneStandActive, errors);
+        }
+
+        return Object.keys(errors).length ? errors : null;
     };
 }

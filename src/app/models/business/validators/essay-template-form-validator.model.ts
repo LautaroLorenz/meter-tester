@@ -29,6 +29,6 @@ export function essayTemplateValidator(): ValidatorFn {
             errors = concatErrorByCode(ErrorCodes.adjustStepParams, errors);
         }
 
-        return Object.keys(errors) ? errors : null;
+        return Object.keys(errors).length ? errors : null;
     };
 }

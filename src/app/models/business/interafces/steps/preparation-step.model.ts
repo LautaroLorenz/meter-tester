@@ -7,7 +7,7 @@ import { APP_CONFIG } from '../../../../../environments/environment';
 import { AbstractStepFormBuilder } from '../../class/step-form-builder.model';
 import { EssayStep } from '../essay-step.model';
 import { StepStatus } from '../../enums/step-status.model';
-import { standFormGroupValidator } from '../../validators/stand-form-group-validator.model';
+import { atLeastOneStandActiveValidator, standFormGroupValidator } from '../../validators/stand-form-group-validator.model';
 
 export type PreparationFormControlRaw = Stand[];
 
@@ -47,6 +47,7 @@ export class PreparationFormBuilder extends AbstractStepFormBuilder<PreparationS
 
     override withVerificationProps(this: PreparationFormBuilder): PreparationFormBuilder {
         const stands: FormArray<AbstractFormGroup<Stand>> = this.form.controls.form_control_raw as FormArray;
+        stands.setValidators(atLeastOneStandActiveValidator().bind(this));
         stands.controls.forEach((standControl) => standControl.setValidators(standFormGroupValidator().bind(this)));
 
         return this;
