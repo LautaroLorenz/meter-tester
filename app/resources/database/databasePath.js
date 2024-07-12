@@ -14,11 +14,11 @@ const dataBaseName = 'database.db';
 function calculateUserDataDir() {
     switch (os.platform()) {
         case 'win32':
-            return path.join('C:', 'Users', username, 'AppData', 'Roaming', 'meter-tester');
+            return path.join('C:', 'Users', username, 'AppData', 'Roaming', 'oelec-ce-soft');
         case 'darwin':
-            return path.join('/Users', username, 'Library', 'Application Support', 'meter-tester');
+            return path.join('/Users', username, 'Library', 'Application Support', 'oelec-ce-soft');
         case 'linux':
-            return path.join('/home', username, '.config', 'meter-tester');
+            return path.join('/home', username, '.config', 'oelec-ce-soft');
         default:
             console.log('Platform not supported');
             break;

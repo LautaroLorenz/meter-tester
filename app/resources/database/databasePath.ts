@@ -18,7 +18,7 @@ function calculateUserDataDir(): string {
         username,
         'AppData',
         'Roaming',
-        'meter-tester'
+        'oelec-ce-soft'
       );
     case 'darwin':
       return path.join(
@@ -26,10 +26,10 @@ function calculateUserDataDir(): string {
         username,
         'Library',
         'Application Support',
-        'meter-tester'
+        'oelec-ce-soft'
       );
     case 'linux':
-      return path.join('/home', username, '.config', 'meter-tester');
+      return path.join('/home', username, '.config', 'oelec-ce-soft');
     default:
       console.log('Platform not supported');
       break;
