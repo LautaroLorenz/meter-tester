@@ -14,7 +14,7 @@ import { RequestTableResponse } from '../../models/core/database.model';
     styleUrls: ['./brands.component.scss']
 })
 export class BrandsComponent extends AbmPage<Brand> {
-    readonly title: string = 'Administración de marcas';
+    readonly title: string = 'Marcas de Medidores';
     readonly cols: TableColumn<Brand>[] = [
         {
             field: 'name',
