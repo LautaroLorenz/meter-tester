@@ -10,7 +10,7 @@ let updatedError = false;
 
 async function runSeedsFirstTime(knex: KnexLib.Knex) {
   // Verifica si la base de datos está vacía
-  const isEmpty = await knex('meters')
+  const isEmpty = await knex('steps')
     .count('* as count')
     .then((rows) => rows[0].count === 0);
 
@@ -65,6 +65,14 @@ export default {
       if (status) {
         response.location = dataBasePath;
       }
+
+      // una vez enviado el estado, volvemos los flags a cero
+      setTimeout(() => {
+        created = false;
+        updated = false;
+        updatedError = false;
+      }, 100);
+
       return response;
     });
   },

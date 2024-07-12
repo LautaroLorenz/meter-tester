@@ -19,7 +19,7 @@ let updatedError = false;
 function runSeedsFirstTime(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         // Verifica si la base de datos está vacía
-        const isEmpty = yield knex('meters')
+        const isEmpty = yield knex('steps')
             .count('* as count')
             .then((rows) => rows[0].count === 0);
         if (isEmpty) {
@@ -70,6 +70,12 @@ exports.default = {
             if (status) {
                 response.location = databasePath_1.dataBasePath;
             }
+            // una vez enviado el estado, volvemos los flags a cero
+            setTimeout(() => {
+                created = false;
+                updated = false;
+                updatedError = false;
+            }, 100);
             return response;
         }));
     },
