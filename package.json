@@ -1,7 +1,7 @@
 {
   "name": "meter-tester",
   "version": "1.0.0",
-  "description": "Meter tester",
+  "description": "Calculador de error",
   "homepage": "https://github.com/LautaroLorenz/meter-tester",
   "author": {
     "name": "Lautaro Lorenz",
