@@ -5,15 +5,25 @@
         [model]="items"
         class="emetsy-menubar w-full"
         styleClass="border-none border-noround shadow-2 mb-0">
-        <!-- FIXME logo
-        <ng-template pTemplate="start">
+        <!-- <ng-template pTemplate="start">
             <div
                 class="logo flex align-items-center px-2 mt-1 py-1 cursor-pointer border-round"
                 [routerLink]="PageUrlName.dashboard"
             >
                 <img src="assets/img/logo_y.png" height="32" />
             </div>
-        </ng-template> 
-    -->
+        </ng-template> -->
+        <ng-template pTemplate="end">
+            <p-button
+                label="Acerca de"
+                [text]="true"
+                severity="secondary"
+                size="small"
+                class="font-normal"
+                (click)="aboutInfo()">
+            </p-button>
+        </ng-template>
     </p-menubar>
 </div>
+
+<app-system-info-dialog [(display)]="displaySystemInfoDialog"></app-system-info-dialog>

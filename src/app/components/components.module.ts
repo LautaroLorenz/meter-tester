@@ -65,6 +65,7 @@ import { ModelFailedWidgetComponent } from './statics-widgets/model-failed-widge
 import { PhaseTableComponent } from './phase-table/phase-table.component';
 import { HelpTextComponent } from './help-text/help-text.component';
 import { ModelTestedWidgetComponent } from './statics-widgets/model-tested-widget/model-tested-widget.component';
+import { SystemInfoDialogComponent } from './system-info-dialog/system-info-dialog.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -127,7 +128,8 @@ const AppComponents = [
     ModelFailedWidgetComponent,
     ModelTestedWidgetComponent,
     PhaseTableComponent,
-    HelpTextComponent
+    HelpTextComponent,
+    SystemInfoDialogComponent
 ];
 
 @NgModule({
@@ -135,4 +137,4 @@ const AppComponents = [
     imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule, FormsModule, TranslateModule],
     exports: [PrimeNgModule, AppComponents]
 })
-export class ComponentsModule {}
+export class ComponentsModule { }
