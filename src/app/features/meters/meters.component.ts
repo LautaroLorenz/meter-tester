@@ -26,7 +26,7 @@ import { RequestTableResponse } from '../../models/core/database.model';
     styleUrls: ['./meters.component.scss']
 })
 export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
-    readonly title: string = 'Administración de modelos';
+    readonly title: string = 'Modelos de Medidores';
     readonly cols: TableColumn<Meter>[] = [
         {
             field: 'foreign.brand.name',

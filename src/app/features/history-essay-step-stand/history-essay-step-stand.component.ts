@@ -36,7 +36,7 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
         {
             templateName: 'saved_time',
             template: undefined, // se inicializa en abm.component.ts
-            header: 'Realizado',
+            header: 'Fecha de ejecución',
             sortable: `${HistoryEssayStepStandDbTableContext.tableName}.saved_time`,
             filter: {
                 field: `${HistoryEssayStepStandDbTableContext.tableName}.saved_time`,

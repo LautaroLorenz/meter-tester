@@ -13,7 +13,7 @@ import { RequestTableResponse } from '../../models/core/database.model';
     styleUrls: ['./available-test.component.scss']
 })
 export class AvailableTestComponent extends AbmPage<EssayTemplate> {
-    readonly title: string = 'Administración de ensayos';
+    readonly title: string = 'Administración de Ensayos';
     readonly cols: TableColumn<EssayTemplate>[] = [
         {
             field: 'name',

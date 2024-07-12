@@ -3,5 +3,5 @@
  * @returns { Promise<void> }
  */
 exports.seed = async function (knex) {
-  // await knex("essay_templates").insert([{ id: 1, name: "Completo" }]);
+  // await knex("statics").insert([]);
 };

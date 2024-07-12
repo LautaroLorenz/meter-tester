@@ -12,7 +12,7 @@ export class MenuComponent implements OnInit {
     PageUrlName = PageUrlName;
     items: MenuItem[] = [];
 
-    constructor() {}
+    constructor() { }
 
     ngOnInit(): void {
         this.items = [
@@ -20,7 +20,7 @@ export class MenuComponent implements OnInit {
                 label: 'Ensayos',
                 items: [
                     {
-                        label: 'Ensayos',
+                        label: 'Administración',
                         routerLink: '/'.concat(PageUrlName.availableTest)
                     },
                     {
