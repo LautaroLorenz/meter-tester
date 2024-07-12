@@ -1,0 +1,12 @@
+<p-dialog
+    header="Información del sistema"
+    [(visible)]="display"
+    [modal]="true"
+    [style]="{ width: '50vw', maxWidth: '500px' }"
+    (onHide)="onHide()">
+    <p>Versión del hardware: {{ systemInfo.hardwareVersion }}</p>
+    <p>Versión del software: {{ systemInfo.softwareVersion }}</p>
+    <p-footer>
+        <!-- Acá se pueden poner botones -->
+    </p-footer>
+</p-dialog>

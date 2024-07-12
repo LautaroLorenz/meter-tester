@@ -11,6 +11,7 @@ import { PageUrlName } from '../../models/business/enums/page-name.model';
 export class MenuComponent implements OnInit {
     PageUrlName = PageUrlName;
     items: MenuItem[] = [];
+    displaySystemInfoDialog = false;
 
     constructor() { }
 
@@ -68,5 +69,9 @@ export class MenuComponent implements OnInit {
                 routerLink: '/'.concat(PageUrlName.dashboard)
             }
         ];
+    }
+
+    aboutInfo(): void {
+        this.displaySystemInfoDialog = true;
     }
 }
