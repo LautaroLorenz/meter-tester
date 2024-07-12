@@ -4,8 +4,14 @@
     [modal]="true"
     [style]="{ width: '50vw', maxWidth: '500px' }"
     (onHide)="onHide()">
-    <p>Versión del hardware: {{ systemInfo.hardwareVersion }}</p>
-    <p>Versión del software: {{ systemInfo.softwareVersion }}</p>
+    <p class="row">
+        <span class="property">Versión del hardware:</span>
+        <span class="value">{{ systemInfo.hardwareVersion }}</span>
+    </p>
+    <p class="row">
+        <span class="property">Versión del software:</span>
+        <span class="value">{{ systemInfo.softwareVersion }}</span>
+    </p>
     <p-footer>
         <!-- Acá se pueden poner botones -->
     </p-footer>
