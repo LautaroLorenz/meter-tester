@@ -15,7 +15,7 @@ const path = require("path");
 const fs = require("fs");
 let mainWindow;
 exports.default = {
-    register: () => {
+    register: (knex) => {
         // seleccionar carpeta donde será guardado el backup
         electron_1.ipcMain.handle('select-backup-folder', () => __awaiter(void 0, void 0, void 0, function* () {
             if (!mainWindow) {
@@ -38,12 +38,27 @@ exports.default = {
             const date = new Date();
             const formattedDate = date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
             const formattedTime = date.toTimeString().split(' ')[0].replace(/:/g, '-'); // Formato HH-MM-SS
+            const fileName = `backup-${formattedDate}-${formattedTime}-database.db`;
+            let id = undefined;
             try {
-                const backupFilePath = path.join(backupPath, `backup-${formattedDate}-${formattedTime}-database.db`);
+                // actualizar la BBDD con los datos del backup (para que queden en el backup)
+                const result = yield knex('backups')
+                    .insert({
+                    saved_time: date.getTime(),
+                    selected_folder: backupPath,
+                    file_name: fileName
+                });
+                id = result[0];
+                // crear archivo de backup                
+                const backupFilePath = path.join(backupPath, fileName);
                 fs.copyFileSync(databasePath_1.dataBasePath, backupFilePath);
                 return { success: true, message: 'Backup completed successfully' };
             }
             catch (error) {
+                if (id !== undefined) {
+                    // en caso de error limpiar el registro de la BBDD con la fecha del último backup
+                    yield knex('backups').delete().where('id', id);
+                }
                 return { success: false, message: `Backup failed: ${error === null || error === void 0 ? void 0 : error.message}` };
             }
         }));

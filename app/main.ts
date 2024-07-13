@@ -18,7 +18,7 @@ function registerIpc(knex: any) {
     essay.register(knex);
     history.register(knex);
     machine.register();
-    backup.register();
+    backup.register(knex);
 }
 
 let win: BrowserWindow | null = null;
