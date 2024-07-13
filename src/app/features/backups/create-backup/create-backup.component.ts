@@ -4,8 +4,7 @@ import { MessagesService } from './../../../services/messages.service';
 import { BackupService } from './../../../services/backup.service';
 import { Component, OnInit } from '@angular/core';
 import { PageUrlName } from '../../../models/business/enums/page-name.model';
-import { DatabaseService } from '../../../services/database.service';
-import { Backup, BackupDbTableContext } from '../../../models/business/database/backup.model';
+import { Backup } from '../../../models/business/database/backup.model';
 import { Message } from 'primeng/api';
 
 @Component({
@@ -17,18 +16,20 @@ export class CreateBackupComponent implements OnInit {
   readonly PageUrlName = PageUrlName;
 
   lastCreatedBackup: Backup | undefined;
-  backupMessages: Message[] = [];
+  backupWarningMessages: Message[] = [];
 
   constructor(
     private blockUIService: BlockUIService,
     private messagesService: MessagesService,
-    private backupService: BackupService,
-    private dbService: DatabaseService<Backup>
+    private backupService: BackupService
   ) { }
 
   ngOnInit(): void {
     // verificar la fecha en que se creó el último backup
-    this.checkLastBackupCreatedDate();
+    this.backupService.checkLastBackup().subscribe((backupStatus) => {
+      this.lastCreatedBackup = backupStatus.backup;
+      this.backupWarningMessages = backupStatus.warningMessages;
+    });
   }
 
   createBackup(): void {
@@ -49,7 +50,10 @@ export class CreateBackupComponent implements OnInit {
       }),
       tap((backupCreated: boolean) => {
         if (backupCreated) {
-          this.checkLastBackupCreatedDate();
+          this.backupService.checkLastBackup().subscribe((backupStatus) => {
+            this.lastCreatedBackup = backupStatus.backup;
+            this.backupWarningMessages = backupStatus.warningMessages;
+          });
           this.messagesService.success('Backup creado correctamente');
           this.messagesService.info('Recuerda poner el archivo de backup en un lugar seguro', true);
         } else {
@@ -64,40 +68,5 @@ export class CreateBackupComponent implements OnInit {
     return this.backupService.selectBackupFolder();
   }
 
-  private checkLastBackupCreatedDate(): void {
-    // limpiar mensajes anteriores
-    this.backupMessages = [];
-    // traer el último registro de la tabla
-    this.dbService.getTable$(BackupDbTableContext.tableName, {
-      relations: BackupDbTableContext.foreignTables,
-      lazyLoadEvent: { rows: 1 }
-    }).subscribe(({ rows }) => {
-      if (rows.length === 0) {
-        this.backupMessages = this.backupMessages.concat({
-          severity: 'warn',
-          summary: 'Aún no has creado un backup de tu base de datos',
-          detail: 'Crea un backup y resguardalo en un lugar seguro de tu preferencia'
-        });
-        return;
-      }
-      const [backupInfo] = rows;
-      this.lastCreatedBackup = backupInfo;
-      const lastCreatedBackupSavedTime = new Date(backupInfo.saved_time);
-      const isLastBackupOutdated = this.isBackupMoreThanOneMonthOld(lastCreatedBackupSavedTime);
-      if (isLastBackupOutdated) {
-        this.backupMessages = this.backupMessages.concat({
-          severity: 'warn',
-          summary: 'Tu último backup es muy viejo',
-          detail: 'Se recomienda crear un nuevo backup'
-        });
-      }
-    });
-  }
 
-  private isBackupMoreThanOneMonthOld(dateToCheck: Date): boolean {
-    const now = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(now.getMonth() - 1);
-    return dateToCheck < oneMonthAgo;
-  }
 }

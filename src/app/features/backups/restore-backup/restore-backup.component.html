@@ -1,1 +1,55 @@
 <app-page-title [title]="title"></app-page-title>
+
+<div class="p-4 flex align-items-center justify-content-center">
+    <div>
+        <p-messages
+            [value]="backupWarningMessages"
+            [enableService]="false"
+            [closable]="false">
+        </p-messages>
+
+        <!-- TODO -->
+        <ng-container *ngIf="backupWarningMessages.length">
+            <div class="mt-3">
+                <p-card header="Se recomienda actualizar sus backups">
+                    <div class="flex flex-row align-items-center gap-2">
+                        <div>Para crear un nuevo backup, ir a</div>
+                        <p-button
+                            [routerLink]="'/' + PageUrlName.backupCreate"
+                            label="Crear backup"
+                            [outlined]="true"
+                            severity="secondary"
+                            size="small">
+                        </p-button>
+                    </div>
+                </p-card>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="lastCreatedBackup">
+            <div class="mt-3">
+                <p-card header="Información de tu último backup">
+                    <p>
+                        <span class="mr-1">Fecha de creación:</span>
+                        <span class="font-semibold">{{ lastCreatedBackup.saved_time | date: 'dd/MM/YYYY' }}</span>
+                    </p>
+                    <p>
+                        <span class="mr-1">Nombre del archivo:</span>
+                        <span class="font-semibold">{{ lastCreatedBackup.file_name }}</span>
+                    </p>
+                    <p>
+                        <span class="mr-1">Carpeta de destino:</span>
+                        <span class="font-semibold">{{ lastCreatedBackup.selected_folder }}</span>
+                    </p>
+                </p-card>
+            </div>
+        </ng-container>
+
+        <div class="flex justify-content-end mt-3">
+            <p-button
+                label="Restaurar backup"
+                (click)="restoreBackup()">
+            </p-button>
+        </div>
+    </div>
+</div>
