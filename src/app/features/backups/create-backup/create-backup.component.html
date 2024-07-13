@@ -1,1 +1,36 @@
-<p>create-backup works!</p>
+<app-page-title [title]="title"></app-page-title>
+<div class="p-8 flex align-items-center justify-content-center">
+    <div>
+        <p-card header="Guía de uso">
+            <ol>
+                <li>Crear el backup desde esta sección.</li>
+                <li class="mt-4">
+                    Almacene el archivo de backup creado en un lugar seguro, preferentemente en otro dispositivo.
+                </li>
+                <li class="mt-3">
+                    <div class="flex flex-row gap-2 align-items-center justify-content-start">
+                        <div>Para restaurar un backup previamente creado, ir a</div>
+                        <p-button
+                            [routerLink]="'/' + PageUrlName.backupRestore"
+                            label="Restaurar backup"
+                            [outlined]="true"
+                            severity="secondary"
+                            size="small">
+                        </p-button>
+                    </div>
+                </li>
+            </ol>
+        </p-card>
+        <div class="flex justify-content-end mt-3">
+            <!-- TODO si no hay un ultimo backup creado, mostrar un alerta en rojo -->
+            <div>
+                <span>Último backup creado</span>
+                <span>{{ lastCreatedBackup }}</span>
+            </div>
+            <p-button
+                label="Crear backup"
+                (click)="createBackup()">
+            </p-button>
+        </div>
+    </div>
+</div>

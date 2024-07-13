@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./restore-backup.component.scss']
 })
 export class RestoreBackupComponent {
-
+  readonly title = 'Restaurar backup';
 }
