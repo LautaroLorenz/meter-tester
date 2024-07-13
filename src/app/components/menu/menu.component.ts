@@ -47,27 +47,27 @@ export class MenuComponent implements OnInit {
                     // },
                 ]
             },
-            // {
-            //   label: 'Backup',
-            //   items: [
-            //     {
-            //       label: 'Importar',
-            //       routerLink: '/'.concat(PageUrlName.import),
-            //     },
-            //     {
-            //       label: 'Exportar',
-            //       routerLink: '/'.concat(PageUrlName.export),
-            //     },
-            //   ],
-            // },
+            {
+                label: 'Estadísticas',
+                routerLink: '/'.concat(PageUrlName.dashboard)
+            },
+            {
+                label: 'Backup',
+                items: [
+                    {
+                        label: 'Crear',
+                        routerLink: '/'.concat(PageUrlName.backupCreate),
+                    },
+                    {
+                        label: 'Restaurar',
+                        routerLink: '/'.concat(PageUrlName.backupRestore),
+                    },
+                ],
+            },
             // {
             //   label: 'Terminal',
             //   routerLink: '/'.concat(PageUrlName.terminal),
             // },
-            {
-                label: 'Estadísticas',
-                routerLink: '/'.concat(PageUrlName.dashboard)
-            }
         ];
     }
 

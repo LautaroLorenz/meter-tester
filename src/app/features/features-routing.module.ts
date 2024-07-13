@@ -14,6 +14,8 @@ import { StaticsComponent } from './statics/statics.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
 import { RunEssayGuard } from '../guards/run-essay.guard';
 import { CommandHistoryComponent } from './command-history/command-history.component';
+import { CreateBackupComponent } from './backups/create-backup/create-backup.component';
+import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.component';
 
 const routes: Routes = [
     {
@@ -62,7 +64,15 @@ const routes: Routes = [
     {
         path: PageUrlName.commandHistory,
         component: CommandHistoryComponent
-    }
+    },
+    {
+        path: PageUrlName.backupCreate,
+        component: CreateBackupComponent
+    },
+    {
+        path: PageUrlName.backupRestore,
+        component: RestoreBackupComponent
+    },
 ];
 
 @NgModule({
