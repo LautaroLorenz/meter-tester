@@ -6,6 +6,7 @@ import { Backup } from '../../../models/business/database/backup.model';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { MessagesService } from '../../../services/messages.service';
 import { BackupService } from '../../../services/backup.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   templateUrl: './restore-backup.component.html',
@@ -22,7 +23,8 @@ export class RestoreBackupComponent implements OnInit {
     private blockUIService: BlockUIService,
     private messagesService: MessagesService,
     private backupService: BackupService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private datePipe: DatePipe,
   ) { }
 
   ngOnInit(): void {
@@ -56,6 +58,12 @@ export class RestoreBackupComponent implements OnInit {
           this.backupService.checkLastBackup().subscribe((backupStatus) => {
             this.lastCreatedBackup = backupStatus.backup;
             this.backupWarningMessages = backupStatus.warningMessages;
+
+            if (backupStatus.backup) {
+              const backupDate = new Date(backupStatus.backup.saved_time);
+              const formatedDate = this.datePipe.transform(backupDate, 'dd/MM/yyyy HH:mm:ss') as string;
+              this.messagesService.info(`Se restauró la base de datos a la fecha ${formatedDate} Hs`, true);
+            }
           });
           this.messagesService.success('Base de datos restaurada', 10000);
         } else {

@@ -1,4 +1,4 @@
-import { Observable, map } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { IpcService } from './ipc.service';
 import { Message } from 'primeng/api';
@@ -33,6 +33,7 @@ export class BackupService {
             relations: BackupDbTableContext.foreignTables,
             lazyLoadEvent: { rows: 1 }
         }).pipe(
+            take(1),
             map(({ rows }) => {
                 let warningMessages: Message[] = [];
                 if (rows.length === 0) {
