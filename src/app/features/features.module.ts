@@ -17,6 +17,8 @@ import { HistoryEssayStepStandComponent } from './history-essay-step-stand/histo
 import { StaticsComponent } from './statics/statics.component';
 import { HistoryEssayComponent } from './history-essay/history-essay.component';
 import { CommandHistoryComponent } from './command-history/command-history.component';
+import { CreateBackupComponent } from './backups/create-backup/create-backup.component';
+import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.component';
 
 @NgModule({
     declarations: [
@@ -30,7 +32,9 @@ import { CommandHistoryComponent } from './command-history/command-history.compo
         HistoryEssayStepStandComponent,
         StaticsComponent,
         HistoryEssayComponent,
-        CommandHistoryComponent
+        CommandHistoryComponent,
+        CreateBackupComponent,
+        RestoreBackupComponent
     ],
     imports: [
         CommonModule,

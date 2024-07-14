@@ -15,5 +15,7 @@ export enum PageUrlName {
     dashboard = 'estadisticas',
     terminal = 'terminal',
     virtualMachine = 'maquina-virtual',
-    commandHistory = 'historial-comandos'
+    commandHistory = 'historial-comandos',
+    backupCreate = 'crear-backup',
+    backupRestore = 'restaurar-backup'
 }

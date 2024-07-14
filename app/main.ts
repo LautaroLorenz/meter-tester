@@ -10,6 +10,7 @@ import virtualMachine from './resources/virtual-machine/virtual-machine';
 import { APP_CONFIG } from './environment/environment';
 import * as KnexLib from 'knex';
 import commandHistory from './resources/command-history/command-history';
+import backup from './resources/database/backup';
 
 function registerIpc(knex: any) {
     database.register();
@@ -17,6 +18,7 @@ function registerIpc(knex: any) {
     essay.register(knex);
     history.register(knex);
     machine.register();
+    backup.register(knex);
 }
 
 let win: BrowserWindow | null = null;
@@ -59,6 +61,7 @@ function createWindow(): BrowserWindow {
         }
     });
     win.setMenuBarVisibility(false);
+    backup.setMainWindow(win);
 
     if (serve) {
         const debug = require('electron-debug');
