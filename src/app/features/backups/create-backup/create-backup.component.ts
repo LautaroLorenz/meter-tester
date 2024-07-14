@@ -53,7 +53,7 @@ export class CreateBackupComponent implements OnInit {
             this.lastCreatedBackup = backupStatus.backup;
             this.backupWarningMessages = backupStatus.warningMessages;
           });
-          this.messagesService.success('Backup creado correctamente');
+          this.messagesService.success('Backup creado correctamente', 10000);
           this.messagesService.info('Recuerda poner el archivo de backup en un lugar seguro', true);
         } else {
           this.messagesService.error('No se pudo crear el backup');
