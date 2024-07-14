@@ -62,6 +62,27 @@ exports.default = {
                 return { success: false, message: `Backup failed: ${error === null || error === void 0 ? void 0 : error.message}` };
             }
         }));
+        // restaurar un backup
+        electron_1.ipcMain.handle('restore-backup-database', () => __awaiter(void 0, void 0, void 0, function* () {
+            const result = yield electron_1.dialog.showOpenDialog(mainWindow, {
+                title: 'Seleccionar archivo de backup',
+                buttonLabel: 'Seleccionar',
+                properties: ['openFile'],
+                filters: [{ name: 'Archivos de backup', extensions: ['db'] }] // Cambia la extensión según tu archivo
+            });
+            if (result.canceled || result.filePaths.length === 0) {
+                return { success: false, message: 'No file selected' };
+            }
+            const backupFilePath = result.filePaths[0];
+            try {
+                // Reemplazar la base de datos actual con el archivo de backup
+                fs.copyFileSync(backupFilePath, databasePath_1.dataBasePath);
+                return { success: true, message: 'Database restored successfully' };
+            }
+            catch (error) {
+                return { success: false, message: `Restore failed: ${error === null || error === void 0 ? void 0 : error.message}` };
+            }
+        }));
     },
     setMainWindow: (mainWindowParam) => {
         mainWindow = mainWindowParam;

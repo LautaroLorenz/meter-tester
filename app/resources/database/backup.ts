@@ -59,6 +59,30 @@ export default {
                 return { success: false, message: `Backup failed: ${error?.message}` };
             }
         });
+
+        // restaurar un backup
+        ipcMain.handle('restore-backup-database', async () => {
+            const result = await dialog.showOpenDialog(mainWindow, {
+                title: 'Seleccionar archivo de backup',
+                buttonLabel: 'Seleccionar',
+                properties: ['openFile'],
+                filters: [{ name: 'Archivos de backup', extensions: ['db'] }] // Cambia la extensión según tu archivo
+            });
+
+            if (result.canceled || result.filePaths.length === 0) {
+                return { success: false, message: 'No file selected' };
+            }
+
+            const backupFilePath = result.filePaths[0];
+
+            try {
+                // Reemplazar la base de datos actual con el archivo de backup
+                fs.copyFileSync(backupFilePath, dataBasePath);
+                return { success: true, message: 'Database restored successfully' };
+            } catch (error: any) {
+                return { success: false, message: `Restore failed: ${error?.message}` };
+            }
+        });
     },
     setMainWindow: (mainWindowParam: BrowserWindow) => {
         mainWindow = mainWindowParam;

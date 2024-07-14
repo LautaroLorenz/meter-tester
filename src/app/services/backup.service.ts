@@ -23,6 +23,10 @@ export class BackupService {
         return this.ipcService.invoke$('backup-database', backupPath);
     }
 
+    restoreBackup(): Observable<{ success: boolean; message: string }> {
+        return this.ipcService.invoke$('restore-backup-database');
+    }
+
     checkLastBackup(): Observable<{ warningMessages: Message[], backup: Backup | undefined }> {
         // traer el último registro de la tabla
         return this.dbService.getTable$(BackupDbTableContext.tableName, {

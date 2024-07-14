@@ -38,7 +38,6 @@ export class CreateBackupComponent implements OnInit {
       tap((backupFolder) => {
         if (!backupFolder) {
           this.messagesService.warn('No se pudo crear el backup');
-          this.blockUIService.setBlocked(false);
         }
       }),
       filter((backupFolder) => !!backupFolder),
@@ -67,6 +66,4 @@ export class CreateBackupComponent implements OnInit {
   private selectBackupFolder(): Observable<string | null> {
     return this.backupService.selectBackupFolder();
   }
-
-
 }
