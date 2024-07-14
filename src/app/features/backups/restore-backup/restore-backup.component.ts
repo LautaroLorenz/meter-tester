@@ -1,7 +1,7 @@
 import { tap, finalize } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { PageUrlName } from '../../../models/business/enums/page-name.model';
-import { Message } from 'primeng/api';
+import { Message, ConfirmationService, PrimeIcons } from 'primeng/api';
 import { Backup } from '../../../models/business/database/backup.model';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { MessagesService } from '../../../services/messages.service';
@@ -12,7 +12,7 @@ import { BackupService } from '../../../services/backup.service';
   styleUrls: ['./restore-backup.component.scss']
 })
 export class RestoreBackupComponent implements OnInit {
-  readonly title = 'Restaurar backup';
+  readonly title = 'Restaurar base de datos';
   readonly PageUrlName = PageUrlName;
 
   lastCreatedBackup: Backup | undefined;
@@ -21,7 +21,8 @@ export class RestoreBackupComponent implements OnInit {
   constructor(
     private blockUIService: BlockUIService,
     private messagesService: MessagesService,
-    private backupService: BackupService
+    private backupService: BackupService,
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -32,7 +33,21 @@ export class RestoreBackupComponent implements OnInit {
     });
   }
 
-  restoreBackup(): void {
+  restoreBackupConfirmation(): void {
+    this.confirmationService.confirm({
+      message: '<p>Al restaurar la base de datos la información volverá al estado en que fue creado el backup que seleccione a continuación.</p><p><b>Esta operación no se puede deshacer.</b></p>',
+      header: 'Restaurar base de datos',
+      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+      defaultFocus: 'reject',
+      acceptButtonStyleClass: 'p-button-warning',
+      acceptLabel: 'Continuar',
+      accept: () => {
+        this.restoreBackup();
+      }
+    });
+  }
+
+  private restoreBackup(): void {
     this.blockUIService.setBlocked(true);
     this.backupService.restoreBackup().pipe(
       tap(({ success }) => {
