@@ -73,10 +73,11 @@ export class AppComponent implements OnInit {
                 }
             });
 
-        timer(3000).pipe(
-            take(1),
-            switchMap(() => this.ipcService.invoke$('check-connection-logs'))
-        )
+        timer(3000)
+            .pipe(
+                take(1),
+                switchMap(() => this.ipcService.invoke$('check-connection-logs'))
+            )
             .subscribe(({ connectionLogs, ports }) => {
                 if (connectionLogs) {
                     this.connectionLogs = connectionLogs;
