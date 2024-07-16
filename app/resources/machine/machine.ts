@@ -7,6 +7,9 @@ import { CommandDirector } from './command-director';
 
 let logsSenders: WebContents[] = [];
 let serialPort: SerialPortStream<BindingInterface>;
+let portList: any;
+let connectionLogs: any;
+
 const parser = new DelimiterParser({
     delimiter: '\n',
     includeDelimiter: false
@@ -84,6 +87,13 @@ export default {
         ipcMain.on('clear-history', () => {
             clearCommandLog();
         });
+
+        ipcMain.handle('check-connection-logs', async () => {
+            return {
+                connectionLogs: connectionLogs,
+                ports: portList
+            };
+        });
     },
     setSerialPort: (serialPortInput: SerialPortStream) => {
         serialPort = serialPortInput;
@@ -91,13 +101,19 @@ export default {
     },
     createSearialPort: async () => {
         const PRODUCT_ID = '7523'; // TODO
-        const VENDOR_ID = '1a86'; // TODO
+        const VENDOR_ID = '1A86'; // TODO
         const ports = await SerialPort.list();
-        const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
-        if (!port) {
-            throw new Error('No se pudo abrir el puerto USB');
+        portList = ports;
+        try {
+            const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
+            if (!port) {
+                throw new Error('No se pudo abrir el puerto USB');
+            }
+            return new SerialPort({ path: port.path, baudRate: 9600 });
+        } catch (err) {
+            connectionLogs = err;
+            return;
         }
-        return new SerialPort({ path: port.path, baudRate: 9600 });
     },
     observeSoftwareWrite: (observable: Observable<string>) => {
         observable.subscribe(async (command) => {

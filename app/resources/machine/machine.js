@@ -15,6 +15,8 @@ const rxjs_1 = require("rxjs");
 const command_director_1 = require("./command-director");
 let logsSenders = [];
 let serialPort;
+let portList;
+let connectionLogs;
 const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
     includeDelimiter: false
@@ -79,6 +81,12 @@ exports.default = {
         electron_1.ipcMain.on('clear-history', () => {
             clearCommandLog();
         });
+        electron_1.ipcMain.handle('check-connection-logs', () => __awaiter(void 0, void 0, void 0, function* () {
+            return {
+                connectionLogs: connectionLogs,
+                ports: portList
+            };
+        }));
     },
     setSerialPort: (serialPortInput) => {
         serialPort = serialPortInput;
@@ -86,13 +94,20 @@ exports.default = {
     },
     createSearialPort: () => __awaiter(void 0, void 0, void 0, function* () {
         const PRODUCT_ID = '7523'; // TODO
-        const VENDOR_ID = '1a86'; // TODO
+        const VENDOR_ID = '1A86'; // TODO
         const ports = yield serialport_1.SerialPort.list();
-        const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
-        if (!port) {
-            throw new Error('No se pudo abrir el puerto USB');
+        portList = ports;
+        try {
+            const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
+            if (!port) {
+                throw new Error('No se pudo abrir el puerto USB');
+            }
+            return new serialport_1.SerialPort({ path: port.path, baudRate: 9600 });
         }
-        return new serialport_1.SerialPort({ path: port.path, baudRate: 9600 });
+        catch (err) {
+            connectionLogs = err;
+            return;
+        }
     }),
     observeSoftwareWrite: (observable) => {
         observable.subscribe((command) => __awaiter(void 0, void 0, void 0, function* () {

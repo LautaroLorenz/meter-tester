@@ -16,6 +16,9 @@ import { PrimeNGConfig } from 'primeng/api';
 export class AppComponent implements OnInit {
     isVirtualMachinePage = false;
     isCommandHistoryPage = false;
+    conecctionLogsDialogOpened = false;
+    connectionLogs: any;
+    ports: any;
 
     constructor(
         private readonly router: Router,
@@ -24,7 +27,7 @@ export class AppComponent implements OnInit {
         private readonly ipcService: IpcService,
         private readonly messagesService: MessagesService,
         private readonly primeNgConfig: PrimeNGConfig
-    ) {}
+    ) { }
 
     get blocked$(): Observable<boolean> {
         return this.blockUIService.blocked$;
@@ -69,6 +72,21 @@ export class AppComponent implements OnInit {
                     // console.log(location);
                 }
             });
+
+        timer(3000).pipe(
+            take(1),
+            switchMap(() => this.ipcService.invoke$('check-connection-logs'))
+        )
+            .subscribe(({ connectionLogs, ports }) => {
+                if (connectionLogs) {
+                    this.connectionLogs = connectionLogs;
+                    if (ports) {
+                        this.ports = ports;
+                    }
+                    this.conecctionLogsDialogOpened = true;
+                }
+            });
+
 
         this.primeNgConfig.setTranslation({
             startsWith: 'Comienza con',
