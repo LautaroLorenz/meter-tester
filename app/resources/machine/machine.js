@@ -94,11 +94,11 @@ exports.default = {
     },
     createSearialPort: () => __awaiter(void 0, void 0, void 0, function* () {
         const PRODUCT_ID = '7523'; // TODO
-        const VENDOR_ID = '1A86'; // TODO
+        const VENDOR_IDs = ['1a86', '1A86']; // TODO
         const ports = yield serialport_1.SerialPort.list();
         portList = ports;
         try {
-            const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId === VENDOR_ID);
+            const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId && VENDOR_IDs.includes(vendorId));
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }
