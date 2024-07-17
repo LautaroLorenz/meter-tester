@@ -7,3 +7,16 @@
 <ng-container *ngIf="blocked$ | async as blocked">
     <app-block-ui [blocked]="blocked"></app-block-ui>
 </ng-container>
+
+<p-dialog
+    [(visible)]="conecctionLogsDialogOpened"
+    [style]="{ minWidth: '520px', maxWidth: '1000px' }"
+    header="Logs de conexión"
+    [modal]="true"
+    styleClass="p-fluid">
+    <strong>Logs de conexión</strong>
+    <p>{{ connectionLogs }}</p>
+
+    <strong>Puertos</strong>
+    <pre>{{ ports | json }}</pre>
+</p-dialog>
