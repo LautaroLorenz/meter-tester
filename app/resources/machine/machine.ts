@@ -116,7 +116,7 @@ export default {
                 .find(({ productId, vendorId, pnpId }) => HARDWARE_IDs
                     .some(({ PRODUCT_ID, VENDOR_ID, PNP_ID }) =>
                         (productId?.toUpperCase() === PRODUCT_ID && vendorId?.toUpperCase() === VENDOR_ID) ||
-                        PNP_ID && pnpId?.toUpperCase()?.replace(/[\\/]/g, '-') === PNP_ID
+                        (PNP_ID && pnpId?.toUpperCase()?.replace(/[\\/]/g, '-') === PNP_ID)
                     ));
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
