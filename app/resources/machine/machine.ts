@@ -100,12 +100,17 @@ export default {
         serialPort.pipe(parser);
     },
     createSearialPort: async () => {
-        const PRODUCT_ID = '7523'; // TODO
-        const VENDOR_IDs = ['1a86', '1A86']; // TODO
+        const HARDWARE_IDs = [{
+            PRODUCT_ID: '7523',
+            VENDOR_ID: '1A86'
+        }, {
+            PRODUCT_ID: '2303',
+            VENDOR_ID: '067B'
+        }];
         const ports = await SerialPort.list();
         portList = ports;
         try {
-            const port = ports.find(({ productId, vendorId }) => productId === PRODUCT_ID && vendorId && VENDOR_IDs.includes(vendorId));
+            const port = ports.find(({ productId, vendorId }) => HARDWARE_IDs.some(({ PRODUCT_ID, VENDOR_ID }) => productId?.toUpperCase() === PRODUCT_ID && vendorId?.toUpperCase() === VENDOR_ID));
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }
