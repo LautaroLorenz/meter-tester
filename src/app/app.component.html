@@ -14,9 +14,8 @@
     header="Logs de conexión"
     [modal]="true"
     styleClass="p-fluid">
-    <strong>Logs de conexión</strong>
-    <p>{{ connectionLogs }}</p>
-
+    <strong>Descripción</strong>
+    <pre class="pre text-red-500 mb-4">{{ connectionLogs }}</pre>
     <strong>Puertos</strong>
-    <pre>{{ ports | json }}</pre>
+    <pre class="pre">{{ ports | json }}</pre>
 </p-dialog>
