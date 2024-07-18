@@ -102,15 +102,22 @@ export default {
     createSearialPort: async () => {
         const HARDWARE_IDs = [{
             PRODUCT_ID: '7523',
-            VENDOR_ID: '1A86'
+            VENDOR_ID: '1A86',
+            PNP_ID: undefined
         }, {
             PRODUCT_ID: '2303',
-            VENDOR_ID: '067B'
+            VENDOR_ID: '067B',
+            PNP_ID: 'ACPI-PNP0501-2'
         }];
         const ports = await SerialPort.list();
         portList = ports;
         try {
-            const port = ports.find(({ productId, vendorId }) => HARDWARE_IDs.some(({ PRODUCT_ID, VENDOR_ID }) => productId?.toUpperCase() === PRODUCT_ID && vendorId?.toUpperCase() === VENDOR_ID));
+            const port = ports
+                .find(({ productId, vendorId, pnpId }) => HARDWARE_IDs
+                    .some(({ PRODUCT_ID, VENDOR_ID, PNP_ID }) =>
+                        (productId?.toUpperCase() === PRODUCT_ID && vendorId?.toUpperCase() === VENDOR_ID) ||
+                        PNP_ID && pnpId?.toUpperCase()?.replace(/[\\/]/g, '-') === PNP_ID
+                    ));
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }

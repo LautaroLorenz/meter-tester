@@ -95,15 +95,23 @@ exports.default = {
     createSearialPort: () => __awaiter(void 0, void 0, void 0, function* () {
         const HARDWARE_IDs = [{
                 PRODUCT_ID: '7523',
-                VENDOR_ID: '1A86'
+                VENDOR_ID: '1A86',
+                PNP_ID: undefined
             }, {
                 PRODUCT_ID: '2303',
-                VENDOR_ID: '067B'
+                VENDOR_ID: '067B',
+                PNP_ID: 'ACPI-PNP0501-2'
             }];
         const ports = yield serialport_1.SerialPort.list();
         portList = ports;
         try {
-            const port = ports.find(({ productId, vendorId }) => HARDWARE_IDs.some(({ PRODUCT_ID, VENDOR_ID }) => (productId === null || productId === void 0 ? void 0 : productId.toUpperCase()) === PRODUCT_ID && (vendorId === null || vendorId === void 0 ? void 0 : vendorId.toUpperCase()) === VENDOR_ID));
+            const port = ports
+                .find(({ productId, vendorId, pnpId }) => HARDWARE_IDs
+                .some(({ PRODUCT_ID, VENDOR_ID, PNP_ID }) => {
+                var _a;
+                return ((productId === null || productId === void 0 ? void 0 : productId.toUpperCase()) === PRODUCT_ID && (vendorId === null || vendorId === void 0 ? void 0 : vendorId.toUpperCase()) === VENDOR_ID) ||
+                    PNP_ID && ((_a = pnpId === null || pnpId === void 0 ? void 0 : pnpId.toUpperCase()) === null || _a === void 0 ? void 0 : _a.replace(/[\\/]/g, '-')) === PNP_ID;
+            }));
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }
