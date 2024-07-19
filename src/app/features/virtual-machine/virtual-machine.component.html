@@ -34,6 +34,23 @@
                     </div>
                 </div>
 
+                <ng-container *ngIf="configForm.controls.responseType.value === VMResponseTypes.Manual">
+                    <div class="col col-6 flex flex-column gap-1">
+                        <label class="text-base">Comando libre</label>
+                        <div class="flex flex-row align-items-center gap-2">
+                            <input
+                                #manualCommand
+                                type="text"
+                                pInputText />
+                            <p-button
+                                label="Enviar"
+                                [outlined]="true"
+                                (click)="virtualMachineWrite(manualCommand.value)"
+                                size="small"></p-button>
+                        </div>
+                    </div>
+                </ng-container>
+
                 <ng-container *ngIf="configForm.controls.responseType.value === VMResponseTypes.Automatic">
                     <div class="col col-6 flex flex-column gap-1">
                         <label class="text-base">Delay en responder</label>
