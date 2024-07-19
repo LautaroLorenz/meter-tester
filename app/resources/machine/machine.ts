@@ -104,11 +104,14 @@ export default {
             PRODUCT_ID: '7523',
             VENDOR_ID: '1A86',
             PNP_ID: undefined
-        }, {
-            PRODUCT_ID: '2303',
-            VENDOR_ID: '067B',
-            PNP_ID: 'ACPI-PNP0501-2'
-        }];
+        }
+            // Ejemplo con PNP_ID
+            // {
+            //     PRODUCT_ID: '2303',
+            //     VENDOR_ID: '067B',
+            //     PNP_ID: 'ACPI-PNP0501-2'
+            // }
+        ];
         const ports = await SerialPort.list();
         portList = ports;
         try {
