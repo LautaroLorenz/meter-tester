@@ -60,6 +60,7 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.wakeLockService.deactivateWakeLock().pipe(take(1)).subscribe();
         this.onDestroy.next();
         this.onDestroy.complete();
     }
