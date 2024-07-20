@@ -111,12 +111,6 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         this.executionSteps$
             .pipe(
                 takeUntil(this.onDestroy),
-                switchMap((steps) => {
-                    if (this.isAllStepsDone(steps)) {
-                        return this.wakeLockService.deactivateWakeLock().pipe(map(() => steps));
-                    }
-                    return of(steps);
-                }),
                 tap((steps) => {
                     // si todos los steps se ejecutaron, avanzar al siguiente major step
                     if (this.isAllStepsDone(steps)) {
