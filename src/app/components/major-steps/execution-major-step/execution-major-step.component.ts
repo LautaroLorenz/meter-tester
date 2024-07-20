@@ -3,10 +3,12 @@ import { EssayStep } from '../../../models/business/interafces/essay-step.model'
 import { ExecutionDirector } from '../../../models/business/class/execution-director.model';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { StepStatus } from '../../../models/business/enums/step-status.model';
-import { Observable, Subject, forkJoin, take, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, forkJoin, take, takeUntil, tap, switchMap, map } from 'rxjs';
 import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photocell-adjustment-status.model';
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 import { FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
+import { WakeLockService } from '../../../services/wake-lock.service';
+import { of } from 'rxjs/internal/observable/of';
 
 @Component({
     selector: 'app-execution-major-step',
@@ -24,7 +26,10 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
 
     private readonly formatDate = inject(FormatDatePipe);
 
-    constructor(private readonly runEssayService: RunEssayService) {}
+    constructor(
+        private readonly runEssayService: RunEssayService,
+        private readonly wakeLockService: WakeLockService,
+    ) { }
 
     get executionSteps$(): Observable<EssayStep[]> {
         return this.runEssayService.executionSteps$.pipe(
@@ -46,10 +51,10 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         forkJoin({
             executionSteps: this.executionSteps$.pipe(take(1)),
             preparationStep: this.preparationStep$.pipe(take(1))
-        }).subscribe(({ executionSteps, preparationStep }) => {
-            this.initExecutionsProps(executionSteps, preparationStep);
-            this.start();
-        });
+        }).pipe(
+            switchMap((result) => this.wakeLockService.activateWakeLock().pipe(map(() => result))),
+            tap(({ executionSteps, preparationStep }) => this.initExecutionsProps(executionSteps, preparationStep))
+        ).subscribe(() => this.start());
 
         this.observeExecutionSteps();
     }
@@ -105,6 +110,12 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         this.executionSteps$
             .pipe(
                 takeUntil(this.onDestroy),
+                switchMap((steps) => {
+                    if (this.isAllStepsDone(steps)) {
+                        return this.wakeLockService.deactivateWakeLock().pipe(map(() => steps));
+                    }
+                    return of(steps);
+                }),
                 tap((steps) => {
                     // si todos los steps se ejecutaron, avanzar al siguiente major step
                     if (this.isAllStepsDone(steps)) {
@@ -131,7 +142,7 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
                             .get('executedStatus')
                             ?.setValue(StepStatus.Current);
                     }
-                })
+                }),
             )
             .subscribe();
     }
