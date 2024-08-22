@@ -28,6 +28,7 @@
   },
   "linux": {
     "icon": "dist/assets/icons",
-    "target": ["AppImage"]
+    "target": ["AppImage"],
+    "artifactName": "OELEC - CE Soft - ${version}.${ext}"
   }
 }
