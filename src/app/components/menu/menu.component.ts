@@ -11,6 +11,8 @@ import { PageUrlName } from '../../models/business/enums/page-name.model';
 export class MenuComponent implements OnInit {
     PageUrlName = PageUrlName;
     items: MenuItem[] = [];
+    settingsItems: MenuItem[] = [];
+    displayDataBaseDialog = false;
     displaySystemInfoDialog = false;
 
     constructor() { }
@@ -69,9 +71,23 @@ export class MenuComponent implements OnInit {
             //   routerLink: '/'.concat(PageUrlName.terminal),
             // },
         ];
+        this.settingsItems = [
+            {
+                label: 'Base de datos',
+                command: () => this.showDataBaseDialog(),
+            },
+            {
+                label: 'Acerca de',
+                command: () => this.aboutInfo(),
+            },
+        ];
     }
 
     aboutInfo(): void {
         this.displaySystemInfoDialog = true;
+    }
+
+    showDataBaseDialog(): void {
+        this.displayDataBaseDialog = true;
     }
 }

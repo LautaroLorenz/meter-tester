@@ -1,0 +1,17 @@
+<p-dialog
+    header="Base de datos"
+    [(visible)]="display"
+    [modal]="true"
+    [style]="{ width: '50vw', maxWidth: '500px' }"
+    (onHide)="onHide()">
+    <p-button
+        styleClass="w-full"
+        [outlined]="true"
+        label="Conectar a una base de datos diferente"
+        (click)="changeDataBaseConnection()">
+    </p-button>
+
+    <p-footer>
+        <!-- Acá se pueden poner botones -->
+    </p-footer>
+</p-dialog>
