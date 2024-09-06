@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  flex-direction: column;
+}
+
+.property {
+  font-style: italic;
+}
+
+.value {
+  font-style: italic;
+  font-weight: 600;
+}

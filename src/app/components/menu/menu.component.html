@@ -15,15 +15,23 @@
         </ng-template> -->
         <ng-template pTemplate="end">
             <p-button
-                label="Acerca de"
-                [text]="true"
+                class="settings-button"
+                type="button"
                 severity="secondary"
-                size="small"
-                class="font-normal"
-                (click)="aboutInfo()">
+                (click)="settingsMenu.toggle($event)"
+                icon="pi pi-cog"
+                [rounded]="true"
+                [outlined]="true"
+                [text]="true">
             </p-button>
+            <p-menu
+                #settingsMenu
+                [model]="settingsItems"
+                [popup]="true">
+            </p-menu>
         </ng-template>
     </p-menubar>
 </div>
 
 <app-system-info-dialog [(display)]="displaySystemInfoDialog"></app-system-info-dialog>
+<app-database-settings-dialog [(display)]="displayDataBaseDialog"></app-database-settings-dialog>

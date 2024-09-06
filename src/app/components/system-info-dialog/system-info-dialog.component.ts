@@ -11,7 +11,7 @@ export class SystemInfoDialogComponent {
 
   systemInfo = {
     hardwareVersion: 'CE8p-v6',
-    softwareVersion: '6.0.0'
+    softwareVersion: '6.1.0'
   };
 
   onHide(): void {

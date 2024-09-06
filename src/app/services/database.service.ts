@@ -29,11 +29,11 @@ export class DatabaseService<T> {
             };
             globalFilterColumns?: string[];
         } = {
-            relations: [],
-            conditions: [],
-            lazyLoadEvent: {},
-            globalFilterColumns: []
-        },
+                relations: [],
+                conditions: [],
+                lazyLoadEvent: {},
+                globalFilterColumns: []
+            },
         rawProperties: string[] = []
     ): Observable<RequestTableResponse<T>> {
         this.getTable(tableName, options, rawProperties);
@@ -51,11 +51,11 @@ export class DatabaseService<T> {
             };
             globalFilterColumns?: string[];
         } = {
-            relations: [],
-            conditions: [],
-            lazyLoadEvent: {},
-            globalFilterColumns: []
-        },
+                relations: [],
+                conditions: [],
+                lazyLoadEvent: {},
+                globalFilterColumns: []
+            },
         rawProperties: string[] = []
     ): void {
         const { first, rows, sortField, sortOrder, globalFilter, filters } = options.lazyLoadEvent ?? {};
@@ -114,6 +114,14 @@ export class DatabaseService<T> {
 
     editElementFromTable$(tableName: string, element: T, rawProperties: string[]): Observable<number> {
         return from(this._editTableRow(tableName, element, rawProperties));
+    }
+
+    changeConnectionPath(): Observable<{ success: boolean; message: string }> {
+        return this.ipcService.invoke$('change-connection-path');
+    }
+
+    checkCustomConnectionPath(): Observable<string | null> {
+        return this.ipcService.invoke$('check-custom-connection-path');
     }
 
     private readonly _listenGetDatabaseTableReply = (ipcService: IpcService): void => {

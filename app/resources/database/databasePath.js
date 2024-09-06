@@ -5,10 +5,13 @@ exports.dataBasePath = void 0;
 const electron_1 = require("electron");
 const path = require("path");
 const os = require("os");
+const Store = require("electron-store");
+const store = new Store();
 // Path de la base de datos en el directorio de datos del usuario
 const username = os.userInfo().username;
 const userDataDir = (_a = electron_1.app === null || electron_1.app === void 0 ? void 0 : electron_1.app.getPath('userData')) !== null && _a !== void 0 ? _a : calculateUserDataDir();
 const dataBaseName = 'database.db';
+const defaultDataBasePath = path.join(userDataDir, dataBaseName);
 // Esta función se utiliza cunado usamos comandos knex ubicados en el package.json
 // se debe a que en ese contexto electron.app es undefined porque estamos fuera de NodeJs
 function calculateUserDataDir() {
@@ -25,5 +28,8 @@ function calculateUserDataDir() {
     }
     return '';
 }
-exports.dataBasePath = path.join(userDataDir, dataBaseName);
+// Obtiene la ruta seleccionada por el usuario desde el almacenamiento local
+const userSelectedDir = store.get('dbDirectory');
+// Usa la ruta seleccionada por el usuario si existe, de lo contrario usa la predeterminada
+exports.dataBasePath = userSelectedDir !== null && userSelectedDir !== void 0 ? userSelectedDir : defaultDataBasePath;
 //# sourceMappingURL=databasePath.js.map
