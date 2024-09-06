@@ -118,6 +118,12 @@ exports.default = {
                 return { success: false, message: `Connection failed: ${error === null || error === void 0 ? void 0 : error.message}` };
             }
         }));
+        // Verificar si el usuario estableció una ruta de conexión personalizada
+        electron_1.ipcMain.handle('check-custom-connection-path', () => __awaiter(void 0, void 0, void 0, function* () {
+            var _a;
+            const customDataBasePath = (_a = store.get('dbDirectory')) !== null && _a !== void 0 ? _a : null;
+            return customDataBasePath;
+        }));
     },
     setMainWindow: (mainWindowParam) => {
         mainWindow = mainWindowParam;

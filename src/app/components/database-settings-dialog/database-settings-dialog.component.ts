@@ -1,7 +1,7 @@
 import { RestartService } from './../../services/restart.service';
 import { tap, finalize } from 'rxjs';
 import { DatabaseService } from './../../services/database.service';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MessagesService } from '../../services/messages.service';
 import { BlockUIService } from '../../services/block-ui.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
@@ -13,9 +13,15 @@ import { ConfirmationService, PrimeIcons } from 'primeng/api';
   styleUrls: ['./database-settings-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatabaseSettingsDialogComponent {
+export class DatabaseSettingsDialogComponent implements OnInit {
   @Input() display = false;
   @Output() displayChange = new EventEmitter<boolean>();
+
+  dataBaseInfo: {
+    customPath: string | undefined,
+  } = {
+      customPath: undefined,
+    };
 
   constructor(
     private blockUIService: BlockUIService,
@@ -24,6 +30,10 @@ export class DatabaseSettingsDialogComponent {
     private confirmationService: ConfirmationService,
     private restartService: RestartService,
   ) { }
+
+  ngOnInit(): void {
+    this.checkDataBaseCustomPath();
+  }
 
   onHide(): void {
     this.displayChange.emit(this.display);
@@ -58,5 +68,15 @@ export class DatabaseSettingsDialogComponent {
         this.onHide();
       })
     ).subscribe()
+  }
+
+  private checkDataBaseCustomPath(): void {
+    this.databaseService.checkCustomConnectionPath().pipe(
+      tap((customConnectionPath) => {
+        if (customConnectionPath) {
+          this.dataBaseInfo.customPath = customConnectionPath;
+        }
+      })
+    ).subscribe();
   }
 }

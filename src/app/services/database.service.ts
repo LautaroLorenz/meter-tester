@@ -120,6 +120,10 @@ export class DatabaseService<T> {
         return this.ipcService.invoke$('change-connection-path');
     }
 
+    checkCustomConnectionPath(): Observable<string | null> {
+        return this.ipcService.invoke$('check-custom-connection-path');
+    }
+
     private readonly _listenGetDatabaseTableReply = (ipcService: IpcService): void => {
         ipcService.on('get-table-reply', (_: any, args: any) => {
             // FIXME

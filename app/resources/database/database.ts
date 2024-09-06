@@ -118,6 +118,11 @@ export default {
         return { success: false, message: `Connection failed: ${error?.message}` };
       }
     });
+    // Verificar si el usuario estableció una ruta de conexión personalizada
+    ipcMain.handle('check-custom-connection-path', async () => {
+      const customDataBasePath = store.get('dbDirectory') as string ?? null;
+      return customDataBasePath;
+    });
   },
   setMainWindow: (mainWindowParam: BrowserWindow) => {
     mainWindow = mainWindowParam;
