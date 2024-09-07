@@ -20,6 +20,7 @@ import { GlobalFilterManager } from '../../models/core/global-filter-manager.mod
 import { TC_AlignHorizontal, TableColumn } from '../../models/core/table-column.model';
 import { ActiveConstantUnitEnum, ReactiveConstantUnitEnum } from '../../models/business/constants/meter-constant.model';
 import { RequestTableResponse } from '../../models/core/database.model';
+import { BarcodeScannerFromType, BarcodeScannerToType } from '../../models/business/interafces/barcode-scanner-params.model';
 
 @Component({
     templateUrl: './meters.component.html',
@@ -151,7 +152,9 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             ]),
             reactiveConstantUnit_id: this.fb.control(undefined, Validators.required.bind(this)),
             brand_id: this.fb.control(undefined, Validators.required.bind(this)),
-            connection_id: this.fb.control(undefined, Validators.required.bind(this))
+            connection_id: this.fb.control(undefined, Validators.required.bind(this)),
+            isBarcodeScannerEnabled: this.fb.control(undefined),
+            barcodeScannerParams_raw: this.fb.control(undefined),
         });
         this.initFormValueChangeListeners();
     }
@@ -200,7 +203,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
             relations: MeterDbTableContext.foreignTables,
             lazyLoadEvent: this.lazyLoadEvent,
             globalFilterColumns: GlobalFilterManager.transform(this.cols)
-        });
+        }, MeterDbTableContext.rawProperties);
     }
 
     override exportQuery$(): Observable<RequestTableResponse<Meter>> {
@@ -317,6 +320,25 @@ export class MetersComponent extends AbmPage<Meter> implements OnDestroy {
                 })
             )
             .subscribe();
+        this.form
+            .get('isBarcodeScannerEnabled')
+            ?.valueChanges.pipe(
+                takeUntil(this.destroyed$),
+                tap((isBarcodeScannerEnabled) => {
+                    if (isBarcodeScannerEnabled) {
+                        this.form.get('barcodeScannerParams_raw')?.setValue({
+                            from: {
+                                type: BarcodeScannerFromType.fromStart,
+                            },
+                            to: {
+                                type: BarcodeScannerToType.toEnd,
+                            }
+                        })
+                    } else {
+                        this.form.get('barcodeScannerParams_raw')?.setValue(null);
+                    }
+                })
+            ).subscribe();
     }
 
     private createMeter(meter: Meter): void {

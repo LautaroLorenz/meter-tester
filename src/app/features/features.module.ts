@@ -5,7 +5,7 @@ import { BrandsComponent } from './brands/brands.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { MetersComponent } from './meters/meters.component';
 import { AvailableTestComponent } from './available-test/available-test.component';
@@ -19,6 +19,7 @@ import { HistoryEssayComponent } from './history-essay/history-essay.component';
 import { CommandHistoryComponent } from './command-history/command-history.component';
 import { CreateBackupComponent } from './backups/create-backup/create-backup.component';
 import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.component';
+import { BarcodeScannerParamsFormComponent } from './meters/components/barcode-scanner-params-form/barcode-scanner-params-form.component';
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.
         HistoryEssayComponent,
         CommandHistoryComponent,
         CreateBackupComponent,
-        RestoreBackupComponent
+        RestoreBackupComponent,
+        BarcodeScannerParamsFormComponent
     ],
     imports: [
         CommonModule,
@@ -43,7 +45,8 @@ import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.
         ComponentsModule,
         ReactiveFormsModule,
         PipesModule,
-        DirectivesModule
+        DirectivesModule,
+        FormsModule
     ],
     providers: []
 })

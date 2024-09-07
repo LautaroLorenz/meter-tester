@@ -194,6 +194,33 @@
                             <app-input-error formControlName="reactiveConstantUnit_id"></app-input-error>
                         </div>
                     </div>
+
+                    <div class="col col-12">
+                        <div class="field flex gap-1 align-items-center">
+                            <p-checkbox
+                                formControlName="isBarcodeScannerEnabled"
+                                [binary]="true"
+                                [trueValue]="1"
+                                inputId="isBarcodeScannerEnabled">
+                            </p-checkbox>
+                            <label
+                                for="isBarcodeScannerEnabled"
+                                class="m-0 flex align-items-center gap-1">
+                                Habilitar lector de códigos
+                                <app-help-text
+                                    title="Algoritmo de corte del lector"
+                                    message="Se aplica para obtener el número de seríe al escanear el código en el medidor">
+                                </app-help-text>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    *ngIf="form.get('isBarcodeScannerEnabled')?.value"
+                    class="formgrid grid">
+                    <app-barcode-scanner-params-form formControlName="barcodeScannerParams_raw">
+                    </app-barcode-scanner-params-form>
                 </div>
             </form>
         </ng-template>

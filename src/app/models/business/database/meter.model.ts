@@ -3,6 +3,7 @@ import { Brand, BrandDbTableContext } from './brand.model';
 import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from './active-constant-unit.model';
 import { Connection, ConnectionDbTableContext } from './connection.model';
 import { ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from './reactive-constant-unit.model';
+import { BarcodeScannerParams } from '../interafces/barcode-scanner-params.model';
 
 export interface Meter extends DbForeignKey {
     id: number;
@@ -16,6 +17,8 @@ export interface Meter extends DbForeignKey {
     reactiveConstantUnit_id: number;
     brand_id: number;
     connection_id: number;
+    isBarcodeScannerEnabled: boolean;
+    barcodeScannerParams_raw: BarcodeScannerParams;
     foreign: {
         brand: Brand;
         activeConstantUnit: ActiveConstantUnit;
@@ -26,7 +29,7 @@ export interface Meter extends DbForeignKey {
 
 export const MeterDbTableContext: DbTableContext = {
     tableName: 'meters',
-    rawProperties: [],
+    rawProperties: ['barcodeScannerParams_raw'],
     foreignTables: [
         {
             tableName: ConnectionDbTableContext.tableName,

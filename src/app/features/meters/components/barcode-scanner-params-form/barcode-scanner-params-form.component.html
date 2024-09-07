@@ -1,0 +1,52 @@
+<div
+    *ngIf="value"
+    class="flex flex-column gap-3">
+    <div class="flex gap-2">
+        <p-dropdown
+            [options]="fromOptions"
+            [(ngModel)]="value.from.type"
+            (onChange)="onFromChange()"
+            optionValue="type"
+            optionLabel="label"
+            appendTo="body"
+            [required]="true"
+            [autoDisplayFirst]="false">
+        </p-dropdown>
+
+        <ng-container *ngIf="value.from.type === BarcodeScannerFromType.fromText">
+            <input
+                placeholder="Ingrese texto patrón"
+                type="text"
+                pInputText
+                [(ngModel)]="value.from.text" />
+        </ng-container>
+    </div>
+
+    <div class="flex gap-2">
+        <p-dropdown
+            [options]="toOptions"
+            [(ngModel)]="value.to.type"
+            (onChange)="onToChange()"
+            optionValue="type"
+            optionLabel="label"
+            appendTo="body"
+            [required]="true"
+            [autoDisplayFirst]="false">
+        </p-dropdown>
+
+        <ng-container *ngIf="value.to.type === BarcodeScannerToType.toText">
+            <input
+                placeholder="Ingrese texto patrón"
+                type="text"
+                pInputText
+                [(ngModel)]="value.to.text" />
+        </ng-container>
+
+        <ng-container *ngIf="value.to.type === BarcodeScannerToType.toFixedLength">
+            <p-inputNumber
+                placeholder="Ingrese largo de la cadena"
+                [min]="0"
+                [(ngModel)]="value.to.fixedLength" />
+        </ng-container>
+    </div>
+</div>
