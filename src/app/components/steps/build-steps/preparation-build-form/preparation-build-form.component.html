@@ -49,20 +49,24 @@
                         </div>
 
                         <div class="field col col-4">
-                            <label for="serialNumber">
-                                <i
+                            <label for="serialNumber"> Número de serie </label>
+
+                            <div class="p-inputgroup">
+                                <span
                                     *ngIf="isVerification && !!barcodeScannerParamsMap[index.toString()]"
-                                    class="pi pi-qrcode mr-1 text-primary"
-                                    pTooltip="Lector de códigos habilitado para este modelo">
-                                </i>
-                                Número de serie
-                            </label>
-                            <input
-                                #serialNumber
-                                type="text"
-                                pInputText
-                                id="serialNumber"
-                                formControlName="serialNumber" />
+                                    class="p-inputgroup-addon">
+                                    <i
+                                        class="pi pi-qrcode mr-1 text-primary help"
+                                        pTooltip="Lector de códigos habilitado para este modelo">
+                                    </i>
+                                </span>
+                                <input
+                                    #serialNumber
+                                    type="text"
+                                    pInputText
+                                    id="serialNumber"
+                                    formControlName="serialNumber" />
+                            </div>
                         </div>
                     </ng-container>
                 </div>

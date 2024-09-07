@@ -160,7 +160,9 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
     private focusOnNextEmptySerialNumberInput(currentIndex: number): void {
         const nextSerialNumberControlIndex = this.standsFormArray.controls.findIndex((control, index) => {
-            return control.get('isActive')?.value && !control.get('serialNumber')?.value && index !== currentIndex;
+            return control.get('isActive')?.value &&
+                !control.get('serialNumber')?.value &&
+                index !== currentIndex;
         });
         if (nextSerialNumberControlIndex > -1) {
             this.serialNumbers.toArray()[nextSerialNumberControlIndex].nativeElement.focus();
