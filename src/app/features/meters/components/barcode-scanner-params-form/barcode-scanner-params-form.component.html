@@ -20,6 +20,13 @@
                 pInputText
                 [(ngModel)]="value.from.text" />
         </ng-container>
+
+        <ng-container *ngIf="value.from.type === BarcodeScannerFromType.fromFixedIndex">
+            <p-inputNumber
+                placeholder="Ingrese el indice de inicio"
+                [min]="0"
+                [(ngModel)]="value.from.fixedIndex" />
+        </ng-container>
     </div>
 
     <div class="flex gap-2">

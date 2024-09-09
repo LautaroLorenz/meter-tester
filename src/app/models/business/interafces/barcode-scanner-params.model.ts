@@ -1,6 +1,7 @@
 export enum BarcodeScannerFromType {
     fromText = 'fromText',
-    fromStart = 'fromStart'
+    fromStart = 'fromStart',
+    fromFixedIndex = 'fromFixedIndex'
 }
 
 export enum BarcodeScannerToType {
@@ -16,6 +17,10 @@ export interface BarcodeScannerFromText {
 
 export interface BarcodeScannerFromStart {
     type: BarcodeScannerFromType.fromStart;
+}
+export interface BarcodeScannerFromFixedIndex {
+    type: BarcodeScannerFromType.fromFixedIndex;
+    fixedIndex: number;
 }
 
 export interface BarcodeScannerToText {
@@ -33,6 +38,6 @@ export interface BarcodeScannerToFixedLength {
 }
 
 export type BarcodeScannerParams = {
-    from: BarcodeScannerFromText | BarcodeScannerFromStart;
+    from: BarcodeScannerFromText | BarcodeScannerFromStart | BarcodeScannerFromFixedIndex;
     to: BarcodeScannerToText | BarcodeScannerToEnd | BarcodeScannerToFixedLength;
 }

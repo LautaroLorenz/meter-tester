@@ -20,6 +20,10 @@ export class BarcodeScanner {
             startIndex = serialNumber.indexOf(params.from.text) + params.from.text.length;
             matchStartFlag = true;
         }
+        if (params.from.type === BarcodeScannerFromType.fromFixedIndex) {
+            startIndex = startIndex + params.from.fixedIndex;
+            matchStartFlag = true;
+        }
 
         // End index
         if (params.to.type === BarcodeScannerToType.toEnd) {

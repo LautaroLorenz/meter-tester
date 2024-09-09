@@ -28,6 +28,10 @@ export class BarcodeScannerParamsFormComponent implements ControlValueAccessor {
   {
     type: BarcodeScannerFromType.fromText,
     label: 'Desde el texto',
+  },
+  {
+    type: BarcodeScannerFromType.fromFixedIndex,
+    label: 'Desde el indice',
   }];
 
   toOptions = [{
@@ -40,7 +44,7 @@ export class BarcodeScannerParamsFormComponent implements ControlValueAccessor {
   },
   {
     type: BarcodeScannerToType.toFixedLength,
-    label: 'Tamaño fijo',
+    label: 'Largo fijo',
   }];
 
   onChange!: (value: BarcodeScannerParams | undefined) => void;
