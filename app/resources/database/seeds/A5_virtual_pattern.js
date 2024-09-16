@@ -7,7 +7,7 @@ exports.seed = async function (knex) {
     {
       id: 1,
       current: 0.5,
-      constant: 20e5,
+      constant: 20e6,
     },
     {
       id: 2,
