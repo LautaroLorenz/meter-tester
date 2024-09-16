@@ -23,9 +23,9 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     abstract readonly device: Devices;
 
     constructor(
-        private readonly deviceService: DeviceService,
+        protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService
-    ) {}
+    ) { }
 
     ngOnDestroy(): void {
         this.onDestroy.next();

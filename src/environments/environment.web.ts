@@ -4,6 +4,7 @@ export const APP_CONFIG: Environment = {
     production: false,
     environment: 'WEB',
     standsQuantity: 8,
+    patternType: 'Virtual',
     commandStandsQuantity: 20,
     skipSteps: {
         manualGeneratorConfirm: false,

@@ -165,7 +165,13 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     private getResults$(): Observable<CommandResultResponse[]> {
-        return this.pattern.constant$(this.currentStep.form_control_raw.meterConstant).pipe(
+        // Tomamos la corriente mayor
+        const corrienteL1 = this.currentStep.form_control_raw.phaseL1.current;
+        const corrienteL2 = this.currentStep.form_control_raw.phaseL2.current;
+        const corrienteL3 = this.currentStep.form_control_raw.phaseL3.current;
+        const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
+
+        return this.pattern.constant$(this.currentStep.form_control_raw.meterConstant, maxCurrent).pipe(
             switchMap((patternStatus) =>
                 this.calculator.resultsTS01$(
                     this.getActiveStands(),
