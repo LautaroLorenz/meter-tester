@@ -8,6 +8,9 @@ export interface Environment {
     // cantidad de puestos que tiene la máquina
     standsQuantity: number;
 
+    // el patrón puede ser Físico o Virtual (desde una tabla de BBDD)
+    patternType: 'Virtual' | 'Physical'
+
     // cantidad de puestos que se envian en los comandos
     commandStandsQuantity: number;
 
