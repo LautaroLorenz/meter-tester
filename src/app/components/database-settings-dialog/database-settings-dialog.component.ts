@@ -46,12 +46,12 @@ export class DatabaseSettingsDialogComponent implements OnInit {
         if (success) {
           this.messagesService.success('Conexión con la base de datos modificada');
           this.confirmationService.confirm({
-            message: 'Para aplicar los cambios es necesario reiniciar.<br/>Si la aplicación no se inicia luego de 10 segundos, deberas iniciarla nuevamente de forma manual.',
+            message: 'Para aplicar los cambios es necesario reiniciar.',
             header: 'Reiniciar aplicación',
             icon: PrimeIcons.EXCLAMATION_TRIANGLE,
             defaultFocus: 'accept',
             acceptButtonStyleClass: 'p-button-success',
-            acceptLabel: 'Reiniciar',
+            acceptLabel: 'Cerrar aplicación',
             accept: () => {
               this.restartService.restartApp().subscribe();
             },
