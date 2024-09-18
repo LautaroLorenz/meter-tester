@@ -63,6 +63,10 @@ export default {
         dataBasePath,
       };
     });
+
+    ipcMain.handle('get-database-version', async () => {
+      return knex.migrate.currentVersion();
+    });
     ipcMain.handle('get-database-connection-status', async () => {
       let status;
       await knex

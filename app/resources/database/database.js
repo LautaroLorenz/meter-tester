@@ -67,6 +67,9 @@ exports.default = {
                 dataBasePath: databasePath_1.dataBasePath,
             };
         }));
+        electron_1.ipcMain.handle('get-database-version', () => __awaiter(void 0, void 0, void 0, function* () {
+            return knex.migrate.currentVersion();
+        }));
         electron_1.ipcMain.handle('get-database-connection-status', () => __awaiter(void 0, void 0, void 0, function* () {
             let status;
             yield knex
