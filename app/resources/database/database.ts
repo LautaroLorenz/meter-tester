@@ -11,18 +11,23 @@ let updated = false;
 let updatedError = false;
 let mainWindow: BrowserWindow;
 
-async function runSeedsFirstTime(knex: KnexLib.Knex) {
+async function runSeeds(knex: KnexLib.Knex) {
   // Verifica si la base de datos está vacía
   const isEmpty = await knex('steps')
     .count('* as count')
     .then((rows) => rows[0].count === 0);
 
   if (isEmpty) {
-    // Si la base de datos está vacía, ejecuta los seeds
-    knex.seed.run().then(() => {
-      created = true;
-    });
+    created = true;
   }
+
+  // Ejecutar seeds pendientes
+  knex.seed
+    .run()
+    .catch((err) => {
+      console.log('seeds error', err);
+      updatedError = true;
+    });
 }
 
 function doConnection() {
@@ -33,14 +38,15 @@ function doConnection() {
     .latest()
     .then((migrations) => {
       if (migrations?.[1]?.length > 0) {
-        console.log(migrations);
+        console.log('migrations', migrations);
         updated = true;
       }
 
-      // Run seeds first time
-      runSeedsFirstTime(knex);
+      // Run seeds
+      runSeeds(knex);
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log('migrations error', err);
       updatedError = true;
     });
 
