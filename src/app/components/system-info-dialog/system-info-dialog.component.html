@@ -12,6 +12,10 @@
         <span class="property">Versión del software:</span>
         <span class="value">{{ systemInfo.softwareVersion }}</span>
     </p>
+    <p class="row">
+        <span class="property">Versión de la base de datos:</span>
+        <span class="value">{{ systemInfo.dataBaseVersion || '-' }}</span>
+    </p>
     <p-footer>
         <!-- Acá se pueden poner botones -->
     </p-footer>

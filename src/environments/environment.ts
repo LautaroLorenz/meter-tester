@@ -5,7 +5,6 @@ export const APP_CONFIG: Environment = {
     environment: 'LOCAL',
     standsQuantity: 8,
     patternType: 'Virtual',
-    commandStandsQuantity: 20,
     skipSteps: {
         manualGeneratorConfirm: false,
         photocellAdjustmentRequest: false,

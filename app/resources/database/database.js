@@ -19,18 +19,22 @@ let created = false;
 let updated = false;
 let updatedError = false;
 let mainWindow;
-function runSeedsFirstTime(knex) {
+function runSeeds(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         // Verifica si la base de datos está vacía
         const isEmpty = yield knex('steps')
             .count('* as count')
             .then((rows) => rows[0].count === 0);
         if (isEmpty) {
-            // Si la base de datos está vacía, ejecuta los seeds
-            knex.seed.run().then(() => {
-                created = true;
-            });
+            created = true;
         }
+        // Ejecutar seeds pendientes
+        knex.seed
+            .run()
+            .catch((err) => {
+            console.log('seeds error', err);
+            updatedError = true;
+        });
     });
 }
 function doConnection() {
@@ -41,13 +45,14 @@ function doConnection() {
         .then((migrations) => {
         var _a;
         if (((_a = migrations === null || migrations === void 0 ? void 0 : migrations[1]) === null || _a === void 0 ? void 0 : _a.length) > 0) {
-            console.log(migrations);
+            console.log('migrations', migrations);
             updated = true;
         }
-        // Run seeds first time
-        runSeedsFirstTime(knex);
+        // Run seeds
+        runSeeds(knex);
     })
-        .catch(() => {
+        .catch((err) => {
+        console.log('migrations error', err);
         updatedError = true;
     });
     return knex;
@@ -61,6 +66,9 @@ exports.default = {
             return {
                 dataBasePath: databasePath_1.dataBasePath,
             };
+        }));
+        electron_1.ipcMain.handle('get-database-version', () => __awaiter(void 0, void 0, void 0, function* () {
+            return knex.migrate.currentVersion();
         }));
         electron_1.ipcMain.handle('get-database-connection-status', () => __awaiter(void 0, void 0, void 0, function* () {
             let status;

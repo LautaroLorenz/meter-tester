@@ -11,7 +11,7 @@
     "migrate:make": "knex migrate:make --knexfile ./resources/database/knexfile.js",
     "seed": "knex seed:run --knexfile ./resources/database/knexfile.js"
   },
-  "version": "6.1.0",
+  "version": "6.2.0",
   "main": "main.js",
   "private": true,
   "dependencies": {

@@ -11,9 +11,6 @@ export interface Environment {
     // el patrón puede ser Físico o Virtual (desde una tabla de BBDD)
     patternType: 'Virtual' | 'Physical'
 
-    // cantidad de puestos que se envian en los comandos
-    commandStandsQuantity: number;
-
     // completa pasos automaticamente
     skipSteps: Record<string, boolean>;
 
