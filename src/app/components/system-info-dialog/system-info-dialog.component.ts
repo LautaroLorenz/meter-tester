@@ -13,7 +13,7 @@ export class SystemInfoDialogComponent implements OnInit {
 
   systemInfo = {
     hardwareVersion: 'CE8p-v6',
-    softwareVersion: '6.2.0',
+    softwareVersion: '6.3.0',
     dataBaseVersion: ''
   };
 
