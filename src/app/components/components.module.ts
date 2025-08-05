@@ -67,6 +67,7 @@ import { HelpTextComponent } from './help-text/help-text.component';
 import { ModelTestedWidgetComponent } from './statics-widgets/model-tested-widget/model-tested-widget.component';
 import { SystemInfoDialogComponent } from './system-info-dialog/system-info-dialog.component';
 import { DatabaseSettingsDialogComponent } from './database-settings-dialog/database-settings-dialog.component';
+import { CopyStandDialogComponent } from './copy-stand-dialog/copy-stand-dialog.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -131,7 +132,8 @@ const AppComponents = [
     PhaseTableComponent,
     HelpTextComponent,
     SystemInfoDialogComponent,
-    DatabaseSettingsDialogComponent
+    DatabaseSettingsDialogComponent,
+    CopyStandDialogComponent
 ];
 
 @NgModule({
@@ -139,4 +141,4 @@ const AppComponents = [
     imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule, FormsModule, TranslateModule],
     exports: [PrimeNgModule, AppComponents]
 })
-export class ComponentsModule { }
+export class ComponentsModule {}
