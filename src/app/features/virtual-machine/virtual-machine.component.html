@@ -14,7 +14,7 @@
                         optionLabel="label"></p-selectButton>
                     <div class="text-400 flex flex-row gap-2 align-items-center">
                         <i class="pi pi-info-circle"></i>
-                        <span>{{ VMResponseTypesConstant[configForm.controls.responseType.value].helpText }}</span>
+                        <span>{{ VMResponseTypesConstant[configForm.get('responseType')?.value].helpText }}</span>
                     </div>
                 </div>
 
@@ -29,7 +29,7 @@
                     <div class="text-400 flex flex-row gap-2 align-items-center">
                         <i class="pi pi-info-circle"></i>
                         <span>{{
-                            VMCommandRefreshTypeConstant[configForm.controls.commandRefreshType.value].helpText
+                            VMCommandRefreshTypeConstant[configForm.get('commandRefreshType')?.value].helpText
                         }}</span>
                     </div>
                 </div>
