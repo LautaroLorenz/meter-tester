@@ -69,27 +69,24 @@ function createWindow(): BrowserWindow {
     backup.setMainWindow(win);
     database.setMainWindow(win);
 
+    let mainWindowUrl: string = '';
     if (serve) {
         const debug = require('electron-debug');
         debug();
-
         require('electron-reloader')(module);
-        knex = database.connect();
-        win.loadURL('http://localhost:4200');
+        mainWindowUrl = 'http://localhost:4200';
     } else {
         // Path when running electron executable
         let pathIndex = './index.html';
-
         if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
             // Path when running electron in local folder
             pathIndex = '../dist/index.html';
         }
-
-        knex = database.connect();
-        const url = new URL(path.join('file:', __dirname, pathIndex));
-        win.loadURL(url.href);
+        mainWindowUrl = new URL(path.join('file:', __dirname, pathIndex)).href;
     }
 
+    knex = database.connect();
+    win.loadURL(mainWindowUrl);
     registerIpc(knex);
 
     // Emitted when the window is closed.
