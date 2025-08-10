@@ -132,7 +132,7 @@ export class DatabaseService<T> {
         });
     };
 
-    private readonly _updateLocalTableData = (response: RequestTableResponse<T>) => {
+    private readonly _updateLocalTableData = (response: RequestTableResponse<T>): void => {
         this._getTableReply$.next(response);
     };
 
