@@ -17,7 +17,7 @@ const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream(
 export default {
     register: () => {
         ipcMain.handle('open-virtual-machine', async () => {
-            secondaryWindowItem = secondaryWindow.openWindow('http://localhost:4200/maquina-virtual', {
+            secondaryWindowItem = secondaryWindow.openWindow('maquina-virtual', {
                 alwaysOnTop: true
             });
             if (!serialPort?.isOpen) {

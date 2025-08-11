@@ -3,6 +3,7 @@ import { WindowItem } from './models/window-item.model';
 import { WindowOpenParams } from './models/window-open-params.model';
 
 let openedWindows: WindowItem[] = [];
+let baseUrl: string = 'http://localhost:4200';
 
 function closeAllOpenedWindow(): void {
     openedWindows.forEach((window) => {
@@ -26,7 +27,8 @@ function closeWindowById(windowId: number) {
 }
 
 function openWindow(url: string, options?: BrowserWindowConstructorOptions): WindowItem {
-    const windowIsOpen = openedWindows.find((window) => window.url === url);
+    const windowUrl = `${baseUrl}/${url}`;
+    const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
         return windowIsOpen;
     }
@@ -44,10 +46,10 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
         ...options
     });
     window.setMenuBarVisibility(false);
-    window.loadURL(url);
+    window.loadURL(windowUrl);
     const windowitem = {
         id: window.id,
-        url,
+        url: windowUrl,
         window,
         close: () => closeWindowById(window.id)
     };

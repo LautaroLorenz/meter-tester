@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 let openedWindows = [];
+let baseUrl = 'http://localhost:4200';
 function closeAllOpenedWindow() {
     openedWindows.forEach((window) => {
         closeWindow(window);
@@ -30,7 +31,8 @@ function closeWindowById(windowId) {
     }
 }
 function openWindow(url, options) {
-    const windowIsOpen = openedWindows.find((window) => window.url === url);
+    const windowUrl = `${baseUrl}/${url}`;
+    const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
         return windowIsOpen;
     }
@@ -40,10 +42,10 @@ function openWindow(url, options) {
             contextIsolation: false
         }, alwaysOnTop: false }, options));
     window.setMenuBarVisibility(false);
-    window.loadURL(url);
+    window.loadURL(windowUrl);
     const windowitem = {
         id: window.id,
-        url,
+        url: windowUrl,
         window,
         close: () => closeWindowById(window.id)
     };

@@ -10,7 +10,6 @@ import restart from './resources/restart/restart';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 import { APP_CONFIG } from './environment/environment';
 import * as KnexLib from 'knex';
-import commandHistory from './resources/command-history/command-history';
 import backup from './resources/database/backup';
 import secondaryWindow from './resources/secondary-window/secondary-window';
 
@@ -22,6 +21,7 @@ function registerIpc(knex: any) {
     machine.register();
     backup.register(knex);
     restart.register();
+    secondaryWindow.register();
 }
 
 let win: BrowserWindow | null = null;
@@ -44,10 +44,6 @@ if (environment.virtualMachine) {
         machine.observeSoftwareWrite(machine.onSoftwareWrite$);
         machine.setSerialPort(serialPort);
     });
-}
-
-if (environment.logsHistory) {
-    commandHistory.register();
 }
 
 function createWindow(): BrowserWindow {

@@ -23,7 +23,7 @@ const serialPort = new stream_1.SerialPortStream({
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
-            secondaryWindowItem = secondary_window_1.default.openWindow('http://localhost:4200/maquina-virtual', {
+            secondaryWindowItem = secondary_window_1.default.openWindow('maquina-virtual', {
                 alwaysOnTop: true
             });
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
