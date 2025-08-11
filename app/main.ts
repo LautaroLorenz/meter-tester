@@ -12,6 +12,7 @@ import { APP_CONFIG } from './environment/environment';
 import * as KnexLib from 'knex';
 import commandHistory from './resources/command-history/command-history';
 import backup from './resources/database/backup';
+import secondaryWindow from './resources/secondary-window/secondary-window';
 
 function registerIpc(knex: any) {
     database.register();
@@ -98,7 +99,7 @@ function createWindow(): BrowserWindow {
         // Dereference the window object, usually you would store window
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        virtualMachine.closeWindow();
+        secondaryWindow.closeAllOpenedWindow();
         win = null;
     });
 

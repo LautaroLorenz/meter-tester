@@ -10,39 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
-let window = null;
-function closeWindow() {
-    if (window && !window.isDestroyed() && window.isClosable()) {
-        window.close();
-    }
-}
+const secondary_window_1 = require("../secondary-window/secondary-window");
+let secondaryWindowItem = null;
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-command-history', () => __awaiter(void 0, void 0, void 0, function* () {
-            if (window && !window.isDestroyed()) {
-                return;
-            }
-            window = new electron_1.BrowserWindow({
-                x: 0,
-                y: 0,
-                width: 1240,
-                height: 720,
-                webPreferences: {
-                    nodeIntegration: true,
-                    allowRunningInsecureContent: true,
-                    contextIsolation: false,
-                },
-                alwaysOnTop: true,
-            });
-            window.setMenuBarVisibility(false);
-            window.loadURL('http://localhost:4200/historial-comandos');
+            secondaryWindowItem = secondary_window_1.default.openWindow('http://localhost:4200/historial-comandos');
             return;
         }));
         electron_1.ipcMain.handle('close-command-history', () => __awaiter(void 0, void 0, void 0, function* () {
-            closeWindow();
+            secondaryWindowItem === null || secondaryWindowItem === void 0 ? void 0 : secondaryWindowItem.close();
             return;
         }));
-    },
-    closeWindow,
+    }
 };
 //# sourceMappingURL=command-history.js.map

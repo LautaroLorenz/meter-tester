@@ -12,38 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const binding_mock_1 = require("@serialport/binding-mock");
 const stream_1 = require("@serialport/stream");
-let window = null;
+const secondary_window_1 = require("../secondary-window/secondary-window");
+let secondaryWindowItem = null;
 binding_mock_1.MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
 const serialPort = new stream_1.SerialPortStream({
     binding: binding_mock_1.MockBinding,
     path: '/dev/ROBOT',
-    baudRate: 14400,
+    baudRate: 14400
 });
-function closeWindow() {
-    if (window && !window.isDestroyed() && window.isClosable()) {
-        window.close();
-    }
-}
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
-            if (window && !window.isDestroyed()) {
-                return;
-            }
-            window = new electron_1.BrowserWindow({
-                x: 0,
-                y: 0,
-                width: 1240,
-                height: 720,
-                webPreferences: {
-                    nodeIntegration: true,
-                    allowRunningInsecureContent: true,
-                    contextIsolation: false,
-                },
-                alwaysOnTop: true,
+            secondaryWindowItem = secondary_window_1.default.openWindow('http://localhost:4200/maquina-virtual', {
+                alwaysOnTop: false
             });
-            window.setMenuBarVisibility(false);
-            window.loadURL('http://localhost:4200/maquina-virtual');
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
                 serialPort.open();
             }
@@ -53,7 +35,7 @@ exports.default = {
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && (serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
                 serialPort.close();
             }
-            closeWindow();
+            secondaryWindowItem === null || secondaryWindowItem === void 0 ? void 0 : secondaryWindowItem.close();
             return;
         }));
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
@@ -64,14 +46,14 @@ exports.default = {
             }
         }));
     },
-    closeWindow,
     getMockSerialPort: () => serialPort,
     observeSoftwareWrite: (observable) => {
         observable.subscribe((command) => {
-            if (window && !(window === null || window === void 0 ? void 0 : window.isDestroyed())) {
-                window.webContents.send('handle-software-write', command);
+            var _a;
+            if ((secondaryWindowItem === null || secondaryWindowItem === void 0 ? void 0 : secondaryWindowItem.window) && !((_a = secondaryWindowItem.window) === null || _a === void 0 ? void 0 : _a.isDestroyed())) {
+                secondaryWindowItem.window.webContents.send('handle-software-write', command);
             }
         });
-    },
+    }
 };
 //# sourceMappingURL=virtual-machine.js.map
