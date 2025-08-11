@@ -83,8 +83,6 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
 }
 
 // TODO
-// - para ventanas productivas se tiene que obtener el link según donde corre el server,
-// - poder abrir ventanas desde el proceso angular, solamente con una url.
 // - transmitir data a la ventana.
 export default {
     openWindow,
