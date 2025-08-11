@@ -63,6 +63,7 @@ function createWindow(): BrowserWindow {
         }
     });
     win.setMenuBarVisibility(false);
+    if (win.isMaximizable()) win.maximize();
     backup.setMainWindow(win);
     database.setMainWindow(win);
 
@@ -85,11 +86,19 @@ function createWindow(): BrowserWindow {
 
     knex = database.connect();
     win.loadURL(mainWindowUrl);
+
     secondaryWindow.setConfig({
         baseUrl: mainWindowUrl,
         inspector: environment.inspector
     });
     registerIpc(knex);
+
+    // Abrir inspector una vez que la URL cargó completamente
+    if (environment.inspector) {
+        win.webContents.on('did-finish-load', () => {
+            win?.webContents.openDevTools({ mode: 'right' });
+        });
+    }
 
     // Emitted when the window is closed.
     win.on('closed', () => {
