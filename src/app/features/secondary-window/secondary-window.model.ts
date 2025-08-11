@@ -19,6 +19,7 @@ export class SecondaryWindowComponent implements OnInit {
         this.secondaryWindowService.onMainWindowMessage(this.onMainWindowMessage.bind(this));
         this.secondaryWindowService
             .getWindowId()
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             .then((id) => (this.windowId = id))
             .catch(() => {});
     }
