@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 let openedWindows = [];
-let baseUrl = 'http://localhost:4200';
+let baseUrl = null;
+let inspector = false;
 function closeAllOpenedWindow() {
     openedWindows.forEach((window) => {
         closeWindow(window);
@@ -39,7 +40,8 @@ function openWindow(url, options) {
     const window = new electron_1.BrowserWindow(Object.assign({ x: 0, y: 0, width: 1240, height: 720, webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
-            contextIsolation: false
+            contextIsolation: false,
+            devTools: inspector
         }, alwaysOnTop: false }, options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
@@ -60,6 +62,10 @@ exports.default = {
     openWindow,
     closeWindowById,
     closeAllOpenedWindow,
+    setConfig: (settings) => {
+        baseUrl = settings.baseUrl;
+        inspector = settings.inspector;
+    },
     register: () => {
         electron_1.ipcMain.handle('open-secondary-window', (_, params) => __awaiter(void 0, void 0, void 0, function* () {
             const windowItem = openWindow(params.url, params.options);

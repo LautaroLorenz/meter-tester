@@ -71,7 +71,7 @@ function createWindow(): BrowserWindow {
         const debug = require('electron-debug');
         debug();
         require('electron-reloader')(module);
-        mainWindowUrl = 'http://localhost:4200';
+        mainWindowUrl = 'http://localhost:4200/';
     } else {
         // Path when running electron executable
         let pathIndex = './index.html';
@@ -81,9 +81,14 @@ function createWindow(): BrowserWindow {
         }
         mainWindowUrl = new URL(path.join('file:', __dirname, pathIndex)).href;
     }
+    mainWindowUrl += '#';
 
     knex = database.connect();
     win.loadURL(mainWindowUrl);
+    secondaryWindow.setConfig({
+        baseUrl: mainWindowUrl,
+        inspector: environment.inspector
+    });
     registerIpc(knex);
 
     // Emitted when the window is closed.

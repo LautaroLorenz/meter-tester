@@ -3,7 +3,8 @@ import { WindowItem } from './models/window-item.model';
 import { WindowOpenParams } from './models/window-open-params.model';
 
 let openedWindows: WindowItem[] = [];
-let baseUrl: string = 'http://localhost:4200';
+let baseUrl: string | null = null;
+let inspector: boolean = false;
 
 function closeAllOpenedWindow(): void {
     openedWindows.forEach((window) => {
@@ -40,7 +41,8 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
-            contextIsolation: false
+            contextIsolation: false,
+            devTools: inspector
         },
         alwaysOnTop: false,
         ...options
@@ -65,6 +67,10 @@ export default {
     openWindow,
     closeWindowById,
     closeAllOpenedWindow,
+    setConfig: (settings: { baseUrl: string; inspector: boolean }) => {
+        baseUrl = settings.baseUrl;
+        inspector = settings.inspector;
+    },
     register: () => {
         ipcMain.handle('open-secondary-window', async (_, params: WindowOpenParams) => {
             const windowItem = openWindow(params.url, params.options);

@@ -12,6 +12,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppComponent } from './app.component';
 import { FeaturesModule } from './features/features.module';
 import { ComponentsModule } from './components/components.module';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
@@ -50,6 +51,10 @@ const appInitializerLangFactory = (translate: TranslateService): any => {
             useFactory: appInitializerLangFactory,
             deps: [TranslateService],
             multi: true
+        },
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy
         }
     ],
     bootstrap: [AppComponent]
