@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { BootTestParamsWindowComponent } from './boot-test-params-window/boot-test-params-window.component';
+import { MachineCalculatorComponent } from './machine-calculator/machine-calculator.component';
 
 const routes: Routes = [
     {
-        path: 'boot-test-params',
-        component: BootTestParamsWindowComponent
+        path: 'machine-calculator',
+        component: MachineCalculatorComponent
     }
 ];
 
 @NgModule({
-    declarations: [BootTestParamsWindowComponent],
+    declarations: [MachineCalculatorComponent],
     imports: [CommonModule, RouterModule.forChild(routes)],
     providers: []
 })
