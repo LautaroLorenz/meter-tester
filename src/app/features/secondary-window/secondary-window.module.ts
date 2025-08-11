@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { MachineCalculatorComponent } from './machine-calculator/machine-calculator.component';
+import { ComponentsModule } from '../../components/components.module';
+// import { StandResultsComponent } from './stand-results/stand-results.component';
 
 const routes: Routes = [
-    {
-        path: 'machine-calculator',
-        component: MachineCalculatorComponent
-    }
+    // {
+    //     path: 'stand-results',
+    //     component: StandResultsComponent
+    // }
 ];
 
 @NgModule({
-    declarations: [MachineCalculatorComponent],
-    imports: [CommonModule, RouterModule.forChild(routes)],
+    declarations: [
+        // StandResultsComponent
+    ],
+    imports: [CommonModule, RouterModule.forChild(routes), ComponentsModule],
     providers: []
 })
 export class SecondaryWindowModule {}
