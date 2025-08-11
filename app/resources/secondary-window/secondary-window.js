@@ -31,18 +31,34 @@ function closeWindowById(windowId) {
         closeWindow(findedItem);
     }
 }
+function openOffset(options) {
+    // abrir ventnas con un pequeño offset
+    const display = electron_1.screen.getPrimaryDisplay();
+    const { width: screenWidth, height: screenHeight } = display.workAreaSize;
+    const windowWidth = (options === null || options === void 0 ? void 0 : options.width) || Math.floor(screenWidth / 1.5);
+    const windowHeight = (options === null || options === void 0 ? void 0 : options.height) || Math.floor(screenHeight / 1.5);
+    const offset = openedWindows.length * 40; // desplazamiento progresivo
+    const x = Math.floor(screenWidth / 2 - windowWidth / 2) + offset;
+    const y = Math.floor(screenHeight / 2 - windowHeight / 2) + offset;
+    return {
+        x,
+        y,
+        width: windowWidth,
+        height: windowHeight
+    };
+}
 function openWindow(url, options) {
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
         return windowIsOpen;
     }
-    const window = new electron_1.BrowserWindow(Object.assign({ x: 0, y: 0, width: 1240, height: 720, webPreferences: {
+    const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset()), { webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,
             devTools: inspector
-        }, alwaysOnTop: false }, options));
+        }, alwaysOnTop: false }), options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
     const windowitem = {
