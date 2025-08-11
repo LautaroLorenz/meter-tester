@@ -56,6 +56,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
+        windowIsOpen.window.focus();
         return windowIsOpen;
     }
 
@@ -79,6 +80,9 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
+    window.on('closed', () => {
+        openedWindows = openedWindows.filter((window) => window.id !== window.id);
+    });
     return windowitem;
 }
 

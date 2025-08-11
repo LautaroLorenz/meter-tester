@@ -51,6 +51,7 @@ function openWindow(url, options) {
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
+        windowIsOpen.window.focus();
         return windowIsOpen;
     }
     const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset()), { webPreferences: {
@@ -68,6 +69,9 @@ function openWindow(url, options) {
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
+    window.on('closed', () => {
+        openedWindows = openedWindows.filter((window) => window.id !== window.id);
+    });
     return windowitem;
 }
 // TODO
