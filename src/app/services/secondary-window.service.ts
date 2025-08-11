@@ -5,7 +5,10 @@ import { IpcService } from './ipc.service';
     providedIn: 'root'
 })
 export class SecondaryWindowService {
-    constructor(private readonly ipcService: IpcService, private readonly ngZone: NgZone) {}
+    constructor(
+        private readonly ipcService: IpcService,
+        private readonly ngZone: NgZone
+    ) {}
 
     openWindow(url: string): Promise<number> {
         return this.ipcService.invoke('open-secondary-window', { url: `secondary-window/${url}` });
@@ -13,6 +16,10 @@ export class SecondaryWindowService {
 
     closeWindow(windowId: number): Promise<void> {
         return this.ipcService.invoke('close-secondary-window', windowId);
+    }
+
+    onWindowReady(windowId: number, callback: any): void {
+        this.ipcService.on(`secondary-window-id-${windowId}-is-ready`, callback);
     }
 
     sendToWindow(windowId: number, args: any): void {

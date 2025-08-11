@@ -66,6 +66,7 @@ function createWindow(): BrowserWindow {
     if (win.isMaximizable()) win.maximize();
     backup.setMainWindow(win);
     database.setMainWindow(win);
+    secondaryWindow.setMainWindow(win);
 
     let mainWindowUrl: string = '';
     if (serve) {

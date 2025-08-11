@@ -1,5 +1,5 @@
 import { SecondaryWindowService } from './../../services/secondary-window.service';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -11,6 +11,7 @@ export class SecondaryWindowComponent implements OnInit {
     windowId: number | null = null;
 
     protected readonly secondaryWindowService: SecondaryWindowService = inject(SecondaryWindowService);
+    protected readonly cd: ChangeDetectorRef = inject(ChangeDetectorRef);
     private readonly titleService: Title = inject(Title);
 
     ngOnInit(): void {

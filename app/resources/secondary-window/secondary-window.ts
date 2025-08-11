@@ -2,6 +2,7 @@ import { BrowserWindow, BrowserWindowConstructorOptions, ipcMain, screen } from 
 import { WindowItem } from './models/window-item.model';
 import { WindowOpenParams } from './models/window-open-params.model';
 
+let mainWindow: BrowserWindow | null = null;
 let openedWindows: WindowItem[] = [];
 let baseUrl: string | null = null;
 let inspector: boolean = false;
@@ -95,6 +96,9 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
 }
 
 export default {
+    setMainWindow: (mainWindowParam: BrowserWindow) => {
+        mainWindow = mainWindowParam;
+    },
     openWindow,
     closeWindowById,
     closeAllOpenedWindow,
@@ -112,7 +116,11 @@ export default {
         });
         ipcMain.handle('get-secondary-window-id', (event) => {
             const win = BrowserWindow.fromWebContents(event.sender);
-            return win ? win.id : null;
+            const windowId = win ? win.id : null;
+            if (windowId) {
+                mainWindow?.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+            }
+            return windowId;
         });
     }
 };

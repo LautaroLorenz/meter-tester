@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+let mainWindow = null;
 let openedWindows = [];
 let baseUrl = null;
 let inspector = false;
@@ -74,6 +75,8 @@ function openWindow(url, options) {
         window.webContents.send('from-main-window', args);
     };
     electron_1.ipcMain.on(`from-main-to-window-id-${window.id}`, listener);
+    // Inidicar que secondary window esta ready
+    // TODO
     window.on('closed', () => {
         openedWindows = openedWindows.filter((window) => window.id !== window.id);
         electron_1.ipcMain.removeListener(`from-main-to-window-id-${window.id}`, listener);
@@ -81,6 +84,9 @@ function openWindow(url, options) {
     return windowitem;
 }
 exports.default = {
+    setMainWindow: (mainWindowParam) => {
+        mainWindow = mainWindowParam;
+    },
     openWindow,
     closeWindowById,
     closeAllOpenedWindow,
@@ -98,7 +104,11 @@ exports.default = {
         }));
         electron_1.ipcMain.handle('get-secondary-window-id', (event) => {
             const win = electron_1.BrowserWindow.fromWebContents(event.sender);
-            return win ? win.id : null;
+            const windowId = win ? win.id : null;
+            if (windowId) {
+                mainWindow === null || mainWindow === void 0 ? void 0 : mainWindow.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+            }
+            return windowId;
         });
     }
 };
