@@ -14,7 +14,7 @@
                         optionLabel="label"></p-selectButton>
                     <div class="text-400 flex flex-row gap-2 align-items-center">
                         <i class="pi pi-info-circle"></i>
-                        <span>{{ VMResponseTypesConstant[configForm.get('responseType')?.value].helpText }}</span>
+                        <span>{{ VMResponseTypesConstant[configForm.get('responseType')?.value]?.helpText }}</span>
                     </div>
                 </div>
 
@@ -29,12 +29,12 @@
                     <div class="text-400 flex flex-row gap-2 align-items-center">
                         <i class="pi pi-info-circle"></i>
                         <span>{{
-                            VMCommandRefreshTypeConstant[configForm.get('commandRefreshType')?.value].helpText
+                            VMCommandRefreshTypeConstant[configForm.get('commandRefreshType')?.value]?.helpText
                         }}</span>
                     </div>
                 </div>
 
-                <ng-container *ngIf="configForm.controls.responseType.value === VMResponseTypes.Manual">
+                <ng-container *ngIf="configForm.get('responseType')?.value === VMResponseTypes.Manual">
                     <div class="col col-6 flex flex-column gap-1">
                         <label class="text-base">Comando libre</label>
                         <div class="flex flex-row align-items-center gap-2">
@@ -51,7 +51,7 @@
                     </div>
                 </ng-container>
 
-                <ng-container *ngIf="configForm.controls.responseType.value === VMResponseTypes.Automatic">
+                <ng-container *ngIf="configForm.get('responseType')?.value === VMResponseTypes.Automatic">
                     <div class="col col-6 flex flex-column gap-1">
                         <label class="text-base">Delay en responder</label>
                         <p-selectButton
@@ -62,14 +62,14 @@
                             optionLabel="label"></p-selectButton>
                         <div class="text-400 flex flex-row gap-2 align-items-center">
                             <i class="pi pi-info-circle"></i>
-                            <span>{{ VMDelayTypesConstant[configForm.controls.delayType.value].helpText }}</span>
+                            <span>{{ VMDelayTypesConstant[configForm.get('delayType')?.value]?.helpText }}</span>
                         </div>
                     </div>
 
                     <div class="col col-6 flex flex-column gap-1">
                         <label class="text-base">Delay valor [milisegundos]</label>
                         <div>
-                            <ng-container [ngSwitch]="configForm.controls.delayType.value">
+                            <ng-container [ngSwitch]="configForm.get('delayType')?.value">
                                 <ng-container *ngSwitchCase="VMDelayTypes.Off">
                                     <p-inputNumber
                                         [disabled]="true"
