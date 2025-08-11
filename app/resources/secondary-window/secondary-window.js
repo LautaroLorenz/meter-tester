@@ -71,9 +71,9 @@ function openWindow(url, options) {
     return windowitem;
 }
 // TODO
-// - para ventanas productivas se tiene que obtener el link según donde corre el server,
-// - poder abrir ventanas desde el proceso angular, solamente con una url.
 // - transmitir data a la ventana.
+//   - Desde el proceso que abrio la ventana, le tengo que poder enviar información a la ventana.
+//   - Desde la ventana le tengo que poder enviar información al proceso que abrió la ventana
 exports.default = {
     openWindow,
     closeWindowById,

@@ -84,6 +84,8 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
 
 // TODO
 // - transmitir data a la ventana.
+//   - Desde el proceso que abrio la ventana, le tengo que poder enviar información a la ventana.
+//   - Desde la ventana le tengo que poder enviar información al proceso que abrió la ventana
 export default {
     openWindow,
     closeWindowById,

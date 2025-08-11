@@ -89,12 +89,7 @@ export class RunEssayService {
     }
 
     openLogsHistory(): Promise<number> {
-        return this.ipcService.invoke('open-secondary-window', {
-            url: 'historial-comandos',
-            options: {
-                alwaysOnTop: true
-            }
-        });
+        return this.ipcService.invoke('open-secondary-window', { url: 'historial-comandos' });
     }
 
     closeLogsHistory(windowId: number): Promise<void> {
