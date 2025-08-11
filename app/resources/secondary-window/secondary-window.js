@@ -69,15 +69,17 @@ function openWindow(url, options) {
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
+    // Abrir un canal para poder enviar comandos desde la ventana principal a la secundaria
+    const listener = (_, args) => {
+        window.webContents.send('from-main-window', args);
+    };
+    electron_1.ipcMain.on(`from-main-to-window-id-${window.id}`, listener);
     window.on('closed', () => {
         openedWindows = openedWindows.filter((window) => window.id !== window.id);
+        electron_1.ipcMain.removeListener(`from-main-to-window-id-${window.id}`, listener);
     });
     return windowitem;
 }
-// TODO
-// - transmitir data a la ventana.
-//   - Desde el proceso que abrio la ventana, le tengo que poder enviar información a la ventana.
-//   - Desde la ventana le tengo que poder enviar información al proceso que abrió la ventana
 exports.default = {
     openWindow,
     closeWindowById,
@@ -94,6 +96,10 @@ exports.default = {
         electron_1.ipcMain.handle('close-secondary-window', (_, windowId) => __awaiter(void 0, void 0, void 0, function* () {
             closeWindowById(windowId);
         }));
+        electron_1.ipcMain.handle('get-secondary-window-id', (event) => {
+            const win = electron_1.BrowserWindow.fromWebContents(event.sender);
+            return win ? win.id : null;
+        });
     }
 };
 //# sourceMappingURL=secondary-window.js.map

@@ -16,6 +16,7 @@ import { PrimeNGConfig } from 'primeng/api';
 export class AppComponent implements OnInit {
     isVirtualMachinePage = false;
     isCommandHistoryPage = false;
+    isSecondaryWindow = false;
     conecctionLogsDialogOpened = false;
     connectionLogs: any;
     ports: any;
@@ -27,7 +28,7 @@ export class AppComponent implements OnInit {
         private readonly ipcService: IpcService,
         private readonly messagesService: MessagesService,
         private readonly primeNgConfig: PrimeNGConfig
-    ) { }
+    ) {}
 
     get blocked$(): Observable<boolean> {
         return this.blockUIService.blocked$;
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit {
             .subscribe((event) => {
                 this.isVirtualMachinePage = (event as NavigationEnd).url === `/${PageUrlName.virtualMachine}`;
                 this.isCommandHistoryPage = (event as NavigationEnd).url === `/${PageUrlName.commandHistory}`;
+                this.isSecondaryWindow = (event as NavigationEnd).urlAfterRedirects.includes('secondary-window');
                 if (this.isVirtualMachinePage) {
                     this.titleService.setTitle('Máquina virtual');
                 }
@@ -87,7 +89,6 @@ export class AppComponent implements OnInit {
                     this.conecctionLogsDialogOpened = true;
                 }
             });
-
 
         this.primeNgConfig.setTranslation({
             startsWith: 'Comienza con',

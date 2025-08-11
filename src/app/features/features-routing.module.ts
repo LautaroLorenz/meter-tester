@@ -73,6 +73,10 @@ const routes: Routes = [
         path: PageUrlName.backupRestore,
         component: RestoreBackupComponent
     },
+    {
+        path: 'secondary-window',
+        loadChildren: () => import('./secondary-window/secondary-window.module').then((m) => m.SecondaryWindowModule)
+    }
 ];
 
 @NgModule({
