@@ -15,7 +15,9 @@ let secondaryWindowItem = null;
 exports.default = {
     register: () => {
         electron_1.ipcMain.handle('open-command-history', () => __awaiter(void 0, void 0, void 0, function* () {
-            secondaryWindowItem = secondary_window_1.default.openWindow('http://localhost:4200/historial-comandos');
+            secondaryWindowItem = secondary_window_1.default.openWindow('http://localhost:4200/historial-comandos', {
+                alwaysOnTop: true
+            });
             return;
         }));
         electron_1.ipcMain.handle('close-command-history', () => __awaiter(void 0, void 0, void 0, function* () {

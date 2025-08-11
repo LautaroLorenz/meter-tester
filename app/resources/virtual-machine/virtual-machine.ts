@@ -3,7 +3,7 @@ import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { Observable } from 'rxjs';
 import secondaryWindow from '../secondary-window/secondary-window';
-import { WindowItem } from '../secondary-window/window-item.model';
+import { WindowItem } from '../secondary-window/models/window-item.model';
 
 let secondaryWindowItem: WindowItem | null = null;
 
@@ -18,7 +18,7 @@ export default {
     register: () => {
         ipcMain.handle('open-virtual-machine', async () => {
             secondaryWindowItem = secondaryWindow.openWindow('http://localhost:4200/maquina-virtual', {
-                alwaysOnTop: false
+                alwaysOnTop: true
             });
             if (!serialPort?.isOpen) {
                 serialPort.open();

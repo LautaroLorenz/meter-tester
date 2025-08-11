@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 let openedWindows = [];
@@ -20,29 +29,43 @@ function closeWindowById(windowId) {
         closeWindow(findedItem);
     }
 }
+function openWindow(url, options) {
+    const windowIsOpen = openedWindows.find((window) => window.url === url);
+    if (windowIsOpen) {
+        return windowIsOpen;
+    }
+    const window = new electron_1.BrowserWindow(Object.assign({ x: 0, y: 0, width: 1240, height: 720, webPreferences: {
+            nodeIntegration: true,
+            allowRunningInsecureContent: true,
+            contextIsolation: false
+        }, alwaysOnTop: false }, options));
+    window.setMenuBarVisibility(false);
+    window.loadURL(url);
+    const windowitem = {
+        id: window.id,
+        url,
+        window,
+        close: () => closeWindowById(window.id)
+    };
+    openedWindows.push(windowitem);
+    return windowitem;
+}
+// TODO
+// - para ventanas productivas se tiene que obtener el link según donde corre el server,
+// - poder abrir ventanas desde el proceso angular, solamente con una url.
+// - transmitir data a la ventana.
 exports.default = {
-    openWindow: (url, options) => {
-        const windowIsOpen = openedWindows.find((window) => window.url === url);
-        if (windowIsOpen) {
-            return windowIsOpen;
-        }
-        const window = new electron_1.BrowserWindow(Object.assign({ x: 0, y: 0, width: 1240, height: 720, webPreferences: {
-                nodeIntegration: true,
-                allowRunningInsecureContent: true,
-                contextIsolation: false
-            }, alwaysOnTop: true }, options));
-        window.setMenuBarVisibility(false);
-        window.loadURL(url);
-        const windowitem = {
-            id: window.id,
-            url,
-            window,
-            close: () => closeWindowById(window.id)
-        };
-        openedWindows.push(windowitem);
-        return windowitem;
-    },
+    openWindow,
     closeWindowById,
-    closeAllOpenedWindow
+    closeAllOpenedWindow,
+    register: () => {
+        electron_1.ipcMain.handle('open-secondary-window', (_, params) => __awaiter(void 0, void 0, void 0, function* () {
+            const windowItem = openWindow(params.url, params.options);
+            return windowItem.id;
+        }));
+        electron_1.ipcMain.handle('close-secondary-window', (_, windowId) => __awaiter(void 0, void 0, void 0, function* () {
+            closeWindowById(windowId);
+        }));
+    }
 };
 //# sourceMappingURL=secondary-window.js.map

@@ -1,5 +1,6 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
-import { WindowItem } from './window-item.model';
+import { BrowserWindow, BrowserWindowConstructorOptions, ipcMain } from 'electron';
+import { WindowItem } from './models/window-item.model';
+import { WindowOpenParams } from './models/window-open-params.model';
 
 let openedWindows: WindowItem[] = [];
 
@@ -24,40 +25,51 @@ function closeWindowById(windowId: number) {
     }
 }
 
+function openWindow(url: string, options?: BrowserWindowConstructorOptions): WindowItem {
+    const windowIsOpen = openedWindows.find((window) => window.url === url);
+    if (windowIsOpen) {
+        return windowIsOpen;
+    }
+    const window = new BrowserWindow({
+        x: 0,
+        y: 0,
+        width: 1240,
+        height: 720,
+        webPreferences: {
+            nodeIntegration: true,
+            allowRunningInsecureContent: true,
+            contextIsolation: false
+        },
+        alwaysOnTop: false,
+        ...options
+    });
+    window.setMenuBarVisibility(false);
+    window.loadURL(url);
+    const windowitem = {
+        id: window.id,
+        url,
+        window,
+        close: () => closeWindowById(window.id)
+    };
+    openedWindows.push(windowitem);
+    return windowitem;
+}
+
 // TODO
 // - para ventanas productivas se tiene que obtener el link según donde corre el server,
 // - poder abrir ventanas desde el proceso angular, solamente con una url.
 // - transmitir data a la ventana.
 export default {
-    openWindow: (url: string, options?: BrowserWindowConstructorOptions): WindowItem => {
-        const windowIsOpen = openedWindows.find((window) => window.url === url);
-        if (windowIsOpen) {
-            return windowIsOpen;
-        }
-        const window = new BrowserWindow({
-            x: 0,
-            y: 0,
-            width: 1240,
-            height: 720,
-            webPreferences: {
-                nodeIntegration: true,
-                allowRunningInsecureContent: true,
-                contextIsolation: false
-            },
-            alwaysOnTop: true,
-            ...options
-        });
-        window.setMenuBarVisibility(false);
-        window.loadURL(url);
-        const windowitem = {
-            id: window.id,
-            url,
-            window,
-            close: () => closeWindowById(window.id)
-        };
-        openedWindows.push(windowitem);
-        return windowitem;
-    },
+    openWindow,
     closeWindowById,
-    closeAllOpenedWindow
+    closeAllOpenedWindow,
+    register: () => {
+        ipcMain.handle('open-secondary-window', async (_, params: WindowOpenParams) => {
+            const windowItem = openWindow(params.url, params.options);
+            return windowItem.id;
+        });
+        ipcMain.handle('close-secondary-window', async (_, windowId: number) => {
+            closeWindowById(windowId);
+        });
+    }
 };
