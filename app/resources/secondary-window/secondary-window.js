@@ -75,8 +75,6 @@ function openWindow(url, options) {
         window.webContents.send('from-main-window', args);
     };
     electron_1.ipcMain.on(`from-main-to-window-id-${window.id}`, listener);
-    // Inidicar que secondary window esta ready
-    // TODO
     window.on('closed', () => {
         openedWindows = openedWindows.filter((window) => window.id !== window.id);
         electron_1.ipcMain.removeListener(`from-main-to-window-id-${window.id}`, listener);
