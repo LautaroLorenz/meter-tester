@@ -17,7 +17,7 @@ import { ConfirmationService, PrimeNGConfig } from 'primeng/api';
 export class AppComponent implements OnInit {
     isVirtualMachinePage = false;
     isCommandHistoryPage = false;
-    isSecondaryWindow = false;
+    isSecondaryWindow = true;
     conecctionLogsDialogOpened = false;
     connectionLogs: any;
     ports: any;
