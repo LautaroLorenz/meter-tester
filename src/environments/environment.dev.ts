@@ -3,13 +3,13 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
-    standsQuantity: 20,
+    standsQuantity: 8,
     patternType: 'Virtual',
     skipSteps: {
         manualGeneratorConfirm: false,
         photocellAdjustmentRequest: false,
-        verificationMajorStep: false,
-        preparationMajorStep: false,
+        verificationMajorStep: true,
+        preparationMajorStep: true,
         vacuumTestRun: false,
         bootTestRun: false,
         contrastTestRun: false
