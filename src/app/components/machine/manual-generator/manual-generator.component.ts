@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { APP_CONFIG } from '../../../../environments/environment';
+import { AwaitUserConfirmComponent } from '../../await-user-confirm/await-user-confirm.component';
+import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 
 @Component({
     selector: 'app-manual-generator',
@@ -7,11 +9,17 @@ import { APP_CONFIG } from '../../../../environments/environment';
     styleUrls: ['./manual-generator.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ManualGeneratorComponent implements OnInit {
+export class ManualGeneratorComponent<T extends EssayTemplateStep> implements OnInit {
+    @Input() currentStep!: T;
     @Output() adjustmentDone = new EventEmitter<void>();
+    @ViewChild('awaitUserConfirm', { static: true }) awaitUserConfirm!: AwaitUserConfirmComponent;
 
     ngOnInit(): void {
         this.skip();
+    }
+
+    resetConfirmation(): void {
+        this.awaitUserConfirm.resetConfirmation();
     }
 
     private skip(): void {

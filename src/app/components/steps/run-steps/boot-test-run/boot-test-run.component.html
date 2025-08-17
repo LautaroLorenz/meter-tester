@@ -1,48 +1,61 @@
-<!-- Parámetros del paso -->
-<app-boot-test-params
-    [currentStep]="currentStep"
-    [toggleable]="true"
-    [showTexts]="true"></app-boot-test-params>
+<p-tabView [(activeIndex)]="tabIndex">
+    <p-tabPanel header="Control de la fuente">
+        <!-- Generador manual -->
+        <div class="mt-2">
+            <app-manual-generator
+                #manualGenerartor
+                [currentStep]="currentStep"
+                (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
+        </div>
 
-<!-- Generador manual -->
-<div class="mt-4">
-    <app-manual-generator (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
-</div>
+        <!-- Patrón -->
+        <div class="mt-2">
+            <app-pattern
+                #pattern
+                [currentStep]="currentStep"></app-pattern>
+        </div>
+    </p-tabPanel>
 
-<!-- Temporizadores -->
-<div class="mt-4">
-    <!-- Tiempo mínimo -->
-    <app-count-timer
-        #countTimerMin
-        visibility="hidden"
-        [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
-        (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
+    <p-tabPanel
+        header="Proceso de medición"
+        [disabled]="!canExecute">
+        <!-- Parámetros del paso -->
+        <app-boot-test-params
+            [currentStep]="currentStep"
+            [toggleable]="true"
+            [showTexts]="true"></app-boot-test-params>
 
-    <!-- Tiempo máximo -->
-    <app-count-timer
-        #countTimerMax
-        visibility="visible"
-        [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
-        (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
-</div>
+        <!-- Temporizadores -->
+        <div class="mt-2">
+            <!-- Tiempo mínimo -->
+            <app-count-timer
+                #countTimerMin
+                visibility="hidden"
+                [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
+                (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
 
-<!-- Calculador -->
-<div class="mt-4">
-    <app-calculator
-        #calculator
-        [resultDecimalsQuantity]="0">
-        <app-stands-result
-            [preparationStep]="preparationStep"
-            [results]="currentStep.standResults"
-            [resultsColumn]="resultsColumn"
-            [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
-    </app-calculator>
-</div>
+            <!-- Tiempo máximo -->
+            <app-count-timer
+                #countTimerMax
+                visibility="visible"
+                [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
+                (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
+        </div>
 
-<!-- Patrón -->
-<div class="mt-4">
-    <app-pattern #pattern></app-pattern>
-</div>
+        <!-- Calculador -->
+        <div class="mt-2">
+            <app-calculator
+                #calculator
+                [resultDecimalsQuantity]="0">
+                <app-stands-result
+                    [preparationStep]="preparationStep"
+                    [results]="currentStep.standResults"
+                    [resultsColumn]="resultsColumn"
+                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+            </app-calculator>
+        </div>
+    </p-tabPanel>
+</p-tabView>
 
 <!-- Actions -->
 <div class="flex justify-content-end mt-4 mb-8 gap-3">

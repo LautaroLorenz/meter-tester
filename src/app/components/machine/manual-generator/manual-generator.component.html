@@ -1,13 +1,16 @@
 <app-await-user-confirm
+    #awaitUserConfirm
     headerText="Generador"
     confirmButtonText="Generador ajustado"
     confirmButtonIcon="pi-wrench"
     afterConfirmationChipText="Ajuste realizado"
     afterConfirmationChipIcon="pi-check"
     (userConfirm)="adjustmentDone.emit()">
-    <p
-        messageTemplate
-        class="m-0">
-        Ajuste el generador manualmente, para poder continuar
-    </p>
+    <div messageTemplate>
+        <app-phase-table
+            [showTexts]="true"
+            [phaseL1]="currentStep.form_control_raw.phaseL1"
+            [phaseL2]="currentStep.form_control_raw.phaseL2"
+            [phaseL3]="currentStep.form_control_raw.phaseL3"></app-phase-table>
+    </div>
 </app-await-user-confirm>

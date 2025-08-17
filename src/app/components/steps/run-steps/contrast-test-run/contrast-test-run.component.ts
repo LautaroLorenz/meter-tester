@@ -15,6 +15,7 @@ import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-c
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { ManualGeneratorComponent } from '../../../machine/manual-generator/manual-generator.component';
 
 @Component({
     selector: 'app-contrast-test-run',
@@ -24,7 +25,8 @@ import { DeviceStatus } from '../../../../models/business/enums/device-status.mo
 })
 export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssayStep> implements OnDestroy {
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<ContrastTestEssayStep>;
+    @ViewChild('manualGenerartor', { static: true }) manualGenerartor!: ManualGeneratorComponent<ContrastTestEssayStep>;
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.contrastTestRun;
 
@@ -48,6 +50,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     onManualGeneratorAdjusted(): void {
+        this.tabIndex = 1;
+        this.canExecute = true;
         this.startTest();
     }
 
@@ -84,6 +88,11 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         if (this.stepRunMode === StepRunMode.finalResultLock && this.isAllStandsWithResultLocked()) {
             this.stopTest();
         }
+    }
+
+    override onRestart(): void {
+        this.stepRunMode = StepRunMode.continuousResultUpdate;
+        this.manualGenerartor.resetConfirmation();
     }
 
     override abort(): Observable<boolean> {

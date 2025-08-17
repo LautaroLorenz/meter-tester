@@ -14,6 +14,7 @@ import { TestRunComponent } from '../../../../models/business/class/test-run-com
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { ManualGeneratorComponent } from '../../../machine/manual-generator/manual-generator.component';
 
 @Component({
     selector: 'app-vacuum-test-run',
@@ -24,7 +25,8 @@ import { DeviceStatus } from '../../../../models/business/enums/device-status.mo
 export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep> implements OnDestroy {
     @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<VacuumTestEssayStep>;
+    @ViewChild('manualGenerartor', { static: true }) manualGenerartor!: ManualGeneratorComponent<VacuumTestEssayStep>;
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
@@ -45,6 +47,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     onManualGeneratorAdjusted(): void {
+        this.tabIndex = 1;
+        this.canExecute = true;
         this.startTest();
     }
 
@@ -80,6 +84,12 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         if (this.isAllStandsFailed()) {
             this.stopTest();
         }
+    }
+
+    override onRestart(): void {
+        // recetea el contador
+        this.countTimer.reset();
+        this.manualGenerartor.resetConfirmation();
     }
 
     override abort(): Observable<boolean> {

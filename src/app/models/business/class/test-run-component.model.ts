@@ -20,6 +20,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     @Input() currentStep!: T;
     @Input() preparationStep!: PreparationStep;
 
+    tabIndex = 0;
+    canExecute = false;
     canContinue = false;
 
     protected readonly runEssayService = inject(RunEssayService);
@@ -89,9 +91,11 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     restart(): void {
+        this.tabIndex = 0;
+        this.canExecute = false;
         this.restartResults(ResultStatus.Pending);
         this.canContinue = this.getCanContinue();
-        this.startTest();
+        this.onRestart();
     }
 
     protected isAllStandsFailed(): boolean {
@@ -137,4 +141,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract stopTest(): void;
 
     abstract restartResults(resultStatus: ResultStatus): void;
+
+    abstract onRestart(): void;
 }

@@ -19,30 +19,15 @@
 
     <div class="grid">
         <div class="col-12">
-            <app-phase-table
-                [showTexts]="showTexts"
-                [phaseL1]="currentStep.form_control_raw.phaseL1"
-                [phaseL2]="currentStep.form_control_raw.phaseL2"
-                [phaseL3]="currentStep.form_control_raw.phaseL3"></app-phase-table>
-        </div>
-
-        <div class="col-12">
-            <div class="grid mx-2 mt-3">
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.meterConstant | meterConstant }}
-                    </span>
-                </div>
-
-                <div class="col-4 flex flex-column gap-1 p-2">
+            <div class="grid">
+                <div class="col-6 flex flex-column gap-1 p-2">
                     <span class="text-color-secondary font-medium"> Cant. de impulsos mínima </span>
                     <span class="text-color font-semibold">
                         {{ currentStep.form_control_raw.allowedPulses }}
                     </span>
                 </div>
 
-                <div class="col-4 flex flex-column gap-1 p-2">
+                <div class="col-6 flex flex-column gap-1 p-2">
                     <span class="text-color-secondary font-medium"> Tiempo mínimo-máximo </span>
                     <span class="text-color font-semibold">
                         {{ currentStep.form_control_raw.minDurationSeconds }}&nbsp;[s]&nbsp;-&nbsp;{{

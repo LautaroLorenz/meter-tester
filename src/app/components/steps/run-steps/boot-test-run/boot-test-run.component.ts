@@ -14,6 +14,7 @@ import { CommandResultResponse, StandStandResult } from '../../../../models/busi
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { ManualGeneratorComponent } from '../../../machine/manual-generator/manual-generator.component';
 
 @Component({
     selector: 'app-boot-test-run',
@@ -27,7 +28,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     @ViewChild('countTimerMax', { static: true })
     countTimerMax!: CountTimerComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<BootTestEssayStep>;
+    @ViewChild('manualGenerartor', { static: true }) manualGenerartor!: ManualGeneratorComponent<BootTestEssayStep>;
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
@@ -48,6 +50,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     onManualGeneratorAdjusted(): void {
+        this.tabIndex = 1;
+        this.canExecute = true;
         this.startTest();
     }
 
@@ -91,6 +95,13 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         if (this.isAllStandsFailed()) {
             this.stopTest();
         }
+    }
+
+    override onRestart(): void {
+        // recetea el contador
+        this.countTimerMin.reset();
+        this.countTimerMax.reset();
+        this.manualGenerartor.resetConfirmation();
     }
 
     override abort(): Observable<boolean> {
