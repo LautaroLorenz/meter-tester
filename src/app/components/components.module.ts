@@ -5,8 +5,6 @@ import { PageTitleComponent } from './page-title/page-title.component';
 import { AbmComponent } from './abm/abm.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
-import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { MenuComponent } from './menu/menu.component';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 import { InputErrorComponent } from './input-error/input-error.component';
@@ -31,16 +29,9 @@ import { ManualGeneratorComponent } from './machine/manual-generator/manual-gene
 import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
-import { CommandHistoryComponent } from './virtual-machine/command-history/command-history.component';
-import { CommandLineComponent } from './virtual-machine/command-line/command-line.component';
-import { VmCalculatorComponent } from './virtual-machine/devices/vm-calculator/vm-calculator.component';
-import { CommandMapComponent } from './virtual-machine/command-map/command-map.component';
 import { StandsResultComponent } from './stands-result/stands-result.component';
-import { TableColumnComponent } from './table-column/table-column.component';
 import { ResultStatusComponent } from './result-status/result-status.component';
 import { PatternComponent } from './machine/pattern/pattern.component';
-import { VmPatternComponent } from './virtual-machine/devices/vm-pattern/vm-pattern.component';
-import { BlockUiComponent } from './block-ui/block-ui.component';
 import { BootTestBuildFormComponent } from './steps/build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PreparationBuildFormComponent } from './steps/build-steps/preparation-build-form/preparation-build-form.component';
 import { ContrastTestBuildFormComponent } from './steps/build-steps/contrast-test-build-form/contrast-test-build-form.component';
@@ -65,15 +56,15 @@ import { ModelFailedWidgetComponent } from './statics-widgets/model-failed-widge
 import { PhaseTableComponent } from './phase-table/phase-table.component';
 import { HelpTextComponent } from './help-text/help-text.component';
 import { ModelTestedWidgetComponent } from './statics-widgets/model-tested-widget/model-tested-widget.component';
-import { SystemInfoDialogComponent } from './system-info-dialog/system-info-dialog.component';
-import { DatabaseSettingsDialogComponent } from './database-settings-dialog/database-settings-dialog.component';
 import { CopyStandDialogComponent } from './copy-stand-dialog/copy-stand-dialog.component';
+import { TableColumnModule } from './table-column/table-column.module';
+import { ConfirmDialogModule } from './confirm-dialog/confirm-dialog.module';
+import { BlockUiModule } from './block-ui/block-ui.module';
+import { MenuModule } from './menu/menu.module';
 
 const AppComponents = [
     PageTitleComponent,
     AbmComponent,
-    ConfirmDialogComponent,
-    MenuComponent,
     ValidatorMessagesComponent,
     BootTestBuildFormComponent,
     PhaseFormGroupComponent,
@@ -104,17 +95,10 @@ const AppComponents = [
     AwaitUserConfirmComponent,
     CalculatorComponent,
     DeviceStatusComponent,
-    CommandHistoryComponent,
-    CommandLineComponent,
-    VmCalculatorComponent,
-    CommandMapComponent,
     StandsResultComponent,
-    TableColumnComponent,
     ResultStatusComponent,
     PatternComponent,
-    VmPatternComponent,
     PdfPageComponent,
-    BlockUiComponent,
     ReportStepSwitchComponent,
     VacuumTestPdfReportComponent,
     BootTestRunComponent,
@@ -131,14 +115,14 @@ const AppComponents = [
     ModelTestedWidgetComponent,
     PhaseTableComponent,
     HelpTextComponent,
-    SystemInfoDialogComponent,
-    DatabaseSettingsDialogComponent,
     CopyStandDialogComponent
 ];
 
+const AppModules = [PrimeNgModule, TableColumnModule, ConfirmDialogModule, BlockUiModule, MenuModule];
+
 @NgModule({
     declarations: [AppComponents],
-    imports: [CommonModule, PrimeNgModule, PipesModule, ReactiveFormsModule, FormsModule, TranslateModule],
-    exports: [PrimeNgModule, AppComponents]
+    imports: [CommonModule, PipesModule, ReactiveFormsModule, FormsModule, TranslateModule.forChild(), AppModules],
+    exports: [AppComponents, AppModules]
 })
 export class ComponentsModule {}

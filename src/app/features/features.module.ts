@@ -1,50 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FeaturesRoutingModule } from './features-routing.module';
-import { BrandsComponent } from './brands/brands.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '../components/components.module';
-import { ReactiveFormsModule } from '@angular/forms';
-import { PipesModule } from '../pipes/pipes.module';
-import { MetersComponent } from './meters/meters.component';
-import { AvailableTestComponent } from './available-test/available-test.component';
-import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
-import { DirectivesModule } from '../directives/directives.module';
-import { RunEssayComponent } from './run-essay/run-essay.component';
-import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
-import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
-import { StaticsComponent } from './statics/statics.component';
-import { HistoryEssayComponent } from './history-essay/history-essay.component';
-import { CommandHistoryComponent } from './command-history/command-history.component';
-import { CreateBackupComponent } from './backups/create-backup/create-backup.component';
-import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.component';
 
 @NgModule({
-    declarations: [
-        PageNotFoundComponent,
-        BrandsComponent,
-        MetersComponent,
-        AvailableTestComponent,
-        EssayTemplateBuilderComponent,
-        RunEssayComponent,
-        VirtualMachineComponent,
-        HistoryEssayStepStandComponent,
-        StaticsComponent,
-        HistoryEssayComponent,
-        CommandHistoryComponent,
-        CreateBackupComponent,
-        RestoreBackupComponent
-    ],
-    imports: [
-        CommonModule,
-        FeaturesRoutingModule,
-        TranslateModule.forChild(),
-        ComponentsModule,
-        ReactiveFormsModule,
-        PipesModule,
-        DirectivesModule
-    ],
+    declarations: [PageNotFoundComponent],
+    imports: [CommonModule, FeaturesRoutingModule],
     providers: []
 })
 export class FeaturesModule {}

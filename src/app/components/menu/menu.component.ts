@@ -15,8 +15,6 @@ export class MenuComponent implements OnInit {
     displayDataBaseDialog = false;
     displaySystemInfoDialog = false;
 
-    constructor() { }
-
     ngOnInit(): void {
         this.items = [
             {
@@ -58,14 +56,14 @@ export class MenuComponent implements OnInit {
                 items: [
                     {
                         label: 'Crear',
-                        routerLink: '/'.concat(PageUrlName.backupCreate),
+                        routerLink: '/'.concat(PageUrlName.backupCreate)
                     },
                     {
                         label: 'Restaurar',
-                        routerLink: '/'.concat(PageUrlName.backupRestore),
-                    },
-                ],
-            },
+                        routerLink: '/'.concat(PageUrlName.backupRestore)
+                    }
+                ]
+            }
             // {
             //   label: 'Terminal',
             //   routerLink: '/'.concat(PageUrlName.terminal),
@@ -74,12 +72,12 @@ export class MenuComponent implements OnInit {
         this.settingsItems = [
             {
                 label: 'Base de datos',
-                command: () => this.showDataBaseDialog(),
+                command: () => this.showDataBaseDialog()
             },
             {
                 label: 'Acerca de',
-                command: () => this.aboutInfo(),
-            },
+                command: () => this.aboutInfo()
+            }
         ];
     }
 

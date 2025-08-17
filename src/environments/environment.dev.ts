@@ -7,8 +7,8 @@ export const APP_CONFIG: Environment = {
     patternType: 'Virtual',
     skipSteps: {
         manualGeneratorConfirm: false,
-        photocellAdjustmentRequest: true,
-        verificationMajorStep: true,
+        photocellAdjustmentRequest: false,
+        verificationMajorStep: false,
         preparationMajorStep: false,
         vacuumTestRun: false,
         bootTestRun: false,

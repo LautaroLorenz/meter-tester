@@ -1,77 +1,65 @@
 import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { BrandsComponent } from './brands/brands.component';
 import { PageUrlName } from '../models/business/enums/page-name.model';
-import { MetersComponent } from './meters/meters.component';
-import { AvailableTestComponent } from './available-test/available-test.component';
-import { PendingChangesGuard } from '../guards/peding-changes.guard';
-import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
-import { RunEssayComponent } from './run-essay/run-essay.component';
-import { VirtualMachineComponent } from './virtual-machine/virtual-machine.component';
-import { HistoryEssayStepStandComponent } from './history-essay-step-stand/history-essay-step-stand.component';
-import { StaticsComponent } from './statics/statics.component';
-import { HistoryEssayComponent } from './history-essay/history-essay.component';
-import { RunEssayGuard } from '../guards/run-essay.guard';
-import { CommandHistoryComponent } from './command-history/command-history.component';
-import { CreateBackupComponent } from './backups/create-backup/create-backup.component';
-import { RestoreBackupComponent } from './backups/restore-backup/restore-backup.component';
 
 const routes: Routes = [
     {
         path: PageUrlName.brands,
-        component: BrandsComponent
+        loadChildren: () => import('./brands/brands.module').then((m) => m.BrandsModule)
     },
     {
         path: PageUrlName.meters,
-        component: MetersComponent
+        loadChildren: () => import('./meters/meters.module').then((m) => m.MetersModule)
     },
     {
         path: PageUrlName.availableTest,
-        component: AvailableTestComponent
+        loadChildren: () => import('./available-test/available-test.module').then((m) => m.AvailableTestModule)
     },
     {
         path: PageUrlName.newEssayTemplate,
-        component: EssayTemplateBuilderComponent,
-        canDeactivate: [PendingChangesGuard]
+        loadChildren: () =>
+            import('./essay-template-builder/essay-template-builder.module').then((m) => m.EssayTemplateBuilderModule)
     },
     {
         path: PageUrlName.editEssayTemplate,
-        component: EssayTemplateBuilderComponent,
-        canDeactivate: [PendingChangesGuard]
+        loadChildren: () =>
+            import('./essay-template-builder/essay-template-builder.module').then((m) => m.EssayTemplateBuilderModule)
     },
     {
         path: PageUrlName.runEssay,
-        component: RunEssayComponent,
-        canDeactivate: [RunEssayGuard]
+        loadChildren: () => import('./run-essay/run-essay.module').then((m) => m.RunEssayModule)
     },
     {
         path: PageUrlName.virtualMachine,
-        component: VirtualMachineComponent
+        loadChildren: () => import('./virtual-machine/virtual-machine.module').then((m) => m.VirtualMachineModule)
     },
     {
         path: PageUrlName.history,
-        component: HistoryEssayStepStandComponent
+        loadChildren: () =>
+            import('./history-essay-step-stand/history-essay-step-stand.module').then(
+                (m) => m.HistoryEssayStepStandModule
+            )
     },
     {
         path: PageUrlName.historyEssay,
-        component: HistoryEssayComponent
+        loadChildren: () => import('./history-essay/history-essay.module').then((m) => m.HistoryEssayModule)
     },
     {
         path: PageUrlName.dashboard,
-        component: StaticsComponent
+        loadChildren: () => import('./statics/statics.module').then((m) => m.StaticsModule)
     },
     {
         path: PageUrlName.commandHistory,
-        component: CommandHistoryComponent
+        loadChildren: () => import('./command-history/command-history.module').then((m) => m.CommandHistoryModule)
     },
     {
         path: PageUrlName.backupCreate,
-        component: CreateBackupComponent
+        loadChildren: () => import('./backups/create-backup/create-backup.module').then((m) => m.CreateBackupModule)
     },
     {
         path: PageUrlName.backupRestore,
-        component: RestoreBackupComponent
+        loadChildren: () => import('./backups/restore-backup/restore-backup.module').then((m) => m.RestoreBackupModule)
     },
     {
         path: 'secondary-window',

@@ -6,12 +6,13 @@ import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
 import { IpcService } from './services/ipc.service';
 import { MessagesService } from './services/messages.service';
-import { PrimeNGConfig } from 'primeng/api';
+import { ConfirmationService, PrimeNGConfig } from 'primeng/api';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    providers: [ConfirmationService]
 })
 export class AppComponent implements OnInit {
     isVirtualMachinePage = false;

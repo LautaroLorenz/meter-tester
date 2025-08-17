@@ -42,7 +42,7 @@ export class TableColumnComponent<T> implements OnInit {
 
     private getColValue(item: T, col: TableColumnField<T>): string {
         if (typeof col.field === 'function') {
-            return col.field(item, this.index);
+            return col.field(item, this.index) as string;
         }
         return this.dDotStringAsObjectPipe.transform(item as object, col.field as string) as string;
     }
