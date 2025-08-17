@@ -4,10 +4,12 @@ export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
     standsQuantity: 8,
+    
+    generatorType: 'Manual',
     patternType: 'Virtual',
     skipSteps: {
         manualGeneratorConfirm: false,
-        photocellAdjustmentRequest: false,
+        photocellAdjustmentRequest: true,
         verificationMajorStep: true,
         preparationMajorStep: true,
         vacuumTestRun: false,
