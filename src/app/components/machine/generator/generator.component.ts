@@ -23,7 +23,7 @@ export class GeneratorComponent<T extends EssayTemplateStep> implements OnInit {
     }
 
     private skip(): void {
-        if (!APP_CONFIG.skipSteps.manualGeneratorConfirm) {
+        if (!APP_CONFIG.skipSteps.generatorAdjusted) {
             return;
         }
 

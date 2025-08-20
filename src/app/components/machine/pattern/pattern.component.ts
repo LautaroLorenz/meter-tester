@@ -11,6 +11,7 @@ import { MessagesService } from '../../../services/messages.service';
 import { DatabaseService } from '../../../services/database.service';
 import { VirtualPattern, VirtualPatternDbTableContext } from '../../../models/business/database/virtual_pattern.model';
 import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
+import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
 
 @Component({
     selector: 'app-pattern',
@@ -36,7 +37,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     }
 
     ngOnInit(): void {
-        if (APP_CONFIG.patternType === 'Virtual') {
+        if (APP_CONFIG.patternType === PatternEnum.Virtual) {
             // obtener las constantes almacenadas en BBDD
             this.databaseService
                 .getTable$(VirtualPatternDbTableContext.tableName)
@@ -50,7 +51,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
 
     constant$(stepMeterConstant: MeterConstantEnum, maxCurrent: number): Observable<PatternStatus> {
         // si es un patrón virtual, respondemos la constante virtual.
-        if (APP_CONFIG.patternType === 'Virtual') {
+        if (APP_CONFIG.patternType === PatternEnum.Virtual) {
             const virtualConstant = this.getVirtualConstant(maxCurrent);
             return of({ constant: virtualConstant });
         }
