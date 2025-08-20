@@ -1,11 +1,11 @@
 <p-tabView [(activeIndex)]="tabIndex">
     <p-tabPanel header="Control de la fuente">
-        <!-- Generador manual -->
+        <!-- Generador -->
         <div class="mt-2">
-            <app-manual-generator
-                #manualGenerartor
+            <app-generator
+                #generator
                 [currentStep]="currentStep"
-                (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
+                (adjustmentDone)="onManualGeneratorAdjusted()"></app-generator>
         </div>
 
         <!-- Patrón -->

@@ -25,7 +25,6 @@ import { RunStepSwitchComponent } from './steps/run-steps/run-step-switch/run-st
 import { PhotocellAdjusmentRequestComponent } from './photocell-adjusment-request/photocell-adjusment-request.component';
 import { VacuumTestRunComponent } from './steps/run-steps/vacuum-test-run/vacuum-test-run.component';
 import { CountTimerComponent } from './count-timer/count-timer.component';
-import { ManualGeneratorComponent } from './machine/manual-generator/manual-generator.component';
 import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confirm.component';
 import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
@@ -61,6 +60,7 @@ import { TableColumnModule } from './table-column/table-column.module';
 import { ConfirmDialogModule } from './confirm-dialog/confirm-dialog.module';
 import { BlockUiModule } from './block-ui/block-ui.module';
 import { MenuModule } from './menu/menu.module';
+import { GeneratorComponent } from './machine/generator/generator.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -91,7 +91,6 @@ const AppComponents = [
     VacuumTestRunComponent,
     CountTimerComponent,
     VacuumTestParamsComponent,
-    ManualGeneratorComponent,
     AwaitUserConfirmComponent,
     CalculatorComponent,
     DeviceStatusComponent,
@@ -115,7 +114,8 @@ const AppComponents = [
     ModelTestedWidgetComponent,
     PhaseTableComponent,
     HelpTextComponent,
-    CopyStandDialogComponent
+    CopyStandDialogComponent,
+    GeneratorComponent
 ];
 
 const AppModules = [PrimeNgModule, TableColumnModule, ConfirmDialogModule, BlockUiModule, MenuModule];
