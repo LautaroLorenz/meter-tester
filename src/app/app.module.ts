@@ -11,7 +11,16 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
 import { FeaturesModule } from './features/features.module';
-import { ComponentsModule } from './components/components.module';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from './components/confirm-dialog/confirm-dialog.module';
+import { DialogModule } from 'primeng/dialog';
+import { BlockUiModule } from './components/block-ui/block-ui.module';
+import { MenuModule } from './components/menu/menu.module';
+
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { PipesModule } from './pipes/pipes.module';
+import { DirectivesModule } from './directives/directives.module';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
@@ -42,7 +51,13 @@ const appInitializerLangFactory = (translate: TranslateService): any => {
                 deps: [HttpClient]
             }
         }),
-        ComponentsModule
+        ToastModule,
+        DialogModule,
+        ConfirmDialogModule,
+        BlockUiModule,
+        MenuModule,
+        PipesModule,
+        DirectivesModule
     ],
     providers: [
         {
@@ -50,7 +65,13 @@ const appInitializerLangFactory = (translate: TranslateService): any => {
             useFactory: appInitializerLangFactory,
             deps: [TranslateService],
             multi: true
-        }
+        },
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy
+        },
+        ConfirmationService,
+        MessageService
     ],
     bootstrap: [AppComponent]
 })

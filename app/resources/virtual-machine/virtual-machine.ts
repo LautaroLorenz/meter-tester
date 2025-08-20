@@ -1,73 +1,50 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { ipcMain } from 'electron';
 import { MockBinding, MockBindingInterface } from '@serialport/binding-mock';
 import { SerialPortStream } from '@serialport/stream';
 import { Observable } from 'rxjs';
+import secondaryWindow from '../secondary-window/secondary-window';
+import { WindowItem } from '../secondary-window/models/window-item.model';
 
-let window: BrowserWindow | null = null;
+let secondaryWindowItem: WindowItem | null = null;
 
 MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
-const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream(
-  {
+const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream({
     binding: MockBinding,
     path: '/dev/ROBOT',
-    baudRate: 14400,
-  }
-);
-
-function closeWindow(): void {
-  if (window && !window.isDestroyed() && window.isClosable()) {
-    window.close();
-  }
-}
+    baudRate: 14400
+});
 
 export default {
-  register: () => {
-    ipcMain.handle('open-virtual-machine', async () => {
-      if (window && !window.isDestroyed()) {
-        return;
-      }
-      window = new BrowserWindow({
-        x: 0,
-        y: 0,
-        width: 1240,
-        height: 720,
-        webPreferences: {
-          nodeIntegration: true,
-          allowRunningInsecureContent: true,
-          contextIsolation: false,
-        },
-        alwaysOnTop: true,
-      });
-      window.setMenuBarVisibility(false);
-      window.loadURL('http://localhost:4200/maquina-virtual');
-      if (!serialPort?.isOpen) {
-        serialPort.open();
-      }
-      return;
-    });
+    register: () => {
+        ipcMain.handle('open-virtual-machine', async () => {
+            secondaryWindowItem = secondaryWindow.openWindow('maquina-virtual');
+            if (!serialPort?.isOpen) {
+                serialPort.open();
+            }
+            return;
+        });
 
-    ipcMain.handle('close-virtual-machine', async () => {
-      if (!serialPort?.destroyed && serialPort?.isOpen) {
-        serialPort.close();
-      }
-      closeWindow();
-      return;
-    });
+        ipcMain.handle('close-virtual-machine', async () => {
+            if (!serialPort?.destroyed && serialPort?.isOpen) {
+                serialPort.close();
+            }
+            secondaryWindowItem?.close();
+            return;
+        });
 
-    // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
-    ipcMain.handle('virtual-machine-write', async (_, { command }) => {
-      if (!serialPort?.destroyed && serialPort.port?.isOpen) {
-        serialPort.port.emitData(command);
-      }
-    });
-  },
-  closeWindow,
-  getMockSerialPort: () => serialPort,
-  observeSoftwareWrite: (observable: Observable<string>) => {
-    observable.subscribe((command) => {
-      if (window && !window?.isDestroyed()) {
-        window.webContents.send('handle-software-write', command);
-      }
-    });
-  },
+        // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
+        ipcMain.handle('virtual-machine-write', async (_, { command }) => {
+            if (!serialPort?.destroyed && serialPort.port?.isOpen) {
+                serialPort.port.emitData(command);
+            }
+        });
+    },
+    getMockSerialPort: () => serialPort,
+    observeSoftwareWrite: (observable: Observable<string>) => {
+        observable.subscribe((command) => {
+            if (secondaryWindowItem?.window && !secondaryWindowItem.window?.isDestroyed()) {
+                secondaryWindowItem.window.webContents.send('handle-software-write', command);
+            }
+        });
+    }
 };

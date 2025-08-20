@@ -43,6 +43,7 @@ import { TimelineModule } from 'primeng/timeline';
 import { ChipModule } from 'primeng/chip';
 import { BlockUIModule } from 'primeng/blockui';
 import { CalendarModule } from 'primeng/calendar';
+import { TabViewModule } from 'primeng/tabview';
 
 const PrimeNgModules = [
     MenubarModule,
@@ -86,7 +87,8 @@ const PrimeNgModules = [
     TimelineModule,
     ChipModule,
     BlockUIModule,
-    CalendarModule
+    CalendarModule,
+    TabViewModule
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

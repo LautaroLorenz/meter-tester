@@ -20,7 +20,10 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     @Input() currentStep!: T;
     @Input() preparationStep!: PreparationStep;
 
+    tabIndex = 0;
+    canExecute = false;
     canContinue = false;
+    isExecuting = false;
 
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
@@ -34,6 +37,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
+        this.executionSkip();
     }
 
     ngOnDestroy(): void {
@@ -89,9 +93,11 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     restart(): void {
+        this.tabIndex = 0;
+        this.canExecute = false;
         this.restartResults(ResultStatus.Pending);
         this.canContinue = this.getCanContinue();
-        this.startTest();
+        this.onRestart();
     }
 
     protected isAllStandsFailed(): boolean {
@@ -128,6 +134,13 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.stepExecutionDone(this.currentStep);
     }
 
+    protected executionSkip(): void {
+        if (!this.skipEnabled) {
+            return;
+        }
+        this.startTest();
+    }
+
     abstract abort(): Observable<boolean>;
 
     abstract isFailCondition(...args: any[]): boolean;
@@ -137,4 +150,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract stopTest(): void;
 
     abstract restartResults(resultStatus: ResultStatus): void;
+
+    abstract onRestart(): void;
 }

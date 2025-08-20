@@ -14,6 +14,7 @@ import { CommandResultResponse, StandStandResult } from '../../../../models/busi
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { GeneratorComponent } from '../../../machine/generator/generator.component';
 
 @Component({
     selector: 'app-boot-test-run',
@@ -27,7 +28,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     @ViewChild('countTimerMax', { static: true })
     countTimerMax!: CountTimerComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<BootTestEssayStep>;
+    @ViewChild('generator', { static: true }) generator!: GeneratorComponent<BootTestEssayStep>;
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
@@ -47,8 +49,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.startTest();
+    onGeneratorAdjustmentDone(): void {
+        this.canExecute = true;
     }
 
     onMinTimerCountdownFinish(): void {
@@ -93,6 +95,13 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         }
     }
 
+    override onRestart(): void {
+        // recetea el contador
+        this.countTimerMin.reset();
+        this.countTimerMax.reset();
+        this.generator.resetConfirmation();
+    }
+
     override abort(): Observable<boolean> {
         this.stopStep.next();
         this.countTimerMin.stop();
@@ -106,7 +115,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -131,6 +141,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
         // recetea el contador
         this.countTimerMin.reset();
         this.countTimerMax.reset();
@@ -167,6 +179,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

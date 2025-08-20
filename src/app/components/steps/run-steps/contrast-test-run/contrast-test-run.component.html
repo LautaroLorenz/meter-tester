@@ -1,42 +1,55 @@
-<!-- Parámetros del paso -->
-<app-contrast-test-params
-    [currentStep]="currentStep"
-    [toggleable]="true"
-    [showTexts]="true"></app-contrast-test-params>
+<p-tabView [(activeIndex)]="tabIndex">
+    <p-tabPanel header="Control de la fuente">
+        <!-- Generador -->
+        <div class="mt-2">
+            <app-generator
+                #generator
+                [currentStep]="currentStep"
+                (adjustmentDone)="onGeneratorAdjustmentDone()"></app-generator>
+        </div>
 
-<!-- Generador manual -->
-<div class="mt-4">
-    <app-manual-generator (adjustmentDone)="onManualGeneratorAdjusted()"></app-manual-generator>
-</div>
+        <!-- Patrón -->
+        <div class="mt-2">
+            <app-pattern
+                #pattern
+                [currentStep]="currentStep"></app-pattern>
+        </div>
+    </p-tabPanel>
 
-<!-- Execution mode -->
-<div class="mt-4 execution-mode-panel">
-    <p-panel header="Ejecución">
-        <p-selectButton
-            [options]="StepRunModes"
-            [(ngModel)]="stepRunMode"
-            optionLabel="label"
-            optionValue="value"></p-selectButton>
-    </p-panel>
-</div>
+    <p-tabPanel
+        header="Proceso de medición"
+        [disabled]="!canExecute">
+        <!-- Parámetros del paso -->
+        <app-contrast-test-params
+            [currentStep]="currentStep"
+            [toggleable]="true"
+            [showTexts]="true"></app-contrast-test-params>
 
-<!-- Calculador -->
-<div class="mt-4">
-    <app-calculator
-        #calculator
-        [resultDecimalsQuantity]="2">
-        <app-stands-result
-            [preparationStep]="preparationStep"
-            [results]="currentStep.standResults"
-            [resultsColumn]="resultsColumn"
-            [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
-    </app-calculator>
-</div>
+        <!-- Execution mode -->
+        <div class="mt-2 execution-mode-panel">
+            <p-panel header="Ejecución">
+                <p-selectButton
+                    [options]="StepRunModes"
+                    [(ngModel)]="stepRunMode"
+                    optionLabel="label"
+                    optionValue="value"></p-selectButton>
+            </p-panel>
+        </div>
 
-<!-- Patrón -->
-<div class="mt-4">
-    <app-pattern #pattern></app-pattern>
-</div>
+        <!-- Calculador -->
+        <div class="mt-2">
+            <app-calculator
+                #calculator
+                [resultDecimalsQuantity]="2">
+                <app-stands-result
+                    [preparationStep]="preparationStep"
+                    [results]="currentStep.standResults"
+                    [resultsColumn]="resultsColumn"
+                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+            </app-calculator>
+        </div>
+    </p-tabPanel>
+</p-tabView>
 
 <!-- Actions -->
 <div class="flex justify-content-end mt-4 mb-8 gap-3">
@@ -47,7 +60,15 @@
         (click)="stepExecutionSkip(this.currentStep)"></p-button>
 
     <p-button
+        label="Comenzar medición"
+        icon="pi pi-play"
+        [outlined]="true"
+        [disabled]="isExecuting || !canExecute || canContinue"
+        (click)="startTest()"></p-button>
+
+    <p-button
         label="Reintentar"
+        icon="pi pi-replay"
         [outlined]="true"
         [disabled]="!canContinue"
         (click)="restart()"></p-button>

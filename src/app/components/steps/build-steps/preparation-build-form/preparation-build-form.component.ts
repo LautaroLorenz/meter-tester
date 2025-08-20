@@ -21,6 +21,8 @@ import { RelationsManager } from '../../../../models/core/relations-manager.mode
 })
 export class PreparationBuildFormComponent extends StepBuildFormComponent<PreparationStep> implements AfterViewInit {
     meters$!: Observable<StandMeter[]>;
+    showCopyDialog = false;
+    copyDialogSourceIndex!: number;
 
     readonly YearOfProductionConstants = YearOfProductionConstants;
 
@@ -36,12 +38,9 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
         }
     }
 
-    copyStandToAll(strandFormGroup: AbstractFormGroup<Stand>): void {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { name, ...propsToCopy } = strandFormGroup.getRawValue();
-        this.standsFormArray.controls.forEach((group) => {
-            group.patchValue({ ...propsToCopy });
-        });
+    openCopyDialog(index: number): void {
+        this.copyDialogSourceIndex = index;
+        this.showCopyDialog = true;
     }
 
     override buildForm(fb: FormBuilder): AbstractFormGroup<PreparationStep> {
@@ -112,7 +111,7 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
 
     private setStandsName(): void {
         this.standsFormArray.controls.forEach((group, index) => {
-            const name = `Puesto ${(index + 1).toString().padStart(2, '0')}`;
+            const name = `${(index + 1).toString().padStart(2, '0')}`;
             group.get('name')?.setValue(name);
         });
     }

@@ -1,23 +1,29 @@
-<ng-container *ngIf="!confirmed; else confirmedTmp">
+<ng-container *ngIf="!confirmed || !shouldRemoveAfterConfirm; else confirmedTmp">
     <p-panel>
         <ng-template pTemplate="header">
             <div class="-my-2 flex align-items-center justify-content-between w-full">
                 <span class="p-panel-title">{{ headerText }}</span>
                 <i
+                    *ngIf="!confirmed"
                     class="pi pi-exclamation-triangle text-color-secondary"
                     style="font-size: 1.5rem"
                     [ngStyle]="{ order: 2 }"></i>
             </div>
         </ng-template>
         <ng-template pTemplate="content">
-            <ng-content select="[messageTemplate]"></ng-content>
-        </ng-template>
-        <ng-template pTemplate="footer">
-            <p-button
-                [label]="confirmButtonText"
-                [icon]="'pi ' + confirmButtonIcon"
-                [outlined]="true"
-                (click)="onUserConfirm()"></p-button>
+            <div>
+                <ng-content select="[messageTemplate]"></ng-content>
+            </div>
+
+            <div
+                *ngIf="!confirmed"
+                class="flex justify-content-end mt-3">
+                <p-button
+                    [label]="confirmButtonText"
+                    [icon]="'pi ' + confirmButtonIcon"
+                    [outlined]="true"
+                    (click)="onUserConfirm()"></p-button>
+            </div>
         </ng-template>
     </p-panel>
 </ng-container>

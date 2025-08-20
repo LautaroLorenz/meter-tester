@@ -1,0 +1,46 @@
+<p-dialog
+    [visible]="showDialog"
+    header="Copiar datos del puesto"
+    [modal]="true"
+    [style]="{ width: '30rem' }"
+    [closable]="false">
+    <div class="p-fluid">
+        <p>Selecciona los puestos a los que quieres copiar los datos:</p>
+
+        <button
+            pButton
+            label="Seleccionar todos"
+            (click)="selectAll()"
+            class="p-button-text p-button-outlined"></button>
+
+        <div
+            *ngFor="let target of targets"
+            class="target-checkbox">
+            <p-checkbox
+                [label]="target.name"
+                [disabled]="!target.isActive"
+                [binary]="true"
+                [ngModel]="selectedIndexes.has(target.index)"
+                (onChange)="toggle(target.index)">
+            </p-checkbox>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+            <button
+                pButton
+                label="Cancelar"
+                icon="pi pi-times"
+                (click)="close()"
+                class="p-button-text p-button-outlined"></button>
+            <button
+                pButton
+                pRipple
+                label="Aceptar"
+                icon="pi pi-check"
+                class="p-button p-button-outlined"
+                (click)="confirm()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

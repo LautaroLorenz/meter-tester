@@ -88,12 +88,12 @@ export class RunEssayService {
         return this.ipcService.invoke('close-virtual-machine');
     }
 
-    openLogsHistory(): Promise<void> {
-        return this.ipcService.invoke('open-command-history');
+    openLogsHistory(): Promise<number> {
+        return this.ipcService.invoke('open-secondary-window', { url: 'historial-comandos' });
     }
 
-    closeLogsHistory(): Promise<void> {
-        return this.ipcService.invoke('close-command-history');
+    closeLogsHistory(windowId: number): Promise<void> {
+        return this.ipcService.invoke('close-secondary-window', windowId);
     }
 
     reset(): void {

@@ -1,64 +1,89 @@
-<ng-container *ngFor="let strandFormGroup of standsFormArray.controls; let index = index; let last = last">
-    <ng-container [formGroup]="strandFormGroup">
-        <div [class.mb-4]="!last">
-            <p-fieldset [class.isActive]="strandFormGroup.get('isActive')?.value">
-                <ng-template pTemplate="header">
-                    <div class="flex align-items-center gap-8">
-                        <p-inputSwitch formControlName="isActive"></p-inputSwitch>
-                        <span class="stand-name">
-                            {{ strandFormGroup.get('name')!.value }}
-                        </span>
-                        <p-button
-                            icon="pi pi-copy"
-                            [outlined]="true"
-                            (click)="copyStandToAll(strandFormGroup)"
-                            pTooltip="Replicar valores en todos los puestos"></p-button>
-                    </div>
-                </ng-template>
+<p-table
+    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+    [value]="standsFormArray.controls"
+    [tableStyle]="{ 'min-width': '100%' }"
+    responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Activo</th>
+            <th>Medidor</th>
+            <th>Modelo</th>
+            <th>Año de fabricación</th>
+            <th>Nª de serie</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
 
-                <div class="mb-2">
-                    <app-input-error [formGroup]="strandFormGroup"></app-input-error>
-                </div>
+    <ng-template
+        pTemplate="body"
+        let-standForm
+        let-i="rowIndex">
+        <ng-container [formGroup]="standForm">
+            <tr>
+                <!-- Checkbox de activación -->
+                <td>
+                    <p-checkbox
+                        formControlName="isActive"
+                        [binary]="true"></p-checkbox>
+                </td>
 
-                <div class="formgrid grid">
-                    <ng-container *ngIf="meters$ | async as meters">
-                        <div class="field col col-4">
-                            <label for="meter">Modelo de medidor</label>
-                            <p-dropdown
-                                id="meter"
-                                [options]="meters"
-                                formControlName="meter_id"
-                                optionLabel="label"
-                                optionValue="id"
-                                appendTo="body"
-                                [autoDisplayFirst]="false"
-                                [showClear]="true"></p-dropdown>
-                        </div>
+                <!-- Nombre del puesto -->
+                <td>{{ standForm.get('name')!.value }}</td>
 
-                        <div class="field col col-4">
-                            <label for="yearOfProduction">Año de fabricación</label>
-                            <p-dropdown
-                                id="yearOfProduction"
-                                [options]="YearOfProductionConstants"
-                                formControlName="yearOfProduction"
-                                optionValue="id"
-                                optionLabel="label"
-                                appendTo="body"
-                                [autoDisplayFirst]="false"
-                                [showClear]="true"></p-dropdown>
-                        </div>
+                <!-- Dropdown del medidor -->
+                <td>
+                    <p-dropdown
+                        *ngIf="meters$ | async as meters"
+                        id="meter"
+                        [options]="meters"
+                        formControlName="meter_id"
+                        optionLabel="label"
+                        optionValue="id"
+                        appendTo="body"
+                        [autoDisplayFirst]="false"
+                        [showClear]="true"
+                        styleClass="w-full"></p-dropdown>
+                </td>
 
-                        <div class="field col col-4">
-                            <label for="serialNumber">Número de serie</label>
-                            <input
-                                type="text"
-                                pInputText
-                                id="serialNumber"
-                                formControlName="serialNumber" />
-                        </div>
-                    </ng-container>
-                </div>
-            </p-fieldset>
-        </div>
-    </ng-container>
-</ng-container>
+                <!-- Año de producción -->
+                <td>
+                    <p-dropdown
+                        id="yearOfProduction"
+                        [options]="YearOfProductionConstants"
+                        formControlName="yearOfProduction"
+                        optionValue="id"
+                        optionLabel="label"
+                        appendTo="body"
+                        [autoDisplayFirst]="false"
+                        [showClear]="true"
+                        styleClass="w-full"></p-dropdown>
+                </td>
+
+                <!-- Número de serie -->
+                <td>
+                    <input
+                        type="text"
+                        pInputText
+                        formControlName="serialNumber"
+                        styleClass="w-full" />
+                </td>
+
+                <!-- Botón para copiar -->
+                <td>
+                    <p-button
+                        icon="pi pi-copy"
+                        [outlined]="true"
+                        (click)="openCopyDialog(i)"
+                        [disabled]="!standForm.get('isActive')!.value"
+                        pTooltip="Copiar valores a otros puestos"></p-button>
+                </td>
+            </tr>
+        </ng-container>
+    </ng-template>
+</p-table>
+
+<app-copy-stand-dialog
+    [showDialog]="showCopyDialog"
+    [sourceIndex]="copyDialogSourceIndex"
+    [controls]="standsFormArray.controls"
+    (closeDialog)="showCopyDialog = false"></app-copy-stand-dialog>

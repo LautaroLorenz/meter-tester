@@ -6,16 +6,18 @@ import { Title } from '@angular/platform-browser';
 import { BlockUIService } from './services/block-ui.service';
 import { IpcService } from './services/ipc.service';
 import { MessagesService } from './services/messages.service';
-import { PrimeNGConfig } from 'primeng/api';
+import { ConfirmationService, PrimeNGConfig } from 'primeng/api';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    providers: [ConfirmationService]
 })
 export class AppComponent implements OnInit {
     isVirtualMachinePage = false;
     isCommandHistoryPage = false;
+    isSecondaryWindow = true;
     conecctionLogsDialogOpened = false;
     connectionLogs: any;
     ports: any;
@@ -27,7 +29,7 @@ export class AppComponent implements OnInit {
         private readonly ipcService: IpcService,
         private readonly messagesService: MessagesService,
         private readonly primeNgConfig: PrimeNGConfig
-    ) { }
+    ) {}
 
     get blocked$(): Observable<boolean> {
         return this.blockUIService.blocked$;
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit {
             .subscribe((event) => {
                 this.isVirtualMachinePage = (event as NavigationEnd).url === `/${PageUrlName.virtualMachine}`;
                 this.isCommandHistoryPage = (event as NavigationEnd).url === `/${PageUrlName.commandHistory}`;
+                this.isSecondaryWindow = (event as NavigationEnd).urlAfterRedirects.includes('secondary-window');
                 if (this.isVirtualMachinePage) {
                     this.titleService.setTitle('Máquina virtual');
                 }
@@ -87,7 +90,6 @@ export class AppComponent implements OnInit {
                     this.conecctionLogsDialogOpened = true;
                 }
             });
-
 
         this.primeNgConfig.setTranslation({
             startsWith: 'Comienza con',

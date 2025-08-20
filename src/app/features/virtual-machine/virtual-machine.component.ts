@@ -38,6 +38,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     readonly VMResponseTypes = VMResponseTypes;
 
     private onDestroy = new Subject<void>();
+
     constructor(
         private readonly virtualMachineService: VirtualMachineService,
         private readonly fb: FormBuilder,

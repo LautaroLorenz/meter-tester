@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
@@ -10,6 +10,8 @@ import { DeviceService } from '../../../services/device.service';
 import { MessagesService } from '../../../services/messages.service';
 import { DatabaseService } from '../../../services/database.service';
 import { VirtualPattern, VirtualPatternDbTableContext } from '../../../models/business/database/virtual_pattern.model';
+import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
+import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
 
 @Component({
     selector: 'app-pattern',
@@ -17,7 +19,9 @@ import { VirtualPattern, VirtualPatternDbTableContext } from '../../../models/bu
     styleUrls: ['./pattern.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PatternComponent extends MachineDeviceComponent implements OnInit {
+export class PatternComponent<T extends EssayTemplateStep> extends MachineDeviceComponent implements OnInit {
+    @Input() currentStep!: T;
+    @Input() toggleable!: boolean;
     override readonly device = Devices.PAT;
 
     readonly lastStatus$ = new ReplaySubject<PatternStatus>(1);
@@ -33,20 +37,23 @@ export class PatternComponent extends MachineDeviceComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (APP_CONFIG.patternType === 'Virtual') {
+        if (APP_CONFIG.patternType === PatternEnum.Virtual) {
             // obtener las constantes almacenadas en BBDD
-            this.databaseService.getTable$(VirtualPatternDbTableContext.tableName).pipe(
-                take(1),
-                tap(({ rows }) => this.virtualConstants = rows.sort((a, b) => a.current - b.current))
-            ).subscribe()
+            this.databaseService
+                .getTable$(VirtualPatternDbTableContext.tableName)
+                .pipe(
+                    take(1),
+                    tap(({ rows }) => (this.virtualConstants = rows.sort((a, b) => a.current - b.current)))
+                )
+                .subscribe();
         }
     }
 
     constant$(stepMeterConstant: MeterConstantEnum, maxCurrent: number): Observable<PatternStatus> {
         // si es un patrón virtual, respondemos la constante virtual.
-        if (APP_CONFIG.patternType === 'Virtual') {
+        if (APP_CONFIG.patternType === PatternEnum.Virtual) {
             const virtualConstant = this.getVirtualConstant(maxCurrent);
-            return of({ constant: virtualConstant })
+            return of({ constant: virtualConstant });
         }
         // responder la constante obtenida desde el patrón físico.
         const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);

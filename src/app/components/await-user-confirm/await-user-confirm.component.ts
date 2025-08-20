@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-await-user-confirm',
@@ -12,11 +12,20 @@ export class AwaitUserConfirmComponent {
     @Input() confirmButtonIcon!: string;
     @Input() afterConfirmationChipText!: string;
     @Input() afterConfirmationChipIcon!: string;
+    @Input() shouldRemoveAfterConfirm!: boolean;
     @Output() userConfirm = new EventEmitter<void>();
     @Output() userRemove = new EventEmitter<void>();
 
     confirmed = false;
     removed = false;
+
+    constructor(private cd: ChangeDetectorRef) {}
+
+    resetConfirmation(): void {
+        this.confirmed = false;
+        this.removed = false;
+        this.cd.detectChanges();
+    }
 
     onUserConfirm(): void {
         this.confirmed = true;

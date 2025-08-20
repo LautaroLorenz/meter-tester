@@ -1,12 +1,15 @@
+import { GeneratorEnum } from '../app/models/business/enums/generator-enum.model';
+import { PatternEnum } from '../app/models/business/enums/pattern-enum.model';
 import { Environment } from '../app/models/core/environment.model';
 
 export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
     standsQuantity: 8,
-    patternType: 'Virtual',
+    generatorType: GeneratorEnum.Manual,
+    patternType: PatternEnum.Virtual,
     skipSteps: {
-        manualGeneratorConfirm: false,
+        generatorAdjusted: false,
         photocellAdjustmentRequest: true,
         verificationMajorStep: true,
         preparationMajorStep: true,
@@ -14,6 +17,6 @@ export const APP_CONFIG: Environment = {
         bootTestRun: false,
         contrastTestRun: false
     },
-    virtualMachine: false,
+    virtualMachine: true,
     logsHistory: true
 };

@@ -14,6 +14,7 @@ import { TestRunComponent } from '../../../../models/business/class/test-run-com
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { GeneratorComponent } from '../../../machine/generator/generator.component';
 
 @Component({
     selector: 'app-vacuum-test-run',
@@ -24,7 +25,8 @@ import { DeviceStatus } from '../../../../models/business/enums/device-status.mo
 export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep> implements OnDestroy {
     @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<VacuumTestEssayStep>;
+    @ViewChild('generator', { static: true }) generator!: GeneratorComponent<VacuumTestEssayStep>;
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
@@ -44,8 +46,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.startTest();
+    onGeneratorAdjustmentDone(): void {
+        this.canExecute = true;
     }
 
     onTimerCountdownFinish(): void {
@@ -82,6 +84,12 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         }
     }
 
+    override onRestart(): void {
+        // recetea el contador
+        this.countTimer.reset();
+        this.generator.resetConfirmation();
+    }
+
     override abort(): Observable<boolean> {
         this.stopStep.next();
         this.countTimer.stop();
@@ -94,7 +102,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -106,6 +115,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
         // recetea el contador
         this.countTimer.reset();
         // apaga el calculador por si estaba encendido
@@ -139,6 +150,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

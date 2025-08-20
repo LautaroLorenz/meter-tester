@@ -15,6 +15,7 @@ import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-c
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
+import { GeneratorComponent } from '../../../machine/generator/generator.component';
 
 @Component({
     selector: 'app-contrast-test-run',
@@ -24,7 +25,8 @@ import { DeviceStatus } from '../../../../models/business/enums/device-status.mo
 })
 export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssayStep> implements OnDestroy {
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
-    @ViewChild('pattern', { static: true }) pattern!: PatternComponent;
+    @ViewChild('pattern', { static: true }) pattern!: PatternComponent<ContrastTestEssayStep>;
+    @ViewChild('generartor', { static: true }) generartor!: GeneratorComponent<ContrastTestEssayStep>;
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.contrastTestRun;
 
@@ -47,8 +49,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.startTest();
+    onGeneratorAdjustmentDone(): void {
+        this.canExecute = true;
     }
 
     onCalculatorResults(results: CommandResultResponse[]): void {
@@ -86,6 +88,11 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         }
     }
 
+    override onRestart(): void {
+        this.stepRunMode = StepRunMode.continuousResultUpdate;
+        this.generartor.resetConfirmation();
+    }
+
     override abort(): Observable<boolean> {
         this.stopStep.next();
         this.deviceService.abort();
@@ -97,7 +104,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -108,6 +116,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
         // apaga el calculador por si estaba encendido
         this.calculator
             .stop$(this.getActiveStands())
@@ -133,6 +143,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

@@ -1,3 +1,6 @@
+import { GeneratorEnum } from "../business/enums/generator-enum.model";
+import { PatternEnum } from "../business/enums/pattern-enum.model";
+
 export interface Environment {
     // flag si es producción
     production: boolean;
@@ -8,8 +11,11 @@ export interface Environment {
     // cantidad de puestos que tiene la máquina
     standsQuantity: number;
 
-    // el patrón puede ser Físico o Virtual (desde una tabla de BBDD)
-    patternType: 'Virtual' | 'Physical'
+    // modelo del generador
+    generatorType: GeneratorEnum;
+
+    // modelo del patrón
+    patternType: PatternEnum;
 
     // completa pasos automaticamente
     skipSteps: Record<string, boolean>;

@@ -28,6 +28,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     readonly id$: Observable<number>;
     readonly runEssayForm: RunEssayForm;
 
+    private logsHistoryWindowId: number | null = null;
     private readonly formatDate = inject(FormatDatePipe);
     private readonly onDestroy = new Subject<void>();
 
@@ -49,7 +50,12 @@ export class RunEssayComponent implements OnInit, OnDestroy {
             void this.runEssayService.openVirtualMachine();
         }
         if (APP_CONFIG.logsHistory) {
-            void this.runEssayService.openLogsHistory();
+            this.runEssayService
+                .openLogsHistory()
+                .then((windowId: number) => {
+                    this.logsHistoryWindowId = windowId;
+                })
+                .catch(() => {});
         }
 
         this.runEssayService.reset();
@@ -61,8 +67,8 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         if (APP_CONFIG.virtualMachine) {
             void this.runEssayService.closeVirtualMachine();
         }
-        if (APP_CONFIG.logsHistory) {
-            void this.runEssayService.closeLogsHistory();
+        if (APP_CONFIG.logsHistory && this.logsHistoryWindowId) {
+            void this.runEssayService.closeLogsHistory(this.logsHistoryWindowId);
         }
 
         this.onDestroy.next();

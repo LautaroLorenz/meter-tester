@@ -10,8 +10,8 @@ import restart from './resources/restart/restart';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
 import { APP_CONFIG } from './environment/environment';
 import * as KnexLib from 'knex';
-import commandHistory from './resources/command-history/command-history';
 import backup from './resources/database/backup';
+import secondaryWindow from './resources/secondary-window/secondary-window';
 
 function registerIpc(knex: any) {
     database.register();
@@ -21,6 +21,7 @@ function registerIpc(knex: any) {
     machine.register();
     backup.register(knex);
     restart.register();
+    secondaryWindow.register();
 }
 
 let win: BrowserWindow | null = null;
@@ -45,10 +46,6 @@ if (environment.virtualMachine) {
     });
 }
 
-if (environment.logsHistory) {
-    commandHistory.register();
-}
-
 function createWindow(): BrowserWindow {
     const size = screen.getPrimaryDisplay().workAreaSize;
 
@@ -66,31 +63,43 @@ function createWindow(): BrowserWindow {
         }
     });
     win.setMenuBarVisibility(false);
+    if (win.isMaximizable()) win.maximize();
     backup.setMainWindow(win);
     database.setMainWindow(win);
+    secondaryWindow.setMainWindow(win);
 
+    let mainWindowUrl: string = '';
     if (serve) {
         const debug = require('electron-debug');
         debug();
-
         require('electron-reloader')(module);
-        knex = database.connect();
-        win.loadURL('http://localhost:4200');
+        mainWindowUrl = 'http://localhost:4200/';
     } else {
         // Path when running electron executable
         let pathIndex = './index.html';
-
         if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
             // Path when running electron in local folder
             pathIndex = '../dist/index.html';
         }
-
-        knex = database.connect();
-        const url = new URL(path.join('file:', __dirname, pathIndex));
-        win.loadURL(url.href);
+        mainWindowUrl = new URL(path.join('file:', __dirname, pathIndex)).href;
     }
+    mainWindowUrl += '#';
 
+    knex = database.connect();
+    win.loadURL(mainWindowUrl);
+
+    secondaryWindow.setConfig({
+        baseUrl: mainWindowUrl,
+        inspector: environment.inspector
+    });
     registerIpc(knex);
+
+    // Abrir inspector una vez que la URL cargó completamente
+    if (environment.inspector) {
+        win.webContents.on('did-finish-load', () => {
+            win?.webContents.openDevTools({ mode: 'right' });
+        });
+    }
 
     // Emitted when the window is closed.
     win.on('closed', () => {
@@ -101,7 +110,7 @@ function createWindow(): BrowserWindow {
         // Dereference the window object, usually you would store window
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        virtualMachine.closeWindow();
+        secondaryWindow.closeAllOpenedWindow();
         win = null;
     });
 
