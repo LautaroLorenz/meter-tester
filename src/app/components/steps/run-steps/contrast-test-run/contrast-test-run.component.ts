@@ -49,10 +49,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.tabIndex = 1;
+    onGeneratorAdjustmentDone(): void {
         this.canExecute = true;
-        this.startTest();
     }
 
     onCalculatorResults(results: CommandResultResponse[]): void {
@@ -106,7 +104,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -117,6 +116,9 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
+        this.canExecute = true;
         // apaga el calculador por si estaba encendido
         this.calculator
             .stop$(this.getActiveStands())
@@ -142,6 +144,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

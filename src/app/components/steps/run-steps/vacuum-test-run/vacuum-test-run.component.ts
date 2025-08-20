@@ -46,10 +46,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.tabIndex = 1;
+    onGeneratorAdjustmentDone(): void {
         this.canExecute = true;
-        this.startTest();
     }
 
     onTimerCountdownFinish(): void {
@@ -104,7 +102,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -116,6 +115,9 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
+        this.canExecute = true;
         // recetea el contador
         this.countTimer.reset();
         // apaga el calculador por si estaba encendido
@@ -149,6 +151,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

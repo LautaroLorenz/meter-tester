@@ -23,6 +23,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     tabIndex = 0;
     canExecute = false;
     canContinue = false;
+    isExecuting = false;
 
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
@@ -36,6 +37,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
+        this.executionSkip();
     }
 
     ngOnDestroy(): void {
@@ -130,6 +132,13 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
             return;
         }
         this.stepExecutionDone(this.currentStep);
+    }
+
+    protected executionSkip(): void {
+        if (!this.skipEnabled) {
+            return;
+        }
+        this.startTest();
     }
 
     abstract abort(): Observable<boolean>;

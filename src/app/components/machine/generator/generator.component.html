@@ -1,16 +1,21 @@
-<app-await-user-confirm
-    #awaitUserConfirm
-    headerText="Generador"
-    confirmButtonText="Generador ajustado"
-    confirmButtonIcon="pi-wrench"
-    afterConfirmationChipText="Ajuste realizado"
-    afterConfirmationChipIcon="pi-check"
-    (userConfirm)="adjustmentDone.emit()">
-    <div messageTemplate>
+<p-panel>
+    <ng-template pTemplate="header">
+        <div class="-my-2 flex align-items-center justify-content-between w-full">
+            <span class="p-panel-title">Generador</span>
+            <i
+                pTooltip="Ajustar valores en el generador antes de comenzar"
+                tooltipPosition="left"
+                class="pi pi-sliders-v text-color-secondary"
+                style="font-size: 1.5rem"
+                [ngStyle]="{ order: 2 }"></i>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
         <app-phase-table
             [showTexts]="true"
             [phaseL1]="currentStep.form_control_raw.phaseL1"
             [phaseL2]="currentStep.form_control_raw.phaseL2"
             [phaseL3]="currentStep.form_control_raw.phaseL3"></app-phase-table>
-    </div>
-</app-await-user-confirm>
+    </ng-template>
+</p-panel>

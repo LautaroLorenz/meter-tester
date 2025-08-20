@@ -49,10 +49,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.stopStep.complete();
     }
 
-    onManualGeneratorAdjusted(): void {
-        this.tabIndex = 1;
+    onGeneratorAdjustmentDone(): void {
         this.canExecute = true;
-        this.startTest();
     }
 
     onMinTimerCountdownFinish(): void {
@@ -117,7 +115,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
                 map(() => true),
-                tap(() => this.blockUIService.setBlocked(false))
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
             );
         }
         return of(true);
@@ -142,6 +141,9 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override startTest(): void {
+        this.isExecuting = true;
+        this.tabIndex = 1;
+        this.canExecute = true;
         // recetea el contador
         this.countTimerMin.reset();
         this.countTimerMax.reset();
@@ -178,6 +180,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
+                    this.isExecuting = false;
                     this.cd.detectChanges();
                     if (this.canContinue) {
                         this.skip();

@@ -5,7 +5,7 @@
             <app-generator
                 #generator
                 [currentStep]="currentStep"
-                (adjustmentDone)="onManualGeneratorAdjusted()"></app-generator>
+                (adjustmentDone)="onGeneratorAdjustmentDone()"></app-generator>
         </div>
 
         <!-- Patrón -->
@@ -60,7 +60,15 @@
         (click)="stepExecutionSkip(this.currentStep)"></p-button>
 
     <p-button
+        label="Comenzar medición"
+        icon="pi pi-play"
+        [outlined]="true"
+        [disabled]="isExecuting || !canExecute || canContinue"
+        (click)="startTest()"></p-button>
+
+    <p-button
         label="Reintentar"
+        icon="pi pi-replay"
         [outlined]="true"
         [disabled]="!canContinue"
         (click)="restart()"></p-button>
