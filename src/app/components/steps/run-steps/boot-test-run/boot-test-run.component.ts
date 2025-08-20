@@ -143,7 +143,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     override startTest(): void {
         this.isExecuting = true;
         this.tabIndex = 1;
-        this.canExecute = true;
         // recetea el contador
         this.countTimerMin.reset();
         this.countTimerMax.reset();

@@ -117,7 +117,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     override startTest(): void {
         this.isExecuting = true;
         this.tabIndex = 1;
-        this.canExecute = true;
         // recetea el contador
         this.countTimer.reset();
         // apaga el calculador por si estaba encendido

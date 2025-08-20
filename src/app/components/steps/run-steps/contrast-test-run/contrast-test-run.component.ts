@@ -118,7 +118,6 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     override startTest(): void {
         this.isExecuting = true;
         this.tabIndex = 1;
-        this.canExecute = true;
         // apaga el calculador por si estaba encendido
         this.calculator
             .stop$(this.getActiveStands())
