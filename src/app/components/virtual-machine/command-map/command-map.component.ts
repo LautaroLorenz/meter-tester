@@ -4,8 +4,10 @@ import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import {
     CalculatorResponseCommands,
+    GeneratorResponseCommands,
     PatternResponseCommands,
     SoftwareCalculatorCommands,
+    SoftwareGeneratorCommands,
     SoftwarePatternCommands
 } from '../../../models/business/enums/commands.model';
 import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
@@ -68,6 +70,18 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.PAT],
             commandRegex: SoftwarePatternCommands.CONSTANT_R,
             responseCommandName: PatternResponseCommands.CONSTANT
+        },
+        {
+            device: Devices.GEN,
+            deviceName: DeviceConstants[Devices.GEN],
+            commandRegex: SoftwareGeneratorCommands.START,
+            responseCommandName: GeneratorResponseCommands.ACK
+        },
+        {
+            device: Devices.GEN,
+            deviceName: DeviceConstants[Devices.GEN],
+            commandRegex: SoftwareGeneratorCommands.STOP,
+            responseCommandName: GeneratorResponseCommands.ACK
         }
     ];
 
