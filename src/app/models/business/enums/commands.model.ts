@@ -6,6 +6,10 @@ export enum PatternResponseCommands {
     CONSTANT = 'CONSTANT'
 }
 
+export enum GeneratorResponseCommands {
+    ACK = 'ACK'
+}
+
 export enum SoftwareCalculatorCommands {
     RESULT_TS01 = 'TS01',
     RESULT_TS02 = 'TS02',
@@ -18,8 +22,15 @@ export enum SoftwarePatternCommands {
     CONSTANT_R = '|R|'
 }
 
+export enum SoftwareGeneratorCommands {
+    START = 'START',
+    STOP = 'STOP'
+}
+
 export type CommandsEnum =
     | CalculatorResponseCommands
     | PatternResponseCommands
+    | GeneratorResponseCommands
     | SoftwarePatternCommands
-    | SoftwareCalculatorCommands;
+    | SoftwareCalculatorCommands
+    | SoftwareGeneratorCommands;

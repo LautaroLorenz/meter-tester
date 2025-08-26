@@ -67,6 +67,7 @@ function openWindow(url, options) {
         id: window.id,
         url: windowUrl,
         window,
+        isReady: false,
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
@@ -100,14 +101,26 @@ exports.default = {
         electron_1.ipcMain.handle('close-secondary-window', (_, windowId) => __awaiter(void 0, void 0, void 0, function* () {
             closeWindowById(windowId);
         }));
+        // Llamando este método desde la ventana secundaria, indicamos al proceso principal que ya está Ready
         electron_1.ipcMain.handle('get-secondary-window-id', (event) => {
             const win = electron_1.BrowserWindow.fromWebContents(event.sender);
             const windowId = win ? win.id : null;
             if (windowId) {
-                mainWindow === null || mainWindow === void 0 ? void 0 : mainWindow.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                const windowItem = openedWindows.find((item) => item.id === windowId);
+                if (windowItem) {
+                    windowItem.isReady = true;
+                    mainWindow === null || mainWindow === void 0 ? void 0 : mainWindow.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                }
             }
             return windowId;
         });
+        // Desde el proceso principal, podemos verificar si una ventana esta ready si tenemos el id
+        electron_1.ipcMain.handle('is-secondary-window-ready', (_, windowId) => __awaiter(void 0, void 0, void 0, function* () {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (!windowItem)
+                return false;
+            return windowItem.isReady;
+        }));
     }
 };
 //# sourceMappingURL=secondary-window.js.map

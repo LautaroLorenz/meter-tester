@@ -22,6 +22,10 @@ export class SecondaryWindowService {
         this.ipcService.on(`secondary-window-id-${windowId}-is-ready`, callback);
     }
 
+    isWindowReady(windowId: number): Promise<boolean> {
+        return this.ipcService.invoke('is-secondary-window-ready', windowId);
+    }
+
     sendToWindow(windowId: number, args: any): void {
         this.ipcService.send(`from-main-to-window-id-${windowId}`, args);
     }

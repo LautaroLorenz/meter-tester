@@ -74,10 +74,11 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     });
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
-    const windowitem = {
+    const windowitem: WindowItem = {
         id: window.id,
         url: windowUrl,
         window,
+        isReady: false,
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
@@ -114,13 +115,26 @@ export default {
         ipcMain.handle('close-secondary-window', async (_, windowId: number) => {
             closeWindowById(windowId);
         });
+
+        // Llamando este método desde la ventana secundaria, indicamos al proceso principal que ya está Ready
         ipcMain.handle('get-secondary-window-id', (event) => {
             const win = BrowserWindow.fromWebContents(event.sender);
             const windowId = win ? win.id : null;
             if (windowId) {
-                mainWindow?.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                const windowItem = openedWindows.find((item) => item.id === windowId);
+                if (windowItem) {
+                    windowItem.isReady = true;
+                    mainWindow?.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                }
             }
             return windowId;
+        });
+
+        // Desde el proceso principal, podemos verificar si una ventana esta ready si tenemos el id
+        ipcMain.handle('is-secondary-window-ready', async (_, windowId) => {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (!windowItem) return false;
+            return windowItem.isReady;
         });
     }
 };

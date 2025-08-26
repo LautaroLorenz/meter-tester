@@ -1,3 +1,4 @@
+import { SecondaryWindowService } from './../../services/secondary-window.service';
 import { Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil, tap } from 'rxjs';
@@ -37,12 +38,14 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     readonly VMDelayTypes = VMDelayTypes;
     readonly VMResponseTypes = VMResponseTypes;
 
+    private isWindowReady = false;
     private onDestroy = new Subject<void>();
 
     constructor(
         private readonly virtualMachineService: VirtualMachineService,
         private readonly fb: FormBuilder,
-        public readonly commandHistoryService: CommandHistoryService
+        public readonly commandHistoryService: CommandHistoryService,
+        private secondaryWindowService: SecondaryWindowService
     ) {
         this.configForm = this.buildConfigForm();
     }
@@ -132,7 +135,8 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
         this.configForm.valueChanges
             .pipe(
                 takeUntil(this.onDestroy),
-                tap((value) => localStorage.setItem('virtual-machine-config', JSON.stringify(value)))
+                tap((value) => localStorage.setItem('virtual-machine-config', JSON.stringify(value))),
+                tap(() => this.setWindowAsReady())
             )
             .subscribe();
 
@@ -140,5 +144,18 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
         if (savedConfig) {
             this.configForm.setValue(JSON.parse(savedConfig) as Record<string, any>);
         }
+    }
+
+    private setWindowAsReady(): void {
+        if (this.isWindowReady) {
+            return;
+        }
+        setTimeout(() => {
+            // Avisamos al proceso principal que el simulador esta inicializado
+            this.secondaryWindowService
+                .getWindowId()
+                .then(() => (this.isWindowReady = true))
+                .catch(() => {});
+        });
     }
 }

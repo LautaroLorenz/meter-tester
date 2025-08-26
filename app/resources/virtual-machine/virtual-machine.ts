@@ -21,7 +21,7 @@ export default {
             if (!serialPort?.isOpen) {
                 serialPort.open();
             }
-            return;
+            return secondaryWindowItem.id;
         });
 
         ipcMain.handle('close-virtual-machine', async () => {

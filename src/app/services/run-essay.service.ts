@@ -80,7 +80,7 @@ export class RunEssayService {
         });
     }
 
-    openVirtualMachine(): Promise<void> {
+    openVirtualMachine(): Promise<number> {
         return this.ipcService.invoke('open-virtual-machine');
     }
 
