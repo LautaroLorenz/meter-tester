@@ -12,6 +12,8 @@ import { DatabaseService } from '../../../services/database.service';
 import { VirtualPattern, VirtualPatternDbTableContext } from '../../../models/business/database/virtual_pattern.model';
 import { EssayTemplateStep } from '../../../models/business/database/essay-template-step.model';
 import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
+import { Phase } from '../../../models/business/interafces/phase.model';
+import { PhasesToCommandPipe } from '../../../pipes/business/phases-to-command.pipe';
 
 @Component({
     selector: 'app-pattern',
@@ -31,7 +33,8 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     constructor(
         protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService,
-        protected readonly databaseService: DatabaseService<VirtualPattern>
+        protected readonly databaseService: DatabaseService<VirtualPattern>,
+        private phasesToCommandPipe: PhasesToCommandPipe
     ) {
         super(deviceService, messagesService);
     }
@@ -49,11 +52,25 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         }
     }
 
-    constant$(stepMeterConstant: MeterConstantEnum, maxCurrent: number): Observable<PatternStatus> {
+    constant$(
+        stepMeterConstant: MeterConstantEnum,
+        phaseL1: Phase,
+        phaseL2: Phase,
+        phaseL3: Phase
+    ): Observable<PatternStatus> {
         // si es un patrón virtual, respondemos la constante virtual.
         if (APP_CONFIG.patternType === PatternEnum.Virtual) {
+            // Tomamos la corriente mayor
+            const corrienteL1 = phaseL1.current;
+            const corrienteL2 = phaseL2.current;
+            const corrienteL3 = phaseL3.current;
+            const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
+
             const virtualConstant = this.getVirtualConstant(maxCurrent);
             return of({ constant: virtualConstant });
+        }
+        if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
+            return this.constantWithParams$(stepMeterConstant, phaseL1, phaseL2, phaseL3);
         }
         // responder la constante obtenida desde el patrón físico.
         const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
@@ -61,6 +78,33 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             map((response) => this.mapConstantResponse(response)),
             tap((patternStatus) => this.lastStatus$.next(patternStatus))
         );
+    }
+
+    // Obtener constante del patrón seteando parámetros del ensayo
+    constantWithParams$(
+        stepMeterConstant: MeterConstantEnum,
+        phaseL1: Phase,
+        phaseL2: Phase,
+        phaseL3: Phase
+    ): Observable<PatternStatus> {
+        const commandBlocks: string[] = [];
+        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
+        commandBlocks.push(stepMeterConstantBlock);
+        commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
+        const command = this.buildCommand(...commandBlocks);
+
+        // responder la constante obtenida desde el patrón físico.
+        return this.write$(command).pipe(
+            map((response) => this.mapConstantResponseWithStatus(response)),
+            tap((patternStatus) => this.lastStatus$.next(patternStatus))
+        );
+    }
+
+    // Respuesta del patrón que incluye información del estado (además de la constante)
+    private mapConstantResponseWithStatus(command: string): PatternStatus {
+        const blocks = CommandDirector.getBlocks(command);
+        const constant = Number(blocks[3]);
+        return { constant };
     }
 
     private mapConstantResponse(command: string): PatternStatus {
