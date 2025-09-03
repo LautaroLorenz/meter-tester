@@ -38,6 +38,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();
+        this.onStepInit();
     }
 
     ngOnDestroy(): void {
@@ -140,6 +141,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         }
         this.startTest();
     }
+
+    abstract onStepInit(): void;
 
     abstract abort(): Observable<boolean>;
 
