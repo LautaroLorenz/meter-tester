@@ -5,11 +5,10 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
-    standsQuantity: 8,
-    generatorType: GeneratorEnum.Manual,
-    patternType: PatternEnum.Virtual,
+    standsQuantity: 2,
+    generatorType: GeneratorEnum.SemiautomaticPYC5050,
+    patternType: PatternEnum.Sm5050,
     skipSteps: {
-        generatorAdjusted: false,
         photocellAdjustmentRequest: true,
         verificationMajorStep: true,
         preparationMajorStep: true,
