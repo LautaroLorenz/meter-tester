@@ -5,7 +5,21 @@ import {
 } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
-import { switchMap, tap, finalize, Observable, Subject, takeUntil, of, map } from 'rxjs';
+import {
+    switchMap,
+    tap,
+    finalize,
+    Observable,
+    Subject,
+    takeUntil,
+    of,
+    map,
+    merge,
+    defer,
+    repeat,
+    catchError,
+    EMPTY
+} from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
@@ -15,6 +29,8 @@ import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
+import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { Phase } from '../../../../models/business/interafces/phase.model';
 
 @Component({
     selector: 'app-vacuum-test-run',
@@ -40,14 +56,11 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
 
     private stopStep = new Subject<void>();
+    private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
-    }
-
-    onGeneratorAdjustmentDone(): void {
-        this.canExecute = true;
     }
 
     onTimerCountdownFinish(): void {
@@ -84,10 +97,55 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         }
     }
 
+    /**
+     * preparar el generador y el patrón
+     */
+    prepareGeneratorBeforeExecution(): void {
+        const phaseL1: Phase = {
+            ...this.currentStep.form_control_raw.phaseL1,
+            anglePhi: 0,
+            current: 0
+        };
+        const phaseL2: Phase = {
+            ...this.currentStep.form_control_raw.phaseL2,
+            anglePhi: 0,
+            current: 0
+        };
+        const phaseL3: Phase = {
+            ...this.currentStep.form_control_raw.phaseL3,
+            anglePhi: 0,
+            current: 0
+        };
+        // consulta la constante del patron en loop
+        const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
+            this.pattern.constant$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
+        ).pipe(
+            // tap((result) => results), <- si fuera necesario consumir el pattern status
+            // Repite indefinidamente tras completar (puedes agregar delay si querés)
+            repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
+            catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.stop$)
+        );
+
+        // inicializa el generador y luego consulta la constante del patrón en loop
+        this.generator
+            .start$(phaseL1, phaseL2, phaseL3)
+            .pipe(
+                takeUntil(this.stop$),
+                tap(() => (this.canExecute = true)),
+                switchMap(() => getPatternConstantLoop$)
+            )
+            .subscribe();
+    }
+
+    override onStepInit(): void {
+        this.onRestart();
+    }
+
     override onRestart(): void {
         // recetea el contador
         this.countTimer.reset();
-        this.generator.resetConfirmation();
+        this.prepareGeneratorBeforeExecution();
     }
 
     override abort(): Observable<boolean> {
@@ -97,10 +155,23 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
                 this.calculator.deviceStatus$.value
-            )
+            ) ||
+            (this.calculator.deviceStatus$.value === DeviceStatus.Stopped && this.isExecuting)
         ) {
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
+                switchMap(() => this.generator.stop$()),
+                map(() => true),
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
+            );
+        } else if (
+            [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
+                this.generator.deviceStatus$.value
+            )
+        ) {
+            this.blockUIService.setBlocked(true);
+            return this.generator.stop$().pipe(
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
@@ -146,6 +217,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                // Apagar el generador
+                switchMap(() => this.generator.stop$()),
                 finalize(() => {
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)

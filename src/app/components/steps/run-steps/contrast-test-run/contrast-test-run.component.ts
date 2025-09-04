@@ -10,12 +10,27 @@ import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
 import { EnumAsOption } from '../../../../models/core/enum-as-option.model';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { switchMap, Observable, tap, takeUntil, Subject, finalize, map, of } from 'rxjs';
+import {
+    switchMap,
+    Observable,
+    tap,
+    takeUntil,
+    Subject,
+    finalize,
+    map,
+    of,
+    merge,
+    defer,
+    repeat,
+    catchError,
+    EMPTY
+} from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
+import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
 
 @Component({
     selector: 'app-contrast-test-run',
@@ -26,7 +41,7 @@ import { GeneratorComponent } from '../../../machine/generator/generator.compone
 export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssayStep> implements OnDestroy {
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
     @ViewChild('pattern', { static: true }) pattern!: PatternComponent<ContrastTestEssayStep>;
-    @ViewChild('generartor', { static: true }) generartor!: GeneratorComponent<ContrastTestEssayStep>;
+    @ViewChild('generator', { static: true }) generator!: GeneratorComponent<ContrastTestEssayStep>;
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.contrastTestRun;
 
@@ -43,14 +58,11 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     };
 
     private stopStep = new Subject<void>();
+    private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
-    }
-
-    onGeneratorAdjustmentDone(): void {
-        this.canExecute = true;
     }
 
     onCalculatorResults(results: CommandResultResponse[]): void {
@@ -88,9 +100,48 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         }
     }
 
+    /**
+     * preparar el generador y el patrón
+     */
+    prepareGeneratorBeforeExecution(): void {
+        // consulta la constante del patron en loop
+        const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
+            this.pattern.constant$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+        ).pipe(
+            // tap((result) => results), <- si fuera necesario consumir el pattern status
+            // Repite indefinidamente tras completar (puedes agregar delay si querés)
+            repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
+            catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.stop$)
+        );
+
+        // inicializa el generador y luego consulta la constante del patrón en loop
+        this.generator
+            .start$(
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+            .pipe(
+                takeUntil(this.stop$),
+                tap(() => (this.canExecute = true)),
+                switchMap(() => getPatternConstantLoop$)
+            )
+            .subscribe();
+    }
+
+    override onStepInit(): void {
+        this.onRestart();
+    }
+
     override onRestart(): void {
         this.stepRunMode = StepRunMode.continuousResultUpdate;
-        this.generartor.resetConfirmation();
+        this.prepareGeneratorBeforeExecution();
     }
 
     override abort(): Observable<boolean> {
@@ -99,10 +150,23 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
                 this.calculator.deviceStatus$.value
-            )
+            ) ||
+            (this.calculator.deviceStatus$.value === DeviceStatus.Stopped && this.isExecuting)
         ) {
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
+                switchMap(() => this.generator.stop$()),
+                map(() => true),
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
+            );
+        } else if (
+            [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
+                this.generator.deviceStatus$.value
+            )
+        ) {
+            this.blockUIService.setBlocked(true);
+            return this.generator.stop$().pipe(
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
@@ -139,6 +203,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                // Apagar el generador
+                switchMap(() => this.generator.stop$()),
                 finalize(() => {
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
@@ -176,22 +242,23 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     private getResults$(): Observable<CommandResultResponse[]> {
-        // Tomamos la corriente mayor
-        const corrienteL1 = this.currentStep.form_control_raw.phaseL1.current;
-        const corrienteL2 = this.currentStep.form_control_raw.phaseL2.current;
-        const corrienteL3 = this.currentStep.form_control_raw.phaseL3.current;
-        const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
-
-        return this.pattern.constant$(this.currentStep.form_control_raw.meterConstant, maxCurrent).pipe(
-            switchMap((patternStatus) =>
-                this.calculator.resultsTS01$(
-                    this.getActiveStands(),
-                    patternStatus.constant,
-                    this.currentStep.form_control_raw.meterPulses,
-                    this.currentStep.form_control_raw.meterConstant
-                )
-            ),
-            tap((results) => this.onCalculatorResults(results))
-        );
+        return this.pattern
+            .constant$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+            .pipe(
+                switchMap((patternStatus) =>
+                    this.calculator.resultsTS01$(
+                        this.getActiveStands(),
+                        patternStatus.constant,
+                        this.currentStep.form_control_raw.meterPulses,
+                        this.currentStep.form_control_raw.meterConstant
+                    )
+                ),
+                tap((results) => this.onCalculatorResults(results))
+            );
     }
 }

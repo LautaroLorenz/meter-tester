@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
-import { Observable, ReplaySubject, map, tap, take, of } from 'rxjs';
+import { Observable, map, tap, take, of } from 'rxjs';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 import { APP_CONFIG } from '../../../../environments/environment';

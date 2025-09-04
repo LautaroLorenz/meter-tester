@@ -108,11 +108,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                 this.currentStep.form_control_raw.phaseL3
             )
         ).pipe(
-            tap((result) => {
-                // TODO mostrar estado del patrón y actualizar la constante
-                // acá obtienes el resultado del patrón
-                console.log('pattern result', result);
-            }),
+            // tap((result) => results), <- si fuera necesario consumir el pattern status
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
             repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
             catchError(() => EMPTY), // evita romper el loop por errores
@@ -270,10 +266,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     private getResults$(): Observable<CommandResultResponse[]> {
-        return this.calculator.resultsTS02$(this.getActiveStands()).pipe(
-            // TODO eliminar este check
-            tap((results) => console.log('calculator results', results)),
-            tap((results) => this.onCalculatorResults(results))
-        );
+        return this.calculator
+            .resultsTS02$(this.getActiveStands())
+            .pipe(tap((results) => this.onCalculatorResults(results)));
     }
 }
