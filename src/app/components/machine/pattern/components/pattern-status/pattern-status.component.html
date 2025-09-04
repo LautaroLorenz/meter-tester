@@ -1,0 +1,26 @@
+<p-table
+    styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm"
+    [value]="rows"
+    responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="text-color-secondary text-center"></th>
+            <th class="text-color-secondary text-center">L1</th>
+            <th class="text-color-secondary text-center">L2</th>
+            <th class="text-color-secondary text-center">L3</th>
+            <th class="text-color-secondary text-center"></th>
+        </tr>
+    </ng-template>
+
+    <ng-template
+        pTemplate="body"
+        let-r>
+        <tr>
+            <td>{{ r.metric }}</td>
+            <td class="text-right">{{ r.l1 | number: getFormat(r) }}</td>
+            <td class="text-right">{{ r.l2 | number: getFormat(r) }}</td>
+            <td class="text-right">{{ r.l3 | number: getFormat(r) }}</td>
+            <td>{{ r.unit || '—' }}</td>
+        </tr>
+    </ng-template>
+</p-table>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
@@ -26,7 +26,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     @Input() toggleable!: boolean;
     override readonly device = Devices.PAT;
 
-    readonly lastStatus$ = new ReplaySubject<PatternStatus>(1);
+    hasRealTimeStatus = false;
+    patternStatus: PatternStatus | null = null;
+    readonly patternType: PatternEnum = APP_CONFIG.patternType;
+    readonly PatternEnum = PatternEnum;
 
     private virtualConstants: VirtualPattern[] = [];
 
@@ -34,7 +37,8 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService,
         protected readonly databaseService: DatabaseService<VirtualPattern>,
-        private phasesToCommandPipe: PhasesToCommandPipe
+        private phasesToCommandPipe: PhasesToCommandPipe,
+        private cd: ChangeDetectorRef
     ) {
         super(deviceService, messagesService);
     }
@@ -50,6 +54,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
                 )
                 .subscribe();
         }
+        this.hasRealTimeStatus = APP_CONFIG.patternType === PatternEnum.Sm5050;
     }
 
     constant$(
@@ -76,7 +81,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
         return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
             map((response) => this.mapConstantResponse(response)),
-            tap((patternStatus) => this.lastStatus$.next(patternStatus))
+            tap((patternStatus) => {
+                this.patternStatus = patternStatus;
+                this.cd.detectChanges();
+            })
         );
     }
 
@@ -96,7 +104,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // responder la constante obtenida desde el patrón físico.
         return this.write$(command).pipe(
             map((response) => this.mapConstantResponseWithStatus(response)),
-            tap((patternStatus) => this.lastStatus$.next(patternStatus))
+            tap((patternStatus) => {
+                this.patternStatus = patternStatus;
+                this.cd.detectChanges();
+            })
         );
     }
 
