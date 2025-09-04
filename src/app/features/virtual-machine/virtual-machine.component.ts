@@ -1,5 +1,14 @@
 import { SecondaryWindowService } from './../../services/secondary-window.service';
-import { Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewChecked,
+    AfterViewInit,
+    Component,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 import { VirtualMachineService } from '../../services/virtual-machine.service';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -24,7 +33,7 @@ import { CommandHistoryService } from '../../services/command-history.service';
     templateUrl: './virtual-machine.component.html',
     styleUrls: ['./virtual-machine.component.scss']
 })
-export class VirtualMachineComponent implements OnInit, OnDestroy {
+export class VirtualMachineComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('commandMap', { static: true })
     commandMap!: CommandMapComponent;
     @ViewChildren(VMDeviceComponent)
@@ -52,7 +61,6 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.observeSoftware();
-        this.observeConfig();
     }
 
     virtualMachineWrite(command: string): void {
@@ -68,6 +76,10 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.onDestroy.next();
         this.onDestroy.complete();
+    }
+
+    ngAfterViewInit(): void {
+        setTimeout(() => this.observeConfig());
     }
 
     private observeSoftware(): void {
@@ -156,6 +168,6 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
                 .getWindowId()
                 .then(() => (this.isWindowReady = true))
                 .catch(() => {});
-        });
+        }, 100);
     }
 }
