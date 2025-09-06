@@ -233,7 +233,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             .subscribe();
         // revisar si algún puesto pasa a estado Falló
         this.checkFailedStatus();
-        // todo lo que no está en estado Falló, pasa a estado Aprobado
+        // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
     }
