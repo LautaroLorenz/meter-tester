@@ -61,11 +61,12 @@ function openWindow(url, options) {
         windowIsOpen.window.focus();
         return windowIsOpen;
     }
-    const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset()), { webPreferences: {
+    const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
+    const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset(options)), { webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,
-            devTools: inspector
+            devTools: openInspector
         }, alwaysOnTop: false }), options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);

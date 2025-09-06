@@ -136,7 +136,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     }
 
     async openSecondaryWindow(): Promise<void> {
-        this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL);
+        this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL, {
+            height: 360,
+            inspector: false
+        });
     }
 
     private mapConstantResponse(command: string): PatternStatus {
