@@ -186,7 +186,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
-                takeUntil(this.stopStep),
+                takeUntil(this.stop$),
                 // cambia el estado de los resultados en el calculador
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
                 // cambia el estado de los resultados en la pantalla
@@ -235,8 +235,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
-            takeUntil(this.onDestroy),
-            takeUntil(this.stopStep),
+            takeUntil(this.stop$),
             switchMap(() => this.getResultsLoop$())
         );
     }
