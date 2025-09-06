@@ -1,6 +1,3 @@
-<!-- TODO para desarrollo -->
-Constante: [{{ patternStatus?.constant }}]
-
 <p-table
     styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm"
     [value]="rows"
@@ -8,22 +5,22 @@ Constante: [{{ patternStatus?.constant }}]
     <ng-template pTemplate="header">
         <tr>
             <th class="text-color-secondary text-center"></th>
-            <th class="text-color-secondary text-center">L1</th>
-            <th class="text-color-secondary text-center">L2</th>
-            <th class="text-color-secondary text-center">L3</th>
+            <th class="text-color-secondary text-center">Fase L1</th>
+            <th class="text-color-secondary text-center">Fase L2</th>
+            <th class="text-color-secondary text-center">Fase L3</th>
             <th class="text-color-secondary text-center"></th>
         </tr>
     </ng-template>
 
     <ng-template
         pTemplate="body"
-        let-r>
+        let-row>
         <tr>
-            <td>{{ r.metric }}</td>
-            <td class="text-right">{{ r.l1 | number: getFormat(r) }}</td>
-            <td class="text-right">{{ r.l2 | number: getFormat(r) }}</td>
-            <td class="text-right">{{ r.l3 | number: getFormat(r) }}</td>
-            <td>{{ r.unit || '—' }}</td>
+            <td>{{ row.metric }}</td>
+            <td class="text-right">{{ row.l1 | number: getFormat(row) }}</td>
+            <td class="text-right">{{ row.l2 | number: getFormat(row) }}</td>
+            <td class="text-right">{{ row.l3 | number: getFormat(row) }}</td>
+            <td>{{ row.unit || '—' }}</td>
         </tr>
     </ng-template>
 </p-table>

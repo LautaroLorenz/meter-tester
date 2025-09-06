@@ -35,6 +35,11 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     private secondaryWindowId: number | null = null;
     private virtualConstants: VirtualPattern[] = [];
     private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
+    private readonly EMPTY_PHASE: Phase = {
+        voltage: 0,
+        current: 0,
+        anglePhi: 0
+    };
 
     constructor(
         protected readonly deviceService: DeviceService,
@@ -92,7 +97,12 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
 
             const virtualConstant = this.getVirtualConstant(maxCurrent);
-            return of({ constant: virtualConstant });
+            return of({
+                constant: virtualConstant,
+                phaseL1: this.EMPTY_PHASE,
+                phaseL2: this.EMPTY_PHASE,
+                phaseL3: this.EMPTY_PHASE
+            });
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
             return this.constantWithParams$(stepMeterConstant, phaseL1, phaseL2, phaseL3);
@@ -129,17 +139,28 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL);
     }
 
+    private mapConstantResponse(command: string): PatternStatus {
+        const blocks = CommandDirector.getBlocks(command);
+        const constant = Number(blocks[3]);
+        return {
+            constant,
+            phaseL1: this.EMPTY_PHASE,
+            phaseL2: this.EMPTY_PHASE,
+            phaseL3: this.EMPTY_PHASE
+        };
+    }
+
+    // TODO agregar el estado
     // Respuesta del patrón que incluye información del estado (además de la constante)
     private mapConstantResponseWithStatus(command: string): PatternStatus {
         const blocks = CommandDirector.getBlocks(command);
         const constant = Number(blocks[3]);
-        return { constant };
-    }
-
-    private mapConstantResponse(command: string): PatternStatus {
-        const blocks = CommandDirector.getBlocks(command);
-        const constant = Number(blocks[3]);
-        return { constant };
+        return {
+            constant,
+            phaseL1: this.EMPTY_PHASE,
+            phaseL2: this.EMPTY_PHASE,
+            phaseL3: this.EMPTY_PHASE
+        };
     }
 
     private getStepConstantBlock(stepMeterConstant: MeterConstantEnum): string {
