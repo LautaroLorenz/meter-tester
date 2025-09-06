@@ -5,7 +5,7 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
-    standsQuantity: 2,
+    standsQuantity: 8,
     generatorType: GeneratorEnum.SemiautomaticPYC5050,
     patternType: PatternEnum.Sm5050,
     skipSteps: {
