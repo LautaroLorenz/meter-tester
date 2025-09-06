@@ -241,23 +241,13 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     private getResults$(): Observable<CommandResultResponse[]> {
-        return this.pattern
-            .constant$(
-                this.currentStep.form_control_raw.meterConstant,
-                this.currentStep.form_control_raw.phaseL1,
-                this.currentStep.form_control_raw.phaseL2,
-                this.currentStep.form_control_raw.phaseL3
+        return this.calculator
+            .resultsTS01$(
+                this.getActiveStands(),
+                this.pattern.patternStatus?.constant || 0,
+                this.currentStep.form_control_raw.meterPulses,
+                this.currentStep.form_control_raw.meterConstant
             )
-            .pipe(
-                switchMap((patternStatus) =>
-                    this.calculator.resultsTS01$(
-                        this.getActiveStands(),
-                        patternStatus.constant,
-                        this.currentStep.form_control_raw.meterPulses,
-                        this.currentStep.form_control_raw.meterConstant
-                    )
-                ),
-                tap((results) => this.onCalculatorResults(results))
-            );
+            .pipe(tap((results) => this.onCalculatorResults(results)));
     }
 }
