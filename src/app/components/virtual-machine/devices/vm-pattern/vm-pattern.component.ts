@@ -63,7 +63,7 @@ export class VmPatternComponent extends VMDeviceComponent implements OnInit {
                 padText: '0',
                 config: {
                     type: CommandLineConfigTypes.Random,
-                    probabilityOfChange: 25,
+                    probabilityOfChange: 50,
                     minRandom: 0,
                     maxRandom: 5000
                 }
@@ -77,7 +77,7 @@ export class VmPatternComponent extends VMDeviceComponent implements OnInit {
                 padText: '0',
                 config: {
                     type: CommandLineConfigTypes.Random,
-                    probabilityOfChange: 25,
+                    probabilityOfChange: 50,
                     minRandom: 0,
                     maxRandom: 200000
                 }
@@ -105,7 +105,7 @@ export class VmPatternComponent extends VMDeviceComponent implements OnInit {
                     padText: '0',
                     config: {
                         type: CommandLineConfigTypes.Random,
-                        probabilityOfChange: 25,
+                        probabilityOfChange: 50,
                         minRandom: 0,
                         maxRandom: 3500
                     }

@@ -30,7 +30,7 @@ export class PatternStatusComponent implements OnChanges {
     }
 
     private updateRows(): PatternStatusRow[] {
-        const updateRow = (
+        const updatePhaseRow = (
             row: PatternStatusRow,
             phaseProp: keyof Phase,
             phaseL1: Phase | undefined,
@@ -46,21 +46,21 @@ export class PatternStatusComponent implements OnChanges {
         };
 
         return [
-            updateRow(
+            updatePhaseRow(
                 this.rows[0],
                 'voltage',
                 this.patternStatus?.phaseL1,
                 this.patternStatus?.phaseL2,
                 this.patternStatus?.phaseL3
             ),
-            updateRow(
+            updatePhaseRow(
                 this.rows[1],
                 'current',
                 this.patternStatus?.phaseL1,
                 this.patternStatus?.phaseL2,
                 this.patternStatus?.phaseL3
             ),
-            updateRow(
+            updatePhaseRow(
                 this.rows[2],
                 'anglePhi',
                 this.patternStatus?.phaseL1,
