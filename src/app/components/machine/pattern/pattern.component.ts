@@ -1,3 +1,4 @@
+import { SecondaryWindowService } from './../../../services/secondary-window.service';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
@@ -31,14 +32,17 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     readonly patternType: PatternEnum = APP_CONFIG.patternType;
     readonly PatternEnum = PatternEnum;
 
+    private secondaryWindowId: number | null = null;
     private virtualConstants: VirtualPattern[] = [];
+    private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
 
     constructor(
         protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService,
         protected readonly databaseService: DatabaseService<VirtualPattern>,
         private phasesToCommandPipe: PhasesToCommandPipe,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
+        private secondaryWindowService: SecondaryWindowService
     ) {
         super(deviceService, messagesService);
     }
@@ -54,7 +58,23 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
                 )
                 .subscribe();
         }
-        this.hasRealTimeStatus = APP_CONFIG.patternType === PatternEnum.Sm5050;
+        if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
+            this.hasRealTimeStatus = true;
+        }
+        // conectamos con la ventana del patrón
+        this.secondaryWindowService
+            .isWindowReadyByUrl(this.PATTERN_WINDOW_URL)
+            .then((isOpen) => {
+                if (isOpen) {
+                    this.secondaryWindowService
+                        .getWindowIdByUrl(this.PATTERN_WINDOW_URL)
+                        .then((windowId) => {
+                            this.secondaryWindowId = windowId;
+                        })
+                        .catch(() => {});
+                }
+            })
+            .catch(() => {});
     }
 
     constant$(
@@ -81,10 +101,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
         return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
             map((response) => this.mapConstantResponse(response)),
-            tap((patternStatus) => {
-                this.patternStatus = patternStatus;
-                this.cd.detectChanges();
-            })
+            tap((patternStatus) => this.updatePatternStatus(patternStatus))
         );
     }
 
@@ -104,11 +121,12 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // responder la constante obtenida desde el patrón físico.
         return this.write$(command).pipe(
             map((response) => this.mapConstantResponseWithStatus(response)),
-            tap((patternStatus) => {
-                this.patternStatus = patternStatus;
-                this.cd.detectChanges();
-            })
+            tap((patternStatus) => this.updatePatternStatus(patternStatus))
         );
+    }
+
+    async openSecondaryWindow(): Promise<void> {
+        this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL);
     }
 
     // Respuesta del patrón que incluye información del estado (además de la constante)
@@ -147,5 +165,13 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             }
         }
         return constant;
+    }
+
+    private updatePatternStatus(newPatternStatus: PatternStatus): void {
+        this.patternStatus = newPatternStatus;
+        this.cd.detectChanges();
+        if (this.secondaryWindowId) {
+            this.secondaryWindowService.sendToWindow(this.secondaryWindowId, newPatternStatus);
+        }
     }
 }

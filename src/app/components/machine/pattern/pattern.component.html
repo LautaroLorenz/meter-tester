@@ -1,7 +1,16 @@
 <p-panel [toggleable]="toggleable">
     <ng-template pTemplate="header">
-        <div class="flex gap-2 align-items-center">
-            <span class="p-panel-title">Patrón</span>
+        <div class="-my-2 flex align-items-center justify-content-between w-full">
+            <span class="p-panel-title flex-order-0">Patrón</span>
+            <div
+                *ngIf="hasRealTimeStatus"
+                class="flex align-items-center gap-3">
+                <i
+                    pTooltip="Ver como ventana separada"
+                    tooltipPosition="left"
+                    class="pi pi-external-link open-in-secondary-window-icon"
+                    (click)="openSecondaryWindow()"></i>
+            </div>
         </div>
     </ng-template>
 
