@@ -1,4 +1,4 @@
-import { SecondaryWindowService } from './../../services/secondary-window.service';
+import { SecondaryWindowService } from '../../../services/secondary-window.service';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
@@ -18,7 +18,7 @@ export class SecondaryWindowComponent implements OnInit {
         this.titleService.setTitle(this.windowTitle);
         this.secondaryWindowService.onMainWindowMessage(this.onMainWindowMessage.bind(this));
         this.secondaryWindowService
-            .getWindowId()
+            .setSecondaryWindowReady()
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             .then((id) => (this.windowId = id))
             .catch(() => {});

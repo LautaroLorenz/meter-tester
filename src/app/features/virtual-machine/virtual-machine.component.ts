@@ -165,7 +165,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy, AfterViewInit
         setTimeout(() => {
             // Avisamos al proceso principal que el simulador esta inicializado
             this.secondaryWindowService
-                .getWindowId()
+                .setSecondaryWindowReady()
                 .then(() => (this.isWindowReady = true))
                 .catch(() => {});
         }, 100);

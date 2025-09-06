@@ -1,21 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { ComponentsModule } from '../../components/components.module';
-// import { StandResultsComponent } from './stand-results/stand-results.component';
+import { PatternStatusWindowModule } from './pages/pattern-status-window/pattern-status-window.module';
 
 const routes: Routes = [
-    // {
-    //     path: 'stand-results',
-    //     component: StandResultsComponent
-    // }
+    {
+        path: 'pattern-status-window',
+        loadChildren: () =>
+            import('./pages/pattern-status-window/pattern-status-window.module').then(
+                (m) => m.PatternStatusWindowModule
+            )
+    }
 ];
 
 @NgModule({
-    declarations: [
-        // StandResultsComponent
-    ],
-    imports: [CommonModule, RouterModule.forChild(routes), ComponentsModule],
+    imports: [CommonModule, RouterModule.forChild(routes), PatternStatusWindowModule],
     providers: []
 })
 export class SecondaryWindowModule {}
