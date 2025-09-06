@@ -1,20 +1,35 @@
 <p-panel [toggleable]="toggleable">
     <ng-template pTemplate="header">
-        <div class="flex gap-2 align-items-center">
-            <span class="p-panel-title">Patrón</span>
+        <div class="-my-2 flex align-items-center justify-content-between w-full">
+            <span class="p-panel-title flex-order-0">Patrón</span>
+            <div
+                *ngIf="hasRealTimeStatus"
+                class="flex align-items-center gap-3">
+                <i
+                    pTooltip="Ver como ventana"
+                    tooltipPosition="left"
+                    class="pi pi-external-link open-in-secondary-window-icon"
+                    (click)="openSecondaryWindow()"></i>
+            </div>
         </div>
     </ng-template>
 
     <div class="grid">
         <div class="col-12">
             <div class="grid">
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.meterConstant | meterConstant }}
-                    </span>
+                <div class="col-12 flex flex-column gap-1 p-2">
+                    <div clas="flex flex-row gap-1">
+                        <span class="text-color-secondary font-medium"> Constante del medidor </span>
+                        <span class="text-color font-semibold">{{
+                            currentStep.form_control_raw.meterConstant | meterConstant
+                        }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <ng-container *ngIf="hasRealTimeStatus">
+        <app-pattern-status [patternStatus]="patternStatus"></app-pattern-status>
+    </ng-container>
 </p-panel>

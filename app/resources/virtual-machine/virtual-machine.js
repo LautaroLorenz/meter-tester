@@ -27,7 +27,7 @@ exports.default = {
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {
                 serialPort.open();
             }
-            return;
+            return secondaryWindowItem.id;
         }));
         electron_1.ipcMain.handle('close-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && (serialPort === null || serialPort === void 0 ? void 0 : serialPort.isOpen)) {

@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { Steps } from '../../../../models/business/enums/steps.model';
-import { timer } from 'rxjs';
 
 @Component({
     selector: 'app-run-step-switch',
@@ -22,22 +21,12 @@ export class RunStepSwitchComponent implements OnChanges {
     @Input() currentStep!: EssayStep;
     @Input() preparationStep!: EssayStep;
 
-    reloaded = true;
     readonly Steps = Steps;
     readonly cd = inject(ChangeDetectorRef);
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.currentStepId) {
-            timer(0).subscribe(() => this.forceReloadStepComponent());
+            setTimeout(() => this.cd.detectChanges());
         }
-    }
-
-    private forceReloadStepComponent(): void {
-        this.reloaded = false;
-        this.cd.markForCheck();
-        timer(0).subscribe(() => {
-            this.reloaded = true;
-            this.cd.detectChanges();
-        });
     }
 }

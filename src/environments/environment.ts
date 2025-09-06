@@ -9,7 +9,6 @@ export const APP_CONFIG: Environment = {
     generatorType: GeneratorEnum.Manual,
     patternType: PatternEnum.Virtual,
     skipSteps: {
-        generatorAdjusted: false,
         photocellAdjustmentRequest: false,
         verificationMajorStep: false,
         preparationMajorStep: false,

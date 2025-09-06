@@ -47,39 +47,39 @@
     <ng-template pTemplate="body">
         <tr>
             <td class="text-center">
-                {{ phaseL1?.voltage }}
+                {{ phaseL1?.voltage | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL1?.voltage !== undefined">[V]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL1?.current }}
+                {{ phaseL1?.current | number: '1.3-3' }}
                 <ng-container *ngIf="phaseL1?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL1?.anglePhi }}
+                {{ phaseL1?.anglePhi | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL1?.anglePhi !== undefined">[º]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL2?.voltage }}
+                {{ phaseL2?.voltage | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL2?.voltage !== undefined">[V]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL2?.current }}
+                {{ phaseL2?.current | number: '1.3-3' }}
                 <ng-container *ngIf="phaseL2?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL2?.anglePhi }}
+                {{ phaseL2?.anglePhi | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL2?.anglePhi !== undefined">[º]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL3?.voltage }}
+                {{ phaseL3?.voltage | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL3?.voltage !== undefined">[V]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL3?.current }}
+                {{ phaseL3?.current | number: '1.3-3' }}
                 <ng-container *ngIf="phaseL3?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL3?.anglePhi }}
+                {{ phaseL3?.anglePhi | number: '1.1-1' }}
                 <ng-container *ngIf="phaseL3?.anglePhi !== undefined">[º]</ng-container>
             </td>
         </tr>

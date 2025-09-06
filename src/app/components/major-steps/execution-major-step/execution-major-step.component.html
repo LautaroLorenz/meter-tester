@@ -7,7 +7,11 @@
         </ng-container>
 
         <ng-container
-            *ngIf="currentStep.photocellAdjustmentStatus !== PhotocellAdjustmentStatus.Pending && preparationStep">
+            *ngIf="
+                preparationStep &&
+                (currentStep.photocellAdjustmentStatus === PhotocellAdjustmentStatus.NotApply ||
+                    currentStep.photocellAdjustmentStatus === PhotocellAdjustmentStatus.Done)
+            ">
             <app-run-step-switch
                 [currentStepId]="currentStep.id"
                 [currentStep]="currentStep"

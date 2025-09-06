@@ -1,0 +1,12 @@
+<p-panel
+    header="Generador"
+    [toggleable]="true">
+    <ng-template pTemplate="body">
+        <div class="flex flex-column gap-3">
+            <app-command-line
+                [commandLines]="commandLines"
+                (send)="sendCommand($event)"
+                (refresh)="refreshCommand(commandLines[$event])"></app-command-line>
+        </div>
+    </ng-template>
+</p-panel>

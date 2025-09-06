@@ -7,7 +7,7 @@ import {
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, finalize, Observable, takeUntil, Subject, of, map } from 'rxjs';
+import { tap, switchMap, finalize, Observable, takeUntil, Subject, of, map, repeat, catchError, EMPTY } from 'rxjs';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
@@ -15,6 +15,9 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
+import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { merge } from 'rxjs/internal/observable/merge';
+import { defer } from 'rxjs/internal/observable/defer';
 
 @Component({
     selector: 'app-boot-test-run',
@@ -43,14 +46,11 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
 
     private stopStep = new Subject<void>();
+    private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
-    }
-
-    onGeneratorAdjustmentDone(): void {
-        this.canExecute = true;
     }
 
     onMinTimerCountdownFinish(): void {
@@ -95,11 +95,50 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         }
     }
 
+    /**
+     * preparar el generador y el patrón
+     */
+    prepareGeneratorBeforeExecution(): void {
+        // consulta la constante del patron en loop
+        const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
+            this.pattern.constant$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+        ).pipe(
+            // tap((result) => results), <- si fuera necesario consumir el pattern status
+            // Repite indefinidamente tras completar (puedes agregar delay si querés)
+            repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
+            catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.stop$)
+        );
+
+        // inicializa el generador y luego consulta la constante del patrón en loop
+        this.generator
+            .start$(
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+            .pipe(
+                takeUntil(this.stop$),
+                tap(() => (this.canExecute = true)),
+                switchMap(() => getPatternConstantLoop$)
+            )
+            .subscribe();
+    }
+
+    override onStepInit(): void {
+        this.onRestart();
+    }
+
     override onRestart(): void {
         // recetea el contador
         this.countTimerMin.reset();
         this.countTimerMax.reset();
-        this.generator.resetConfirmation();
+        this.prepareGeneratorBeforeExecution();
     }
 
     override abort(): Observable<boolean> {
@@ -110,10 +149,23 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
                 this.calculator.deviceStatus$.value
-            )
+            ) ||
+            (this.calculator.deviceStatus$.value === DeviceStatus.Stopped && this.isExecuting)
         ) {
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
+                switchMap(() => this.generator.stop$()),
+                map(() => true),
+                tap(() => this.blockUIService.setBlocked(false)),
+                tap(() => (this.isExecuting = false))
+            );
+        } else if (
+            [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
+                this.generator.deviceStatus$.value
+            )
+        ) {
+            this.blockUIService.setBlocked(true);
+            return this.generator.stop$().pipe(
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
@@ -150,7 +202,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
-                takeUntil(this.stopStep),
+                takeUntil(this.stop$),
                 // cambia el estado de los resultados en el calculador
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
                 // cambia el estado de los resultados en la pantalla
@@ -175,6 +227,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                // Apagar el generador
+                switchMap(() => this.generator.stop$()),
                 finalize(() => {
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
@@ -187,9 +241,10 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                 })
             )
             .subscribe();
+
         // revisar si algún puesto pasa a estado Falló
         this.checkFailedStatus();
-        // todo lo que no está en estado Falló, pasa a estado Aprobado
+        // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
     }
@@ -205,8 +260,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
-            takeUntil(this.onDestroy),
-            takeUntil(this.stopStep),
+            takeUntil(this.stop$),
             switchMap(() => this.getResultsLoop$())
         );
     }

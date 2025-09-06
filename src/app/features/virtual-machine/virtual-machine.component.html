@@ -143,6 +143,10 @@
 </div>
 
 <div class="mt-4">
+    <app-vm-generator (write)="virtualMachineWrite($event)"></app-vm-generator>
+</div>
+
+<div class="mt-4">
     <p-panel
         header="Historial de comandos"
         [toggleable]="true">

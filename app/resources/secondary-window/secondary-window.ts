@@ -28,6 +28,13 @@ function closeWindowById(windowId: number) {
     }
 }
 
+function closeWindowByUrl(url: string) {
+    const findedItem = openedWindows.find((window) => window.url === `${baseUrl}/${url}`);
+    if (findedItem) {
+        closeWindow(findedItem);
+    }
+}
+
 function openOffset(options?: BrowserWindowConstructorOptions): {
     x: number;
     y: number;
@@ -74,10 +81,11 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     });
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
-    const windowitem = {
+    const windowitem: WindowItem = {
         id: window.id,
         url: windowUrl,
         window,
+        isReady: false,
         close: () => closeWindowById(window.id)
     };
     openedWindows.push(windowitem);
@@ -89,7 +97,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     ipcMain.on(`from-main-to-window-id-${window.id}`, listener);
 
     window.on('closed', () => {
-        openedWindows = openedWindows.filter((window) => window.id !== window.id);
+        openedWindows = openedWindows.filter((w) => w.id !== window.id);
         ipcMain.removeListener(`from-main-to-window-id-${window.id}`, listener);
     });
     return windowitem;
@@ -111,16 +119,46 @@ export default {
             const windowItem = openWindow(params.url, params.options);
             return windowItem.id;
         });
-        ipcMain.handle('close-secondary-window', async (_, windowId: number) => {
-            closeWindowById(windowId);
+        ipcMain.handle('close-secondary-window', async (_, windowIdOrUrl: number | string) => {
+            if (typeof windowIdOrUrl === 'number') {
+                closeWindowById(windowIdOrUrl);
+            }
+            if (typeof windowIdOrUrl === 'string') {
+                closeWindowByUrl(windowIdOrUrl);
+            }
         });
-        ipcMain.handle('get-secondary-window-id', (event) => {
+
+        // Llamando este método desde la ventana secundaria, indicamos al proceso principal que ya está Ready
+        ipcMain.handle('get-secondary-window-id', (_, url: string | undefined) => {
+            if (url) {
+                const windowItem = openedWindows.find((item) => item.url === `${baseUrl}/${url}`);
+                if (windowItem) {
+                    return windowItem.id;
+                }
+            }
+            return null;
+        });
+
+        ipcMain.handle('set-secondary-window-ready', (event) => {
             const win = BrowserWindow.fromWebContents(event.sender);
             const windowId = win ? win.id : null;
             if (windowId) {
-                mainWindow?.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                const windowItem = openedWindows.find((item) => item.id === windowId);
+                if (windowItem) {
+                    windowItem.isReady = true;
+                    mainWindow?.webContents.send(`secondary-window-id-${windowId}-is-ready`);
+                }
             }
             return windowId;
+        });
+
+        // Desde el proceso principal, podemos verificar si una ventana esta ready si tenemos el id
+        ipcMain.handle('is-secondary-window-ready', async (_, windowIdOrUrl) => {
+            const windowItem = openedWindows.find(
+                (item) => item.id === windowIdOrUrl || item.url === `${baseUrl}/${windowIdOrUrl}`
+            );
+            if (!windowItem) return false;
+            return windowItem.isReady;
         });
     }
 };

@@ -61,6 +61,7 @@ import { ConfirmDialogModule } from './confirm-dialog/confirm-dialog.module';
 import { BlockUiModule } from './block-ui/block-ui.module';
 import { MenuModule } from './menu/menu.module';
 import { GeneratorComponent } from './machine/generator/generator.component';
+import { PatternStatusModule } from './machine/pattern/components/pattern-status/pattern-status.module';
 
 const AppComponents = [
     PageTitleComponent,
@@ -118,7 +119,14 @@ const AppComponents = [
     GeneratorComponent
 ];
 
-const AppModules = [PrimeNgModule, TableColumnModule, ConfirmDialogModule, BlockUiModule, MenuModule];
+const AppModules = [
+    PrimeNgModule,
+    TableColumnModule,
+    ConfirmDialogModule,
+    BlockUiModule,
+    MenuModule,
+    PatternStatusModule
+];
 
 @NgModule({
     declarations: [AppComponents],

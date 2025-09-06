@@ -8,7 +8,6 @@ import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photoc
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 import { FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
 import { WakeLockService } from '../../../services/wake-lock.service';
-import { of } from 'rxjs/internal/observable/of';
 
 @Component({
     selector: 'app-execution-major-step',
