@@ -150,16 +150,39 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         };
     }
 
-    // TODO agregar el estado
     // Respuesta del patrón que incluye información del estado (además de la constante)
     private mapConstantResponseWithStatus(command: string): PatternStatus {
         const blocks = CommandDirector.getBlocks(command);
-        const constant = Number(blocks[3]);
+        const constant = Number(blocks[3] || '0');
+        const voltageL1 = Number(blocks[4] || '0') / 10;
+        const voltageL2 = Number(blocks[5] || '0') / 10;
+        const voltageL3 = Number(blocks[6] || '0') / 10;
+        const currentL1 = Number(blocks[7] || '0') / 1000;
+        const currentL2 = Number(blocks[8] || '0') / 1000;
+        const currentL3 = Number(blocks[9] || '0') / 1000;
+        const anglePhiL1 = Number((blocks[10] || '0').substring(3)) / 10;
+        const anglePhiL2 = Number((blocks[11] || '0').substring(3)) / 10;
+        const anglePhiL3 = Number((blocks[12] || '0').substring(3)) / 10;
         return {
             constant,
-            phaseL1: this.EMPTY_PHASE,
-            phaseL2: this.EMPTY_PHASE,
-            phaseL3: this.EMPTY_PHASE
+            phaseL1: {
+                ...this.EMPTY_PHASE,
+                voltage: voltageL1,
+                current: currentL1,
+                anglePhi: anglePhiL1
+            },
+            phaseL2: {
+                ...this.EMPTY_PHASE,
+                voltage: voltageL2,
+                current: currentL2,
+                anglePhi: anglePhiL2
+            },
+            phaseL3: {
+                ...this.EMPTY_PHASE,
+                voltage: voltageL3,
+                current: currentL3,
+                anglePhi: anglePhiL3
+            }
         };
     }
 
