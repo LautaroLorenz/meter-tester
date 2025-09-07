@@ -11,7 +11,7 @@ export class ResultStatusComponent {
     @Input() resultStatus!: ResultStatus;
 
     get styleClass(): string {
-        const classes: string[] = ['py-2 px-3 gap-2'];
+        const classes: string[] = ['py-1 px-2 gap-1'];
         if (this.severity === 'surface') {
             classes.push('bg-surface-200');
         }
@@ -68,7 +68,7 @@ export class ResultStatusComponent {
             case ResultStatus.Locked:
                 return 'Bloqueado';
             case ResultStatus.Approved:
-                return 'Aprobado';
+                return 'Ok';
             case ResultStatus.Failed:
                 return 'Falló';
         }

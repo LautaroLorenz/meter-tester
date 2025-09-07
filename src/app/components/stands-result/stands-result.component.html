@@ -6,7 +6,9 @@
         pTemplate="header"
         let-columns>
         <tr>
-            <th *ngFor="let col of columns">
+            <th
+                *ngFor="let col of columns"
+                [style]="col.headerStyle">
                 {{ col.header }}
             </th>
         </tr>

@@ -52,22 +52,26 @@ export class StandsResultComponent implements OnInit, OnChanges {
             {
                 header: 'Puesto',
                 field: (_, index) => (index + 1).toString().padStart(2, '0'),
-                alignHorizontal: TC_AlignHorizontal.Number
+                alignHorizontal: TC_AlignHorizontal.Number,
+                headerStyle: 'font-size:15px;'
             },
             {
                 header: 'Medidor',
                 field: (item) => ('foreign' in item && !!item.foreign?.meter ? item.foreign.meter.label : ''),
-                alignHorizontal: TC_AlignHorizontal.Text
+                alignHorizontal: TC_AlignHorizontal.Text,
+                headerStyle: 'font-size:15px;'
             },
             {
                 header: 'Nº de serie',
                 field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
-                alignHorizontal: TC_AlignHorizontal.Text
+                alignHorizontal: TC_AlignHorizontal.Text,
+                headerStyle: 'min-width:104px;font-size:15px;'
             },
             {
                 header: 'Año',
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
-                alignHorizontal: TC_AlignHorizontal.Number
+                alignHorizontal: TC_AlignHorizontal.Number,
+                headerStyle: 'font-size:15px;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`,
@@ -80,12 +84,14 @@ export class StandsResultComponent implements OnInit, OnChanges {
                     }
                     return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
                 },
-                alignHorizontal: TC_AlignHorizontal.Alphanumeric
+                alignHorizontal: TC_AlignHorizontal.Alphanumeric,
+                headerStyle: 'min-width:116px;font-size:15px;'
             },
             this.resultsColumn,
             {
                 header: 'Resultado',
-                template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp
+                template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
+                headerStyle: 'font-size:15px;'
             }
         ];
     }
