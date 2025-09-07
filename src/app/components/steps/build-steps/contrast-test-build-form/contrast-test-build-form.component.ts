@@ -7,6 +7,7 @@ import {
 } from '../../../../models/business/interafces/steps/contrast-test-step.model';
 import { MeterConstants } from '../../../../models/business/constants/meter-constant.model';
 import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
+import { copyPhase } from '../../../../models/business/helper/copy-phase.helper';
 
 @Component({
     selector: 'app-contrast-test-build-form',
@@ -16,6 +17,7 @@ import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.m
 })
 export class ContrastTestBuildFormComponent extends StepBuildFormComponent<ContrastTestStep> {
     readonly MeterConstants = MeterConstants;
+    readonly copyPhase = copyPhase;
 
     override buildForm(fb: FormBuilder): AbstractFormGroup<ContrastTestStep> {
         return new ContrastTestFormBuilder().build(fb).form as AbstractFormGroup<ContrastTestStep>;

@@ -1,6 +1,12 @@
 <ng-container [formGroup]="formGroup">
-    <div class="mb-3 flex justify-content-center">
+    <div class="mb-3 flex justify-content-center gap-2 align-items-center title">
         <label class="text-lg"> Fase {{ faseLabel }} </label>
+        <p-button
+            *ngIf="showCopyButton"
+            icon="pi pi-copy"
+            [outlined]="true"
+            (click)="copyClick.emit()"
+            pTooltip="Copiar valores a otras fases"></p-button>
     </div>
     <div class="flex flex-column">
         <div

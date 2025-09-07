@@ -4,6 +4,7 @@ import { StepBuildFormComponent } from '../../../../models/business/class/step-b
 import { VacuumTestFormBuilder, VacuumTestStep } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { MeterConstants } from '../../../../models/business/constants/meter-constant.model';
 import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
+import { copyPhase } from '../../../../models/business/helper/copy-phase.helper';
 
 @Component({
     selector: 'app-vacuum-test-build-form',
@@ -13,6 +14,7 @@ import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.m
 })
 export class VacuumTestBuildFormComponent extends StepBuildFormComponent<VacuumTestStep> {
     readonly MeterConstants = MeterConstants;
+    readonly copyPhase = copyPhase;
 
     override buildForm(fb: FormBuilder): AbstractFormGroup<VacuumTestStep> {
         return new VacuumTestFormBuilder().build(fb).form as AbstractFormGroup<VacuumTestStep>;

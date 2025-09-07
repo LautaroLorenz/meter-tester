@@ -91,7 +91,14 @@
                         [formGroup]="form.get('form_control_raw.phaseL1') | asFormGroup"
                         faseLabel="L1"
                         voltageFormControlName="voltage"
-                        voltageLabel="U1"></app-phase-form-group>
+                        voltageLabel="U1"
+                        [showCopyButton]="true"
+                        (copyClick)="
+                            copyPhase(form.get('form_control_raw.phaseL1'), [
+                                form.get('form_control_raw.phaseL2'),
+                                form.get('form_control_raw.phaseL3'),
+                            ])
+                        "></app-phase-form-group>
                 </div>
 
                 <div class="field col col-4">
