@@ -30,6 +30,15 @@
 </p-table>
 
 <ng-template
+    #meterColumnTmp
+    let-item="item"
+    let-index="index">
+    <app-clamp [lines]="2">
+        {{ item?.foreign?.meter?.label }}
+    </app-clamp>
+</ng-template>
+
+<ng-template
     #resultStatusColumnTmp
     let-item="item"
     let-index="index">

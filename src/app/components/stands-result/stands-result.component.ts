@@ -29,6 +29,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
     @Input() stepMeterConstant!: MeterConstantEnum;
     @Input() resultStatusColumnTemplate: TemplateRef<TableColumnTemplateContext<StandStandResult>> | undefined;
 
+    @ViewChild('meterColumnTmp', { static: true })
+    meterColumnTmp!: TemplateRef<TableColumnTemplateContext<StandStandResult>>;
     @ViewChild('resultStatusColumnTmp', { static: true })
     resultStatusColumnTmp!: TemplateRef<TableColumnTemplateContext<StandStandResult>>;
 
@@ -57,8 +59,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             },
             {
                 header: 'Medidor',
-                field: (item) => ('foreign' in item && !!item.foreign?.meter ? item.foreign.meter.label : ''),
-                alignHorizontal: TC_AlignHorizontal.Text,
+                template: this.meterColumnTmp,
                 headerStyle: 'font-size:15px;'
             },
             {

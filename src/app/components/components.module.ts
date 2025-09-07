@@ -62,6 +62,7 @@ import { BlockUiModule } from './block-ui/block-ui.module';
 import { MenuModule } from './menu/menu.module';
 import { GeneratorComponent } from './machine/generator/generator.component';
 import { PatternStatusModule } from './machine/pattern/components/pattern-status/pattern-status.module';
+import { ClampModule } from './clamp/clamp.module';
 
 const AppComponents = [
     PageTitleComponent,
@@ -125,7 +126,8 @@ const AppModules = [
     ConfirmDialogModule,
     BlockUiModule,
     MenuModule,
-    PatternStatusModule
+    PatternStatusModule,
+    ClampModule
 ];
 
 @NgModule({
