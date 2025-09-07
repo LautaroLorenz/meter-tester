@@ -11,7 +11,7 @@ export class ResultStatusComponent {
     @Input() resultStatus!: ResultStatus;
 
     get styleClass(): string {
-        const classes: string[] = ['py-2 px-3 gap-2'];
+        const classes: string[] = ['py-1 px-2 gap-1'];
         if (this.severity === 'surface') {
             classes.push('bg-surface-200');
         }
@@ -62,13 +62,13 @@ export class ResultStatusComponent {
             case ResultStatus.Unknown:
                 return undefined;
             case ResultStatus.Pending:
-                return 'En espera';
+                return 'Esperando';
             case ResultStatus.WorkInProgress:
                 return 'Calculando';
             case ResultStatus.Locked:
                 return 'Bloqueado';
             case ResultStatus.Approved:
-                return 'Aprobado';
+                return 'OK';
             case ResultStatus.Failed:
                 return 'Falló';
         }

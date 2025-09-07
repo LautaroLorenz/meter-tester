@@ -4,6 +4,7 @@ import { BootTestFormBuilder, BootTestStep } from '../../../../models/business/i
 import { AbstractFormGroup } from '../../../../models/core/abstract-form-group.model';
 import { StepBuildFormComponent } from '../../../../models/business/class/step-build-form-component.model';
 import { MeterConstants } from '../../../../models/business/constants/meter-constant.model';
+import { copyPhase } from '../../../../models/business/helper/copy-phase.helper';
 
 @Component({
     selector: 'app-boot-test-build-form',
@@ -13,6 +14,7 @@ import { MeterConstants } from '../../../../models/business/constants/meter-cons
 })
 export class BootTestBuildFormComponent extends StepBuildFormComponent<BootTestStep> {
     readonly MeterConstants = MeterConstants;
+    readonly copyPhase = copyPhase;
 
     override buildForm(fb: FormBuilder): AbstractFormGroup<BootTestStep> {
         return new BootTestFormBuilder().build(fb).form as AbstractFormGroup<BootTestStep>;

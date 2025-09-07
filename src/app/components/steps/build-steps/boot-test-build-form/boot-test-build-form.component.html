@@ -111,7 +111,14 @@
                         currentFormControlName="current"
                         currentLabel="I1"
                         angleFormControlName="anglePhi"
-                        angleLabel="&#632;1"></app-phase-form-group>
+                        angleLabel="&#632;1"
+                        [showCopyButton]="true"
+                        (copyClick)="
+                            copyPhase(form.get('form_control_raw.phaseL1'), [
+                                form.get('form_control_raw.phaseL2'),
+                                form.get('form_control_raw.phaseL3'),
+                            ])
+                        "></app-phase-form-group>
                 </div>
 
                 <div class="field col col-4">

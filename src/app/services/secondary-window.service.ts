@@ -12,8 +12,14 @@ export class SecondaryWindowService {
         private readonly ngZone: NgZone
     ) {}
 
-    openWindow(url: string): Promise<number> {
-        return this.ipcService.invoke('open-secondary-window', { url: this.formatUrl(url) });
+    openWindow(
+        url: string,
+        options?: {
+            height?: number;
+            inspector?: boolean;
+        }
+    ): Promise<number> {
+        return this.ipcService.invoke('open-secondary-window', { url: this.formatUrl(url), options });
     }
 
     closeWindow(windowId: number): Promise<void> {

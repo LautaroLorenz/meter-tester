@@ -68,13 +68,14 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
         return windowIsOpen;
     }
 
+    const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
     const window = new BrowserWindow({
-        ...openOffset(),
+        ...openOffset(options),
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,
-            devTools: inspector
+            devTools: openInspector
         },
         alwaysOnTop: false,
         ...options

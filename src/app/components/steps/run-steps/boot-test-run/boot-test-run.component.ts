@@ -40,7 +40,8 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | BootTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
-        }
+        },
+        headerStyle: 'min-width:90px;font-size:15px;'
     };
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
