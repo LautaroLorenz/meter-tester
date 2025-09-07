@@ -28,6 +28,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
     @Input() resultsColumn!: TableColumn<StandStandResult>;
     @Input() stepMeterConstant!: MeterConstantEnum;
     @Input() resultStatusColumnTemplate: TemplateRef<TableColumnTemplateContext<StandStandResult>> | undefined;
+    @Input() limit: number | null = null;
+    @Input() offset = 0;
 
     @ViewChild('meterColumnTmp', { static: true })
     meterColumnTmp!: TemplateRef<TableColumnTemplateContext<StandStandResult>>;
@@ -53,7 +55,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
         this.columns = [
             {
                 header: 'Puesto',
-                field: (_, index) => (index + 1).toString().padStart(2, '0'),
+                field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'font-size:15px;'
             },
@@ -107,9 +109,15 @@ export class StandsResultComponent implements OnInit, OnChanges {
         if (!preparationStep.form_control_raw?.length) {
             return [];
         }
-        return results.map((result, index) => ({
+        const formatedResults = results.map((result, index) => ({
             ...result,
             ...preparationStep.form_control_raw[index]
         }));
+        // calcular los elementos visibles
+        const off = Math.max(0, this.offset ?? 0);
+        const lim = this.limit ?? formatedResults.length;
+        const start = Math.min(off, formatedResults.length);
+        const end = Math.min(start + Math.max(0, lim), formatedResults.length);
+        return formatedResults.slice(start, end);
     }
 }

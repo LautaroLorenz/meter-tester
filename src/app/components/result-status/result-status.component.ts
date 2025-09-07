@@ -62,13 +62,13 @@ export class ResultStatusComponent {
             case ResultStatus.Unknown:
                 return undefined;
             case ResultStatus.Pending:
-                return 'En espera';
+                return 'Esperando';
             case ResultStatus.WorkInProgress:
                 return 'Calculando';
             case ResultStatus.Locked:
                 return 'Bloqueado';
             case ResultStatus.Approved:
-                return 'Ok';
+                return 'OK';
             case ResultStatus.Failed:
                 return 'Falló';
         }

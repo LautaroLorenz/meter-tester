@@ -65,7 +65,10 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         private readonly staticsService: StaticsService
     ) {
         this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
-        this.executionSteps = MajorStepsDirector.stepsByMajorStep(this.runEssay.essaySteps, MajorSteps.Execution).filter(({ executedStatus }) => executedStatus === StepStatus.Done);
+        this.executionSteps = MajorStepsDirector.stepsByMajorStep(
+            this.runEssay.essaySteps,
+            MajorSteps.Execution
+        ).filter(({ executedStatus }) => executedStatus === StepStatus.Done);
         this.preparationStep = MajorStepsDirector.stepsByMajorStep(
             this.runEssay.essaySteps,
             MajorSteps.Preparation
@@ -120,11 +123,14 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
             if (index > 0) {
                 PDF.addPage();
             }
-            const canvas = await html2canvas(page.html, { scale: 3 });
-            const imageGeneratedFromTemplate = canvas.toDataURL('image/png');
+            const canvas = await html2canvas(page.html, {
+                scale: 1.5,
+                useCORS: true
+            });
+            const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg');
             const width = PDF.internal.pageSize.getWidth();
             const height = PDF.internal.pageSize.getHeight();
-            PDF.addImage(imageGeneratedFromTemplate, 'PNG', 0, 0, width, height, undefined, 'FAST');
+            PDF.addImage(imageGeneratedFromTemplate, 'JPEG', 0, 0, width, height, undefined, 'FAST');
         }
         return PDF.save(fileName, { returnPromise: true });
     }
