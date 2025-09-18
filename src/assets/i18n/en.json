@@ -1,6 +1,6 @@
 {
-  "StepRunMode.continuousResultUpdate": "Continuous results update",
-  "StepRunMode.finalResultLock": "Lock final result and finish",
+  "StepRunMode.continuousResultUpdate": "Sequential test",
+  "StepRunMode.finalResultLock": "Unit test",
   "ResultStatus.Approved": "Approved",
   "ResultStatus.Failed": "Failed",
   "Select": "Select"
