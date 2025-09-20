@@ -20,15 +20,15 @@ import { GeneratorResponseCommands } from '../../../../models/business/enums/com
 export class VmGeneratorComponent extends VMDeviceComponent {
     override readonly device = Devices.GEN;
     override commandLines: CommandLine[] = [
-      {
-                  id: 1,
-                  name: GeneratorResponseCommands.ACK,
-                  blocks: [
-                      {
-                          type: CommandBlockTypes.Fixed,
-                          value: `B|${Devices.GEN}|${Devices.STW}|ACK |Z|x`
-                      },
-                  ]
-              }
+        {
+            id: 1,
+            name: GeneratorResponseCommands.ACK,
+            blocks: [
+                {
+                    type: CommandBlockTypes.Fixed,
+                    value: `B|${Devices.GEN}${Devices.STW}|ACK |Z|x`
+                }
+            ]
+        }
     ];
 }

@@ -112,7 +112,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     private mapTSxxResponse(commands: string[]): CommandResultResponse[] {
         return commands.map((command) => {
             const blocks = CommandDirector.getBlocks(command);
-            const resultBlock = blocks[4];
+            const resultBlock = blocks[3];
             const resultBlockValue = resultBlock.substring(4);
 
             // los resultados sin números no se procesan

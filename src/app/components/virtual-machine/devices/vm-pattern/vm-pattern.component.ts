@@ -35,7 +35,7 @@ export class VmPatternComponent extends VMDeviceComponent implements OnInit {
                 blocks: [
                     {
                         type: CommandBlockTypes.Fixed,
-                        value: `B|${Devices.PAT}|${Devices.STW}|`
+                        value: `B|${Devices.PAT}${Devices.STW}|`
                     },
                     {
                         type: CommandBlockTypes.Variable,
@@ -117,7 +117,7 @@ export class VmPatternComponent extends VMDeviceComponent implements OnInit {
                 blocks: [
                     {
                         type: CommandBlockTypes.Fixed,
-                        value: `B|${Devices.PAT}|${Devices.STW}|`
+                        value: `B|${Devices.PAT}${Devices.STW}|`
                     },
                     {
                         type: CommandBlockTypes.Variable,

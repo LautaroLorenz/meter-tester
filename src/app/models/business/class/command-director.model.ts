@@ -7,11 +7,17 @@ export class CommandDirector {
     public static readonly STAND = 'PS';
 
     static getFrom(command: string): Devices {
-        return this.getBlocks(command)[1] as Devices;
+        const compositeCode = this.getBlocks(command)[1];
+        // Para códigos compuestos como 'PS', 'CS', 'GS', 'SP', 'SC', 'SG'
+        // El primer carácter indica el dispositivo origen
+        return compositeCode[0] as Devices;
     }
 
     static getTo(command: string): Devices {
-        return this.getBlocks(command)[2] as Devices;
+        const compositeCode = this.getBlocks(command)[1];
+        // Para códigos compuestos como 'PS', 'CS', 'GS', 'SP', 'SC', 'SG'
+        // El segundo carácter indica el dispositivo destino
+        return compositeCode[1] as Devices;
     }
 
     static getBlocks(command: string): string[] {

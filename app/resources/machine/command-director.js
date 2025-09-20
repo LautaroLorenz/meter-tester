@@ -3,10 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandDirector = void 0;
 class CommandDirector {
     static getFrom(command) {
-        return this.getBlocks(command)[1];
+        const compositeCode = this.getBlocks(command)[1];
+        // Para códigos compuestos como 'PS', 'CS', 'GS', 'SP', 'SC', 'SG'
+        // El primer carácter indica el dispositivo origen
+        return compositeCode[0];
     }
     static getTo(command) {
-        return this.getBlocks(command)[2];
+        const compositeCode = this.getBlocks(command)[1];
+        // Para códigos compuestos como 'PS', 'CS', 'GS', 'SP', 'SC', 'SG'
+        // El segundo carácter indica el dispositivo destino
+        return compositeCode[1];
     }
     static getBlocks(command) {
         return command.split(this.DIVIDER);

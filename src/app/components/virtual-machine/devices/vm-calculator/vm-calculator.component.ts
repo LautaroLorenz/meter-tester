@@ -7,8 +7,8 @@ import {
 } from '../../../../models/business/enums/commands.model';
 import { CommandLine } from '../../../../models/business/interafces/command-line.model';
 import { CommandBlockTypes } from '../../../../models/business/interafces/command-block.model';
-import { APP_CONFIG } from '../../../../../environments/environment';
 import { CommandDirector } from '../../../../models/business/class/command-director.model';
+import { APP_CONFIG } from '../../../../../environments/environment';
 import { CommandLineConfigTypes } from '../../../../models/business/interafces/command-block-config.model';
 
 @Component({
@@ -44,7 +44,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
                     blocks: [
                         {
                             type: CommandBlockTypes.Fixed,
-                            value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK |Z|x`
+                            value: `B|${Devices.CAL}${Devices.STW}|P${standNumber}|ACK |Z|x`
                         }
                     ]
                 };
@@ -63,7 +63,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
                     blocks: [
                         {
                             type: CommandBlockTypes.Fixed,
-                            value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK |Z|x`
+                            value: `B|${Devices.CAL}${Devices.STW}|P${standNumber}|ACK |Z|x`
                         }
                     ]
                 };
@@ -86,7 +86,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
                     blocks: [
                         {
                             type: CommandBlockTypes.Fixed,
-                            value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK`
+                            value: `B|${Devices.CAL}${Devices.STW}|P${standNumber}|ACK`
                         },
                         {
                             type: CommandBlockTypes.Variable,
@@ -135,7 +135,7 @@ export class VmCalculatorComponent extends VMDeviceComponent {
                     blocks: [
                         {
                             type: CommandBlockTypes.Fixed,
-                            value: `B|${Devices.CAL}|${Devices.STW}|P${standNumber}|ACK`
+                            value: `B|${Devices.CAL}${Devices.STW}|P${standNumber}|ACK`
                         },
                         {
                             type: CommandBlockTypes.Variable,

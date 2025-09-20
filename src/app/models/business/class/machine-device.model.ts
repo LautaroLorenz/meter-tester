@@ -25,7 +25,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     constructor(
         protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService
-    ) { }
+    ) {}
 
     ngOnDestroy(): void {
         this.onDestroy.next();
@@ -34,7 +34,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     }
 
     buildCommand(...blocks: string[]): string {
-        return CommandDirector.build(Devices.STW, this.device, ...blocks);
+        return CommandDirector.build(`${Devices.STW}${this.device}`, ...blocks);
     }
 
     write$(command: string, onError?: () => void): Observable<string> {
