@@ -88,7 +88,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
                     return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
                 },
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:116px;font-size:15px;'
+                headerStyle: 'min-width:119px;font-size:15px;white-space:nowrap;'
             },
             this.resultsColumn,
             {
