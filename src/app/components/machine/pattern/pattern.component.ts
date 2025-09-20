@@ -38,7 +38,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     private readonly EMPTY_PHASE: Phase = {
         voltage: 0,
         current: 0,
-        anglePhi: 0
+        anglePhi: 0,
+        powerFactor: 0,
+        powerFactorLetter: 'L'
     };
 
     constructor(

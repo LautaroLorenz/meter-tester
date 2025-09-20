@@ -110,8 +110,11 @@
                         voltageLabel="U1"
                         currentFormControlName="current"
                         currentLabel="I1"
-                        angleFormControlName="anglePhi"
-                        angleLabel="&#632;1"
+                        powerFactorFormControlName="powerFactor"
+                        powerFactorLabel="&#632;1"
+                        powerFactorLetterFormControlName="powerFactorLetter"
+                        powerFactorLetterLabel=""
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"
                         [showCopyButton]="true"
                         (copyClick)="
                             copyPhase(form.get('form_control_raw.phaseL1'), [
@@ -129,8 +132,11 @@
                         voltageLabel="U2"
                         currentFormControlName="current"
                         currentLabel="I2"
-                        angleFormControlName="anglePhi"
-                        angleLabel="&#632;2"></app-phase-form-group>
+                        powerFactorFormControlName="powerFactor"
+                        powerFactorLabel="&#632;2"
+                        powerFactorLetterFormControlName="powerFactorLetter"
+                        powerFactorLetterLabel=""
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
 
                 <div class="field col col-4">
@@ -141,8 +147,11 @@
                         voltageLabel="U3"
                         currentFormControlName="current"
                         currentLabel="I3"
-                        angleFormControlName="anglePhi"
-                        angleLabel="&#632;3"></app-phase-form-group>
+                        powerFactorFormControlName="powerFactor"
+                        powerFactorLabel="&#632;3"
+                        powerFactorLetterFormControlName="powerFactorLetter"
+                        powerFactorLetterLabel=""
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
             </div>
         </div>

@@ -50,23 +50,36 @@
         </div>
 
         <div
-            *ngIf="angleFormControlName"
+            *ngIf="powerFactorFormControlName"
             class="flex flex-column mt-3">
             <label
-                for="{{ angleFormControlName }}"
+                for="{{ powerFactorFormControlName }}"
                 class="mb-2"
-                >Ángulo de ensayo {{ angleLabel }} [º]<span class="ml-1 text-red-300">*</span>
+                >{{ getPowerFactorLabel() }} {{ powerFactorLabel }}<span class="ml-1 text-red-300">*</span>
             </label>
-            <p-inputNumber
-                styleClass="flex flex-1"
-                id="{{ angleFormControlName }}"
-                [formControlName]="angleFormControlName"
-                autofocus
-                [useGrouping]="false"
-                [min]="0"
-                [minFractionDigits]="0"
-                [maxFractionDigits]="1"></p-inputNumber>
-            <app-input-error [formControlName]="angleFormControlName"></app-input-error>
+            <div class="flex gap-2">
+                <p-inputNumber
+                    styleClass="flex flex-1"
+                    id="{{ powerFactorFormControlName }}"
+                    [formControlName]="powerFactorFormControlName"
+                    autofocus
+                    [useGrouping]="false"
+                    [min]="0"
+                    [max]="1"
+                    [minFractionDigits]="2"
+                    [maxFractionDigits]="2"></p-inputNumber>
+                <p-dropdown
+                    styleClass="flex"
+                    id="{{ powerFactorLetterFormControlName }}"
+                    [formControlName]="powerFactorLetterFormControlName"
+                    [options]="powerFactorLetterOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="L/C"
+                    appendTo="body"></p-dropdown>
+            </div>
+            <app-input-error [formControlName]="powerFactorFormControlName"></app-input-error>
+            <app-input-error [formControlName]="powerFactorLetterFormControlName"></app-input-error>
         </div>
     </div>
 </ng-container>

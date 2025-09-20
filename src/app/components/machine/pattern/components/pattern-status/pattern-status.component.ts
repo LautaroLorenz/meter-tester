@@ -32,16 +32,16 @@ export class PatternStatusComponent implements OnChanges {
     private updateRows(): PatternStatusRow[] {
         const updatePhaseRow = (
             row: PatternStatusRow,
-            phaseProp: keyof Phase,
+            phaseProp: 'voltage' | 'current' | 'anglePhi' | 'powerFactor',
             phaseL1: Phase | undefined,
             phaseL2: Phase | undefined,
             phaseL3: Phase | undefined
         ): PatternStatusRow => {
             return {
                 ...row,
-                l1: phaseL1 ? phaseL1[phaseProp] : 0,
-                l2: phaseL2 ? phaseL2[phaseProp] : 0,
-                l3: phaseL3 ? phaseL3[phaseProp] : 0
+                l1: phaseL1 ? (phaseL1[phaseProp] as number) : 0,
+                l2: phaseL2 ? (phaseL2[phaseProp] as number) : 0,
+                l3: phaseL3 ? (phaseL3[phaseProp] as number) : 0
             };
         };
 

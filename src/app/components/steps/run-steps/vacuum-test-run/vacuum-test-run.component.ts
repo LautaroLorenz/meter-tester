@@ -105,17 +105,23 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         const phaseL1: Phase = {
             ...this.currentStep.form_control_raw.phaseL1,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         const phaseL2: Phase = {
             ...this.currentStep.form_control_raw.phaseL2,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         const phaseL3: Phase = {
             ...this.currentStep.form_control_raw.phaseL3,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         // consulta la constante del patron en loop
         const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>

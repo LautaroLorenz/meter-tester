@@ -27,21 +27,30 @@
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I1
             </th>
-            <th class="text-color-secondary text-center">&nbsp;&#632;1</th>
+            <th class="text-color-secondary text-center">
+                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                >&nbsp;&#632;1
+            </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Tensión</ng-container>&nbsp;U2
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I2
             </th>
-            <th class="text-color-secondary text-center">&nbsp;&#632;2</th>
+            <th class="text-color-secondary text-center">
+                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                >&nbsp;&#632;2
+            </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Tensión</ng-container>&nbsp;U3
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I3
             </th>
-            <th class="text-color-secondary text-center">&nbsp;&#632;3</th>
+            <th class="text-color-secondary text-center">
+                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                >&nbsp;&#632;3
+            </th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body">
@@ -55,8 +64,8 @@
                 <ng-container *ngIf="phaseL1?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL1?.anglePhi | number: '1.1-1' }}
-                <ng-container *ngIf="phaseL1?.anglePhi !== undefined">[º]</ng-container>
+                {{ phaseL1?.powerFactor | number: '1.2-2' }}{{ phaseL1?.powerFactorLetter }}
+                <ng-container *ngIf="phaseL1?.powerFactor !== undefined"></ng-container>
             </td>
             <td class="text-center">
                 {{ phaseL2?.voltage | number: '1.1-1' }}
@@ -67,8 +76,8 @@
                 <ng-container *ngIf="phaseL2?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL2?.anglePhi | number: '1.1-1' }}
-                <ng-container *ngIf="phaseL2?.anglePhi !== undefined">[º]</ng-container>
+                {{ phaseL2?.powerFactor | number: '1.2-2' }}{{ phaseL2?.powerFactorLetter }}
+                <ng-container *ngIf="phaseL2?.powerFactor !== undefined"></ng-container>
             </td>
             <td class="text-center">
                 {{ phaseL3?.voltage | number: '1.1-1' }}
@@ -79,8 +88,8 @@
                 <ng-container *ngIf="phaseL3?.current !== undefined">[A]</ng-container>
             </td>
             <td class="text-center">
-                {{ phaseL3?.anglePhi | number: '1.1-1' }}
-                <ng-container *ngIf="phaseL3?.anglePhi !== undefined">[º]</ng-container>
+                {{ phaseL3?.powerFactor | number: '1.2-2' }}{{ phaseL3?.powerFactorLetter }}
+                <ng-container *ngIf="phaseL3?.powerFactor !== undefined"></ng-container>
             </td>
         </tr>
     </ng-template>
