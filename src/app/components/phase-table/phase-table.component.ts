@@ -23,4 +23,13 @@ export class PhaseTableComponent {
         }
         return 'Factor de potencia';
     }
+
+    getPowerFactorPrefix(): string {
+        if (this.meterConstantEnum === MeterConstantEnum.Active) {
+            return 'Cos';
+        } else if (this.meterConstantEnum === MeterConstantEnum.Reactive) {
+            return 'Sen';
+        }
+        return 'FP';
+    }
 }

@@ -29,6 +29,7 @@
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
                 >&nbsp;&#632;1
             </th>
             <th class="text-color-secondary text-center">
@@ -39,6 +40,7 @@
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
                 >&nbsp;&#632;2
             </th>
             <th class="text-color-secondary text-center">
@@ -49,6 +51,7 @@
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
+                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
                 >&nbsp;&#632;3
             </th>
         </tr>
