@@ -27,33 +27,21 @@
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I1
             </th>
-            <th class="text-color-secondary text-center">
-                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
-                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
-                >&nbsp;&#632;1
-            </th>
+            <th class="text-color-secondary text-center">{{ getPowerFactorPrefix() }}&nbsp;&#632;1</th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Tensión</ng-container>&nbsp;U2
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I2
             </th>
-            <th class="text-color-secondary text-center">
-                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
-                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
-                >&nbsp;&#632;2
-            </th>
+            <th class="text-color-secondary text-center">{{ getPowerFactorPrefix() }}&nbsp;&#632;2</th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Tensión</ng-container>&nbsp;U3
             </th>
             <th class="text-color-secondary text-center">
                 <ng-container *ngIf="showTexts">Corriente</ng-container>&nbsp;I3
             </th>
-            <th class="text-color-secondary text-center">
-                <ng-container *ngIf="showTexts">{{ getPowerFactorLabel() }}</ng-container
-                ><ng-container *ngIf="!showTexts">{{ getPowerFactorPrefix() }}</ng-container
-                >&nbsp;&#632;3
-            </th>
+            <th class="text-color-secondary text-center">{{ getPowerFactorPrefix() }}&nbsp;&#632;3</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body">

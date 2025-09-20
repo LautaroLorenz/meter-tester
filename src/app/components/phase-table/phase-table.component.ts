@@ -15,15 +15,6 @@ export class PhaseTableComponent {
     @Input() phaseL3: Phase | Partial<Phase> | undefined;
     @Input() meterConstantEnum: MeterConstantEnum | undefined;
 
-    getPowerFactorLabel(): string {
-        if (this.meterConstantEnum === MeterConstantEnum.Active) {
-            return 'Cos de phi';
-        } else if (this.meterConstantEnum === MeterConstantEnum.Reactive) {
-            return 'Sen de phi';
-        }
-        return 'Factor de potencia';
-    }
-
     getPowerFactorPrefix(): string {
         if (this.meterConstantEnum === MeterConstantEnum.Active) {
             return 'Cos';
