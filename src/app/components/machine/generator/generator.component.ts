@@ -24,6 +24,8 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
     override readonly device = Devices.GEN;
 
     showDeviceStatus = false;
+    readonly GeneratorEnum = GeneratorEnum;
+    readonly generatorType = APP_CONFIG.generatorType;
 
     constructor(
         protected readonly deviceService: DeviceService,

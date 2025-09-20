@@ -18,6 +18,16 @@
     </ng-template>
 
     <ng-template pTemplate="content">
+        <!-- Texto para generador SemiautomaticPYC5050 -->
+        <div
+            *ngIf="generatorType === GeneratorEnum.SemiautomaticPYC5050"
+            class="mb-3">
+            <p class="m-0 text-color-secondary">
+                Ajuste las fotocélulas para ensayo de energía
+                <strong>{{ currentStep.form_control_raw.meterConstant | meterConstant }}</strong>
+            </p>
+        </div>
+
         <app-phase-table
             [showTexts]="true"
             [phaseL1]="currentStep.form_control_raw.phaseL1"

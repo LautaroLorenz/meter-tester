@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { APP_CONFIG } from '../../../environments/environment';
+import { GeneratorEnum } from '../../models/business/enums/generator-enum.model';
 
 @Component({
     selector: 'app-photocell-adjusment-request',
@@ -10,6 +11,9 @@ import { APP_CONFIG } from '../../../environments/environment';
 export class PhotocellAdjusmentRequestComponent implements OnInit {
     @Input() meterConstant!: number;
     @Output() adjustmentDone = new EventEmitter<void>();
+
+    readonly GeneratorEnum = GeneratorEnum;
+    readonly generatorType = APP_CONFIG.generatorType;
 
     ngOnInit(): void {
         this.skip();
