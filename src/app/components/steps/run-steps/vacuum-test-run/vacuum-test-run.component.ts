@@ -131,14 +131,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
             repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
             catchError(() => EMPTY), // evita romper el loop por errores
-            takeUntil(this.stop$)
+            takeUntil(this.onDestroy)
         );
 
         // inicializa el generador y luego consulta la constante del patrón en loop
         this.generator
             .start$(phaseL1, phaseL2, phaseL3)
             .pipe(
-                takeUntil(this.stop$),
+                takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),
                 switchMap(() => getPatternConstantLoop$)
             )
@@ -147,12 +147,13 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     override onStepInit(): void {
         this.onRestart();
+        this.prepareGeneratorBeforeExecution();
     }
 
     override onRestart(): void {
         // recetea el contador
         this.countTimer.reset();
-        this.prepareGeneratorBeforeExecution();
+        this.canExecute = true;
     }
 
     override abort(): Observable<boolean> {
@@ -224,8 +225,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
-                // Apagar el generador
-                switchMap(() => this.generator.stop$()),
                 finalize(() => {
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
@@ -243,6 +242,23 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
+    }
+
+    override stepExecutionDone(essayStep: VacuumTestEssayStep): void {
+        // Bloquear la UI mientras se apaga el generador
+        this.blockUIService.setBlocked(true);
+
+        // Apagar el generador antes de continuar
+        this.generator
+            .stop$()
+            .pipe(
+                finalize(() => {
+                    this.blockUIService.setBlocked(false);
+                    // Llamar al método padre para continuar
+                    super.stepExecutionDone(essayStep);
+                })
+            )
+            .subscribe();
     }
 
     override restartResults(resultStatus: ResultStatus): void {
