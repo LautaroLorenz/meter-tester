@@ -20,7 +20,9 @@
             <td class="text-right">{{ row.l1 | number: getFormat(row) }}</td>
             <td class="text-right">{{ row.l2 | number: getFormat(row) }}</td>
             <td class="text-right">{{ row.l3 | number: getFormat(row) }}</td>
-            <td>[{{ row.unit }}]</td>
+            <td>
+                <ng-container *ngIf="row.unit">[{{ row.unit }}]</ng-container>
+            </td>
         </tr>
     </ng-template>
 </p-table>

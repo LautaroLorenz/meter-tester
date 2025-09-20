@@ -2,6 +2,7 @@ import { PatternStatus } from './../../../../../models/business/interafces/patte
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { PatternStatusRow } from '../../models/pattern-status-row.model';
 import { Phase } from '../../../../../models/business/interafces/phase.model';
+import { MeterConstantEnum } from '../../../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-pattern-status',
@@ -11,15 +12,16 @@ import { Phase } from '../../../../../models/business/interafces/phase.model';
 })
 export class PatternStatusComponent implements OnChanges {
     @Input() patternStatus: PatternStatus | null = null;
+    @Input() meterConstant: MeterConstantEnum | null = null;
 
     rows: PatternStatusRow[] = [
         { metric: 'Tensión U', l1: 0, l2: 0, l3: 0, unit: 'V', decimals: 1 },
         { metric: 'Corriente I', l1: 0, l2: 0, l3: 0, unit: 'A', decimals: 3 },
-        { metric: 'Ángulo ɸ', l1: 0, l2: 0, l3: 0, unit: 'º', decimals: 1 }
+        { metric: 'Factor de potencia', l1: 0, l2: 0, l3: 0, unit: '', decimals: 2 }
     ];
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.patternStatus) {
+        if (changes.patternStatus || changes.meterConstant) {
             this.rows = this.updateRows();
         }
     }
@@ -39,11 +41,29 @@ export class PatternStatusComponent implements OnChanges {
         ): PatternStatusRow => {
             return {
                 ...row,
-                l1: phaseL1 ? (phaseL1[phaseProp] as number) : 0,
-                l2: phaseL2 ? (phaseL2[phaseProp] as number) : 0,
-                l3: phaseL3 ? (phaseL3[phaseProp] as number) : 0
+                l1: phaseL1 ? phaseL1[phaseProp] : 0,
+                l2: phaseL2 ? phaseL2[phaseProp] : 0,
+                l3: phaseL3 ? phaseL3[phaseProp] : 0
             };
         };
+
+        // Update power factor row with appropriate text based on meter constant
+        const powerFactorRow = updatePhaseRow(
+            this.rows[2],
+            'powerFactor',
+            this.patternStatus?.phaseL1,
+            this.patternStatus?.phaseL2,
+            this.patternStatus?.phaseL3
+        );
+
+        // Update the metric text based on meter constant
+        if (this.meterConstant === MeterConstantEnum.Active) {
+            powerFactorRow.metric = 'Cos de Phi';
+        } else if (this.meterConstant === MeterConstantEnum.Reactive) {
+            powerFactorRow.metric = 'Sen de Phi';
+        } else {
+            powerFactorRow.metric = 'Factor de potencia';
+        }
 
         return [
             updatePhaseRow(
@@ -60,13 +80,7 @@ export class PatternStatusComponent implements OnChanges {
                 this.patternStatus?.phaseL2,
                 this.patternStatus?.phaseL3
             ),
-            updatePhaseRow(
-                this.rows[2],
-                'anglePhi',
-                this.patternStatus?.phaseL1,
-                this.patternStatus?.phaseL2,
-                this.patternStatus?.phaseL3
-            )
+            powerFactorRow
         ];
     }
 }

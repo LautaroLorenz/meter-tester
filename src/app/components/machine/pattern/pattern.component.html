@@ -30,6 +30,9 @@
     </div>
 
     <ng-container *ngIf="hasRealTimeStatus">
-        <app-pattern-status [patternStatus]="patternStatus"></app-pattern-status>
+        <app-pattern-status
+            [patternStatus]="patternStatus"
+            [meterConstant]="currentStep.form_control_raw.meterConstant">
+        </app-pattern-status>
     </ng-container>
 </p-panel>

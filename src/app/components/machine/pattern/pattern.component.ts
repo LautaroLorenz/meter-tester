@@ -220,7 +220,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         this.patternStatus = newPatternStatus;
         this.cd.detectChanges();
         if (this.secondaryWindowId) {
-            this.secondaryWindowService.sendToWindow(this.secondaryWindowId, newPatternStatus);
+            this.secondaryWindowService.sendToWindow(this.secondaryWindowId, {
+                patternStatus: newPatternStatus,
+                meterConstant: this.currentStep.form_control_raw.meterConstant
+            });
         }
     }
 }
