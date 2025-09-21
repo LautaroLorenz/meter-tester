@@ -19,7 +19,7 @@ let portList;
 let connectionLogs;
 const parser = new serialport_1.DelimiterParser({
     delimiter: '\n',
-    includeDelimiter: false
+    includeDelimiter: false,
 });
 parser.removeAllListeners();
 parser.on('data', (data) => {
@@ -129,11 +129,6 @@ exports.default = {
         observable.subscribe((command) => __awaiter(void 0, void 0, void 0, function* () {
             // escribir por el puerto USB
             const buffer = Buffer.from(command, 'ascii');
-            // const checksum = getChecksumByte(buffer);
-            // const checksumBuffer = decimalChecksumToBuffer(checksum);
-            // const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
-            // TODO esta linea no va
-            // FIXME arreglar la maquina virtual cunado escribo el comando
             const commandBuffer = buffer;
             const coludBeSent = yield new Promise((resolve) => {
                 serialPort.write(commandBuffer, (err) => {

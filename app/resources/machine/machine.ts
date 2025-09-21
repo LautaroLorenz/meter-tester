@@ -12,7 +12,7 @@ let connectionLogs: any;
 
 const parser = new DelimiterParser({
     delimiter: '\n',
-    includeDelimiter: false
+    includeDelimiter: false,
 });
 parser.removeAllListeners();
 parser.on('data', (data) => {
@@ -134,11 +134,6 @@ export default {
         observable.subscribe(async (command) => {
             // escribir por el puerto USB
             const buffer = Buffer.from(command, 'ascii');
-            // const checksum = getChecksumByte(buffer);
-            // const checksumBuffer = decimalChecksumToBuffer(checksum);
-            // const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
-            // TODO esta linea no va
-            // FIXME arreglar la maquina virtual cunado escribo el comando
             const commandBuffer = buffer;
             const coludBeSent = await new Promise((resolve) => {
                 serialPort.write(commandBuffer, (err) => {
