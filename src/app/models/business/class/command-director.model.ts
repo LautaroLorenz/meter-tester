@@ -25,7 +25,7 @@ export class CommandDirector {
 
     static build(...blocks: string[]): string {
         const commandBlocks: string[] = [this.CHAR_START, ...blocks, this.CHAR_END];
-        const commandBlocksText = commandBlocks.join(this.DIVIDER) + this.DIVIDER;
+        const commandBlocksText = commandBlocks.join(this.DIVIDER);
         return commandBlocksText;
     }
 
