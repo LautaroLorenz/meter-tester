@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
-import { SoftwareCalculatorCommands } from '../../../models/business/enums/commands.model';
+import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Observable, map, tap, from, toArray, concatMap, delay } from 'rxjs';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum, MeterConstantUnitEnum } from '../../../models/business/constants/meter-constant.model';
@@ -31,7 +31,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
         const observables = activeStands.map(({ index }) => {
             const standNumber = (index + 1).toString().padStart(2, '0');
             const standBlock = `P${standNumber}`;
-            const command = this.buildCommand(standBlock, SoftwareCalculatorCommands.STOP);
+            const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
             );
@@ -48,7 +48,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
         const observables = activeStands.map(({ index }) => {
             const standNumber = (index + 1).toString().padStart(2, '0');
             const standBlock = `P${standNumber}`;
-            const command = this.buildCommand(standBlock, SoftwareCalculatorCommands.RESET);
+            const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESET);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
             );
@@ -73,7 +73,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
             const meterConstant = this.getMeterConstantBlock(stepMeterConstant, activeStand.stand);
             const command = this.buildCommand(
                 standBlock,
-                SoftwareCalculatorCommands.RESULT_TS01,
+                COMMANDS.Software.Calculator.RESULT_TS01,
                 pattern,
                 pulses,
                 meterConstant
@@ -95,7 +95,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
         const observables = activeStands.map((activeStand) => {
             const standNumber = (activeStand.index + 1).toString().padStart(2, '0');
             const standBlock = `P${standNumber}`;
-            const command = this.buildCommand(standBlock, SoftwareCalculatorCommands.RESULT_TS02);
+            const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESULT_TS02);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
             );

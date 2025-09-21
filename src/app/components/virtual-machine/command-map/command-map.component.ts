@@ -2,15 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { VMCommandMap } from '../../../models/business/interafces/vm-command-map.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
-import {
-    CalculatorResponseCommands,
-    GeneratorResponseCommands,
-    PatternResponseCommands,
-    SoftwareCalculatorCommands,
-    SoftwareGeneratorCommands,
-    SoftwarePatternCommands
-} from '../../../models/business/enums/commands.model';
 import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
+import { COMMANDS } from '../../../models/business/constants/commands.model';
 
 @Component({
     selector: 'app-command-map',
@@ -25,70 +18,36 @@ export class CommandMapComponent {
             field: 'deviceName'
         },
         {
-            header: 'Recibe comando [Regex]',
-            field: 'commandRegex'
+            header: 'Envía [start pattern]',
+            field: 'startPattern'
         },
         {
-            header: 'Responde comando',
-            field: 'responseCommandName'
+            header: 'Respuesta',
+            field: 'automaticResponse'
         }
     ];
 
+    readonly COMMAND_START = `${CommandDirector.CHAR_START}${CommandDirector.DIVIDER}`;
+    readonly COMMAND_END = `${CommandDirector.DIVIDER}${CommandDirector.CHAR_END}`;
+
     readonly map: VMCommandMap[] = [
         {
-            device: Devices.CAL,
-            deviceName: DeviceConstants[Devices.CAL],
-            commandRegex: SoftwareCalculatorCommands.STOP,
-            responseCommandName: CalculatorResponseCommands.ACK
-        },
-        {
-            device: Devices.CAL,
-            deviceName: DeviceConstants[Devices.CAL],
-            commandRegex: SoftwareCalculatorCommands.RESET,
-            responseCommandName: CalculatorResponseCommands.ACK
-        },
-        {
-            device: Devices.CAL,
-            deviceName: DeviceConstants[Devices.CAL],
-            commandRegex: SoftwareCalculatorCommands.RESULT_TS01,
-            responseCommandName: CalculatorResponseCommands.ACK
-        },
-        {
-            device: Devices.CAL,
-            deviceName: DeviceConstants[Devices.CAL],
-            commandRegex: SoftwareCalculatorCommands.RESULT_TS02,
-            responseCommandName: CalculatorResponseCommands.ACK
-        },
-        {
-            device: Devices.PAT,
-            deviceName: DeviceConstants[Devices.PAT],
-            commandRegex: SoftwarePatternCommands.CONSTANT_A,
-            responseCommandName: PatternResponseCommands.CONSTANT
-        },
-        {
-            device: Devices.PAT,
-            deviceName: DeviceConstants[Devices.PAT],
-            commandRegex: SoftwarePatternCommands.CONSTANT_R,
-            responseCommandName: PatternResponseCommands.CONSTANT
-        },
-        {
             device: Devices.GEN,
             deviceName: DeviceConstants[Devices.GEN],
-            commandRegex: SoftwareGeneratorCommands.START,
-            responseCommandName: GeneratorResponseCommands.ACK
-        },
-        {
-            device: Devices.GEN,
-            deviceName: DeviceConstants[Devices.GEN],
-            commandRegex: SoftwareGeneratorCommands.STOP,
-            responseCommandName: GeneratorResponseCommands.ACK
+            startPattern: `${this.COMMAND_START}${Devices.STW}${Devices.GEN}`,
+            automaticResponse: `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
         }
     ];
 
     get(command: string): VMCommandMap | undefined {
-        const deviceTo: Devices = CommandDirector.getTo(command);
-        return this.map
-            .filter(({ device }) => device === deviceTo)
-            .find(({ commandRegex }) => command.includes(commandRegex));
+        return this.map.find((item) => {
+            try {
+                const regex = new RegExp(item.startPattern);
+                return regex.test(command);
+            } catch (error) {
+                // Si el startPattern no es una regex válida, hacer comparación exacta
+                return item.startPattern === command;
+            }
+        });
     }
 }

@@ -9,7 +9,7 @@ import { DeviceService } from '../../../services/device.service';
 import { MessagesService } from '../../../services/messages.service';
 import { Observable, tap, of } from 'rxjs';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
-import { SoftwareGeneratorCommands } from '../../../models/business/enums/commands.model';
+import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 
 @Component({
@@ -40,7 +40,7 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StartInProgress);
-        const commandBlocks: string[] = [SoftwareGeneratorCommands.START];
+        const commandBlocks: string[] = [COMMANDS.Software.Generator.START];
         commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
         const command = this.buildCommand(...commandBlocks);
         return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));
@@ -51,7 +51,7 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StopInProgress);
-        return this.write$(this.buildCommand(SoftwareGeneratorCommands.STOP)).pipe(
+        return this.write$(this.buildCommand(COMMANDS.Software.Generator.STOP)).pipe(
             tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
         );
     }
