@@ -1,3 +1,4 @@
+import { CommandsSizes } from '../constants/commands-size.model';
 import { Devices } from '../enums/devices.model';
 
 export class CommandDirector {
@@ -20,7 +21,35 @@ export class CommandDirector {
     }
 
     static getBlocks(command: string): string[] {
-        return command.split(this.DIVIDER);
+        // Buscar el patrón que coincida con el comando
+        const matchingPattern = CommandsSizes.find((cs) => {
+            // Los patrones ya están escapados, usar directamente
+            const regex = new RegExp(`^${cs.pattern}`);
+            return regex.test(command);
+        });
+
+        if (!matchingPattern) {
+            // Fallback al método anterior si no se encuentra patrón
+            return command.split(this.DIVIDER);
+        }
+
+        // Usar las posiciones de dividers para extraer los bloques
+        const blocks: string[] = [];
+        let lastIndex = 0;
+
+        for (const dividerPos of matchingPattern.dividerPositions) {
+            if (dividerPos < command.length) {
+                blocks.push(command.substring(lastIndex, dividerPos));
+                lastIndex = dividerPos + 1; // +1 para saltar el divider
+            }
+        }
+
+        // Agregar el último bloque (desde el último divider hasta el final)
+        if (lastIndex < command.length) {
+            blocks.push(command.substring(lastIndex));
+        }
+
+        return blocks;
     }
 
     static build(...blocks: string[]): string {

@@ -119,6 +119,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         // inicializa el generador y luego consulta la constante del patrón en loop
         this.generator
             .start$(
+                this.currentStep.form_control_raw.meterConstant,
                 this.currentStep.form_control_raw.phaseL1,
                 this.currentStep.form_control_raw.phaseL2,
                 this.currentStep.form_control_raw.phaseL3

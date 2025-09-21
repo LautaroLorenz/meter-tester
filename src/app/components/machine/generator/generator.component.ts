@@ -11,6 +11,7 @@ import { Observable, tap, of } from 'rxjs';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
+import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-generator',
@@ -35,12 +36,16 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
         super(deviceService, messagesService);
     }
 
-    start$(phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): Observable<string> {
+    start$(stepMeterConstant: MeterConstantEnum, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): Observable<string> {
         if (APP_CONFIG.generatorType === GeneratorEnum.Manual) {
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StartInProgress);
-        const commandBlocks: string[] = [COMMANDS.Software.Generator.START];
+        const startCommand =
+            stepMeterConstant === MeterConstantEnum.Active
+                ? COMMANDS.Software.Generator.START_ACTIVA
+                : COMMANDS.Software.Generator.START_REACTIVA;
+        const commandBlocks: string[] = [startCommand];
         commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
         const command = this.buildCommand(...commandBlocks);
         return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));

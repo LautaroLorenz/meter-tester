@@ -136,7 +136,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
         // inicializa el generador y luego consulta la constante del patrón en loop
         this.generator
-            .start$(phaseL1, phaseL2, phaseL3)
+            .start$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
             .pipe(
                 takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),

@@ -3,8 +3,9 @@ import { CommandDirector } from '../class/command-director.model';
 export const COMMANDS = {
     Software: {
         Generator: {
-            START: 'START',
-            STOP: 'STOP'
+            START_ACTIVA: CommandDirector.encodeCompactNumber(1),
+            START_REACTIVA: CommandDirector.encodeCompactNumber(2),
+            STOP: CommandDirector.encodeCompactNumber(3)
         },
         Calculator: {
             STOP: 'STOP',
