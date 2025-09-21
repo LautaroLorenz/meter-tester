@@ -34,20 +34,49 @@ export class CommandMapComponent {
         {
             device: Devices.GEN,
             deviceName: DeviceConstants[Devices.GEN],
-            startPattern: `${this.COMMAND_START}${Devices.STW}${Devices.GEN}`,
+            startPattern: `B\\|SG`,
             automaticResponse: `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.PAT],
+            startPattern: `B\\|SP`,
+            automaticResponse: this.getPatternAutomaticResponse()
         }
     ];
 
     get(command: string): VMCommandMap | undefined {
         return this.map.find((item) => {
-            try {
-                const regex = new RegExp(item.startPattern);
-                return regex.test(command);
-            } catch (error) {
-                // Si el startPattern no es una regex válida, hacer comparación exacta
-                return item.startPattern === command;
-            }
+            // Usar directamente el patrón ya escapado
+            const regex = new RegExp(`^${item.startPattern}`);
+            const matches = regex.test(command);
+            return matches;
         });
+    }
+
+    private getPatternAutomaticResponse(): string {
+        // B|PS|xKPx|UR|US|UT|IR|IS|IT|-PR|-PS|-PT|Z
+        const blocks: string[] = [CommandDirector.CHAR_START, `${Devices.PAT}${Devices.STW}`];
+
+        // xKPx
+        blocks.push(CommandDirector.encodeCompactNumber(4294967295));
+
+        // UR|US|UT
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+
+        // IR|IS|IT
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(65535));
+
+        // -PR|-PS|-PT
+        blocks.push(`-${CommandDirector.encodeCompactNumber(255)}L`);
+        blocks.push(` ${CommandDirector.encodeCompactNumber(255)}C`);
+        blocks.push(`-${CommandDirector.encodeCompactNumber(255)}L`);
+
+        blocks.push(CommandDirector.CHAR_END);
+        return blocks.join(CommandDirector.DIVIDER);
     }
 }

@@ -35,7 +35,9 @@ export default {
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
         ipcMain.handle('virtual-machine-write', async (_, { command }) => {
             if (!serialPort?.destroyed && serialPort.port?.isOpen) {
-                serialPort.port.emitData(command);
+                // Convert string to Buffer using latin1 encoding to preserve all byte values
+                const buffer = Buffer.from(command, 'latin1');
+                serialPort.port.emitData(buffer);
             }
         });
     },
