@@ -23,8 +23,8 @@ export class CommandDirector {
     static getBlocks(command: string): string[] {
         // Buscar el patrón que coincida con el comando
         const matchingPattern = CommandsSizes.find((cs) => {
-            const regexPattern = cs.pattern.replace(/\?/g, '.');
-            const regex = new RegExp(`^${regexPattern}`);
+            // Los patrones ya están escapados, usar directamente
+            const regex = new RegExp(`^${cs.pattern}`);
             return regex.test(command);
         });
 
