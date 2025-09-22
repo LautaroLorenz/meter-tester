@@ -36,7 +36,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.GEN],
             startPattern: `B\\|SG`,
             lastResponse: '',
-            automaticResponse: (_: string) =>
+            automaticResponse: () =>
                 `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
         },
         {
@@ -44,7 +44,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.PAT],
             startPattern: `B\\|SP`,
             lastResponse: '',
-            automaticResponse: (_: string) => this.getPatternAutomaticResponse()
+            automaticResponse: () => this.getPatternAutomaticResponse()
         },
         {
             device: Devices.PAT,
@@ -66,6 +66,13 @@ export class CommandMapComponent {
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESULT_TS01}|\\n)`,
             lastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticTS01Response(command || '')
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.CAL],
+            startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESULT_TS02}|\\n)`,
+            lastResponse: '',
+            automaticResponse: (command?: string) => this.getCalculatorAutomaticTS02Response(command || '')
         }
     ];
 
@@ -151,6 +158,33 @@ export class CommandMapComponent {
         // Para contraste: punto fijo con 2 decimales, usar 2 bytes para el número entero
         // El punto fijo va en el medio, no se codifica con decimales
         const encodedValue = CommandDirector.encodeCompactNumber(absoluteValue, 2, 0);
+        responseBlocks.push(`${sign}${encodedValue}`);
+
+        responseBlocks.push(CommandDirector.CHAR_END);
+        return responseBlocks.join(CommandDirector.DIVIDER);
+    }
+
+    private getCalculatorAutomaticTS02Response(command: string): string {
+        // Extraer los bloques del comando para obtener el puesto
+        const blocks = CommandDirector.getBlocks(command);
+
+        // El puesto está en el bloque 2 (índice 2) del comando
+        // Comando: B|SC|PUESTO|STOP|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        const position = blocks[2];
+
+        const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
+        // Incluir el puesto en la respuesta
+        responseBlocks.push(position);
+
+        // Resultados aleatorios para arranque/vacío: cantidad de impulsos
+        // Valor máximo 16,777,215 (3 bytes)
+        const randomValue = Math.floor(Math.random() * 16777216); // 0 a 16,777,215
+        // NO usamos el byte de signo , de esa forma podemos enviar numeros de 3 bytes
+        const sign = ''; 
+
+        // Para arranque/vacío: cantidad de impulsos, usar 3 bytes
+        const encodedValue = CommandDirector.encodeCompactNumber(randomValue, 3, 0);
         responseBlocks.push(`${sign}${encodedValue}`);
 
         responseBlocks.push(CommandDirector.CHAR_END);

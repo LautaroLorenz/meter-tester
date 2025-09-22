@@ -95,7 +95,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     resultsTS02$(activeStands: ActiveStand[]): Observable<CommandResultResponse[]> {
         const observables = activeStands.map((activeStand) => {
             const standNumber = (activeStand.index + 1).toString().padStart(2, '0');
-            const standBlock = `P${standNumber}`;
+            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESULT_TS02);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
