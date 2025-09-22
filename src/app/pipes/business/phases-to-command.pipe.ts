@@ -1,15 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Phase } from '../../models/business/interafces/phase.model';
+import { CommandDirector } from '../../models/business/class/command-director.model';
 
-/**
- * @return MeterConstantEnum como 'value[unit]'
- */
 @Pipe({
     name: 'phasesToCommand'
 })
 export class PhasesToCommandPipe implements PipeTransform {
     /**
-     * recibe las las tres fases y las devuelve como bloques para un comando
+     * Recibe las tres fases y las devuelve como bloques codificados para un comando al generador
+     * Formato: [UR, US, UT, IR, IS, IT, PR, PS, PT]
+     * - UR|US|UT: Tensión con punto fijo 1 decimal, 2 bytes, máx 6553.5V
+     * - IR|IS|IT: Corriente con punto fijo 2 decimales, 2 bytes, máx 655.35A
+     * - PR|PS|PT: Factor de potencia con punto fijo 2 decimales, 3 bytes (signo + valor + L/C)
      */
     transform(phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): string[] {
         return [
@@ -19,52 +21,39 @@ export class PhasesToCommandPipe implements PipeTransform {
             this.formatI(phaseL1.current),
             this.formatI(phaseL2.current),
             this.formatI(phaseL3.current),
-            this.formatPhi(phaseL1.anglePhi),
-            this.formatPhi(phaseL2.anglePhi),
-            this.formatPhi(phaseL3.anglePhi)
+            this.formatPowerFactor(phaseL1.powerFactor, phaseL1.powerFactorLetter),
+            this.formatPowerFactor(phaseL2.powerFactor, phaseL2.powerFactorLetter),
+            this.formatPowerFactor(phaseL3.powerFactor, phaseL3.powerFactorLetter)
         ];
     }
 
-    // formatear la tensión
+    // Tensión: 2 bytes, 1 decimal, máximo: 65535 (6553.5V)
     formatU = (voltage: number): string => {
-        if (voltage === undefined || voltage === null || isNaN(voltage)) {
-            return 'xxxx0000'; // valor por defecto
-        }
-        // Separar entero y decimal
-        const [intPart, fracPart] = voltage.toFixed(1).split('.');
-        // Entero con padding de 3 dígitos
-        const intFormatted = intPart.padStart(3, '0');
-        // Decimal (siempre un dígito)
-        const fracFormatted = fracPart || '0';
-        return `xxxx${intFormatted}${fracFormatted}`;
+        return CommandDirector.encodeCompactNumber(voltage, 2, 1);
     };
 
-    // formatear la corriente
+    // Corriente: 2 bytes, 2 decimales, máximo: 65535 (655.35A)
     formatI = (current: number): string => {
-        if (current === undefined || current === null || isNaN(current)) {
-            return 'xx000000';
-        }
-        // Asegura 3 decimales con redondeo
-        const [intPart, fracPart] = Number(current).toFixed(3).split('.');
-        // Entero a 3 dígitos (si por algún motivo excede, toma los últimos 3)
-        const intFormatted = intPart.padStart(3, '0').slice(-3);
-        // Decimales ya vienen con 3 dígitos por toFixed(3)
-        const fracFormatted = (fracPart ?? '').padEnd(3, '0').slice(0, 3);
-        return `xx${intFormatted}${fracFormatted}`;
+        return CommandDirector.encodeCompactNumber(current, 2, 2);
     };
 
-    // formatear la fase
-    formatPhi = (anglePhi: number): string => {
-        if (anglePhi === undefined || anglePhi === null || isNaN(anglePhi)) {
-            return 'xxx+0000';
-        }
-        // signo y magnitud (acotamos a 359.9 por seguridad)
-        const sign = anglePhi >= 0 ? '+' : '-';
-        const abs = Math.min(Math.abs(Number(anglePhi)), 359.9);
-        // 3 enteros + 1 decimal, con padding
-        const [intPart, fracPart] = abs.toFixed(1).split('.');
-        const intFormatted = intPart.padStart(3, '0').slice(-3);
-        const fracFormatted = (fracPart ?? '0').slice(0, 1).padEnd(1, '0');
-        return `xxx${sign}${intFormatted}${fracFormatted}`;
+    /*
+     * Factor de potencia: 3 bytes, 2 decimales:
+     * 1 byte: para el signo como latin1
+     * 1 byte: para el valor entero entre: 0 y 1 (0 a 255)
+     * 1 byte: para el tipo reactivo o inductivo: L o C como latin1
+     */
+    formatPowerFactor = (powerFactor: number, powerFactorLetter: string): string => {
+        // Determinar el carácter reactivo (L o C) como latin1
+        const reactiveChar = powerFactorLetter?.toUpperCase() === 'C' ? 'C' : 'L';
+
+        // Determinar el signo como latin1 (' ' para positivo, '-' para negativo)
+        const sign = powerFactor < 0 ? '-' : ' ';
+
+        // Usar CommandDirector para el valor en punto fijo con 2 decimales
+        const valueBytes = CommandDirector.encodeCompactNumber(Math.abs(powerFactor), 1, 2);
+
+        // Retornar los 3 bytes por separado
+        return `${sign}${valueBytes}${reactiveChar}`;
     };
 }

@@ -59,22 +59,22 @@ export class CommandMapComponent {
         const blocks: string[] = [CommandDirector.CHAR_START, `${Devices.PAT}${Devices.STW}`];
 
         // xKPx
-        blocks.push(CommandDirector.encodeCompactNumber(4294967295));
+        blocks.push(CommandDirector.encodeCompactNumber(4294967295, 4, 0));
 
         // UR|US|UT
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(123.4, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(12.3, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 1));
 
         // IR|IS|IT
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
-        blocks.push(CommandDirector.encodeCompactNumber(65535));
+        blocks.push(CommandDirector.encodeCompactNumber(12.34, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(12.3, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 2));
 
         // -PR|-PS|-PT
-        blocks.push(`-${CommandDirector.encodeCompactNumber(255)}L`);
-        blocks.push(` ${CommandDirector.encodeCompactNumber(255)}C`);
-        blocks.push(`-${CommandDirector.encodeCompactNumber(255)}L`);
+        blocks.push(`-${CommandDirector.encodeCompactNumber(1.0, 1, 2)}L`);
+        blocks.push(` ${CommandDirector.encodeCompactNumber(0.12, 1, 2)}C`);
+        blocks.push(`-${CommandDirector.encodeCompactNumber(0, 1, 2)}L`);
 
         blocks.push(CommandDirector.CHAR_END);
         return blocks.join(CommandDirector.DIVIDER);

@@ -59,31 +59,55 @@ export class CommandDirector {
     }
 
     /**
-     * Codifica un número en formato compacto usando ASCII completo (0-255)
-     * @param number Número a codificar (0 a 4,294,967,295)
+     * Codifica un número en formato compacto usando el algoritmo específico
+     * @param number Número a codificar (valor real con decimales)
+     * @param bytes Número de bytes a usar (1-4)
+     * @param decimals Número de decimales para punto fijo (0-4)
      * @returns String con la representación compacta
+     *
+     * Algoritmo:
+     * - 1 byte (0-255): Se pone el número directamente
+     * - 2 bytes (0-65535): MSB = número/256, LSB = número mod 256
+     * - 3 bytes (0-16777215): B2 = número/65536, B1 = (número - B2*65536)/256, B0 = (número - B2*65536) mod 256
+     * - 4 bytes (0-4294967295): Similar proceso con 4 bytes
+     *
      * Ejemplos de uso:
-     *  CommandDirector.encodeCompactNumber(1)    // "\x01"  (1 carácter)
-     *  CommandDirector.encodeCompactNumber(255)  // "\xFF"  (1 carácter)
-     *  CommandDirector.encodeCompactNumber(256)  // "\x01\x00" (2 caracteres)
-     *  CommandDirector.encodeCompactNumber(1000) // "\x03\xE8" (2 caracteres)
+     *  CommandDirector.encodeCompactNumber(123.4, 2, 1)     // Tensión: 1234 → "\x04\xD2"
+     *  CommandDirector.encodeCompactNumber(12.34, 2, 2)     // Corriente: 1234 → "\x04\xD2"
+     *  CommandDirector.encodeCompactNumber(0.85, 3, 2)      // Factor de potencia: 85 → "\x00\x00\x55"
      */
-    static encodeCompactNumber(number: number): string {
-        if (number < 0 || number > 0xffffffff) {
-            throw new Error(`Número fuera de rango: ${number}`);
+    static encodeCompactNumber(number: number, bytes: number, decimals = 0): string {
+        if (bytes < 1 || bytes > 4) {
+            throw new Error(`Número de bytes debe estar entre 1 y 4: ${bytes}`);
         }
 
-        const chars: string[] = [];
-        const range = 256; // Usar todo el rango ASCII 0-255
+        if (decimals < 0 || decimals > 4) {
+            throw new Error(`Número de decimales debe estar entre 0 y 4: ${decimals}`);
+        }
 
-        // Convertir número a base 256 usando todo el rango ASCII
-        let remaining = number;
-        do {
-            chars.unshift(String.fromCharCode(remaining % range));
-            remaining = Math.floor(remaining / range);
-        } while (remaining > 0);
+        // Convertir a punto fijo multiplicando por 10^decimals
+        const multiplier = Math.pow(10, decimals);
+        const fixedPointNumber = Math.round(number * multiplier);
 
-        return chars.join('');
+        // Verificar que el número en punto fijo no exceda el rango del número de bytes
+        const maxValue = Math.pow(256, bytes) - 1;
+        if (fixedPointNumber < 0 || fixedPointNumber > maxValue) {
+            throw new Error(
+                `Número en punto fijo fuera de rango: ${fixedPointNumber} (máximo para ${bytes} bytes: ${maxValue})`
+            );
+        }
+
+        // Calcular cada byte según el algoritmo específico
+        const resultBytes: number[] = [];
+        let remaining = fixedPointNumber;
+
+        for (let i = bytes - 1; i >= 0; i--) {
+            const divisor = Math.pow(256, i);
+            resultBytes.unshift(Math.floor(remaining / divisor));
+            remaining = remaining % divisor;
+        }
+
+        return resultBytes.map((byte) => String.fromCharCode(byte)).join('');
     }
 
     /**
