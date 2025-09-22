@@ -55,7 +55,8 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             const realItem = item as Stand | ContrastTestStandResult;
             return 'measuredError' in realItem ? realItem.measuredError?.toFixed(2) : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;'
+        headerStyle: 'min-width:90px;font-size:15px;',
+        customStyles: 'font-size:14px;'
     };
 
     private stopStep = new Subject<void>();

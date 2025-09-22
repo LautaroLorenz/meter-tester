@@ -14,7 +14,8 @@ import { Steps } from '../../../../models/business/enums/steps.model';
 export class ReportStepSwitchComponent {
     @Input() essayStep!: EssayStep;
     @Input() preparationStep!: PreparationEssayStep;
-    @ViewChild(PdfReportComponent) stepPdfReport!: PdfReportComponent;
+    @Input() showPreparation = false;
+    @ViewChild(PdfReportComponent, { static: false }) stepPdfReport!: PdfReportComponent;
 
     readonly Steps = Steps;
 

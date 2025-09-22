@@ -51,7 +51,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             const realItem = item as Stand | VacuumTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;'
+        headerStyle: 'min-width:90px;font-size:15px;',
+        customStyles: 'font-size:14px;'
     };
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;

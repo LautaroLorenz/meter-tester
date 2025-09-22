@@ -21,22 +21,7 @@
                 [results]="essayStep.standResults"
                 [resultsColumn]="resultsColumn"
                 [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
-                [limit]="10"></app-stands-result>
-        </div>
-    </div>
-</app-pdf-page>
-
-<app-pdf-page *ngIf="essayStep.standResults.length > 10">
-    <div class="flex flex-column p-3 gap-4">
-        <!-- Resultados -->
-        <div class="-mx-3">
-            <app-stands-result
-                [preparationStep]="preparationStep"
-                [results]="essayStep.standResults"
-                [resultsColumn]="resultsColumn"
-                [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
-                [offset]="10"
-                [limit]="10"></app-stands-result>
+                [compactMode]="true"></app-stands-result>
         </div>
     </div>
 </app-pdf-page>

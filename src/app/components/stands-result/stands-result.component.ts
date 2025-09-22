@@ -30,6 +30,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
     @Input() resultStatusColumnTemplate: TemplateRef<TableColumnTemplateContext<StandStandResult>> | undefined;
     @Input() limit: number | null = null;
     @Input() offset = 0;
+    @Input() compactMode = false;
 
     @ViewChild('meterColumnTmp', { static: true })
     meterColumnTmp!: TemplateRef<TableColumnTemplateContext<StandStandResult>>;
@@ -38,7 +39,6 @@ export class StandsResultComponent implements OnInit, OnChanges {
 
     value: StandStandResult[] = [];
     columns: TableColumn<StandStandResult>[] = [];
-
     readonly meterConstantPipe = inject(MeterConstantPipe);
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
@@ -52,54 +52,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        this.columns = [
-            {
-                header: 'Puesto',
-                field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
-                alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;'
-            },
-            {
-                header: 'Medidor',
-                template: this.meterColumnTmp,
-                headerStyle: 'font-size:15px;'
-            },
-            {
-                header: 'Nº de serie',
-                field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
-                alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width:104px;font-size:15px;',
-                customStyles: 'font-size:14px;'
-            },
-            {
-                header: 'Año',
-                field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
-                alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;',
-                customStyles: 'font-size:14px;'
-            },
-            {
-                header: `Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`,
-                field: (item): string => {
-                    if (this.stepMeterConstant === undefined) {
-                        return '';
-                    }
-                    if (!('foreign' in item) || !item.foreign?.meter) {
-                        return '';
-                    }
-                    return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
-                },
-                alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:119px;white-space:nowrap;',
-                customStyles: 'font-size:14px;white-space:nowrap;'
-            },
-            this.resultsColumn,
-            {
-                header: 'Resultado',
-                template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
-                headerStyle: 'font-size:15px;'
-            }
-        ];
+        this.columns = this.getColumns();
     }
 
     private getValues(results: StandResult[], preparationStep: PreparationStep): StandStandResult[] {
@@ -122,5 +75,64 @@ export class StandsResultComponent implements OnInit, OnChanges {
         const start = Math.min(off, formatedResults.length);
         const end = Math.min(start + Math.max(0, lim), formatedResults.length);
         return formatedResults.slice(start, end);
+    }
+
+    private getColumns(): TableColumn<StandStandResult>[] {
+        const columns: TableColumn<StandStandResult>[] = [];
+        columns.push({
+            header: 'Puesto',
+            field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
+            alignHorizontal: TC_AlignHorizontal.Number,
+            headerStyle: 'font-size:15px;',
+            customStyles: 'font-size:14px;font-family:monospace;'
+        });
+        if (!this.compactMode) {
+            columns.push({
+                header: 'Medidor',
+                template: this.meterColumnTmp,
+                headerStyle: 'font-size:15px;'
+            });
+        }
+        columns.push({
+            header: 'Nº de serie',
+            field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
+            alignHorizontal: TC_AlignHorizontal.Text,
+            headerStyle: 'min-width:104px;font-size:15px;',
+            customStyles: 'font-size:14px;'
+        });
+        if (!this.compactMode) {
+            columns.push({
+                header: 'Año',
+                field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
+                alignHorizontal: TC_AlignHorizontal.Number,
+                headerStyle: 'font-size:15px;',
+                customStyles: 'font-size:14px;'
+            });
+        }
+        if (!this.compactMode) {
+            columns.push({
+                header: `Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`,
+                field: (item): string => {
+                    if (this.stepMeterConstant === undefined) {
+                        return '';
+                    }
+                    if (!('foreign' in item) || !item.foreign?.meter) {
+                        return '';
+                    }
+                    return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
+                },
+                alignHorizontal: TC_AlignHorizontal.Alphanumeric,
+                headerStyle: 'min-width:119px;white-space:nowrap;',
+                customStyles: 'font-size:14px;white-space:nowrap;'
+            });
+        }
+        columns.push(this.resultsColumn);
+        columns.push({
+            header: 'Resultado',
+            template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
+            headerStyle: 'font-size:15px;'
+        });
+
+        return columns;
     }
 }

@@ -1,4 +1,10 @@
-<ng-container [ngSwitch]="essayStep.step_id">
+<ng-container *ngIf="showPreparation && preparationStep">
+    <app-preparation-pdf-report [preparationStep]="preparationStep"></app-preparation-pdf-report>
+</ng-container>
+
+<ng-container
+    *ngIf="essayStep"
+    [ngSwitch]="essayStep.step_id">
     <app-vacuum-test-pdf-report
         *ngSwitchCase="Steps.VacuumTest"
         [essayStep]="essayStep | stepAs"
