@@ -4,5 +4,6 @@ export interface VMCommandMap {
     device: Devices;
     deviceName: string;
     startPattern: string;
-    automaticResponse: string;
+    automaticResponse: (command: string) => string;
+    lastResponse: string;
 }

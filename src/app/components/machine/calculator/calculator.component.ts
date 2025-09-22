@@ -30,7 +30,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     stop$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
             const standNumber = (index + 1).toString().padStart(2, '0');
-            const standBlock = `P${standNumber}`;
+            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
@@ -47,7 +47,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     reset$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
             const standNumber = (index + 1).toString().padStart(2, '0');
-            const standBlock = `P${standNumber}`;
+            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESET);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)

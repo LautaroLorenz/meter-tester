@@ -51,7 +51,7 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
 
     private processCommand(command: string): string {
         const commandMap = this.commandMap.get(command);
-        return commandMap?.automaticResponse || '';
+        return commandMap?.lastResponse || '';
     }
 
     private setWindowAsReady(): void {

@@ -8,10 +8,10 @@ export const COMMANDS = {
             STOP: CommandDirector.encodeCompactNumber(3, 1, 0)
         },
         Calculator: {
-            STOP: 'STOP',
-            RESET: 'RSET',
-            RESULT_TS01: 'TS01',
-            RESULT_TS02: 'TS02'
+            STOP: CommandDirector.encodeCompactNumber(10, 1, 0),
+            RESET: CommandDirector.encodeCompactNumber(20, 1, 0),
+            RESULT_TS01: CommandDirector.encodeCompactNumber(1, 1, 0), // Constraste
+            RESULT_TS02: CommandDirector.encodeCompactNumber(2, 1, 0) // Arranque y Vacío
         }
     },
     Generator: {

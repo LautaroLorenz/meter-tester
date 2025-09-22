@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { VMCommandMap } from '../../../models/business/interafces/vm-command-map.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
@@ -18,12 +18,12 @@ export class CommandMapComponent {
             field: 'deviceName'
         },
         {
-            header: 'Envía [start pattern]',
+            header: 'Recibe [start pattern]',
             field: 'startPattern'
         },
         {
-            header: 'Respuesta',
-            field: 'automaticResponse'
+            header: 'Última Respuesta',
+            field: 'lastResponse'
         }
     ];
 
@@ -35,23 +35,47 @@ export class CommandMapComponent {
             device: Devices.GEN,
             deviceName: DeviceConstants[Devices.GEN],
             startPattern: `B\\|SG`,
-            automaticResponse: `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
+            lastResponse: '',
+            automaticResponse: (_: string) =>
+                `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
         },
         {
             device: Devices.PAT,
             deviceName: DeviceConstants[Devices.PAT],
             startPattern: `B\\|SP`,
-            automaticResponse: this.getPatternAutomaticResponse()
+            lastResponse: '',
+            automaticResponse: (_: string) => this.getPatternAutomaticResponse()
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.CAL],
+            startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.STOP}|\\n)`,
+            lastResponse: '',
+            automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.CAL],
+            startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESET}|\\n)`,
+            lastResponse: '',
+            automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
         }
     ];
 
+    private readonly cdr = inject(ChangeDetectorRef);
+
     get(command: string): VMCommandMap | undefined {
-        return this.map.find((item) => {
+        const item = this.map.find((item) => {
             // Usar directamente el patrón ya escapado
             const regex = new RegExp(`^${item.startPattern}`);
             const matches = regex.test(command);
             return matches;
         });
+        if (item) {
+            item.lastResponse = item.automaticResponse(command);
+            this.cdr.detectChanges();
+        }
+        return item;
     }
 
     private getPatternAutomaticResponse(): string {
@@ -78,5 +102,23 @@ export class CommandMapComponent {
 
         blocks.push(CommandDirector.CHAR_END);
         return blocks.join(CommandDirector.DIVIDER);
+    }
+
+    private getCalculatorAutomaticAckResponse(command: string): string {
+        // Extraer los bloques del comando para obtener el puesto
+        const blocks = CommandDirector.getBlocks(command);
+
+        // El puesto está en el bloque 2 (índice 2) del comando
+        // Comando: B|SC|PUESTO|STOP|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        const position = blocks[2];
+
+        const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
+        // Incluir el puesto en la respuesta
+        responseBlocks.push(position);
+        // Incluir espacio de resultados vacio para mantener longitud fija
+        responseBlocks.push('   ');
+        responseBlocks.push(CommandDirector.CHAR_END);
+        return responseBlocks.join(CommandDirector.DIVIDER);
     }
 }
