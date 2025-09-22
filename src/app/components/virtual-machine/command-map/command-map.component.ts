@@ -96,23 +96,45 @@ export class CommandMapComponent {
         // B|PS|xKPx|UR|US|UT|IR|IS|IT|-PR|-PS|-PT|Z
         const blocks: string[] = [CommandDirector.CHAR_START, `${Devices.PAT}${Devices.STW}`];
 
-        // xKPx
-        blocks.push(CommandDirector.encodeCompactNumber(4294967295, 4, 0));
+        // xKPx - Patrón aleatorio (4 bytes, 0 decimales) - rango: 0 a 4294967295
+        const patternValue = Math.floor(Math.random() * 4294967296);
+        blocks.push(CommandDirector.encodeCompactNumber(patternValue, 4, 0));
 
-        // UR|US|UT
-        blocks.push(CommandDirector.encodeCompactNumber(123.4, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(12.4, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 1));
+        // UR|US|UT - Tensiones aleatorias (2 bytes, 1 decimal) - rango: 0.0 a 255.9
+        const urValue = Math.random() * 255.9;
+        const usValue = Math.random() * 255.9;
+        const utValue = Math.random() * 255.9;
+        blocks.push(CommandDirector.encodeCompactNumber(urValue, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(usValue, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(utValue, 2, 1));
 
-        // IR|IS|IT
-        blocks.push(CommandDirector.encodeCompactNumber(12.34, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(12.345, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 2));
+        // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
+        const irValue = Math.random() * 25.59;
+        const isValue = Math.random() * 25.59;
+        const itValue = Math.random() * 25.59;
+        blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
 
-        // -PR|-PS|-PT
-        blocks.push(`-${CommandDirector.encodeCompactNumber(1.0, 1, 2)}L`);
-        blocks.push(` ${CommandDirector.encodeCompactNumber(0.12, 1, 2)}C`);
-        blocks.push(` ${CommandDirector.encodeCompactNumber(0, 1, 2)}L`);
+        // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
+        const prValue = Math.random() * 2.55;
+        const psValue = Math.random() * 2.55;
+        const ptValue = Math.random() * 2.55;
+
+        // Generar signo aleatorio para PR
+        const prSign = Math.random() > 0.5 ? '-' : ' ';
+        const prType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${prSign}${CommandDirector.encodeCompactNumber(prValue, 1, 2)}${prType}`);
+
+        // Generar signo aleatorio para PS
+        const psSign = Math.random() > 0.5 ? '-' : ' ';
+        const psType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${psSign}${CommandDirector.encodeCompactNumber(psValue, 1, 2)}${psType}`);
+
+        // Generar signo aleatorio para PT
+        const ptSign = Math.random() > 0.5 ? '-' : ' ';
+        const ptType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${ptSign}${CommandDirector.encodeCompactNumber(ptValue, 1, 2)}${ptType}`);
 
         blocks.push(CommandDirector.CHAR_END);
         return blocks.join(CommandDirector.DIVIDER);
@@ -181,7 +203,7 @@ export class CommandMapComponent {
         // Valor máximo 16,777,215 (3 bytes)
         const randomValue = Math.floor(Math.random() * 16777216); // 0 a 16,777,215
         // NO usamos el byte de signo , de esa forma podemos enviar numeros de 3 bytes
-        const sign = ''; 
+        const sign = '';
 
         // Para arranque/vacío: cantidad de impulsos, usar 3 bytes
         const encodedValue = CommandDirector.encodeCompactNumber(randomValue, 3, 0);
