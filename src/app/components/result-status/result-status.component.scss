@@ -1,5 +1,24 @@
 .result-status-chip::ng-deep {
   .p-chip {
-    font-size: 14px;
+    font-size: 12px;
+    border-radius: 4px !important;
+    padding: 0.25rem 0.75rem !important;
+    font-weight: 500;
+    border: 1px solid transparent;
+    min-height: 1.5rem;
+    height: 1.5rem;
+    min-width: 80px;
+    width: 80px;
+    justify-content: center;
+
+    .p-chip-text {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .p-chip-icon {
+      font-size: 10px;
+      margin-right: 0.25rem;
+    }
   }
 }
