@@ -59,6 +59,13 @@ export class CommandMapComponent {
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESET}|\\n)`,
             lastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
+        },
+        {
+            device: Devices.PAT,
+            deviceName: DeviceConstants[Devices.CAL],
+            startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESULT_TS01}|\\n)`,
+            lastResponse: '',
+            automaticResponse: (command?: string) => this.getCalculatorAutomaticTS01Response(command || '')
         }
     ];
 
@@ -116,8 +123,36 @@ export class CommandMapComponent {
         const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
         // Incluir el puesto en la respuesta
         responseBlocks.push(position);
-        // Incluir espacio de resultados vacio para mantener longitud fija
+        // Incluir espacio de resultados vacio para mantener longitud fija (3 bytes)
         responseBlocks.push('   ');
+        responseBlocks.push(CommandDirector.CHAR_END);
+        return responseBlocks.join(CommandDirector.DIVIDER);
+    }
+
+    private getCalculatorAutomaticTS01Response(command: string): string {
+        // Extraer los bloques del comando para obtener el puesto
+        const blocks = CommandDirector.getBlocks(command);
+
+        // El puesto está en el bloque 2 (índice 2) del comando
+        // Comando: B|SC|PUESTO|STOP|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        const position = blocks[2];
+
+        const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
+        // Incluir el puesto en la respuesta
+        responseBlocks.push(position);
+
+        // Resultados aleatorios -9999 a 9999
+        // Generar valor entre -9999 y 9999
+        const randomValue = Math.floor(Math.random() * 19999) - 9999; // -9999 a 9999
+        const sign = randomValue < 0 ? '-' : ' ';
+        const absoluteValue = Math.abs(randomValue);
+
+        // Para contraste: punto fijo con 2 decimales, usar 2 bytes para el número entero
+        // El punto fijo va en el medio, no se codifica con decimales
+        const encodedValue = CommandDirector.encodeCompactNumber(absoluteValue, 2, 0);
+        responseBlocks.push(`${sign}${encodedValue}`);
+
         responseBlocks.push(CommandDirector.CHAR_END);
         return responseBlocks.join(CommandDirector.DIVIDER);
     }

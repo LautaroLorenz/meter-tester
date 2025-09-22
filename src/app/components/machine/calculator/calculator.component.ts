@@ -65,11 +65,12 @@ export class CalculatorComponent extends MachineDeviceComponent {
         stepMeterPulses: number,
         stepMeterConstant: MeterConstantEnum
     ): Observable<CommandResultResponse[]> {
+        // B|SC|P|T|xKPx|Xs|IxKm|Z
         const observables = activeStands.map((activeStand) => {
             const standNumber = (activeStand.index + 1).toString().padStart(2, '0');
-            const standBlock = `P${standNumber}`;
-            const pattern = patternConstant.toString().padStart(10, '0');
-            const pulses = stepMeterPulses.toString().padStart(5, '0');
+            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+            const pattern = CommandDirector.encodeCompactNumber(patternConstant, 4, 0);
+            const pulses = CommandDirector.encodeCompactNumber(stepMeterPulses, 2, 0);
             const meterConstant = this.getMeterConstantBlock(stepMeterConstant, activeStand.stand);
             const command = this.buildCommand(
                 standBlock,
@@ -112,22 +113,26 @@ export class CalculatorComponent extends MachineDeviceComponent {
     private mapTSxxResponse(commands: string[]): CommandResultResponse[] {
         return commands.map((command) => {
             const blocks = CommandDirector.getBlocks(command);
-            const resultBlock = blocks[3];
-            const resultBlockValue = resultBlock.substring(4);
 
-            // los resultados sin números no se procesan
-            if (isNaN(Number(resultBlockValue)) || resultBlockValue.trim() === '') {
+            // El resultado está en el bloque 3 (índice 3)
+            // Estructura: B|CS|PUESTO|RESULTADO|Z
+            // RESULTADO: 3 caracteres codificados
+            const resultBlock = blocks[3];
+
+            if (!resultBlock || resultBlock.length < 3) {
                 return undefined;
             }
 
-            let resultValue = Number(resultBlockValue);
-            const resultSignal = resultBlock.substring(3, 4);
-            if (resultSignal === '-') {
-                resultValue = resultValue * -1;
-            }
+            // Extraer signo y valor codificado
+            const sign = resultBlock.charAt(0); // '-' o ' '
+            const encodedValue = resultBlock.substring(1); // 2 caracteres con el valor codificado
 
-            const decimals = Math.pow(10, this.resultDecimalsQuantity);
-            return Math.round((resultValue / decimals) * decimals) / decimals;
+            // Decodificar el valor usando CommandDirector con los decimales apropiados
+            const decodedValue = CommandDirector.decodeCompactNumber(encodedValue, this.resultDecimalsQuantity);
+
+            // Aplicar el signo
+            const resultValue = sign === '-' ? -decodedValue : decodedValue;
+            return resultValue;
         });
     }
 
@@ -156,27 +161,14 @@ export class CalculatorComponent extends MachineDeviceComponent {
         let value = '';
         // 7 dígitos enteros
         if (startChart === 'I') {
-            value = meterConstantValue.padStart(7, '0');
+            // 3 bytes: 7 enteros y 0 decimales
+            value = CommandDirector.encodeCompactNumber(Number(meterConstantValue), 3, 0);
         }
         // 3 enteros y 4 decimales
         if (startChart === 'W') {
-            value = this.formatNumberWithPadding(meterConstantValue);
+            // 3 bytes: 3 enteros y 4 decimales
+            value = CommandDirector.encodeCompactNumber(Number(meterConstantValue), 3, 4);
         }
         return `${startChart}${value}`;
-    }
-
-    // 3 enteros y 4 decimales
-    private formatNumberWithPadding(meterConstantValue: string): string {
-        // Separar la parte entera y decimal
-        const parts = meterConstantValue.split('.');
-        let integerPart = parts[0];
-        let decimalPart = parts[1] || '0';
-
-        // Rellenar con ceros a la izquierda
-        integerPart = integerPart.padStart(3, '0');
-        decimalPart = decimalPart.padEnd(4, '0');
-
-        // Concatenar y devolver el resultado
-        return integerPart + decimalPart;
     }
 }
