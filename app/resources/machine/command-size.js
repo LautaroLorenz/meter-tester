@@ -20,8 +20,8 @@ exports.CommandsSizes = [
         dividerPositions: [1, 4, 6]
     },
     {
-        // Calculador -> Software - Respuesta - Puesto (1-255 -> regex ".") + ACK + Valores del ensayo
-        pattern: `B\\|CS\\|.\\|`,
+        // Calculador -> Software - Respuesta - Puesto (1-255 -> regex "[\\s\\S]") + ACK + Valores del ensayo
+        pattern: `B\\|CS\\|[\\s\\S]\\|`,
         size: 12,
         dividerPositions: [1, 4, 6, 10]
     }
