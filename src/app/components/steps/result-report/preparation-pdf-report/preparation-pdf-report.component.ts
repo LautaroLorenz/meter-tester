@@ -59,43 +59,43 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 header: 'Puesto',
                 field: (item) => ('name' in item ? item.name : 'N/A'),
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;',
-                customStyles: 'font-size:14px;font-family:monospace;'
+                headerStyle: 'min-width: 50px;',
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Medidor',
                 template: this.meterColumnTmp,
-                headerStyle: 'font-size:15px;'
+                headerStyle: 'min-width: 150px;'
             },
             {
                 header: 'Nº de serie',
                 field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width:104px;font-size:15px;',
-                customStyles: 'font-size:14px;'
+                headerStyle: 'min-width: 100px;',
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Año',
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;',
-                customStyles: 'font-size:14px;'
+                headerStyle: 'min-width: 60px;',
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Active)}`,
                 field: (item): string =>
                     this.standMeterConstantPipe.transform(MeterConstantEnum.Active, item?.foreign.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:119px;white-space:nowrap;',
-                customStyles: 'font-size:14px;white-space:nowrap;'
+                headerStyle: 'min-width: 100px; white-space: nowrap;',
+                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Reactive)}`,
                 field: (item): string =>
                     this.standMeterConstantPipe.transform(MeterConstantEnum.Reactive, item?.foreign.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:119px;white-space:nowrap;',
-                customStyles: 'font-size:14px;white-space:nowrap;'
+                headerStyle: 'min-width: 100px; white-space: nowrap;',
+                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             }
         ];
     }

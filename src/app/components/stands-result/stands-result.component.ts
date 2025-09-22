@@ -83,30 +83,30 @@ export class StandsResultComponent implements OnInit, OnChanges {
             header: 'Puesto',
             field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
             alignHorizontal: TC_AlignHorizontal.Number,
-            headerStyle: 'font-size:15px;',
-            customStyles: 'font-size:14px;font-family:monospace;'
+            headerStyle: 'min-width: 50px;',
+            customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
         });
         if (!this.compactMode) {
             columns.push({
                 header: 'Medidor',
                 template: this.meterColumnTmp,
-                headerStyle: 'font-size:15px;'
+                headerStyle: 'min-width: 150px;'
             });
         }
         columns.push({
             header: 'Nº de serie',
             field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
             alignHorizontal: TC_AlignHorizontal.Text,
-            headerStyle: 'min-width:104px;font-size:15px;',
-            customStyles: 'font-size:14px;'
+            headerStyle: 'min-width: 100px;',
+            customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
         });
         if (!this.compactMode) {
             columns.push({
                 header: 'Año',
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;',
-                customStyles: 'font-size:14px;'
+                headerStyle: 'min-width: 60px;',
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             });
         }
         if (!this.compactMode) {
@@ -122,15 +122,21 @@ export class StandsResultComponent implements OnInit, OnChanges {
                     return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
                 },
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:119px;white-space:nowrap;',
-                customStyles: 'font-size:14px;white-space:nowrap;'
+                headerStyle: 'min-width: 100px; white-space: nowrap;',
+                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             });
         }
-        columns.push(this.resultsColumn);
+        columns.push({
+            ...this.resultsColumn,
+            headerStyle: (this.resultsColumn.headerStyle || '') + ' min-width: 80px;',
+            customStyles:
+                (this.resultsColumn.customStyles || '') +
+                ' font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+        });
         columns.push({
             header: 'Resultado',
             template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
-            headerStyle: 'font-size:15px;'
+            headerStyle: 'min-width: 80px;'
         });
 
         return columns;

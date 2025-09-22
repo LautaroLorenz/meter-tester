@@ -3,7 +3,7 @@
         <span class="text-color-secondary font-medium">Preparación</span>
         <div class="-mx-3">
             <p-table
-                styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm stands-result-table"
+                styleClass="p-datatable-gridlines mx-3 p-datatable-sm stands-result-table"
                 [columns]="columns"
                 [value]="value">
                 <ng-template
@@ -12,6 +12,7 @@
                     <tr>
                         <th
                             *ngFor="let col of columns"
+                            class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider"
                             [style]="col.headerStyle">
                             {{ col.header }}
                         </th>
@@ -23,7 +24,9 @@
                     let-columns="columns"
                     let-rowIndex="rowIndex">
                     <tr>
-                        <td *ngFor="let col of columns">
+                        <td
+                            *ngFor="let col of columns"
+                            class="text-center text-gray-700 font-medium text-xs">
                             <app-table-column
                                 [tableColumn]="col"
                                 [data]="rowData"

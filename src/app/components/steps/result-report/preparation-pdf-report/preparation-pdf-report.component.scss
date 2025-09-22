@@ -1,9 +1,29 @@
 ::ng-deep .stands-result-table {
-  td {
-    padding: 0.25rem 0.25rem;
+  .p-datatable-thead > tr > th {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .p-datatable-tbody > tr > td {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .p-datatable-tbody > tr:hover > td {
+    background: #f8f9fa;
   }
 }
 
 .meter-column {
-  font-size: 14px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #495057;
+  font-family: monospace;
 }
