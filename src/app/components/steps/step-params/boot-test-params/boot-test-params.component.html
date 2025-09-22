@@ -1,16 +1,22 @@
-<p-panel [toggleable]="toggleable">
+<p-panel
+    [toggleable]="toggleable"
+    styleClass="p-panel-compact">
     <ng-template pTemplate="header">
-        <div class="flex gap-2 align-items-center">
+        <div class="flex gap-1 align-items-center py-1">
             <ng-container *ngIf="showCompleteName">
                 <span
-                    class="p-panel-title text-color-secondary"
+                    class="text-sm text-gray-500 font-normal"
                     [ngStyle]="{ order: 1 }">
                     {{ currentStep.foreign.step?.name }}
                 </span>
-                <span [ngStyle]="{ order: 2 }">-</span>
+                <span
+                    class="text-gray-400 text-xs"
+                    [ngStyle]="{ order: 2 }"
+                    >-</span
+                >
             </ng-container>
             <span
-                class="p-panel-title"
+                class="text-sm text-gray-600 font-medium"
                 [ngStyle]="{ order: 3 }">
                 {{ currentStep.form_control_raw.name }}
             </span>
@@ -18,7 +24,7 @@
     </ng-template>
 
     <p-table
-        styleClass="p-datatable-sm p-datatable-gridlines"
+        styleClass="p-datatable-sm p-datatable-gridlines p-datatable-compact"
         [value]="[true]"
         [rows]="1">
         <ng-template pTemplate="header">
