@@ -17,34 +17,37 @@
         </div>
     </ng-template>
 
-    <div class="grid">
-        <div class="col-12">
-            <div class="grid">
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Máximo error permitido </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.maxAllowedError }}&nbsp;[%]
-                    </span>
-                </div>
-
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Cantidad de impulsos </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.meterPulses }}
-                    </span>
-                </div>
-
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
-                    <span class="text-color font-semibold">
-                        {{
-                            currentStep.form_control_raw.meterConstant === MeterConstantEnum.Active
-                                ? 'Activa'
-                                : 'Reactiva'
-                        }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p-table
+        styleClass="p-datatable-sm p-datatable-gridlines"
+        [value]="[true]"
+        [rows]="1">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Máximo error permitido
+                </th>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Cantidad de impulsos
+                </th>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Constante del medidor
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <tr>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{ currentStep.form_control_raw.maxAllowedError }} [%]
+                </td>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{ currentStep.form_control_raw.meterPulses }}
+                </td>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{
+                        currentStep.form_control_raw.meterConstant === MeterConstantEnum.Active ? 'Activa' : 'Reactiva'
+                    }}
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </p-panel>

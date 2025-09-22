@@ -17,34 +17,37 @@
         </div>
     </ng-template>
 
-    <div class="grid">
-        <div class="col-12">
-            <div class="grid">
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Cant. de impulsos máx. </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.maxAllowedPulses }}
-                    </span>
-                </div>
-
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Tiempo de ejecución </span>
-                    <span class="text-color font-semibold">
-                        {{ currentStep.form_control_raw.durationSeconds }}&nbsp;[s]
-                    </span>
-                </div>
-
-                <div class="col-4 flex flex-column gap-1 p-2">
-                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
-                    <span class="text-color font-semibold">
-                        {{
-                            currentStep.form_control_raw.meterConstant === MeterConstantEnum.Active
-                                ? 'Activa'
-                                : 'Reactiva'
-                        }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p-table
+        styleClass="p-datatable-sm p-datatable-gridlines"
+        [value]="[true]"
+        [rows]="1">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Cant. de impulsos máx.
+                </th>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Tiempo de ejecución
+                </th>
+                <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                    Constante del medidor
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <tr>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{ currentStep.form_control_raw.maxAllowedPulses }}
+                </td>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{ currentStep.form_control_raw.durationSeconds }} [s]
+                </td>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{
+                        currentStep.form_control_raw.meterConstant === MeterConstantEnum.Active ? 'Activa' : 'Reactiva'
+                    }}
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </p-panel>
