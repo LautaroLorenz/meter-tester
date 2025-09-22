@@ -2,7 +2,7 @@
     <ng-container *ngIf="{ seconds: countdownDown$ | async } as countdown">
         <p-panel
             #panel
-            [toggleable]="true"
+            [toggleable]="false"
             styleClass="timer-panel">
             <ng-template pTemplate="header">
                 <div class="flex align-items-center gap-2">
