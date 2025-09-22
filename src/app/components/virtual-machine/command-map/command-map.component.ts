@@ -102,20 +102,20 @@ export class CommandMapComponent {
         blocks.push(CommandDirector.encodeCompactNumber(2000000000, 4, 0));
 
         // UR|US|UT - Tensiones aleatorias (2 bytes, 1 decimal) - rango: 0.0 a 255.9
-        const urValue = Math.random() * 255.9;
-        const usValue = Math.random() * 255.9;
-        const utValue = Math.random() * 255.9;
-        blocks.push(CommandDirector.encodeCompactNumber(urValue, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(usValue, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(utValue, 2, 1));
+        // const urValue = Math.random() * 255.9;
+        // const usValue = Math.random() * 255.9;
+        // const utValue = Math.random() * 255.9;
+        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
 
         // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
-        const irValue = Math.random() * 25.59;
-        const isValue = Math.random() * 25.59;
-        const itValue = Math.random() * 25.59;
-        blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
+        // const irValue = Math.random() * 25.59;
+        // const isValue = Math.random() * 25.59;
+        // const itValue = Math.random() * 25.59;
+        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
         const prValue = Math.random() * 2.55;
