@@ -15,9 +15,9 @@ export class PatternStatusComponent implements OnChanges {
     @Input() meterConstant: MeterConstantEnum | null = null;
 
     rows: PatternStatusRow[] = [
-        { metric: 'Tensión U', l1: 0, l2: 0, l3: 0, unit: 'V', decimals: 1 },
-        { metric: 'Corriente I', l1: 0, l2: 0, l3: 0, unit: 'A', decimals: 3 },
-        { metric: 'Factor de potencia', l1: 0, l2: 0, l3: 0, unit: '', decimals: 2 }
+        { metric: 'Tensión U', l1: '0', l2: '0', l3: '0', unit: 'V', decimals: 1 },
+        { metric: 'Corriente I', l1: '0', l2: '0', l3: '0', unit: 'A', decimals: 3 },
+        { metric: 'Factor de potencia', l1: '0', l2: '0', l3: '0', unit: '', decimals: 2 }
     ];
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -26,12 +26,12 @@ export class PatternStatusComponent implements OnChanges {
         }
     }
 
-    // construye el formato del pipe number según dp
-    getFormat(row: PatternStatusRow): string {
-        return `1.${row.decimals}-${row.decimals}`;
-    }
-
     private updateRows(): PatternStatusRow[] {
+        const formatValue = (value: number, decimals: number, letter?: string): string => {
+            const formattedNumber = value.toFixed(decimals);
+            return letter ? `${formattedNumber}${letter}` : formattedNumber;
+        };
+
         const updatePhaseRow = (
             row: PatternStatusRow,
             phaseProp: 'voltage' | 'current' | 'anglePhi' | 'powerFactor',
@@ -40,21 +40,16 @@ export class PatternStatusComponent implements OnChanges {
             phaseL3: Phase | undefined,
             includeLetters = false
         ): PatternStatusRow => {
-            const updatedRow: PatternStatusRow = {
+            const valueL1 = phaseL1 ? phaseL1[phaseProp] : 0;
+            const valueL2 = phaseL2 ? phaseL2[phaseProp] : 0;
+            const valueL3 = phaseL3 ? phaseL3[phaseProp] : 0;
+
+            return {
                 ...row,
-                l1: phaseL1 ? phaseL1[phaseProp] : 0,
-                l2: phaseL2 ? phaseL2[phaseProp] : 0,
-                l3: phaseL3 ? phaseL3[phaseProp] : 0
+                l1: formatValue(valueL1, row.decimals, includeLetters ? phaseL1?.powerFactorLetter : undefined),
+                l2: formatValue(valueL2, row.decimals, includeLetters ? phaseL2?.powerFactorLetter : undefined),
+                l3: formatValue(valueL3, row.decimals, includeLetters ? phaseL3?.powerFactorLetter : undefined)
             };
-
-            // Si se requieren letras (para factor de potencia), agregarlas
-            if (includeLetters) {
-                updatedRow.l1Letter = phaseL1?.powerFactorLetter;
-                updatedRow.l2Letter = phaseL2?.powerFactorLetter;
-                updatedRow.l3Letter = phaseL3?.powerFactorLetter;
-            }
-
-            return updatedRow;
         };
 
         // Update power factor row with appropriate text based on meter constant
