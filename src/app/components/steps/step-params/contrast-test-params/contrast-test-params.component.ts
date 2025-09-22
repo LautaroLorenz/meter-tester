@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StepParamsComponent } from '../../../../models/business/class/step-params-component.model';
 import { ContrastTestEssayStep } from '../../../../models/business/interafces/steps/contrast-test-step.model';
+import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-contrast-test-params',
@@ -10,4 +11,6 @@ import { ContrastTestEssayStep } from '../../../../models/business/interafces/st
 })
 export class ContrastTestParamsComponent extends StepParamsComponent<ContrastTestEssayStep> {
     @Input() showTexts!: boolean;
+
+    readonly MeterConstantEnum = MeterConstantEnum;
 }

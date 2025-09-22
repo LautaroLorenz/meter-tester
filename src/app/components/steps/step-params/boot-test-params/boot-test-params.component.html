@@ -20,19 +20,30 @@
     <div class="grid">
         <div class="col-12">
             <div class="grid">
-                <div class="col-6 flex flex-column gap-1 p-2">
+                <div class="col-4 flex flex-column gap-1 p-2">
                     <span class="text-color-secondary font-medium"> Cant. de impulsos mínima </span>
                     <span class="text-color font-semibold">
                         {{ currentStep.form_control_raw.allowedPulses }}
                     </span>
                 </div>
 
-                <div class="col-6 flex flex-column gap-1 p-2">
+                <div class="col-4 flex flex-column gap-1 p-2">
                     <span class="text-color-secondary font-medium"> Tiempo mínimo-máximo </span>
                     <span class="text-color font-semibold">
                         {{ currentStep.form_control_raw.minDurationSeconds }}&nbsp;[s]&nbsp;-&nbsp;{{
                             currentStep.form_control_raw.maxDurationSeconds
                         }}&nbsp;[s]
+                    </span>
+                </div>
+
+                <div class="col-4 flex flex-column gap-1 p-2">
+                    <span class="text-color-secondary font-medium"> Constante del medidor </span>
+                    <span class="text-color font-semibold">
+                        {{
+                            currentStep.form_control_raw.meterConstant === MeterConstantEnum.Active
+                                ? 'Activa'
+                                : 'Reactiva'
+                        }}
                     </span>
                 </div>
             </div>
