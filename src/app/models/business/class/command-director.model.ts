@@ -113,22 +113,57 @@ export class CommandDirector {
     /**
      * Decodifica un número desde formato compacto
      * @param encoded String codificado
+     * @param decimals Número de decimales para convertir de punto fijo a decimal (0-4). Si no se especifica, devuelve el valor en punto fijo
      * @returns Número decodificado
      * Ejemplos de uso:
      *  CommandDirector.decodeCompactNumber("\x01") // 1
      *  CommandDirector.decodeCompactNumber("\xFF") // 255
      *  CommandDirector.decodeCompactNumber("\x01\x00") // 256
      *  CommandDirector.decodeCompactNumber("\x03\xE8") // 1000
+     *  CommandDirector.decodeCompactNumber("\x04\xD2", 1) // 123.4 (1234 / 10)
+     *  CommandDirector.decodeCompactNumber("\x04\xD2", 2) // 12.34 (1234 / 100)
      */
-    static decodeCompactNumber(encoded: string): number {
-        const range = 256;
+    static decodeCompactNumber(encoded: string, decimals: number): number {
         let result = 0;
 
+        // Little-endian: LSB primero, MSB último (como envía el patrón)
         for (let i = 0; i < encoded.length; i++) {
             const charCode = encoded.charCodeAt(i);
-            result = result * range + charCode;
+            result += charCode * Math.pow(256, i); // LSB en posición 0, MSB en posición mayor
+        }
+
+        // Si se especifican decimales, convertir de punto fijo a decimal
+        if (decimals > 0) {
+            const divisor = Math.pow(10, decimals);
+            return result / divisor;
         }
 
         return result;
+    }
+
+    /**
+     * Decodifica un valor de factor de potencia (3 bytes: signo + valor + tipo)
+     * @param encoded String codificado en 3 bytes
+     * @returns Objeto con {value: number, type: 'L'|'C'}
+     */
+    static decodePowerFactor(encoded: string): { value: number; type: 'L' | 'C' } {
+        if (encoded.length !== 3) {
+            throw new Error(`Factor de potencia debe tener exactamente 3 bytes, recibido: ${encoded.length}`);
+        }
+
+        const sign = encoded.charAt(0); // '+' o '-' o ' '
+        const valueByte = encoded.charAt(1);
+        const typeChar = encoded.charAt(2); // 'L' o 'C'
+
+        // Decodificar el valor
+        const value = this.decodeCompactNumber(valueByte, 2); // 2 decimales
+
+        // Aplicar el signo
+        const signedValue = sign === '-' ? -value : value;
+
+        return {
+            value: signedValue,
+            type: typeChar as 'L' | 'C'
+        };
     }
 }

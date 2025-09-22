@@ -63,18 +63,18 @@ export class CommandMapComponent {
 
         // UR|US|UT
         blocks.push(CommandDirector.encodeCompactNumber(123.4, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(12.3, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(12.4, 2, 1));
         blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 1));
 
         // IR|IS|IT
         blocks.push(CommandDirector.encodeCompactNumber(12.34, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(12.3, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(12.345, 2, 2));
         blocks.push(CommandDirector.encodeCompactNumber(1.2, 2, 2));
 
         // -PR|-PS|-PT
         blocks.push(`-${CommandDirector.encodeCompactNumber(1.0, 1, 2)}L`);
         blocks.push(` ${CommandDirector.encodeCompactNumber(0.12, 1, 2)}C`);
-        blocks.push(`-${CommandDirector.encodeCompactNumber(0, 1, 2)}L`);
+        blocks.push(` ${CommandDirector.encodeCompactNumber(0, 1, 2)}L`);
 
         blocks.push(CommandDirector.CHAR_END);
         return blocks.join(CommandDirector.DIVIDER);
