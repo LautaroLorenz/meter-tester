@@ -17,9 +17,15 @@
         let-row>
         <tr>
             <td>{{ row.metric }}</td>
-            <td class="text-right">{{ row.l1 | number: getFormat(row) }}</td>
-            <td class="text-right">{{ row.l2 | number: getFormat(row) }}</td>
-            <td class="text-right">{{ row.l3 | number: getFormat(row) }}</td>
+            <td class="text-right">
+                {{ row.l1 | number: getFormat(row) }}<span *ngIf="row.l1Letter">{{ row.l1Letter }}</span>
+            </td>
+            <td class="text-right">
+                {{ row.l2 | number: getFormat(row) }}<span *ngIf="row.l2Letter">{{ row.l2Letter }}</span>
+            </td>
+            <td class="text-right">
+                {{ row.l3 | number: getFormat(row) }}<span *ngIf="row.l3Letter">{{ row.l3Letter }}</span>
+            </td>
             <td>
                 <ng-container *ngIf="row.unit">[{{ row.unit }}]</ng-container>
             </td>

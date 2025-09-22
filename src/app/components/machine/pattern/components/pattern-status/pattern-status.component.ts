@@ -37,14 +37,24 @@ export class PatternStatusComponent implements OnChanges {
             phaseProp: 'voltage' | 'current' | 'anglePhi' | 'powerFactor',
             phaseL1: Phase | undefined,
             phaseL2: Phase | undefined,
-            phaseL3: Phase | undefined
+            phaseL3: Phase | undefined,
+            includeLetters = false
         ): PatternStatusRow => {
-            return {
+            const updatedRow: PatternStatusRow = {
                 ...row,
                 l1: phaseL1 ? phaseL1[phaseProp] : 0,
                 l2: phaseL2 ? phaseL2[phaseProp] : 0,
                 l3: phaseL3 ? phaseL3[phaseProp] : 0
             };
+
+            // Si se requieren letras (para factor de potencia), agregarlas
+            if (includeLetters) {
+                updatedRow.l1Letter = phaseL1?.powerFactorLetter;
+                updatedRow.l2Letter = phaseL2?.powerFactorLetter;
+                updatedRow.l3Letter = phaseL3?.powerFactorLetter;
+            }
+
+            return updatedRow;
         };
 
         // Update power factor row with appropriate text based on meter constant
@@ -53,7 +63,8 @@ export class PatternStatusComponent implements OnChanges {
             'powerFactor',
             this.patternStatus?.phaseL1,
             this.patternStatus?.phaseL2,
-            this.patternStatus?.phaseL3
+            this.patternStatus?.phaseL3,
+            true // Incluir letras para el factor de potencia
         );
 
         // Update the metric text based on meter constant
