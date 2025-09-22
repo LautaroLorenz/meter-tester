@@ -65,7 +65,7 @@ export class CommandDirector {
      * @param decimals Número de decimales para punto fijo (0-4)
      * @returns String con la representación compacta
      *
-     * Algoritmo:
+     * Algoritmo (Big-endian - MSB a la izquierda, LSB a la derecha):
      * - 1 byte (0-255): Se pone el número directamente
      * - 2 bytes (0-65535): MSB = número/256, LSB = número mod 256
      * - 3 bytes (0-16777215): B2 = número/65536, B1 = (número - B2*65536)/256, B0 = (número - B2*65536) mod 256
@@ -97,13 +97,13 @@ export class CommandDirector {
             );
         }
 
-        // Calcular cada byte según el algoritmo específico
+        // Calcular cada byte según el algoritmo específico (Big-endian)
         const resultBytes: number[] = [];
         let remaining = fixedPointNumber;
 
         for (let i = bytes - 1; i >= 0; i--) {
             const divisor = Math.pow(256, i);
-            resultBytes.unshift(Math.floor(remaining / divisor));
+            resultBytes.push(Math.floor(remaining / divisor));
             remaining = remaining % divisor;
         }
 
@@ -126,10 +126,10 @@ export class CommandDirector {
     static decodeCompactNumber(encoded: string, decimals: number): number {
         let result = 0;
 
-        // Little-endian: LSB primero, MSB último (como envía el patrón)
+        // Big-endian: MSB primero, LSB último (MSB a la izquierda, LSB a la derecha)
         for (let i = 0; i < encoded.length; i++) {
             const charCode = encoded.charCodeAt(i);
-            result += charCode * Math.pow(256, i); // LSB en posición 0, MSB en posición mayor
+            result += charCode * Math.pow(256, encoded.length - 1 - i); // MSB en posición 0, LSB en posición mayor
         }
 
         // Si se especifican decimales, convertir de punto fijo a decimal
