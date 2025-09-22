@@ -27,6 +27,7 @@ export class PhaseFormGroupComponent {
     @Output() copyClick = new EventEmitter<void>();
 
     powerFactorLetterOptions = [
+        { label: 'Seleccionar', value: '', disabled: true },
         { label: 'L', value: 'L' },
         { label: 'C', value: 'C' }
     ];
