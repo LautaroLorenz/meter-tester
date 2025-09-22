@@ -6,6 +6,7 @@ import { MessagesService } from '../../../services/messages.service';
 import { DeviceConstants } from '../constants/devices-constant.model';
 import { DeviceService } from '../../../services/device.service';
 import { CommandDirector } from './command-director.model';
+import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
     template: '',
@@ -17,7 +18,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     protected deviceError = new Subject<void>();
     protected onDestroy = new Subject<void>();
 
-    protected readonly loopDelay = 500;
+    protected readonly loopDelay = APP_CONFIG.delays.loopDelay;
     protected readonly DeviceConstants = DeviceConstants;
 
     abstract readonly device: Devices;

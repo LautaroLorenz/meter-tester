@@ -1,5 +1,5 @@
-import { GeneratorEnum } from "../business/enums/generator-enum.model";
-import { PatternEnum } from "../business/enums/pattern-enum.model";
+import { GeneratorEnum } from '../business/enums/generator-enum.model';
+import { PatternEnum } from '../business/enums/pattern-enum.model';
 
 export interface Environment {
     // flag si es producción
@@ -25,4 +25,14 @@ export interface Environment {
 
     // activa el historial de logs
     logsHistory: boolean;
+
+    // delays para comandos y ciclos
+    delays: {
+        // delay entre verificaciones contra el patrón (ms)
+        patternCheckCycleDelay: number;
+        // delay para resultados del calculador (ms)
+        resultsDelay: number;
+        // delay para loops de dispositivos (ms)
+        loopDelay: number;
+    };
 }

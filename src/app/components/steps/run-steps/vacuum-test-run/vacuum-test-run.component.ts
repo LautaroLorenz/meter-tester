@@ -129,7 +129,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         ).pipe(
             // tap((result) => results), <- si fuera necesario consumir el pattern status
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
-            repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
+            repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
             catchError(() => EMPTY), // evita romper el loop por errores
             takeUntil(this.onDestroy)
         );

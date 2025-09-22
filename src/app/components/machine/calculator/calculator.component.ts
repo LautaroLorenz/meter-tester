@@ -10,6 +10,7 @@ import { StandMeterConstantPipe } from '../../../pipes/business/stand-meter-cons
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { ActiveStand } from '../../../models/business/interafces/active-stand.model';
 import { CommandResultResponse } from '../../../models/business/interafces/stand-result.model';
+import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-calculator',
@@ -25,7 +26,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
-    private readonly resultsDelayMs = 500;
+    private readonly resultsDelayMs = APP_CONFIG.delays.resultsDelay;
 
     stop$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
