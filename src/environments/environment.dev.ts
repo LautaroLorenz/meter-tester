@@ -16,7 +16,7 @@ export const APP_CONFIG: Environment = {
         bootTestRun: false,
         contrastTestRun: false
     },
-    virtualMachine: false,
+    virtualMachine: true,
     logsHistory: false,
     delays: {
         patternCheckCycleDelay: 50,

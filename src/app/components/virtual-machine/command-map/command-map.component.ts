@@ -97,8 +97,9 @@ export class CommandMapComponent {
         const blocks: string[] = [CommandDirector.CHAR_START, `${Devices.PAT}${Devices.STW}`];
 
         // xKPx - Patrón aleatorio (4 bytes, 0 decimales) - rango: 0 a 4294967295
-        const patternValue = Math.floor(Math.random() * 4294967296);
-        blocks.push(CommandDirector.encodeCompactNumber(patternValue, 4, 0));
+        // const patternValue = Math.floor(Math.random() * 4294967296);
+        // blocks.push(CommandDirector.encodeCompactNumber(patternValue, 4, 0));
+        blocks.push(CommandDirector.encodeCompactNumber(2000000000, 4, 0));
 
         // UR|US|UT - Tensiones aleatorias (2 bytes, 1 decimal) - rango: 0.0 a 255.9
         const urValue = Math.random() * 255.9;
