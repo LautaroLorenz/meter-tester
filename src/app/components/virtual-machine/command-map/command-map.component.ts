@@ -47,28 +47,28 @@ export class CommandMapComponent {
             automaticResponse: () => this.getPatternAutomaticResponse()
         },
         {
-            device: Devices.PAT,
+            device: Devices.CAL,
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.STOP}|\\n)`,
             lastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
         },
         {
-            device: Devices.PAT,
+            device: Devices.CAL,
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESET}|\\n)`,
             lastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
         },
         {
-            device: Devices.PAT,
+            device: Devices.CAL,
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESULT_TS01}|\\n)`,
             lastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticTS01Response(command || '')
         },
         {
-            device: Devices.PAT,
+            device: Devices.CAL,
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|.\\|(?:${COMMANDS.Software.Calculator.RESULT_TS02}|\\n)`,
             lastResponse: '',
