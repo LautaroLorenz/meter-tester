@@ -1,16 +1,20 @@
 <p-table
-    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+    styleClass="p-datatable-gridlines mx-3 p-datatable-sm p-datatable-compact"
     [value]="standsFormArray.controls"
     [tableStyle]="{ 'min-width': '100%' }"
     responsiveLayout="scroll">
     <ng-template pTemplate="header">
         <tr>
-            <th>Activo</th>
-            <th>Puesto</th>
-            <th>Modelo</th>
-            <th>Año de fabricación</th>
-            <th>Nª de serie</th>
-            <th>Acciones</th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Activo</th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Puesto</th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Modelo</th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                Año de fabricación
+            </th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+                Nª de serie
+            </th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Acciones</th>
         </tr>
     </ng-template>
 
@@ -21,14 +25,16 @@
         <ng-container [formGroup]="standForm">
             <tr>
                 <!-- Checkbox de activación -->
-                <td>
+                <td class="text-center">
                     <p-checkbox
                         formControlName="isActive"
                         [binary]="true"></p-checkbox>
                 </td>
 
                 <!-- Nombre del puesto -->
-                <td>{{ standForm.get('name')!.value }}</td>
+                <td class="text-center text-gray-700 font-medium text-sm font-mono">
+                    {{ standForm.get('name')!.value }}
+                </td>
 
                 <!-- Dropdown del medidor -->
                 <td>
@@ -42,7 +48,7 @@
                         appendTo="body"
                         [autoDisplayFirst]="false"
                         [showClear]="true"
-                        styleClass="w-full"></p-dropdown>
+                        styleClass="w-full p-inputtext-sm"></p-dropdown>
                 </td>
 
                 <!-- Año de producción -->
@@ -56,7 +62,7 @@
                         appendTo="body"
                         [autoDisplayFirst]="false"
                         [showClear]="true"
-                        styleClass="w-full"></p-dropdown>
+                        styleClass="w-full p-inputtext-sm"></p-dropdown>
                 </td>
 
                 <!-- Número de serie -->
@@ -65,14 +71,16 @@
                         type="text"
                         pInputText
                         formControlName="serialNumber"
-                        styleClass="w-full" />
+                        styleClass="w-full"
+                        style="height: 2.5rem; font-size: 0.875rem; padding: 1.2rem" />
                 </td>
 
                 <!-- Botón para copiar -->
-                <td>
+                <td class="text-center">
                     <p-button
                         icon="pi pi-copy"
                         [outlined]="true"
+                        size="small"
                         (click)="openCopyDialog(i)"
                         [disabled]="!standForm.get('isActive')!.value"
                         pTooltip="Copiar valores a otros puestos"
