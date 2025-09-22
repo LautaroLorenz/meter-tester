@@ -68,13 +68,15 @@ export class StandsResultComponent implements OnInit, OnChanges {
                 header: 'Nº de serie',
                 field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width:104px;font-size:15px;'
+                headerStyle: 'min-width:104px;font-size:15px;',
+                customStyles: 'font-size:14px;'
             },
             {
                 header: 'Año',
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'font-size:15px;'
+                headerStyle: 'font-size:15px;',
+                customStyles: 'font-size:14px;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`,
@@ -88,7 +90,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
                     return this.standMeterConstantPipe.transform(this.stepMeterConstant, item?.foreign.meter);
                 },
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
-                headerStyle: 'min-width:119px;font-size:15px;white-space:nowrap;'
+                headerStyle: 'min-width:119px;white-space:nowrap;',
+                customStyles: 'font-size:14px;white-space:nowrap;'
             },
             this.resultsColumn,
             {

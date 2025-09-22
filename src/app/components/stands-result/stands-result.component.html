@@ -1,5 +1,5 @@
 <p-table
-    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm stands-result-table"
     [columns]="columns"
     [value]="value">
     <ng-template
@@ -33,9 +33,11 @@
     #meterColumnTmp
     let-item="item"
     let-index="index">
-    <app-clamp [lines]="3">
-        {{ item?.foreign?.meter?.label }}
-    </app-clamp>
+    <div class="meter-column">
+        <app-clamp [lines]="3">
+            {{ item?.foreign?.meter?.label }}
+        </app-clamp>
+    </div>
 </ng-template>
 
 <ng-template
