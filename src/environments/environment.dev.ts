@@ -5,13 +5,13 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: false,
     environment: 'DEV',
-    standsQuantity: 2,
+    standsQuantity: 20,
     generatorType: GeneratorEnum.SemiautomaticPYC5050,
     patternType: PatternEnum.Sm5050,
     skipSteps: {
         photocellAdjustmentRequest: false,
-        verificationMajorStep: true,
-        preparationMajorStep: true,
+        verificationMajorStep: false,
+        preparationMajorStep: false,
         vacuumTestRun: false,
         bootTestRun: false,
         contrastTestRun: false
@@ -19,8 +19,8 @@ export const APP_CONFIG: Environment = {
     virtualMachine: true,
     logsHistory: false,
     delays: {
-        patternCheckCycleDelay: 3000,
-        resultsDelay: 500,
-        loopDelay: 500
+        patternCheckCycleDelay: 50,
+        resultsDelay: 50,
+        loopDelay: 50
     }
 };
