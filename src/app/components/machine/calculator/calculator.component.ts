@@ -30,8 +30,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     stop$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
-            const standNumber = (index + 1).toString().padStart(2, '0');
-            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+            const { standNumber, standBlock } = this.createStandBlock(index);
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
@@ -47,8 +46,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     reset$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
-            const standNumber = (index + 1).toString().padStart(2, '0');
-            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+            const { standNumber, standBlock } = this.createStandBlock(index);
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESET);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
@@ -68,8 +66,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     ): Observable<CommandResultResponse[]> {
         // B|SC|P|T|xKPx|Xs|IxKm|Z
         const observables = activeStands.map((activeStand) => {
-            const standNumber = (activeStand.index + 1).toString().padStart(2, '0');
-            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+            const { standNumber, standBlock } = this.createStandBlock(activeStand.index);
             const pattern = CommandDirector.encodeCompactNumber(patternConstant, 4, 0);
             const pulses = CommandDirector.encodeCompactNumber(stepMeterPulses, 2, 0);
             const meterConstant = this.getMeterConstantBlock(stepMeterConstant, activeStand.stand);
@@ -95,8 +92,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     resultsTS02$(activeStands: ActiveStand[]): Observable<CommandResultResponse[]> {
         const observables = activeStands.map((activeStand) => {
-            const standNumber = (activeStand.index + 1).toString().padStart(2, '0');
-            const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+            const { standNumber, standBlock } = this.createStandBlock(activeStand.index);
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.RESULT_TS02);
             return this.write$(command, () =>
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
@@ -171,5 +167,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
             value = CommandDirector.encodeCompactNumber(Number(meterConstantValue), 3, 4);
         }
         return `${startChart}${value}`;
+    }
+
+    private createStandBlock(standIndex: number): { standNumber: string; standBlock: string } {
+        const standNumber = (standIndex + 1).toString().padStart(2, '0');
+        const standBlock = `${CommandDirector.encodeCompactNumber(Number(standNumber), 1, 0)}`;
+        return { standNumber, standBlock };
     }
 }
