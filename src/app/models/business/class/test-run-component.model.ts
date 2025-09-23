@@ -7,10 +7,11 @@ import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 import { ActiveStand } from '../interafces/active-stand.model';
 import { Subject } from 'rxjs/internal/Subject';
-import { Observable } from 'rxjs';
+import { Observable, take, tap, map } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
+import { MajorSteps } from '../enums/major-steps.model';
 
 @Component({
     template: '',
@@ -24,6 +25,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     canExecute = false;
     canContinue = false;
     isExecuting = false;
+    showRepeatFromDialog = false;
+    showContinueToDialog = false;
 
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
@@ -140,6 +143,110 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
             return;
         }
         this.startTest();
+    }
+
+    /**
+     * Obtiene los pasos de ejecución disponibles para repetir desde
+     */
+    getAvailableStepsToRepeatFrom(): Observable<EssayStep[]> {
+        return this.runEssayService.executionSteps$.pipe(
+            map((executionSteps: EssayStep[]) => executionSteps.filter((step: EssayStep) => step.id <= this.currentStep.id))
+        );
+    }
+
+    /**
+     * Muestra el diálogo para seleccionar desde qué paso repetir
+     */
+    openRepeatFromDialog(): void {
+        this.showRepeatFromDialog = true;
+        this.cd.detectChanges();
+    }
+
+    /**
+     * Repite la ejecución desde el paso seleccionado
+     */
+    repeatFromStep(selectedStep: EssayStep): void {
+        this.showRepeatFromDialog = false;
+        this.abort().subscribe(() => {
+            this.resetStepsFrom(selectedStep.id);
+        });
+    }
+
+    /**
+     * Resetea todos los pasos desde el stepId seleccionado
+     */
+    private resetStepsFrom(fromStepId: number): void {
+        this.runEssayService.executionSteps$.pipe(
+            take(1),
+            tap((executionSteps: EssayStep[]) => {
+                executionSteps.forEach((step: EssayStep) => {
+                    if (step.id >= fromStepId) {
+                        // Resetear el estado del paso
+                        this.runEssayService
+                            .getEssayStep(step.id)
+                            .get('executedStatus')
+                            ?.setValue(StepStatus.Pending);
+                        
+                        // Resetear los resultados específicos del test
+                        this.resetTestSpecificResults(step.id);
+                        
+                        // Resetear los resultados de los stands
+                        this.getActiveStands().forEach(({ index }) => {
+                            const standResult = this.runEssayService.getStandResult(step.id, index);
+                            standResult.patchValue({
+                                resultStatus: ResultStatus.Pending
+                            });
+                        });
+                    }
+                });
+                
+                // Marcar el paso seleccionado como actual
+                this.runEssayService
+                    .getEssayStep(fromStepId)
+                    .get('executedStatus')
+                    ?.setValue(StepStatus.Current);
+            })
+        ).subscribe();
+    }
+
+    /**
+     * Resetea los resultados específicos del tipo de test
+     */
+    protected resetTestSpecificResults(stepId: number): void {
+        // Este método será sobrescrito por cada componente específico
+        // para limpiar los resultados específicos de su tipo de test
+    }
+
+    /**
+     * Muestra el diálogo para seleccionar a qué paso continuar
+     */
+    openContinueToDialog(): void {
+        this.showContinueToDialog = true;
+        this.cd.detectChanges();
+    }
+
+    /**
+     * Continúa a un paso específico (puede ser anterior o siguiente)
+     */
+    continueToStep(selectedStep: EssayStep): void {
+        this.showContinueToDialog = false;
+        if (selectedStep.id < this.currentStep.id) {
+            // Si es un paso anterior, usar la funcionalidad de repetir
+            this.repeatFromStep(selectedStep);
+        } else if (selectedStep.id === this.currentStep.id) {
+            // Si es el paso actual, simplemente continuar
+            this.stepExecutionDone(this.currentStep);
+        }
+        // Si es un paso posterior, no hacer nada (no se puede saltar hacia adelante)
+    }
+
+    /**
+     * Obtiene los pasos disponibles para continuar (anteriores al actual)
+     */
+    getAvailableStepsToContinueTo(): Observable<EssayStep[]> {
+        return this.runEssayService.executionSteps$.pipe(
+            map((executionSteps: EssayStep[]) => executionSteps.filter((step: EssayStep) => step.id <= this.currentStep.id))
+        );
     }
 
     abstract onStepInit(): void;

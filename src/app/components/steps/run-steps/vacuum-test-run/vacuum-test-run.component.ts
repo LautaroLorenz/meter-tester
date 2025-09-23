@@ -271,6 +271,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.cd.detectChanges();
     }
 
+    override resetTestSpecificResults(stepId: number): void {
+        this.getActiveStands().forEach(({ index }) => {
+            this.runEssayService
+                .getStandResult<VacuumTestStandResult>(stepId, index)
+                .patchValue({ measuredPulses: undefined });
+        });
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.stop$),
@@ -281,6 +289,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     private getResults$(): Observable<CommandResultResponse[]> {
         return this.calculator
             .resultsTS02$(this.getActiveStands())
-            .pipe(tap((results) => this.onCalculatorResults(results)));
+            .pipe(tap((results: CommandResultResponse[]) => this.onCalculatorResults(results)));
     }
 }

@@ -78,8 +78,30 @@
         (click)="restart()"></p-button>
 
     <p-button
+        label="Repetir desde paso anterior"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        [disabled]="!canContinue"
+        (click)="openRepeatFromDialog()"></p-button>
+
+    <p-button
         label="Continuar"
         [outlined]="false"
         [disabled]="!canContinue"
-        (click)="stepExecutionDone(this.currentStep)"></p-button>
+        (click)="openContinueToDialog()"></p-button>
 </div>
+
+<!-- Repeat from step dialog -->
+<app-repeat-from-step-dialog
+    [(visible)]="showRepeatFromDialog"
+    [availableSteps]="getAvailableStepsToRepeatFrom() | async"
+    (stepSelected)="repeatFromStep($event)">
+</app-repeat-from-step-dialog>
+
+<!-- Continue to step dialog -->
+<app-continue-to-step-dialog
+    [(visible)]="showContinueToDialog"
+    [availableSteps]="getAvailableStepsToContinueTo() | async"
+    [currentStepId]="currentStep.id"
+    (stepSelected)="continueToStep($event)">
+</app-continue-to-step-dialog>

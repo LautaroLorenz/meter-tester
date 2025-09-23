@@ -66,6 +66,8 @@ import { ClampModule } from './clamp/clamp.module';
 import { PreparationPdfReportComponent } from './steps/result-report/preparation-pdf-report/preparation-pdf-report.component';
 import { IntegrationTestBuildFormComponent } from './steps/build-steps/integration-test-build-form/integration-test-build-form.component';
 import { IntegrationTestParamsComponent } from './steps/step-params/integration-test-params/integration-test-params.component';
+import { RepeatFromStepDialogComponent } from './shared/repeat-from-step-dialog/repeat-from-step-dialog.component';
+import { ContinueToStepDialogComponent } from './shared/continue-to-step-dialog/continue-to-step-dialog.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -123,7 +125,9 @@ const AppComponents = [
     CopyStandDialogComponent,
     GeneratorComponent,
     IntegrationTestBuildFormComponent,
-    IntegrationTestParamsComponent
+    IntegrationTestParamsComponent,
+    RepeatFromStepDialogComponent,
+    ContinueToStepDialogComponent
 ];
 
 const AppModules = [

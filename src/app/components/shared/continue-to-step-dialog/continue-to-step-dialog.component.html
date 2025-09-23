@@ -1,0 +1,56 @@
+<p-dialog
+    header="Continuar a paso"
+    [(visible)]="visible"
+    (onHide)="onCancel()"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="continue-to-step-dialog"
+    [style]="{ width: '500px' }">
+    
+    <div class="dialog-content">
+        <p class="mb-3">
+            Seleccione el paso al cual desea continuar. Puede continuar al siguiente paso 
+            o repetir desde un paso anterior.
+        </p>
+        
+        <div class="steps-list">
+            <div 
+                *ngFor="let step of availableSteps" 
+                class="step-item"
+                [class.selected]="selectedStep?.id === step.id"
+                [class.current-step]="isCurrentStep(step)"
+                [class.previous-step]="isPreviousStep(step)"
+                (click)="selectedStep = step">
+                <div class="step-info">
+                    <div class="step-header">
+                        <span class="step-name">{{ getStepName(step) }}</span>
+                        <span class="step-id">Paso {{ step.id }}</span>
+                    </div>
+                    <span class="step-description">{{ getStepDescription(step) }}</span>
+                </div>
+                <p-radioButton 
+                    [value]="step" 
+                    [(ngModel)]="selectedStep"
+                    [inputId]="'step-' + step.id">
+                </p-radioButton>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+            <p-button 
+                label="Cancelar" 
+                [outlined]="true" 
+                (click)="onCancel()">
+            </p-button>
+            <p-button 
+                label="Continuar" 
+                [disabled]="!selectedStep"
+                (click)="onConfirm()">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>

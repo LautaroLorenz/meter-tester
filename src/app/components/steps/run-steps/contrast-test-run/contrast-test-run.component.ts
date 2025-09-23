@@ -252,6 +252,14 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.cd.detectChanges();
     }
 
+    override resetTestSpecificResults(stepId: number): void {
+        this.getActiveStands().forEach(({ index }) => {
+            this.runEssayService
+                .getStandResult<ContrastTestStandResult>(stepId, index)
+                .patchValue({ measuredError: undefined });
+        });
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.stop$),
@@ -267,6 +275,6 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 this.currentStep.form_control_raw.meterPulses,
                 this.currentStep.form_control_raw.meterConstant
             )
-            .pipe(tap((results) => this.onCalculatorResults(results)));
+            .pipe(tap((results: CommandResultResponse[]) => this.onCalculatorResults(results)));
     }
 }

@@ -1,0 +1,83 @@
+:host ::ng-deep {
+    .continue-to-step-dialog {
+        .p-dialog-content {
+            padding: 1.5rem;
+        }
+    }
+}
+
+.dialog-content {
+    .steps-list {
+        max-height: 300px;
+        overflow-y: auto;
+        
+        .step-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.75rem;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                background-color: #f8f9fa;
+                border-color: #dee2e6;
+            }
+            
+            &.selected {
+                background-color: #e3f2fd;
+                border-color: #2196f3;
+            }
+            
+            &.current-step {
+                border-left: 4px solid #28a745;
+                
+                &.selected {
+                    background-color: #d4edda;
+                    border-color: #28a745;
+                }
+            }
+            
+            &.previous-step {
+                border-left: 4px solid #ffc107;
+                
+                &.selected {
+                    background-color: #fff3cd;
+                    border-color: #ffc107;
+                }
+            }
+            
+            .step-info {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                
+                .step-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.25rem;
+                    
+                    .step-name {
+                        font-weight: 500;
+                        color: #212529;
+                    }
+                    
+                    .step-id {
+                        font-size: 0.875rem;
+                        color: #6c757d;
+                    }
+                }
+                
+                .step-description {
+                    font-size: 0.8rem;
+                    color: #6c757d;
+                    font-style: italic;
+                }
+            }
+        }
+    }
+}
