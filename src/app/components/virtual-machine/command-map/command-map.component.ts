@@ -4,6 +4,7 @@ import { Devices } from '../../../models/business/enums/devices.model';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
+import { CommandFormatterUtil } from '../../../utils/command-formatter.util';
 
 @Component({
     selector: 'app-command-map',
@@ -23,7 +24,7 @@ export class CommandMapComponent {
         },
         {
             header: 'Última Respuesta',
-            field: 'lastResponse'
+            field: 'formatedLastResponse'
         }
     ];
 
@@ -36,6 +37,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.GEN],
             startPattern: `B\\|SG`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: () =>
                 `${this.COMMAND_START}${Devices.GEN}${Devices.STW}${CommandDirector.DIVIDER}${COMMANDS.Generator.ACK}${this.COMMAND_END}`
         },
@@ -44,6 +46,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.PAT],
             startPattern: `B\\|SP`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: () => this.getPatternAutomaticResponse()
         },
         {
@@ -51,6 +54,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|[\\s\\S]\\|(?:${COMMANDS.Software.Calculator.STOP}|\\n)`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
         },
         {
@@ -58,6 +62,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|[\\s\\S]\\|(?:${COMMANDS.Software.Calculator.RESET}|\\n)`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticAckResponse(command || '')
         },
         {
@@ -65,6 +70,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|[\\s\\S]\\|(?:${COMMANDS.Software.Calculator.RESULT_TS01}|\\n)`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticTS01Response(command || '')
         },
         {
@@ -72,6 +78,7 @@ export class CommandMapComponent {
             deviceName: DeviceConstants[Devices.CAL],
             startPattern: `B\\|SC\\|[\\s\\S]\\|(?:${COMMANDS.Software.Calculator.RESULT_TS02}|\\n)`,
             lastResponse: '',
+            formatedLastResponse: '',
             automaticResponse: (command?: string) => this.getCalculatorAutomaticTS02Response(command || '')
         }
     ];
@@ -87,6 +94,7 @@ export class CommandMapComponent {
         });
         if (item) {
             item.lastResponse = item.automaticResponse(command);
+            item.formatedLastResponse = CommandFormatterUtil.formatCommandForDisplay(item.lastResponse);
             this.cdr.detectChanges();
         }
         return item;

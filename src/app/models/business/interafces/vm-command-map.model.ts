@@ -6,4 +6,5 @@ export interface VMCommandMap {
     startPattern: string;
     automaticResponse: (command: string) => string;
     lastResponse: string;
+    formatedLastResponse: string;
 }
