@@ -10,11 +10,12 @@ export const APP_CONFIG: Environment = {
     patternType: PatternEnum.Sm5050,
     skipSteps: {
         photocellAdjustmentRequest: false,
-        verificationMajorStep: false,
-        preparationMajorStep: false,
+        verificationMajorStep: true,
+        preparationMajorStep: true,
         vacuumTestRun: false,
         bootTestRun: false,
-        contrastTestRun: false
+        contrastTestRun: false,
+        integrationTestRun: false
     },
     virtualMachine: true,
     logsHistory: false,
