@@ -64,6 +64,8 @@ import { GeneratorComponent } from './machine/generator/generator.component';
 import { PatternStatusModule } from './machine/pattern/components/pattern-status/pattern-status.module';
 import { ClampModule } from './clamp/clamp.module';
 import { PreparationPdfReportComponent } from './steps/result-report/preparation-pdf-report/preparation-pdf-report.component';
+import { IntegrationTestBuildFormComponent } from './steps/build-steps/integration-test-build-form/integration-test-build-form.component';
+import { IntegrationTestParamsComponent } from './steps/step-params/integration-test-params/integration-test-params.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -119,7 +121,9 @@ const AppComponents = [
     PhaseTableComponent,
     HelpTextComponent,
     CopyStandDialogComponent,
-    GeneratorComponent
+    GeneratorComponent,
+    IntegrationTestBuildFormComponent,
+    IntegrationTestParamsComponent
 ];
 
 const AppModules = [

@@ -1,7 +1,7 @@
 import { Steps } from '../enums/steps.model';
 import { HelpText } from '../interafces/help-text.model';
 
-export const HelpTextStepsMap: Record<number, HelpText> = {
+export const HelpTextStepsMap: Record<Steps, HelpText> = {
     [Steps.BootTest]: {
         title: 'Funcionamiento de la prueba de arranque',
         message:
@@ -19,5 +19,9 @@ export const HelpTextStepsMap: Record<number, HelpText> = {
         title: 'Funcionamiento de la prueba de vacío',
         message:
             'En esta prueba, los medidores no deben emitir más impulsos de los permitidos durante el tiempo especificado. Si los impulsos exceden el máximo permitido, la prueba no se considerará superada.'
+    },
+    [Steps.IntegrationTest]: {
+        title: '',
+        message: ''
     }
 };

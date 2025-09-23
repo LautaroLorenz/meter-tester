@@ -31,5 +31,13 @@
                 (formValidChange)="this.formValidChange.emit($event)"
                 (formValueChange)="this.formValueChange.emit($event)"></app-contrast-test-build-form>
         </ng-container>
+
+        <ng-container *ngSwitchCase="Steps.IntegrationTest">
+            <app-integration-test-build-form
+                [essayTemplateStep]="essayTemplateStep | stepAs"
+                [isVerification]="isVerification"
+                (formValidChange)="this.formValidChange.emit($event)"
+                (formValueChange)="this.formValueChange.emit($event)"></app-integration-test-build-form>
+        </ng-container>
     </ng-container>
 </ng-container>
