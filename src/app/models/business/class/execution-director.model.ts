@@ -1,3 +1,5 @@
+import { APP_CONFIG } from '../../../../environments/environment';
+import { GeneratorEnum } from '../enums/generator-enum.model';
 import { PhotocellAdjustmentStatus } from '../enums/photocell-adjustment-status.model';
 import { ResultStatus } from '../enums/result-status.model';
 import { EssayStep } from '../interafces/essay-step.model';
@@ -22,7 +24,8 @@ export class ExecutionDirector {
         const lastAjustmentMeterConstant: number | undefined = this.getLastAdjustmentMeterConstant(essaySteps, index);
         if (
             lastAjustmentMeterConstant !== undefined &&
-            currentStep.form_control_raw.meterConstant === lastAjustmentMeterConstant
+            currentStep.form_control_raw.meterConstant === lastAjustmentMeterConstant &&
+            APP_CONFIG.generatorType !== GeneratorEnum.SemiautomaticPYC5050
         ) {
             return PhotocellAdjustmentStatus.NotApply;
         }
