@@ -7,7 +7,6 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } f
 })
 export abstract class StepParamsComponent<T extends EssayTemplateStep> implements OnChanges {
     @Input() currentStep!: T;
-    @Input() toggleable!: boolean;
 
     showCompleteName!: boolean;
 

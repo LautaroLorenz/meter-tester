@@ -2,7 +2,6 @@
     <div class="flex flex-column p-3 gap-4">
         <!-- Parámetros -->
         <app-vacuum-test-params
-            [toggleable]="false"
             [currentStep]="essayStep"
             [showTexts]="false"></app-vacuum-test-params>
 
@@ -11,7 +10,8 @@
             [showTexts]="false"
             [phaseL1]="essayStep.form_control_raw.phaseL1"
             [phaseL2]="essayStep.form_control_raw.phaseL2"
-            [phaseL3]="essayStep.form_control_raw.phaseL3"></app-phase-table>
+            [phaseL3]="essayStep.form_control_raw.phaseL3"
+            [meterConstantEnum]="essayStep.form_control_raw.meterConstant"></app-phase-table>
 
         <!-- Resultados -->
         <div class="-mx-3">
@@ -20,21 +20,7 @@
                 [results]="essayStep.standResults"
                 [resultsColumn]="resultsColumn"
                 [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
-                [limit]="8"></app-stands-result>
-        </div>
-    </div>
-</app-pdf-page>
-
-<app-pdf-page *ngIf="essayStep.standResults.length > 8">
-    <div class="flex flex-column p-3 gap-4">
-        <!-- Resultados -->
-        <div class="-mx-3">
-            <app-stands-result
-                [preparationStep]="preparationStep"
-                [results]="essayStep.standResults"
-                [resultsColumn]="resultsColumn"
-                [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
-                [offset]="8"></app-stands-result>
+                [compactMode]="true"></app-stands-result>
         </div>
     </div>
 </app-pdf-page>

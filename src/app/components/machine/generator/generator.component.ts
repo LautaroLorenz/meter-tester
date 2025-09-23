@@ -9,8 +9,9 @@ import { DeviceService } from '../../../services/device.service';
 import { MessagesService } from '../../../services/messages.service';
 import { Observable, tap, of } from 'rxjs';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
-import { SoftwareGeneratorCommands } from '../../../models/business/enums/commands.model';
+import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
+import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-generator',
@@ -24,6 +25,8 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
     override readonly device = Devices.GEN;
 
     showDeviceStatus = false;
+    readonly GeneratorEnum = GeneratorEnum;
+    readonly generatorType = APP_CONFIG.generatorType;
 
     constructor(
         protected readonly deviceService: DeviceService,
@@ -33,12 +36,16 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
         super(deviceService, messagesService);
     }
 
-    start$(phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): Observable<string> {
+    start$(stepMeterConstant: MeterConstantEnum, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): Observable<string> {
         if (APP_CONFIG.generatorType === GeneratorEnum.Manual) {
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StartInProgress);
-        const commandBlocks: string[] = [SoftwareGeneratorCommands.START];
+        const startCommand =
+            stepMeterConstant === MeterConstantEnum.Active
+                ? COMMANDS.Software.Generator.START_ACTIVA
+                : COMMANDS.Software.Generator.START_REACTIVA;
+        const commandBlocks: string[] = [startCommand];
         commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
         const command = this.buildCommand(...commandBlocks);
         return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));
@@ -49,7 +56,7 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StopInProgress);
-        return this.write$(this.buildCommand(SoftwareGeneratorCommands.STOP)).pipe(
+        return this.write$(this.buildCommand(COMMANDS.Software.Generator.STOP)).pipe(
             tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
         );
     }

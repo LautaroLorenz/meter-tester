@@ -6,6 +6,7 @@ import { MessagesService } from '../../../services/messages.service';
 import { DeviceConstants } from '../constants/devices-constant.model';
 import { DeviceService } from '../../../services/device.service';
 import { CommandDirector } from './command-director.model';
+import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
     template: '',
@@ -17,7 +18,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     protected deviceError = new Subject<void>();
     protected onDestroy = new Subject<void>();
 
-    protected readonly loopDelay = 500;
+    protected readonly loopDelay = APP_CONFIG.delays.loopDelay;
     protected readonly DeviceConstants = DeviceConstants;
 
     abstract readonly device: Devices;
@@ -25,7 +26,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     constructor(
         protected readonly deviceService: DeviceService,
         protected readonly messagesService: MessagesService
-    ) { }
+    ) {}
 
     ngOnDestroy(): void {
         this.onDestroy.next();
@@ -34,7 +35,7 @@ export abstract class MachineDeviceComponent implements OnDestroy {
     }
 
     buildCommand(...blocks: string[]): string {
-        return CommandDirector.build(Devices.STW, this.device, ...blocks);
+        return CommandDirector.build(`${Devices.STW}${this.device}`, ...blocks);
     }
 
     write$(command: string, onError?: () => void): Observable<string> {

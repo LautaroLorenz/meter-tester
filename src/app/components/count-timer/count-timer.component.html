@@ -2,50 +2,39 @@
     <ng-container *ngIf="{ seconds: countdownDown$ | async } as countdown">
         <p-panel
             #panel
-            [toggleable]="true">
+            [toggleable]="false"
+            styleClass="timer-panel">
             <ng-template pTemplate="header">
-                <div class="p-panel-title">
-                    <div class="flex align-items-center gap-2">
-                        <span
-                            class="p-panel-title"
-                            [ngStyle]="{ order: 1 }">
-                            Temporizador
-                        </span>
-                        <span
-                            [ngStyle]="{ order: 2 }"
-                            class="p-panel-title text-500 font-normal"
-                            >-</span
-                        >
-                        <span
-                            [ngStyle]="{ order: 3 }"
-                            class="p-panel-title text-500 font-normal"
-                            >{{ timerStatus }}</span
-                        >
-                        <ng-container *ngIf="panel.collapsed">
-                            <span
-                                [ngStyle]="{ order: 4 }"
-                                class="p-panel-title text-500 font-normal"
-                                >-</span
-                            >
-                            <span
-                                class="p-panel-title text-500 font-normal"
-                                [ngStyle]="{ order: 5 }">
-                                {{ currentSecond }} [s]
-                            </span>
-                        </ng-container>
+                <div class="flex align-items-center gap-2">
+                    <i
+                        class="pi pi-clock text-600"
+                        style="font-size: 0.9rem"
+                        pTooltip="Temporizador"
+                        tooltipPosition="right"></i>
+                    <div class="flex align-items-center gap-1">
+                        <span class="text-600 font-medium text-sm">{{ timerStatus }}</span>
                     </div>
+                    <ng-container *ngIf="panel.collapsed">
+                        <span class="text-400">-</span>
+                        <span class="text-700 font-mono text-xs">{{ currentSecond }} [s]</span>
+                    </ng-container>
                 </div>
             </ng-template>
 
             <ng-template pTemplate="content">
-                <div class="flex w-full flex-column">
-                    <div class="flex flex-row justify-content-between mb-1">
-                        <span>0 [s]</span>
-                        <span>{{ currentSecond }} [s]</span>
+                <div class="flex flex-column gap-1">
+                    <div class="flex justify-content-between align-items-center">
+                        <span class="text-500 text-xs font-mono">0 [s]</span>
+                        <span class="text-700 font-semibold text-sm font-mono"
+                            >{{ percentage | number: '1.1-1' }}%</span
+                        >
+                        <span class="text-500 text-xs font-mono">{{ currentSecond }} [s]</span>
                     </div>
                     <p-progressBar
                         [value]="$any(percentage | number: '1.2-2')"
-                        [color]="color"></p-progressBar>
+                        [color]="color"
+                        styleClass="p-progressbar-compact">
+                    </p-progressBar>
                 </div>
             </ng-template>
         </p-panel>

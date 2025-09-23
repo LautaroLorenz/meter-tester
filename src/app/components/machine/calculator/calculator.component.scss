@@ -1,0 +1,15 @@
+::ng-deep {
+  .calculator-panel {
+    .p-panel-header {
+      padding: 0.5rem 0.75rem !important;
+      background: #f8f9fa !important;
+      border-bottom: 1px solid #e9ecef !important;
+      font-size: 0.9rem !important;
+      font-weight: 500 !important;
+    }
+
+    .p-panel-content {
+      padding: 0.75rem !important;
+    }
+  }
+}

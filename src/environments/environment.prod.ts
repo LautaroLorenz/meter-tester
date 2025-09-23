@@ -17,5 +17,10 @@ export const APP_CONFIG: Environment = {
         contrastTestRun: false
     },
     virtualMachine: false,
-    logsHistory: false
+    logsHistory: false,
+    delays: {
+        patternCheckCycleDelay: 50,
+        resultsDelay: 50,
+        loopDelay: 50
+    }
 };

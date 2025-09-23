@@ -63,6 +63,7 @@ import { MenuModule } from './menu/menu.module';
 import { GeneratorComponent } from './machine/generator/generator.component';
 import { PatternStatusModule } from './machine/pattern/components/pattern-status/pattern-status.module';
 import { ClampModule } from './clamp/clamp.module';
+import { PreparationPdfReportComponent } from './steps/result-report/preparation-pdf-report/preparation-pdf-report.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -108,6 +109,7 @@ const AppComponents = [
     ContrastTestParamsComponent,
     ContrastTestRunComponent,
     ContrastTestPdfReportComponent,
+    PreparationPdfReportComponent,
     MeterDetailComponent,
     StandUsedWidgetComponent,
     StaticWidgetComponent,

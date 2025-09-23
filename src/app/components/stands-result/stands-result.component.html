@@ -1,5 +1,5 @@
 <p-table
-    styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+    styleClass="p-datatable-gridlines mx-3 p-datatable-sm stands-result-table"
     [columns]="columns"
     [value]="value">
     <ng-template
@@ -8,7 +8,7 @@
         <tr>
             <th
                 *ngFor="let col of columns"
-                [style]="col.headerStyle">
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
                 {{ col.header }}
             </th>
         </tr>
@@ -19,7 +19,9 @@
         let-columns="columns"
         let-rowIndex="rowIndex">
         <tr>
-            <td *ngFor="let col of columns">
+            <td
+                *ngFor="let col of columns"
+                class="text-center text-gray-700 font-medium text-xs">
                 <app-table-column
                     [tableColumn]="col"
                     [data]="rowData"
@@ -33,9 +35,11 @@
     #meterColumnTmp
     let-item="item"
     let-index="index">
-    <app-clamp [lines]="3">
-        {{ item?.foreign?.meter?.label }}
-    </app-clamp>
+    <div class="meter-column">
+        <app-clamp [lines]="3">
+            {{ item?.foreign?.meter?.label }}
+        </app-clamp>
+    </div>
 </ng-template>
 
 <ng-template

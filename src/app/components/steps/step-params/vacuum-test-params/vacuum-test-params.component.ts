@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { VacuumTestEssayStep } from '../../../../models/business/interafces/steps/vacuum-step.model';
 import { StepParamsComponent } from '../../../../models/business/class/step-params-component.model';
+import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-vacuum-test-params',
@@ -10,4 +11,6 @@ import { StepParamsComponent } from '../../../../models/business/class/step-para
 })
 export class VacuumTestParamsComponent extends StepParamsComponent<VacuumTestEssayStep> {
     @Input() showTexts!: boolean;
+
+    readonly MeterConstantEnum = MeterConstantEnum;
 }

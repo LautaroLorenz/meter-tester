@@ -1,6 +1,6 @@
 {
-  "StepRunMode.continuousResultUpdate": "Actualización continua de resultados",
-  "StepRunMode.finalResultLock": "Bloquear resultado final y terminar",
+  "StepRunMode.continuousResultUpdate": "Ensayo secuencial",
+  "StepRunMode.finalResultLock": "Ensayo unitario",
   "ResultStatus.Approved": "Aprobado",
   "ResultStatus.Failed": "Falló",
   "Select": "Seleccionar"

@@ -8,20 +8,26 @@
                         <app-device-status [deviceStatus]="deviceStatus"></app-device-status>
                     </ng-container>
                 </ng-container>
-                <i
-                    pTooltip="Ajustar valores en el generador antes de comenzar"
-                    tooltipPosition="left"
-                    class="pi pi-sliders-v text-color-secondary"
-                    style="font-size: 1.5rem"></i>
             </div>
         </div>
     </ng-template>
 
     <ng-template pTemplate="content">
+        <!-- Texto para generador SemiautomaticPYC5050 -->
+        <div
+            *ngIf="generatorType === GeneratorEnum.SemiautomaticPYC5050"
+            class="mb-3">
+            <p class="m-0 text-color-secondary">
+                Ajuste las fotocélulas para ensayo de energía
+                <strong>{{ currentStep.form_control_raw.meterConstant | meterConstant }}</strong>
+            </p>
+        </div>
+
         <app-phase-table
             [showTexts]="true"
             [phaseL1]="currentStep.form_control_raw.phaseL1"
             [phaseL2]="currentStep.form_control_raw.phaseL2"
-            [phaseL3]="currentStep.form_control_raw.phaseL3"></app-phase-table>
+            [phaseL3]="currentStep.form_control_raw.phaseL3"
+            [meterConstantEnum]="currentStep.form_control_raw.meterConstant"></app-phase-table>
     </ng-template>
 </p-panel>

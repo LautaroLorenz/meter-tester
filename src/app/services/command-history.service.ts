@@ -5,6 +5,7 @@ import { DeviceConstantPipe } from '../pipes/business/device.pipe';
 import { DatePipe } from '@angular/common';
 import { CommandDirector } from '../models/business/class/command-director.model';
 import { IpcService } from './ipc.service';
+import { CommandFormatterUtil } from '../utils/command-formatter.util';
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +30,7 @@ export class CommandHistoryService {
                     {
                         from: this.deviceConstantPipe.transform(CommandDirector.getFrom(command)),
                         to: this.deviceConstantPipe.transform(CommandDirector.getTo(command)),
-                        command,
+                        command: CommandFormatterUtil.formatCommandForDisplay(command),
                         date: this.datePipe.transform(new Date(), 'HH:mm:ss.SSS') || ''
                     },
                     ...this.history$.value

@@ -1,14 +1,28 @@
-<app-await-user-confirm
-    headerText="Fotocélulas"
-    confirmButtonText="Fotocélulas ajustadas"
-    confirmButtonIcon="pi-wrench"
-    afterConfirmationChipText="Ajuste realizado"
-    afterConfirmationChipIcon="pi-check"
-    (userConfirm)="adjustmentDone.emit()">
-    <p
-        messageTemplate
-        class="m-0">
-        Ajuste las fotocélulas para ensayo de energía
-        <strong>{{ meterConstant | meterConstant }}</strong>
-    </p>
-</app-await-user-confirm>
+<ng-container [ngSwitch]="generatorType">
+    <!-- Generador SemiautomaticPYC5050 -->
+    <app-await-user-confirm
+        *ngSwitchCase="GeneratorEnum.SemiautomaticPYC5050"
+        headerText="Generador"
+        confirmButtonText="Iniciar generador"
+        confirmButtonIcon="pi-play"
+        afterConfirmationChipIcon="pi-check"
+        (userConfirm)="adjustmentDone.emit()">
+    </app-await-user-confirm>
+
+    <!-- Generador Manual (comportamiento original) -->
+    <app-await-user-confirm
+        *ngSwitchDefault
+        headerText="Fotocélulas"
+        confirmButtonText="Fotocélulas ajustadas"
+        confirmButtonIcon="pi-wrench"
+        afterConfirmationChipText="Ajuste realizado"
+        afterConfirmationChipIcon="pi-check"
+        (userConfirm)="adjustmentDone.emit()">
+        <p
+            messageTemplate
+            class="m-0">
+            Ajuste las fotocélulas para ensayo de energía
+            <strong>{{ meterConstant | meterConstant }}</strong>
+        </p>
+    </app-await-user-confirm>
+</ng-container>

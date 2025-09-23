@@ -1,29 +1,119 @@
 import { WebContents, ipcMain } from 'electron';
-import { SerialPort, DelimiterParser } from 'serialport';
+import { SerialPort } from 'serialport';
 import { BindingInterface } from '@serialport/bindings-interface';
 import { BehaviorSubject, Observable, Subject, filter, firstValueFrom, from, tap, timeout } from 'rxjs';
 import { SerialPortStream } from '@serialport/stream';
 import { CommandDirector } from './command-director';
+import { CommandsSizes, CommandSize } from './command-size';
+import { CHAR_END, DIVIDER } from './constants';
 
 let logsSenders: WebContents[] = [];
 let serialPort: SerialPortStream<BindingInterface>;
 let portList: any;
 let connectionLogs: any;
 
-const parser = new DelimiterParser({
-    delimiter: '\n',
-    includeDelimiter: false
-});
-parser.removeAllListeners();
-parser.on('data', (data) => {
-    const response = data.toString('ascii');
-    addCommandLog(response);
-    machineResponse$.next(response);
-});
+// Buffer para acumular datos hasta encontrar el final del comando
+let commandBuffer = '';
+
+// Función para configurar el parser personalizado
+function setupParser() {
+    serialPort.on('data', (data) => {
+        // Use 'latin1' encoding to preserve all byte values (0-255)
+        const chunk = data.toString('latin1');
+        commandBuffer += chunk;
+
+        // Procesar todos los comandos completos en el buffer
+        processCommands();
+    });
+}
+
+function processCommands() {
+    while (commandBuffer.length > 0) {
+        // Buscar el primer comando que coincida con algún patrón
+        const recognizedCommand = findRecognizedCommand(commandBuffer);
+
+        if (recognizedCommand) {
+            const { command, commandSize } = recognizedCommand;
+
+            // Verificar que el comando tenga el tamaño correcto
+            if (command.length === commandSize.size) {
+                // Verificar que termine en 'Z'
+                if (command.endsWith(CHAR_END)) {
+                    // Verificar que los dividers estén en las posiciones correctas
+                    if (validateDividers(command, commandSize.dividerPositions)) {
+                        // Comando válido encontrado
+                        addCommandLog(command);
+                        machineResponse$.next(command);
+
+                        // Remover el comando procesado del buffer
+                        commandBuffer = commandBuffer.substring(command.length);
+                        continue;
+                    } else {
+                        // Remover el comando completo ya que sabemos su tamaño
+                        commandBuffer = commandBuffer.substring(command.length);
+                        continue;
+                    }
+                } else {
+                    // Remover el comando completo ya que sabemos su tamaño
+                    commandBuffer = commandBuffer.substring(command.length);
+                    continue;
+                }
+            } else if (command.length < commandSize.size) {
+                // No tenemos suficientes datos, esperar más
+                break;
+            } else {
+                // El comando es más largo de lo esperado, remover el comando completo
+                commandBuffer = commandBuffer.substring(command.length);
+                continue;
+            }
+        } else {
+            // No se encontró ningún patrón reconocido, remover el primer carácter
+            commandBuffer = commandBuffer.substring(1);
+        }
+    }
+}
+
+function findRecognizedCommand(buffer: string): { command: string; commandSize: CommandSize } | null {
+    for (const commandSize of CommandsSizes) {
+        // Usar directamente el patrón como regex (ya está escapado en CommandsSizes)
+        const regex = new RegExp(`^${commandSize.pattern}`);
+
+        // Verificar si el buffer hace match con el patrón regex
+        if (regex.test(buffer)) {
+            // Si el buffer tiene al menos el tamaño mínimo para este comando, extraer el comando
+            if (buffer.length >= commandSize.size) {
+                const command = buffer.substring(0, commandSize.size);
+                return { command, commandSize };
+            } else {
+                // No tenemos suficientes datos para este comando, pero el patrón coincide
+                return null;
+            }
+        }
+    }
+    return null;
+}
+
+function validateDividers(command: string, dividerPositions: number[]): boolean {
+    for (const position of dividerPositions) {
+        // Verificar que la posición esté dentro del rango del comando
+        if (position < command.length) {
+            // Verificar que en esa posición haya un divider '|'
+            if (command[position] !== DIVIDER) {
+                return false;
+            }
+        } else {
+            // Si la posición está fuera del rango, el comando no es válido
+            return false;
+        }
+    }
+    return true;
+}
+
 const machineResponse$ = new Subject<string>();
 const _onSoftwareWrite$ = new Subject<string>();
 
 const commandLog$ = new BehaviorSubject<string[]>([]);
+
 function addCommandLog(command: string): void {
     // solamente logueamos si hay senders a los que enviar los logs
     if (!logsSenders.length) {
@@ -97,14 +187,15 @@ export default {
     },
     setSerialPort: (serialPortInput: SerialPortStream) => {
         serialPort = serialPortInput;
-        serialPort.pipe(parser);
+        setupParser(); // Configurar el parser personalizado
     },
     createSearialPort: async () => {
-        const HARDWARE_IDs = [{
-            PRODUCT_ID: '7523',
-            VENDOR_ID: '1A86',
-            PNP_ID: undefined
-        }
+        const HARDWARE_IDs = [
+            {
+                PRODUCT_ID: '7523',
+                VENDOR_ID: '1A86',
+                PNP_ID: undefined
+            }
             // Ejemplo con PNP_ID
             // {
             //     PRODUCT_ID: '2303',
@@ -115,12 +206,13 @@ export default {
         const ports = await SerialPort.list();
         portList = ports;
         try {
-            const port = ports
-                .find(({ productId, vendorId, pnpId }) => HARDWARE_IDs
-                    .some(({ PRODUCT_ID, VENDOR_ID, PNP_ID }) =>
+            const port = ports.find(({ productId, vendorId, pnpId }) =>
+                HARDWARE_IDs.some(
+                    ({ PRODUCT_ID, VENDOR_ID, PNP_ID }) =>
                         (productId?.toUpperCase() === PRODUCT_ID && vendorId?.toUpperCase() === VENDOR_ID) ||
                         (PNP_ID && pnpId?.toUpperCase()?.replace(/[\\/]/g, '-') === PNP_ID)
-                    ));
+                )
+            );
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }
@@ -133,12 +225,7 @@ export default {
     observeSoftwareWrite: (observable: Observable<string>) => {
         observable.subscribe(async (command) => {
             // escribir por el puerto USB
-            const buffer = Buffer.from(command, 'ascii');
-            // const checksum = getChecksumByte(buffer);
-            // const checksumBuffer = decimalChecksumToBuffer(checksum);
-            // const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
-            // TODO esta linea no va
-            // FIXME arreglar la maquina virtual cunado escribo el comando
+            const buffer = Buffer.from(command, 'latin1');
             const commandBuffer = buffer;
             const coludBeSent = await new Promise((resolve) => {
                 serialPort.write(commandBuffer, (err) => {

@@ -40,7 +40,9 @@ exports.default = {
         electron_1.ipcMain.handle('virtual-machine-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && ((_a = serialPort.port) === null || _a === void 0 ? void 0 : _a.isOpen)) {
-                serialPort.port.emitData(command);
+                // Convert string to Buffer using latin1 encoding to preserve all byte values
+                const buffer = Buffer.from(command, 'latin1');
+                serialPort.port.emitData(buffer);
             }
         }));
     },

@@ -21,17 +21,19 @@
         <!-- Parámetros del paso -->
         <app-contrast-test-params
             [currentStep]="currentStep"
-            [toggleable]="true"
             [showTexts]="true"></app-contrast-test-params>
 
         <!-- Execution mode -->
         <div class="mt-2 execution-mode-panel">
-            <p-panel header="Ejecución">
+            <p-panel
+                header="Modo de ejecución"
+                styleClass="execution-panel">
                 <p-selectButton
                     [options]="StepRunModes"
                     [(ngModel)]="stepRunMode"
                     optionLabel="label"
-                    optionValue="value"></p-selectButton>
+                    optionValue="value"
+                    styleClass="execution-select-button"></p-selectButton>
             </p-panel>
         </div>
 

@@ -9,13 +9,18 @@ export const APP_CONFIG: Environment = {
     generatorType: GeneratorEnum.SemiautomaticPYC5050,
     patternType: PatternEnum.Sm5050,
     skipSteps: {
-        photocellAdjustmentRequest: true,
-        verificationMajorStep: true,
-        preparationMajorStep: true,
+        photocellAdjustmentRequest: false,
+        verificationMajorStep: false,
+        preparationMajorStep: false,
         vacuumTestRun: false,
         bootTestRun: false,
         contrastTestRun: false
     },
     virtualMachine: true,
-    logsHistory: true
+    logsHistory: false,
+    delays: {
+        patternCheckCycleDelay: 50,
+        resultsDelay: 50,
+        loopDelay: 50
+    }
 };

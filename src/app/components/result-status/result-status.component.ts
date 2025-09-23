@@ -12,29 +12,24 @@ export class ResultStatusComponent {
 
     get styleClass(): string {
         const classes: string[] = ['py-1 px-2 gap-1'];
-        if (this.severity === 'surface') {
-            classes.push('bg-surface-200');
+        const severity = this.severity;
+
+        if (severity === 'surface') {
+            classes.push('bg-surface-200', 'text-gray-700');
         }
-        if (this.severity === 'info') {
-            classes.push('bg-blue-400');
+        if (severity === 'info') {
+            classes.push('bg-blue-100', 'text-blue-800');
         }
-        if (this.severity === 'success') {
-            classes.push('bg-green-400');
+        if (severity === 'success') {
+            classes.push('bg-green-100', 'text-green-800');
         }
-        if (this.severity === 'danger') {
-            classes.push('bg-red-400');
+        if (severity === 'danger') {
+            classes.push('bg-red-100', 'text-red-800');
         }
-        if (this.severity === 'warning') {
-            classes.push('bg-orange-400');
+        if (severity === 'warning') {
+            classes.push('bg-orange-100', 'text-orange-800');
         }
-        if (
-            this.severity === 'info' ||
-            this.severity === 'success' ||
-            this.severity === 'warning' ||
-            this.severity === 'danger'
-        ) {
-            classes.push('text-white');
-        }
+
         return classes.join(' ');
     }
 

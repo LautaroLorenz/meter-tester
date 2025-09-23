@@ -51,7 +51,8 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             const realItem = item as Stand | VacuumTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;'
+        headerStyle: 'min-width:90px;font-size:15px;',
+        customStyles: 'font-size:14px;'
     };
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
@@ -105,17 +106,23 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         const phaseL1: Phase = {
             ...this.currentStep.form_control_raw.phaseL1,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         const phaseL2: Phase = {
             ...this.currentStep.form_control_raw.phaseL2,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         const phaseL3: Phase = {
             ...this.currentStep.form_control_raw.phaseL3,
             anglePhi: 0,
-            current: 0
+            current: 0,
+            powerFactor: 0,
+            powerFactorLetter: 'L'
         };
         // consulta la constante del patron en loop
         const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
@@ -123,16 +130,16 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         ).pipe(
             // tap((result) => results), <- si fuera necesario consumir el pattern status
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
-            repeat({ delay: 3000 }), // o { delay: 2000 } para 2s entre ciclos
+            repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
             catchError(() => EMPTY), // evita romper el loop por errores
-            takeUntil(this.stop$)
+            takeUntil(this.onDestroy)
         );
 
         // inicializa el generador y luego consulta la constante del patrón en loop
         this.generator
-            .start$(phaseL1, phaseL2, phaseL3)
+            .start$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
             .pipe(
-                takeUntil(this.stop$),
+                takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),
                 switchMap(() => getPatternConstantLoop$)
             )
@@ -141,12 +148,13 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     override onStepInit(): void {
         this.onRestart();
+        this.prepareGeneratorBeforeExecution();
     }
 
     override onRestart(): void {
         // recetea el contador
         this.countTimer.reset();
-        this.prepareGeneratorBeforeExecution();
+        this.canExecute = true;
     }
 
     override abort(): Observable<boolean> {
@@ -218,8 +226,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
-                // Apagar el generador
-                switchMap(() => this.generator.stop$()),
                 finalize(() => {
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
@@ -237,6 +243,23 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
+    }
+
+    override stepExecutionDone(essayStep: VacuumTestEssayStep): void {
+        // Bloquear la UI mientras se apaga el generador
+        this.blockUIService.setBlocked(true);
+
+        // Apagar el generador antes de continuar
+        this.generator
+            .stop$()
+            .pipe(
+                finalize(() => {
+                    this.blockUIService.setBlocked(false);
+                    // Llamar al método padre para continuar
+                    super.stepExecutionDone(essayStep);
+                })
+            )
+            .subscribe();
     }
 
     override restartResults(resultStatus: ResultStatus): void {

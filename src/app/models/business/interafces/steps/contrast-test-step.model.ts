@@ -50,17 +50,23 @@ export class ContrastTestFormBuilder extends AbstractStepFormBuilder<ContrastTes
                 phaseL1: fb.nonNullable.group({
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
-                    anglePhi: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(359.9)]]
+                    anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],
+                    powerFactor: [undefined, [Validators.required.bind(this), Validators.min(-1), Validators.max(1)]],
+                    powerFactorLetter: [undefined, [Validators.required.bind(this)]]
                 }),
                 phaseL2: fb.nonNullable.group({
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
-                    anglePhi: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(359.9)]]
+                    anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],
+                    powerFactor: [undefined, [Validators.required.bind(this), Validators.min(-1), Validators.max(1)]],
+                    powerFactorLetter: [undefined, [Validators.required.bind(this)]]
                 }),
                 phaseL3: fb.nonNullable.group({
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
-                    anglePhi: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(359.9)]]
+                    anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],
+                    powerFactor: [undefined, [Validators.required.bind(this), Validators.min(-1), Validators.max(1)]],
+                    powerFactorLetter: [undefined, [Validators.required.bind(this)]]
                 }),
                 maxAllowedError: [
                     undefined,

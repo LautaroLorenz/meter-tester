@@ -24,6 +24,11 @@
 
 <ng-container *ngIf="preparationStep && executionSteps">
     <div class="report flex flex-column gap-4 align-items-center mt-4">
+        <app-report-step-switch
+            [preparationStep]="preparationStep"
+            [showPreparation]="true">
+        </app-report-step-switch>
+
         <ng-container *ngFor="let essayStep of executionSteps">
             <app-report-step-switch
                 [essayStep]="essayStep"

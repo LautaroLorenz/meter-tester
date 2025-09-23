@@ -38,7 +38,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     private readonly EMPTY_PHASE: Phase = {
         voltage: 0,
         current: 0,
-        anglePhi: 0
+        anglePhi: 0,
+        powerFactor: 0,
+        powerFactorLetter: 'L'
     };
 
     constructor(
@@ -156,35 +158,47 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     // Respuesta del patrón que incluye información del estado (además de la constante)
     private mapConstantResponseWithStatus(command: string): PatternStatus {
         const blocks = CommandDirector.getBlocks(command);
-        const constant = Number(blocks[3] || '0');
-        const voltageL1 = Number(blocks[4] || '0') / 10;
-        const voltageL2 = Number(blocks[5] || '0') / 10;
-        const voltageL3 = Number(blocks[6] || '0') / 10;
-        const currentL1 = Number(blocks[7] || '0') / 1000;
-        const currentL2 = Number(blocks[8] || '0') / 1000;
-        const currentL3 = Number(blocks[9] || '0') / 1000;
-        const anglePhiL1 = Number((blocks[10] || '0').substring(3)) / 10;
-        const anglePhiL2 = Number((blocks[11] || '0').substring(3)) / 10;
-        const anglePhiL3 = Number((blocks[12] || '0').substring(3)) / 10;
+
+        // Decodificar la constante (bloque 2) - 4 bytes, 0 decimales (número entero)
+        const constant = CommandDirector.decodeCompactNumber(blocks[2] || '\x00\x00\x00\x00', 0);
+
+        // Decodificar tensiones (bloques 3, 4, 5) - 2 bytes cada una con 1 decimal
+        const voltageL1 = CommandDirector.decodeCompactNumber(blocks[3] || '\x00\x00', 1);
+        const voltageL2 = CommandDirector.decodeCompactNumber(blocks[4] || '\x00\x00', 1);
+        const voltageL3 = CommandDirector.decodeCompactNumber(blocks[5] || '\x00\x00', 1);
+
+        // Decodificar corrientes (bloques 6, 7, 8) - 2 bytes cada una con 2 decimales
+        const currentL1 = CommandDirector.decodeCompactNumber(blocks[6] || '\x00\x00', 2);
+        const currentL2 = CommandDirector.decodeCompactNumber(blocks[7] || '\x00\x00', 2);
+        const currentL3 = CommandDirector.decodeCompactNumber(blocks[8] || '\x00\x00', 2);
+
+        // Decodificar factores de potencia (bloques 9, 10, 11) - 3 bytes cada uno
+        const powerFactorL1 = CommandDirector.decodePowerFactor(blocks[9] || ' \x00L');
+        const powerFactorL2 = CommandDirector.decodePowerFactor(blocks[10] || ' \x00L');
+        const powerFactorL3 = CommandDirector.decodePowerFactor(blocks[11] || ' \x00L');
+
         return {
             constant,
             phaseL1: {
                 ...this.EMPTY_PHASE,
                 voltage: voltageL1,
                 current: currentL1,
-                anglePhi: anglePhiL1
+                powerFactor: powerFactorL1.value,
+                powerFactorLetter: powerFactorL1.type
             },
             phaseL2: {
                 ...this.EMPTY_PHASE,
                 voltage: voltageL2,
                 current: currentL2,
-                anglePhi: anglePhiL2
+                powerFactor: powerFactorL2.value,
+                powerFactorLetter: powerFactorL2.type
             },
             phaseL3: {
                 ...this.EMPTY_PHASE,
                 voltage: voltageL3,
                 current: currentL3,
-                anglePhi: anglePhiL3
+                powerFactor: powerFactorL3.value,
+                powerFactorLetter: powerFactorL3.type
             }
         };
     }
@@ -218,7 +232,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         this.patternStatus = newPatternStatus;
         this.cd.detectChanges();
         if (this.secondaryWindowId) {
-            this.secondaryWindowService.sendToWindow(this.secondaryWindowId, newPatternStatus);
+            this.secondaryWindowService.sendToWindow(this.secondaryWindowId, {
+                patternStatus: newPatternStatus,
+                meterConstant: this.currentStep.form_control_raw.meterConstant
+            });
         }
     }
 }

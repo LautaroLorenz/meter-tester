@@ -1,6 +1,8 @@
 <p-chip
     *ngIf="text"
-    [styleClass]="styleClass">
+    class="result-status-chip"
+    [styleClass]="styleClass"
+    [removable]="false">
     <i
         *ngIf="icon"
         [class]="icon"></i>

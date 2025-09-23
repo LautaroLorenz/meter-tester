@@ -92,6 +92,7 @@
                         faseLabel="L1"
                         voltageFormControlName="voltage"
                         voltageLabel="U1"
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"
                         [showCopyButton]="true"
                         (copyClick)="
                             copyPhase(form.get('form_control_raw.phaseL1'), [
@@ -106,7 +107,8 @@
                         [formGroup]="form.get('form_control_raw.phaseL2') | asFormGroup"
                         faseLabel="L2"
                         voltageFormControlName="voltage"
-                        voltageLabel="U2"></app-phase-form-group>
+                        voltageLabel="U2"
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
 
                 <div class="field col col-4">
@@ -114,7 +116,8 @@
                         [formGroup]="form.get('form_control_raw.phaseL3') | asFormGroup"
                         faseLabel="L3"
                         voltageFormControlName="voltage"
-                        voltageLabel="U3"></app-phase-form-group>
+                        voltageLabel="U3"
+                        [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
             </div>
         </div>
