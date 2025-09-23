@@ -12,6 +12,7 @@ import { DeviceStatus } from '../../../models/business/enums/device-status.model
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
+import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.model';
 
 @Component({
     selector: 'app-generator',
@@ -56,9 +57,10 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StopInProgress);
-        return this.write$(this.buildCommand(COMMANDS.Software.Generator.STOP)).pipe(
-            tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
-        );
+        const commandBlocks: string[] = [COMMANDS.Software.Generator.STOP];
+        commandBlocks.push(...this.phasesToCommandPipe.transform(EMPTY_PHASE, EMPTY_PHASE, EMPTY_PHASE));
+        const command = this.buildCommand(...commandBlocks);
+        return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Stopped)));
     }
 
     ngOnInit(): void {

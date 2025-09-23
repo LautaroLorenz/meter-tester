@@ -15,6 +15,7 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
 import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 import { PhasesToCommandPipe } from '../../../pipes/business/phases-to-command.pipe';
+import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.model';
 
 @Component({
     selector: 'app-pattern',
@@ -35,13 +36,6 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     private secondaryWindowId: number | null = null;
     private virtualConstants: VirtualPattern[] = [];
     private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
-    private readonly EMPTY_PHASE: Phase = {
-        voltage: 0,
-        current: 0,
-        anglePhi: 0,
-        powerFactor: 0,
-        powerFactorLetter: 'L'
-    };
 
     constructor(
         protected readonly deviceService: DeviceService,
@@ -101,9 +95,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             const virtualConstant = this.getVirtualConstant(maxCurrent);
             return of({
                 constant: virtualConstant,
-                phaseL1: this.EMPTY_PHASE,
-                phaseL2: this.EMPTY_PHASE,
-                phaseL3: this.EMPTY_PHASE
+                phaseL1: EMPTY_PHASE,
+                phaseL2: EMPTY_PHASE,
+                phaseL3: EMPTY_PHASE
             });
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
@@ -149,9 +143,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         const constant = Number(blocks[3]);
         return {
             constant,
-            phaseL1: this.EMPTY_PHASE,
-            phaseL2: this.EMPTY_PHASE,
-            phaseL3: this.EMPTY_PHASE
+            phaseL1: EMPTY_PHASE,
+            phaseL2: EMPTY_PHASE,
+            phaseL3: EMPTY_PHASE
         };
     }
 
@@ -180,21 +174,21 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         return {
             constant,
             phaseL1: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL1,
                 current: currentL1,
                 powerFactor: powerFactorL1.value,
                 powerFactorLetter: powerFactorL1.type
             },
             phaseL2: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL2,
                 current: currentL2,
                 powerFactor: powerFactorL2.value,
                 powerFactorLetter: powerFactorL2.type
             },
             phaseL3: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL3,
                 current: currentL3,
                 powerFactor: powerFactorL3.value,
