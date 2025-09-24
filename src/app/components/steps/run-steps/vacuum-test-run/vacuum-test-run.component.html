@@ -67,5 +67,9 @@
         icon="pi pi-check"
         [model]="splitButtonItems"
         [disabled]="!canContinue"
+        [styleClass]="allActiveStandsPassed ? 'p-button-success' : ''"
         (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
 </div>
+
+<!-- Espacio adicional para el menú desplegable del split button -->
+<div style="height: 300px"></div>

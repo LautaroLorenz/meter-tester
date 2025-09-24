@@ -68,6 +68,13 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
+    get allActiveStandsPassed(): boolean {
+        return this.getActiveStands().every(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Approved;
+        });
+    }
+
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
