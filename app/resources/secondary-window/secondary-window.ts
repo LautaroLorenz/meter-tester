@@ -172,5 +172,14 @@ export default {
             }
             return false;
         });
+
+        // Get always on top state for a specific window
+        ipcMain.handle('get-window-always-on-top', async (_, { windowId }) => {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (windowItem && windowItem.window && !windowItem.window.isDestroyed()) {
+                return windowItem.window.isAlwaysOnTop();
+            }
+            return false;
+        });
     }
 };

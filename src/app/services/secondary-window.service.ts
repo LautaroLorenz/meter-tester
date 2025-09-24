@@ -68,6 +68,10 @@ export class SecondaryWindowService {
         return this.ipcService.invoke('set-window-always-on-top', { windowId, alwaysOnTop });
     }
 
+    getAlwaysOnTopState(windowId: number): Promise<boolean> {
+        return this.ipcService.invoke('get-window-always-on-top', { windowId });
+    }
+
     private formatUrl(url: string): string {
         return `${this.baseUrl}${url}`;
     }

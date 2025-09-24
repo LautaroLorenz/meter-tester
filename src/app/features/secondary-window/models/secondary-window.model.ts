@@ -22,7 +22,11 @@ export class SecondaryWindowComponent implements OnInit {
         this.secondaryWindowService
             .setSecondaryWindowReady()
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            .then((id) => (this.windowId = id))
+            .then((id) => {
+                this.windowId = id;
+                // Sincronizar el estado inicial de alwaysOnTop
+                this.syncAlwaysOnTopState();
+            })
             .catch(() => {});
     }
 
@@ -31,12 +35,26 @@ export class SecondaryWindowComponent implements OnInit {
 
     onAlwaysOnTopChange(event: { checked: boolean }): void {
         if (this.windowId) {
-            const checked = event.checked as boolean;
+            const checked = event.checked;
             this.secondaryWindowService.setAlwaysOnTop(this.windowId, checked).catch(() => {
                 // Revert the toggle if the operation failed
                 this.alwaysOnTop = !checked;
                 this.cd.detectChanges();
             });
+        }
+    }
+
+    private syncAlwaysOnTopState(): void {
+        if (this.windowId) {
+            this.secondaryWindowService
+                .getAlwaysOnTopState(this.windowId)
+                .then((isAlwaysOnTop) => {
+                    this.alwaysOnTop = isAlwaysOnTop;
+                    this.cd.detectChanges();
+                })
+                .catch(() => {
+                    // Si no se puede obtener el estado, mantener el valor por defecto
+                });
         }
     }
 }

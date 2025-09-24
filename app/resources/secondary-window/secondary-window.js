@@ -152,6 +152,14 @@ exports.default = {
             }
             return false;
         }));
+        // Get always on top state for a specific window
+        electron_1.ipcMain.handle('get-window-always-on-top', (_, { windowId }) => __awaiter(void 0, void 0, void 0, function* () {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (windowItem && windowItem.window && !windowItem.window.isDestroyed()) {
+                return windowItem.window.isAlwaysOnTop();
+            }
+            return false;
+        }));
     }
 };
 //# sourceMappingURL=secondary-window.js.map

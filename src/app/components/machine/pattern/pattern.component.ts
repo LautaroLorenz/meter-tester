@@ -136,7 +136,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             height: 260,
             width: 520,
             inspector: false,
-            alwaysOnTop: false
+            alwaysOnTop: true
         });
     }
 
