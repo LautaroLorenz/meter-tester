@@ -13,19 +13,24 @@ export class StandMeterConstantPipe implements PipeTransform {
 
     transform(
         stepMeterConstant: MeterConstantEnum,
-        standMeter: Meter,
+        standMeter: Meter | undefined | null,
         returnType: 'OnlyValue' | 'OnlyUnit' | 'ValueAndUnit' = 'ValueAndUnit'
     ): string {
+        // Handle null or undefined meter
+        if (!standMeter) {
+            return '';
+        }
+
         let constantValue: number;
         let constantUnit = '';
         switch (stepMeterConstant) {
             case MeterConstantEnum.Active:
                 constantValue = standMeter.activeConstantValue;
-                constantUnit = standMeter.foreign.activeConstantUnit.name;
+                constantUnit = standMeter.foreign?.activeConstantUnit?.name || '';
                 break;
             case MeterConstantEnum.Reactive:
                 constantValue = standMeter.reactiveConstantValue;
-                constantUnit = standMeter.foreign.reactiveConstantUnit.name;
+                constantUnit = standMeter.foreign?.reactiveConstantUnit?.name || '';
                 break;
         }
 
