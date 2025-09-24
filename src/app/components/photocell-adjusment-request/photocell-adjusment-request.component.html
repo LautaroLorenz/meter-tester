@@ -26,3 +26,12 @@
         </p>
     </app-await-user-confirm>
 </ng-container>
+
+<!-- Skip Button -->
+<div class="flex justify-content-end mt-4 mb-8 gap-3">
+    <p-button
+        [label]="'Omitir ejecución del paso ' + stepNumber"
+        [outlined]="true"
+        severity="warning"
+        (click)="skipStep()"></p-button>
+</div>

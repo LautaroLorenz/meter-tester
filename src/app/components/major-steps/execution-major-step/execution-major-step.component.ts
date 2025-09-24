@@ -78,6 +78,10 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
             ?.setValue(PhotocellAdjustmentStatus.Done);
     }
 
+    stepExecutionSkipped(stepId: number): void {
+        this.runEssayService.getEssayStep(stepId).get('executedStatus')?.setValue(StepStatus.Skipped);
+    }
+
     private start(): void {
         if (!this.executionSteps?.length) {
             return;
