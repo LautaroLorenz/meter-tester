@@ -45,6 +45,14 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         customStyles: 'font-size:14px;'
     };
 
+    readonly splitButtonItems = [
+        {
+            label: 'Reintentar',
+            icon: 'pi pi-replay',
+            command: () => this.restart()
+        }
+    ];
+
     override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
 
     private stopStep = new Subject<void>();

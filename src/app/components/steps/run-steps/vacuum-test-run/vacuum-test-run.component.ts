@@ -55,6 +55,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         customStyles: 'font-size:14px;'
     };
 
+    readonly splitButtonItems = [
+        {
+            label: 'Reintentar',
+            icon: 'pi pi-replay',
+            command: () => this.restart()
+        }
+    ];
+
     override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
 
     private stopStep = new Subject<void>();

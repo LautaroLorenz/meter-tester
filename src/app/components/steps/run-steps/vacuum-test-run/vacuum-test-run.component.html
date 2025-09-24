@@ -62,16 +62,10 @@
         [disabled]="isExecuting || !canExecute || canContinue"
         (click)="startTest()"></p-button>
 
-    <p-button
-        label="Reintentar"
-        icon="pi pi-replay"
-        [outlined]="true"
-        [disabled]="!canContinue"
-        (click)="restart()"></p-button>
-
-    <p-button
+    <p-splitButton
         label="Continuar"
-        [outlined]="false"
+        icon="pi pi-check"
+        [model]="splitButtonItems"
         [disabled]="!canContinue"
-        (click)="stepExecutionDone(this.currentStep)"></p-button>
+        (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
 </div>

@@ -59,6 +59,14 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         customStyles: 'font-size:14px;'
     };
 
+    readonly splitButtonItems = [
+        {
+            label: 'Reintentar',
+            icon: 'pi pi-replay',
+            command: () => this.restart()
+        }
+    ];
+
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
