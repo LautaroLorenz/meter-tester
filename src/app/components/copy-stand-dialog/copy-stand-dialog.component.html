@@ -17,10 +17,10 @@
             *ngFor="let target of targets"
             class="target-checkbox">
             <p-checkbox
-                [label]="target.name"
-                [disabled]="!target.isActive"
+                [label]="getLabel(target)"
+                [disabled]="!target.isActive || target.isSource"
                 [binary]="true"
-                [ngModel]="selectedIndexes.has(target.index)"
+                [ngModel]="target.isSource ? true : selectedIndexes.has(target.index)"
                 (onChange)="toggle(target.index)">
             </p-checkbox>
         </div>
