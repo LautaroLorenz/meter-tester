@@ -1,3 +1,19 @@
+.col-satand-is-active {
+  width: 80px;
+  vertical-align: middle;
+  padding: 0.25rem;
+
+  &::ng-deep .p-button-sm {
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+
+    .p-button-icon {
+      font-size: 0.7rem;
+    }
+  }
+}
+
 .col-satand-index {
   max-width: 65px;
 }
