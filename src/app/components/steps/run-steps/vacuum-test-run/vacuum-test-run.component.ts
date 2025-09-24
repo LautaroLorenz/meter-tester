@@ -105,6 +105,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     prepareGeneratorBeforeExecution(): void {
         const phaseL1: Phase = {
             ...this.currentStep.form_control_raw.phaseL1,
+            isActive: true,
             anglePhi: 0,
             current: 0,
             powerFactor: 0,
@@ -112,6 +113,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         };
         const phaseL2: Phase = {
             ...this.currentStep.form_control_raw.phaseL2,
+            isActive: true,
             anglePhi: 0,
             current: 0,
             powerFactor: 0,
@@ -119,6 +121,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         };
         const phaseL3: Phase = {
             ...this.currentStep.form_control_raw.phaseL3,
+            isActive: true,
             anglePhi: 0,
             current: 0,
             powerFactor: 0,

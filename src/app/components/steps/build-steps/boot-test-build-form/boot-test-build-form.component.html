@@ -1,4 +1,4 @@
-<fom
+<form
     novalidate
     [formGroup]="form">
     <ng-container formGroupName="form_control_raw">
@@ -114,6 +114,7 @@
                         powerFactorLabel="&#632;1"
                         powerFactorLetterFormControlName="powerFactorLetter"
                         powerFactorLetterLabel=""
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"
                         [showCopyButton]="true"
                         (copyClick)="
@@ -136,6 +137,7 @@
                         powerFactorLabel="&#632;2"
                         powerFactorLetterFormControlName="powerFactorLetter"
                         powerFactorLetterLabel=""
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
 
@@ -151,9 +153,10 @@
                         powerFactorLabel="&#632;3"
                         powerFactorLetterFormControlName="powerFactorLetter"
                         powerFactorLetterLabel=""
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
             </div>
         </div>
     </ng-container>
-</fom>
+</form>

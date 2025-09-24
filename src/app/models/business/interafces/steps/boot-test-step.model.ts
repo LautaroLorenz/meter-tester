@@ -49,6 +49,7 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<BootTestStep, B
                 name: undefined,
                 meterConstant: [undefined, Validators.required.bind(this)],
                 phaseL1: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
                     anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],
@@ -56,6 +57,7 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<BootTestStep, B
                     powerFactorLetter: [undefined, [Validators.required.bind(this)]]
                 }),
                 phaseL2: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
                     anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],
@@ -63,6 +65,7 @@ export class BootTestFormBuilder extends AbstractStepFormBuilder<BootTestStep, B
                     powerFactorLetter: [undefined, [Validators.required.bind(this)]]
                 }),
                 phaseL3: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]],
                     current: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(200)]],
                     anglePhi: [undefined, [Validators.min(0), Validators.max(359.9)]],

@@ -8,6 +8,18 @@
             (click)="copyClick.emit()"
             pTooltip="Copiar valores a otras fases"></p-button>
     </div>
+
+    <!-- Phase Active Toggle -->
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 p-2 border-round"
+        style="background-color: var(--surface-50)">
+        <label class="mb-0 text-sm font-medium">Fase Activa</label>
+        <p-inputSwitch
+            [formControlName]="isActiveFormControlName"
+            (onChange)="onPhaseActiveChange($event.checked)"
+            pTooltip="Activar/Desactivar esta fase"
+            styleClass="text-sm"></p-inputSwitch>
+    </div>
     <div class="flex flex-column">
         <div
             *ngIf="voltageFormControlName"
