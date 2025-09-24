@@ -2,4 +2,47 @@
   td {
     font-size: 13px;
   }
+
+  // Estilos para fases activas (clásico y tranquilo)
+  th.bg-gray-100 {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    font-weight: 500;
+  }
+
+  td.bg-white {
+    background-color: #ffffff !important;
+    color: #374151 !important;
+    font-weight: 400;
+  }
+
+  // Estilos para fases inactivas (más sutiles)
+  th.bg-gray-50 {
+    background-color: #f9fafb !important;
+    color: #9ca3af !important;
+  }
+
+  // Sub-headers para fases activas (texto normal)
+  th.bg-gray-100.text-gray-600 {
+    background-color: #f3f4f6 !important;
+    color: #4b5563 !important;
+  }
+
+  // Sub-headers para fases inactivas (texto apagado)
+  th.bg-gray-100.text-gray-400 {
+    background-color: #f3f4f6 !important;
+    color: #9ca3af !important;
+  }
+
+  td.bg-gray-25 {
+    background-color: #fafafa !important;
+    color: #9ca3af !important;
+    font-style: italic;
+  }
+
+  // Mejorar la separación visual
+  .p-datatable-tbody > tr > td {
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+  }
 }

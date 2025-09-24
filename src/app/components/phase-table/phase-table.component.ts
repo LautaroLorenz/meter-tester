@@ -23,4 +23,26 @@ export class PhaseTableComponent {
         }
         return 'FP';
     }
+
+    isPhaseActive(phase: Phase | Partial<Phase> | undefined): boolean {
+        return phase?.isActive === true;
+    }
+
+    getPhaseHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
+        return this.isPhaseActive(phase)
+            ? 'text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide'
+            : 'text-center bg-gray-50 text-gray-400 font-medium text-sm uppercase tracking-wide';
+    }
+
+    getPhaseCellClass(phase: Phase | Partial<Phase> | undefined): string {
+        return this.isPhaseActive(phase)
+            ? 'text-center text-gray-700 font-medium text-sm font-mono bg-white'
+            : 'text-center text-gray-400 font-medium text-sm font-mono bg-gray-25';
+    }
+
+    getSubHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
+        return this.isPhaseActive(phase)
+            ? 'text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider'
+            : 'text-center bg-gray-100 text-gray-400 font-medium text-xs uppercase tracking-wider';
+    }
 }
