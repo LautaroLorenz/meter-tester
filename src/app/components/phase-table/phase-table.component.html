@@ -48,68 +48,35 @@
         <tr>
             <!-- Fase L1 -->
             <td [class]="getPhaseCellClass(phaseL1)">
-                <ng-container *ngIf="isPhaseActive(phaseL1)">
-                    {{ phaseL1?.voltage | number: '1.1-1' }}
-                    <ng-container *ngIf="phaseL1?.voltage !== undefined">[V]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL1)">--</ng-container>
+                {{ getDisplayValue(phaseL1, 'voltage') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL1)">
-                <ng-container *ngIf="isPhaseActive(phaseL1)">
-                    {{ phaseL1?.current | number: '1.3-3' }}
-                    <ng-container *ngIf="phaseL1?.current !== undefined">[A]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL1)">--</ng-container>
+                {{ getDisplayValue(phaseL1, 'current') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL1)">
-                <ng-container *ngIf="isPhaseActive(phaseL1)">
-                    {{ phaseL1?.powerFactor | number: '1.2-2' }}{{ phaseL1?.powerFactorLetter }}
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL1)">--</ng-container>
+                {{ getDisplayValue(phaseL1, 'powerFactor') }}
             </td>
 
             <!-- Fase L2 -->
             <td [class]="getPhaseCellClass(phaseL2)">
-                <ng-container *ngIf="isPhaseActive(phaseL2)">
-                    {{ phaseL2?.voltage | number: '1.1-1' }}
-                    <ng-container *ngIf="phaseL2?.voltage !== undefined">[V]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL2)">--</ng-container>
+                {{ getDisplayValue(phaseL2, 'voltage') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL2)">
-                <ng-container *ngIf="isPhaseActive(phaseL2)">
-                    {{ phaseL2?.current | number: '1.3-3' }}
-                    <ng-container *ngIf="phaseL2?.current !== undefined">[A]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL2)">--</ng-container>
+                {{ getDisplayValue(phaseL2, 'current') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL2)">
-                <ng-container *ngIf="isPhaseActive(phaseL2)">
-                    {{ phaseL2?.powerFactor | number: '1.2-2' }}{{ phaseL2?.powerFactorLetter }}
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL2)">--</ng-container>
+                {{ getDisplayValue(phaseL2, 'powerFactor') }}
             </td>
 
             <!-- Fase L3 -->
             <td [class]="getPhaseCellClass(phaseL3)">
-                <ng-container *ngIf="isPhaseActive(phaseL3)">
-                    {{ phaseL3?.voltage | number: '1.1-1' }}
-                    <ng-container *ngIf="phaseL3?.voltage !== undefined">[V]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL3)">--</ng-container>
+                {{ getDisplayValue(phaseL3, 'voltage') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL3)">
-                <ng-container *ngIf="isPhaseActive(phaseL3)">
-                    {{ phaseL3?.current | number: '1.3-3' }}
-                    <ng-container *ngIf="phaseL3?.current !== undefined">[A]</ng-container>
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL3)">--</ng-container>
+                {{ getDisplayValue(phaseL3, 'current') }}
             </td>
             <td [class]="getPhaseCellClass(phaseL3)">
-                <ng-container *ngIf="isPhaseActive(phaseL3)">
-                    {{ phaseL3?.powerFactor | number: '1.2-2' }}{{ phaseL3?.powerFactorLetter }}
-                </ng-container>
-                <ng-container *ngIf="!isPhaseActive(phaseL3)">--</ng-container>
+                {{ getDisplayValue(phaseL3, 'powerFactor') }}
             </td>
         </tr>
     </ng-template>
