@@ -1,10 +1,10 @@
-import { SecondaryWindowService } from './../../services/secondary-window.service';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { PageUrlName } from '../../models/business/enums/page-name.model';
 import { NavigationService } from '../../services/navigation.service';
 import { Observable, Subject, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { DatabaseService } from '../../services/database.service';
+import { SecondaryWindowService } from '../../services/secondary-window.service';
 import { EssayTemplate, EssayTemplateDbTableContext } from '../../models/business/database/essay-template.model';
 import {
     EssayTemplateStep,
@@ -32,7 +32,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
     private logsHistoryWindowId: number | null = null;
     private readonly formatDate = inject(FormatDatePipe);
     private readonly onDestroy = new Subject<void>();
-    private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
 
     constructor(
         private readonly fb: FormBuilder,
@@ -41,7 +40,7 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         private readonly route: ActivatedRoute,
         private readonly navigationService: NavigationService,
         public readonly runEssayService: RunEssayService,
-        private secondaryWindowService: SecondaryWindowService
+        private readonly secondaryWindowService: SecondaryWindowService
     ) {
         this.id$ = this.getId$();
         this.runEssayForm = this.buildForm();
@@ -93,8 +92,6 @@ export class RunEssayComponent implements OnInit, OnDestroy {
         if (APP_CONFIG.logsHistory && this.logsHistoryWindowId) {
             void this.runEssayService.closeLogsHistory(this.logsHistoryWindowId);
         }
-        // Cerrar la ventana secundaria patrón (si no esta abierta no pasa nada)
-        void this.secondaryWindowService.closeWindowByUrl(this.PATTERN_WINDOW_URL);
 
         this.onDestroy.next();
         this.onDestroy.complete();
