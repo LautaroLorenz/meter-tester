@@ -5,7 +5,8 @@
     responsiveLayout="scroll">
     <ng-template pTemplate="header">
         <tr>
-            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-satand-is-active">
+            <th
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-satand-is-active">
                 <div class="flex flex-col align-items-center gap-1">
                     <span>Activo</span>
                     <p-button
@@ -102,7 +103,8 @@
                         (click)="openCopyDialog(i)"
                         [disabled]="!standForm.get('isActive')!.value"
                         pTooltip="Copiar valores a otros puestos"
-                        tooltipPosition="left"></p-button>
+                        tooltipPosition="left"
+                        [style]="{ height: '2rem', width: '2rem' }"></p-button>
                 </td>
             </tr>
         </ng-container>
