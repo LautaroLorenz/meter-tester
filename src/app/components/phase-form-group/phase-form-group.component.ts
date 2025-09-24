@@ -47,6 +47,18 @@ export class PhaseFormGroupComponent implements OnInit {
         return 'Factor de potencia';
     }
 
+    getDropdownStyleClass(): string {
+        const control = this.formGroup.get(this.powerFactorLetterFormControlName);
+        const hasError = control && control.invalid && (control.dirty || control.touched);
+        return hasError ? 'p-invalid' : '';
+    }
+
+    getInputNumberStyleClass(): string {
+        const control = this.formGroup.get(this.powerFactorFormControlName);
+        const hasError = control && control.invalid && (control.dirty || control.touched);
+        return hasError ? 'flex flex-1 p-invalid' : 'flex flex-1';
+    }
+
     onPhaseActiveChange(isActive: boolean): void {
         if (!isActive) {
             // Disable controls and reset all phase values to default when deactivated

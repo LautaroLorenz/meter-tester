@@ -70,27 +70,31 @@
                 >{{ getPowerFactorLabel() }} {{ powerFactorLabel }}<span class="ml-1 text-red-300">*</span>
             </label>
             <div class="flex gap-2">
-                <p-inputNumber
-                    styleClass="flex flex-1"
-                    id="{{ powerFactorFormControlName }}"
-                    [formControlName]="powerFactorFormControlName"
-                    autofocus
-                    [useGrouping]="false"
-                    [min]="-1"
-                    [max]="1"
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="2"></p-inputNumber>
-                <p-dropdown
-                    styleClass="flex"
-                    id="{{ powerFactorLetterFormControlName }}"
-                    [formControlName]="powerFactorLetterFormControlName"
-                    [options]="powerFactorLetterOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    appendTo="body"></p-dropdown>
+                <div class="flex flex-column flex-1">
+                    <p-inputNumber
+                        [styleClass]="getInputNumberStyleClass()"
+                        id="{{ powerFactorFormControlName }}"
+                        [formControlName]="powerFactorFormControlName"
+                        autofocus
+                        [useGrouping]="false"
+                        [min]="-1"
+                        [max]="1"
+                        [minFractionDigits]="2"
+                        [maxFractionDigits]="2"></p-inputNumber>
+                    <app-input-error [formControlName]="powerFactorFormControlName"></app-input-error>
+                </div>
+                <div class="flex flex-column">
+                    <p-dropdown
+                        [styleClass]="getDropdownStyleClass()"
+                        id="{{ powerFactorLetterFormControlName }}"
+                        [formControlName]="powerFactorLetterFormControlName"
+                        [options]="powerFactorLetterOptions"
+                        optionLabel="label"
+                        optionValue="value"
+                        appendTo="body"></p-dropdown>
+                    <app-input-error [formControlName]="powerFactorLetterFormControlName"></app-input-error>
+                </div>
             </div>
-            <app-input-error [formControlName]="powerFactorFormControlName"></app-input-error>
-            <app-input-error [formControlName]="powerFactorLetterFormControlName"></app-input-error>
         </div>
     </div>
 </ng-container>
