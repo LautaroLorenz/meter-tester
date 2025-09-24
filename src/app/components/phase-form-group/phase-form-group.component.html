@@ -82,7 +82,9 @@
                         [maxFractionDigits]="2"></p-inputNumber>
                     <app-input-error [formControlName]="powerFactorFormControlName"></app-input-error>
                 </div>
-                <div class="flex flex-column">
+                <div
+                    class="flex flex-column"
+                    [style]="{ width: 'calc(50% - 0.25rem)' }">
                     <p-dropdown
                         [styleClass]="getDropdownStyleClass()"
                         id="{{ powerFactorLetterFormControlName }}"
@@ -90,7 +92,8 @@
                         [options]="powerFactorLetterOptions"
                         optionLabel="label"
                         optionValue="value"
-                        appendTo="body"></p-dropdown>
+                        appendTo="body"
+                        [style]="{ width: '100%' }"></p-dropdown>
                     <app-input-error [formControlName]="powerFactorLetterFormControlName"></app-input-error>
                 </div>
             </div>
