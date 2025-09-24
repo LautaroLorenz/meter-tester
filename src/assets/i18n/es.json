@@ -1,7 +1,7 @@
 {
   "StepRunMode.continuousResultUpdate": "Ensayo secuencial",
   "StepRunMode.finalResultLock": "Ensayo unitario",
-  "ResultStatus.Approved": "Aprobado",
+  "ResultStatus.Approved": "OK",
   "ResultStatus.Failed": "Falló",
   "Select": "Seleccionar"
 }
