@@ -16,7 +16,9 @@ export class SecondaryWindowService {
         url: string,
         options?: {
             height?: number;
+            width?: number;
             inspector?: boolean;
+            alwaysOnTop?: boolean;
         }
     ): Promise<number> {
         return this.ipcService.invoke('open-secondary-window', { url: this.formatUrl(url), options });
@@ -60,6 +62,10 @@ export class SecondaryWindowService {
                 listener(args);
             });
         });
+    }
+
+    setAlwaysOnTop(windowId: number, alwaysOnTop: boolean): Promise<void> {
+        return this.ipcService.invoke('set-window-always-on-top', { windowId, alwaysOnTop });
     }
 
     private formatUrl(url: string): string {

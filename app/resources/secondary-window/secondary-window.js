@@ -62,12 +62,13 @@ function openWindow(url, options) {
         return windowIsOpen;
     }
     const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
+    const alwaysOnTop = options && 'alwaysOnTop' in options ? !!options.alwaysOnTop : false;
     const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset(options)), { webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,
             devTools: openInspector
-        }, alwaysOnTop: false }), options));
+        }, alwaysOnTop: alwaysOnTop }), options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
     const windowitem = {
@@ -141,6 +142,15 @@ exports.default = {
             if (!windowItem)
                 return false;
             return windowItem.isReady;
+        }));
+        // Toggle always on top for a specific window
+        electron_1.ipcMain.handle('set-window-always-on-top', (_, { windowId, alwaysOnTop }) => __awaiter(void 0, void 0, void 0, function* () {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (windowItem && windowItem.window && !windowItem.window.isDestroyed()) {
+                windowItem.window.setAlwaysOnTop(alwaysOnTop);
+                return true;
+            }
+            return false;
         }));
     }
 };

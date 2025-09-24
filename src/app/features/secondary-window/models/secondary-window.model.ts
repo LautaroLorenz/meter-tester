@@ -9,6 +9,8 @@ import { Title } from '@angular/platform-browser';
 export class SecondaryWindowComponent implements OnInit {
     windowTitle = '';
     windowId: number | null = null;
+    alwaysOnTop = false;
+    showAlwaysOnTopToggle = true;
 
     protected readonly secondaryWindowService: SecondaryWindowService = inject(SecondaryWindowService);
     protected readonly cd: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -26,4 +28,15 @@ export class SecondaryWindowComponent implements OnInit {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onMainWindowMessage(...args: any[]): void {}
+
+    onAlwaysOnTopChange(event: { checked: boolean }): void {
+        if (this.windowId) {
+            const checked = event.checked as boolean;
+            this.secondaryWindowService.setAlwaysOnTop(this.windowId, checked).catch(() => {
+                // Revert the toggle if the operation failed
+                this.alwaysOnTop = !checked;
+                this.cd.detectChanges();
+            });
+        }
+    }
 }

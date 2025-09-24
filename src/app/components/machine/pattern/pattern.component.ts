@@ -133,8 +133,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
 
     async openSecondaryWindow(): Promise<void> {
         this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL, {
-            height: 360,
-            inspector: false
+            height: 260,
+            width: 520,
+            inspector: false,
+            alwaysOnTop: false
         });
     }
 
