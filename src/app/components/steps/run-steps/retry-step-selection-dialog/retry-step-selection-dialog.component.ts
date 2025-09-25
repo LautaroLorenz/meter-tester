@@ -8,6 +8,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
+import { RunEssayService } from '../../../../services/run-essay.service';
 
 @Component({
     selector: 'app-retry-step-selection-dialog',
@@ -28,8 +29,26 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     selectedSteps: EssayStep[] = [];
     includeCurrentStep = false;
 
+    constructor(private runEssayService: RunEssayService) {}
+
     get canConfirm(): boolean {
         return this.selectedSteps.length > 0 || this.includeCurrentStep;
+    }
+
+    getCurrentStepDisplayName(): string {
+        if (!this.currentStep) {
+            return 'Paso actual no disponible';
+        }
+
+        // Obtener el número del paso actual basándose en su posición en todos los pasos
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        const currentStepIndex = executionSteps.findIndex((step) => step.id === this.currentStep?.id);
+        const stepNumber = currentStepIndex + 1;
+
+        const stepName = this.currentStep?.form_control_raw?.name as string;
+        const displayName = stepName || 'Sin nombre';
+        return `Paso ${stepNumber}: ${displayName}`;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
