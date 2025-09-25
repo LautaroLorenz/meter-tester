@@ -289,6 +289,14 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         return this.generator;
     }
 
+    protected getCalculatorComponent(): CalculatorComponent {
+        return this.calculator;
+    }
+
+    protected getPatternComponent(): PatternComponent<BootTestEssayStep> {
+        return this.pattern;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.abortExecution$),

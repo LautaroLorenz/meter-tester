@@ -286,6 +286,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         return this.generator;
     }
 
+    protected getCalculatorComponent(): CalculatorComponent {
+        return this.calculator;
+    }
+
+    protected getPatternComponent(): PatternComponent<VacuumTestEssayStep> {
+        return this.pattern;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.abortExecution$),

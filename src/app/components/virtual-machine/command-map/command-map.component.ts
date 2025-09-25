@@ -118,12 +118,23 @@ export class CommandMapComponent {
         blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
 
         // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
-        // const irValue = Math.random() * 25.59;
-        // const isValue = Math.random() * 25.59;
-        // const itValue = Math.random() * 25.59;
-        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(2.41, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
+        // Simular alarma de sobrecorriente con 5% de probabilidad
+        const shouldTriggerOvercurrent = Math.random() < 0.03; // 5% de probabilidad
+
+        if (shouldTriggerOvercurrent) {
+            // Simular sobrecorriente: todas las corrientes bajo 2A, pero una supera 2.4A
+            blocks.push(CommandDirector.encodeCompactNumber(1.5, 2, 2)); // L1: 1.5A (bajo 2A)
+            blocks.push(CommandDirector.encodeCompactNumber(2.4, 2, 2)); // L2: 2.41A (sobrecorriente)
+            blocks.push(CommandDirector.encodeCompactNumber(1.8, 2, 2)); // L3: 1.8A (bajo 2A)
+        } else {
+            // Valores normales
+            const irValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            const isValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            const itValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
+        }
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
         const prValue = Math.random() * 2.55;

@@ -323,6 +323,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
             // Setear el estado del generador en error
             this.setGeneratorErrorStatus();
+            this.setCalculatorErrorStatus();
+            this.setPatternUnknownStatus();
 
             // Mostrar alerta roja al usuario usando MessagesService
             this.messagesService.error(GeneratorAlarmType.Overcurrent);
@@ -336,6 +338,26 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         const generator = this.getGeneratorComponent();
         if (generator) {
             generator.deviceStatus$.next(DeviceStatus.Error);
+        }
+    }
+
+    /**
+     * Setea el estado del calculator en unknown
+     */
+    private setCalculatorErrorStatus(): void {
+        const calculator = this.getCalculatorComponent();
+        if (calculator) {
+            calculator.deviceStatus$.next(DeviceStatus.Error);
+        }
+    }
+
+    /**
+     * Setea el estado del pattern en unknown
+     */
+    private setPatternUnknownStatus(): void {
+        const pattern = this.getPatternComponent();
+        if (pattern) {
+            pattern.deviceStatus$.next(DeviceStatus.Unknown);
         }
     }
 
@@ -407,4 +429,16 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
      * Debe ser implementado por los componentes hijos que tengan generador
      */
     protected abstract getGeneratorComponent(): any;
+
+    /**
+     * Obtiene la referencia al componente calculator
+     * Debe ser implementado por los componentes hijos que tengan calculator
+     */
+    protected abstract getCalculatorComponent(): any;
+
+    /**
+     * Obtiene la referencia al componente pattern
+     * Debe ser implementado por los componentes hijos que tengan pattern
+     */
+    protected abstract getPatternComponent(): any;
 }

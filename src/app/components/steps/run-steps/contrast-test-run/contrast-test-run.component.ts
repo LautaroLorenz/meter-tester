@@ -264,6 +264,14 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         return this.generator;
     }
 
+    protected getCalculatorComponent(): CalculatorComponent {
+        return this.calculator;
+    }
+
+    protected getPatternComponent(): PatternComponent<ContrastTestEssayStep> {
+        return this.pattern;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.abortExecution$),
