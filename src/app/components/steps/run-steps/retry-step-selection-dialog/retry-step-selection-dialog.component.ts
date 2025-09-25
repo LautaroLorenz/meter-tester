@@ -8,6 +8,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
+import { RetryMode } from '../../../../models/business/enums/retry-mode.enum';
 
 @Component({
     selector: 'app-retry-step-selection-dialog',
@@ -23,10 +24,12 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     @Output() visibleChange = new EventEmitter<boolean>();
     @Output() selectedPreviousStepChange = new EventEmitter<EssayStep | null>();
     @Output() cancel = new EventEmitter<void>();
-    @Output() confirm = new EventEmitter<EssayStep>();
+    @Output() confirm = new EventEmitter<{ step: EssayStep; retryMode: RetryMode }>();
 
     previousStepsWithDisplayName: Array<{ step: EssayStep; displayName: string }> = [];
     selectedItem: { step: EssayStep; displayName: string } | null = null;
+    retryMode: RetryMode | null = null;
+    retryModeEnum = RetryMode;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['previousSteps']) {
@@ -43,8 +46,11 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     }
 
     onConfirmClick(): void {
-        if (this.selectedItem) {
-            this.confirm.emit(this.selectedItem.step);
+        if (this.selectedItem && this.retryMode) {
+            this.confirm.emit({
+                step: this.selectedItem.step,
+                retryMode: this.retryMode
+            });
         }
         this.visibleChange.emit(false);
         this.selectedPreviousStepChange.emit(null);
@@ -58,6 +64,7 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
 
     private cancelDialog(): void {
         this.selectedItem = null;
+        this.retryMode = null;
         this.visibleChange.emit(false);
         this.selectedPreviousStepChange.emit(null);
         this.cancel.emit();
