@@ -70,10 +70,9 @@
     <app-pulses-progress-bar
         #progressBar
         visibility="visible"
+        [pulsesCounted]="pulsesCounted"
         [targetPulses]="targetPulses"
-        [standResults$]="standResults$"
-        [activeStands$]="activeStands$"
-        [isRunning$]="isRunning$"></app-pulses-progress-bar>
+        [isRunning]="isTestRunning"></app-pulses-progress-bar>
 </div>
 
 <!-- Espacio adicional para el menú desplegable del split button -->

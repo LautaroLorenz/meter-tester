@@ -5,18 +5,13 @@
         styleClass="progress-panel">
         <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2">
-                <i
-                    class="pi pi-chart-line text-600"
-                    style="font-size: 0.9rem"
-                    pTooltip="Progreso de medición"
-                    tooltipPosition="right"></i>
-                <span class="text-700 font-medium text-sm">Progreso de medición -</span>
+                <span class="text-700 font-medium text-sm">Progreso -</span>
                 <div class="flex align-items-center gap-1">
-                    <span class="text-600 font-medium text-sm">{{ progressStatus.text }}</span>
+                    <span class="text-600 font-medium text-sm">{{ statusText }}</span>
                 </div>
                 <ng-container *ngIf="panel.collapsed">
                     <span class="text-400">-</span>
-                    <span class="text-700 font-mono text-xs">{{ minPulsesCounted }} / {{ targetPulses }}</span>
+                    <span class="text-700 font-mono text-xs">{{ pulsesCounted }} / {{ targetPulses }}</span>
                 </ng-container>
             </div>
         </ng-template>
@@ -33,11 +28,6 @@
                     [color]="color"
                     styleClass="p-progressbar-compact">
                 </p-progressBar>
-                <div class="text-center mt-1">
-                    <span class="text-600 text-xs">
-                        Stand con menor progreso: {{ minPulsesCounted }} / {{ targetPulses }} pulsos
-                    </span>
-                </div>
             </div>
         </ng-template>
     </p-panel>

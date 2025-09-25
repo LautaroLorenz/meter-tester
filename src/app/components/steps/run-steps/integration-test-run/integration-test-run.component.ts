@@ -18,13 +18,11 @@ import {
     defer,
     repeat,
     catchError,
-    EMPTY,
-    BehaviorSubject
+    EMPTY
 } from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
-import { ActiveStand } from '../../../../models/business/interafces/active-stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
@@ -61,7 +59,6 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     // Progress tracking properties
     isTestRunning = false;
-    private isTestRunningSubject$ = new BehaviorSubject<boolean>(false);
 
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
@@ -71,24 +68,34 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         return this.currentStep.form_control_raw.durationPulses;
     }
 
-    get standResults$(): Observable<IntegrationTestStandResult[]> {
-        // Create an observable from the current step's stand results
-        return new BehaviorSubject(this.currentStep.standResults);
-    }
+    get pulsesCounted(): number {
+        const activeStands = this.getActiveStands();
+        if (activeStands.length === 0) {
+            return 0;
+        }
 
-    get activeStands$(): Observable<ActiveStand[]> {
-        // Create an observable from the current step's active stands
-        return new BehaviorSubject(this.getActiveStands());
-    }
+        let minPulses = Number.MAX_SAFE_INTEGER;
 
-    get isRunning$(): Observable<boolean> {
-        return this.isTestRunningSubject$.asObservable();
+        for (const { index: standIndex } of activeStands) {
+            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                this.currentStep.id,
+                standIndex
+            ).value;
+            const measuredPulses = standResult.measuredPulses as number;
+            if (measuredPulses !== undefined) {
+                minPulses = Math.min(minPulses, measuredPulses);
+            } else {
+                // If any active stand has no measurement, progress is 0
+                return 0;
+            }
+        }
+
+        return minPulses === Number.MAX_SAFE_INTEGER ? 0 : minPulses;
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
-        this.isTestRunningSubject$.complete();
     }
 
     /**
@@ -133,7 +140,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
             const measuredPulses = result;
             const expectedPulses = this.currentStep.form_control_raw.durationPulses;
             const calculatedError = expectedPulses > 0 ? ((measuredPulses - expectedPulses) / expectedPulses) * 100 : 0;
-            
+
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
                 .patchValue({ measuredPulses, calculatedError });
@@ -207,7 +214,6 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     override onRestart(): void {
         // reset progress tracking
         this.isTestRunning = false;
-        this.isTestRunningSubject$.next(false);
         this.canExecute = true;
     }
 
@@ -215,7 +221,6 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         this.abortExecution$.next();
         this.stopStep.next();
         this.isTestRunning = false;
-        this.isTestRunningSubject$.next(false);
         this.deviceService.abort();
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
@@ -253,7 +258,6 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     override startTest(): void {
         this.isExecuting = true;
         this.isTestRunning = true;
-        this.isTestRunningSubject$.next(true);
         this.tabIndex = 1;
         // apaga el calculador por si estaba encendido
         this.calculator
@@ -275,7 +279,6 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         this.stopStep.next();
         // detener tracking de progreso
         this.isTestRunning = false;
-        this.isTestRunningSubject$.next(false);
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
