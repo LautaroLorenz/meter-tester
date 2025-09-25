@@ -1,14 +1,12 @@
 <!-- Diálogo de selección de pasos para reintentar -->
 <p-dialog
-    header="Seleccionar pasos para reintentar"
+    header="Selecciona los pasos que deseas volver a ejecutar"
     [(visible)]="visible"
     [modal]="true"
     [style]="{ width: '60vw' }"
     [closable]="true"
     (onHide)="onDialogHide()">
     <div class="flex flex-column gap-3">
-        <p>Selecciona los pasos que deseas volver a ejecutar:</p>
-
         <p-listbox
             [options]="stepsWithDisplayName"
             [(ngModel)]="selectedSteps"

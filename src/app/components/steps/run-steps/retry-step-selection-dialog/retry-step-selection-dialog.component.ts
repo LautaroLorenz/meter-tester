@@ -48,7 +48,7 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
 
         const stepName = this.currentStep?.form_control_raw?.name as string;
         const displayName = stepName || 'Sin nombre';
-        return `Paso ${stepNumber}: ${displayName}`;
+        return `Paso ${stepNumber} (Actual): ${displayName}`;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
