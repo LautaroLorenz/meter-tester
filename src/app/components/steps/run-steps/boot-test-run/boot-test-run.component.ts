@@ -47,8 +47,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
 
-    splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
-
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
@@ -136,7 +134,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override onStepInit(): void {
-        this.updateSplitButtonItems();
         this.onRestart();
         this.prepareGeneratorBeforeExecution();
     }
@@ -255,6 +252,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     retryPrevious(): void {
+        console.log('BootTestRunComponent - retryPrevious clicked');
         // TODO: Implement retry previous functionality
     }
 
@@ -295,21 +293,5 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         return this.calculator
             .resultsTS02$(this.getActiveStands())
             .pipe(tap((results) => this.onCalculatorResults(results)));
-    }
-
-    private updateSplitButtonItems(): void {
-        this.splitButtonItems = [
-            {
-                label: 'Reintentar',
-                icon: 'pi pi-replay',
-                command: () => this.restart()
-            },
-            {
-                label: 'Ir a paso anterior',
-                icon: 'pi pi-undo',
-                command: () => this.retryPrevious(),
-                disabled: !this.hasPreviousStep
-            }
-        ];
     }
 }

@@ -25,6 +25,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     canContinue = false;
     isExecuting = false;
 
+    splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
+
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
     protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
@@ -72,6 +74,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();
+        this.updateSplitButtonItems();
         this.onStepInit();
     }
 
@@ -176,6 +179,22 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.startTest();
     }
 
+    protected updateSplitButtonItems(): void {
+        this.splitButtonItems = [
+            {
+                label: 'Reintentar',
+                icon: 'pi pi-replay',
+                command: () => this.restart()
+            },
+            {
+                label: 'Ir a paso anterior',
+                icon: 'pi pi-undo',
+                command: () => this.retryPrevious(),
+                disabled: !this.hasPreviousStep
+            }
+        ];
+    }
+
     abstract onStepInit(): void;
 
     abstract abort(): Observable<boolean>;
@@ -189,4 +208,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract restartResults(resultStatus: ResultStatus): void;
 
     abstract onRestart(): void;
+
+    abstract retryPrevious(): void;
 }

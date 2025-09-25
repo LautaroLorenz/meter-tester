@@ -57,8 +57,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.vacuumTestRun;
 
-    splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
-
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
@@ -152,7 +150,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override onStepInit(): void {
-        this.updateSplitButtonItems();
         this.onRestart();
         this.prepareGeneratorBeforeExecution();
     }
@@ -252,6 +249,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     retryPrevious(): void {
+        console.log('VacuumTestRunComponent - retryPrevious clicked');
         // TODO: Implement retry previous functionality
     }
 
@@ -292,21 +290,5 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         return this.calculator
             .resultsTS02$(this.getActiveStands())
             .pipe(tap((results) => this.onCalculatorResults(results)));
-    }
-
-    private updateSplitButtonItems(): void {
-        this.splitButtonItems = [
-            {
-                label: 'Reintentar',
-                icon: 'pi pi-replay',
-                command: () => this.restart()
-            },
-            {
-                label: 'Ir a paso anterior',
-                icon: 'pi pi-undo',
-                command: () => this.retryPrevious(),
-                disabled: !this.hasPreviousStep
-            }
-        ];
     }
 }
