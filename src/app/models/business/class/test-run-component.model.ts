@@ -49,6 +49,19 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         });
     }
 
+    get continueButtonStyleClass(): string {
+        if (!this.canContinue) {
+            return 'p-button-secondary';
+        }
+        if (this.allActiveStandsPassed) {
+            return 'p-button-success';
+        }
+        if (this.hasAnyStandFailed) {
+            return 'p-button-warning';
+        }
+        return '';
+    }
+
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();

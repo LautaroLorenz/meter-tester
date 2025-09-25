@@ -19,15 +19,7 @@
             icon="pi pi-check"
             [model]="splitButtonItems"
             [disabled]="!canContinue"
-            [styleClass]="
-                !canContinue
-                    ? 'p-button-secondary'
-                    : allActiveStandsPassed
-                      ? 'p-button-success'
-                      : hasAnyStandFailed
-                        ? 'p-button-warning'
-                        : ''
-            "
+            [styleClass]="continueButtonStyleClass"
             (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
     </div>
 </div>
