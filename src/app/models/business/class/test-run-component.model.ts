@@ -152,10 +152,8 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.cd.detectChanges();
     }
 
-    onStepSelectionConfirm(): void {
-        if (this.selectedPreviousStep) {
-            this.onRetryPreviousStep(this.selectedPreviousStep);
-        }
+    onStepSelectionConfirm(selectedStep: EssayStep): void {
+        this.onRetryPreviousStep(selectedStep);
         this.showStepSelectionDialog = false;
         this.selectedPreviousStep = null;
         this.cd.detectChanges();

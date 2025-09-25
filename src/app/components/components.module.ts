@@ -46,6 +46,7 @@ import { BootTestPdfReportComponent } from './steps/result-report/boot-test-pdf-
 import { ContrastTestParamsComponent } from './steps/step-params/contrast-test-params/contrast-test-params.component';
 import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/contrast-test-run.component';
 import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
+import { RetryStepSelectionDialogComponent } from './steps/run-steps/retry-step-selection-dialog/retry-step-selection-dialog.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterDetailComponent } from './details/meter-detail/meter-detail.component';
 import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/stand-used-widget.component';
@@ -111,6 +112,7 @@ const AppComponents = [
     ContrastTestParamsComponent,
     ContrastTestRunComponent,
     ContrastTestPdfReportComponent,
+    RetryStepSelectionDialogComponent,
     PreparationPdfReportComponent,
     MeterDetailComponent,
     StandUsedWidgetComponent,

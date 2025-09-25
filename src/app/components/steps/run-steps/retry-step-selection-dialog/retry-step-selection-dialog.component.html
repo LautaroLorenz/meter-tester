@@ -1,0 +1,36 @@
+<!-- Diálogo de selección de paso anterior -->
+<p-dialog
+    header="Seleccionar paso anterior"
+    [(visible)]="visible"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [closable]="true"
+    (onHide)="onDialogHide()">
+    <div class="flex flex-column gap-3">
+        <p>Selecciona el paso anterior al que deseas volver:</p>
+
+        <p-listbox
+            [options]="previousSteps"
+            [(ngModel)]="selectedPreviousStep"
+            (ngModelChange)="onStepSelectionChange($event)"
+            optionLabel="form_control_raw.name"
+            [style]="{ width: '100%' }"
+            [listStyle]="{ 'max-height': '300px' }">
+        </p-listbox>
+
+        <div class="flex justify-content-end gap-2">
+            <p-button
+                label="Cancelar"
+                icon="pi pi-times"
+                [text]="true"
+                (click)="onCancelClick()">
+            </p-button>
+            <p-button
+                label="Confirmar"
+                icon="pi pi-check"
+                [disabled]="!selectedPreviousStep"
+                (click)="onConfirmClick()">
+            </p-button>
+        </div>
+    </div>
+</p-dialog>
