@@ -325,9 +325,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         //     // Si el current step está seleccionado, marcarlo como Pending
         //     // El estado de fotocélulas se deja como estaba
         //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
-
-        //     // Reiniciar los resultados de los stands para el paso actual
-        //     this.restartResults(ResultStatus.Pending);
         // } else {
         //     // Si el current step no está seleccionado, marcarlo como Done
         //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Done);
@@ -337,6 +334,9 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         // if (selectedSteps.length > 0) {
         //     const firstSelectedStep = selectedSteps[0];
         //     this.runEssayService.getEssayStep(firstSelectedStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+
+        //     // Reiniciar los resultados de los stands para el paso actual
+        //     this.restartResults(ResultStatus.Pending);
         // }
 
         // // Forzar la detección de cambios para actualizar la UI

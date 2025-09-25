@@ -67,16 +67,19 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
 
     onConfirmClick(): void {
         if (this.selectedSteps.length > 0 || this.includeCurrentStep) {
-            // Crear array con todos los pasos seleccionados
-            const allSelectedSteps = [...this.selectedSteps];
+            // Extraer solo los objetos EssayStep de los pasos seleccionados del listbox
+            const finalSelectedSteps: EssayStep[] = this.selectedSteps.map((item: any) => item.step as EssayStep);
 
-            // Si el current step está seleccionado, agregarlo al array
+            // Si el current step checkbox está marcado, agregar el paso actual a la lista
             if (this.includeCurrentStep && this.currentStep) {
-                allSelectedSteps.push(this.currentStep);
+                // Asegurarse de que el currentStep no se duplique si ya fue seleccionado en el listbox
+                if (!finalSelectedSteps.some((step) => step.id === this.currentStep?.id)) {
+                    finalSelectedSteps.push(this.currentStep);
+                }
             }
 
             this.confirm.emit({
-                selectedSteps: allSelectedSteps
+                selectedSteps: finalSelectedSteps
             });
         }
         this.visibleChange.emit(false);
