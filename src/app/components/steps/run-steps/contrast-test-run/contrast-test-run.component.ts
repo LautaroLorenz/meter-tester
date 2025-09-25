@@ -260,6 +260,10 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.cd.detectChanges();
     }
 
+    protected getGeneratorComponent(): GeneratorComponent<ContrastTestEssayStep> {
+        return this.generator;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.abortExecution$),

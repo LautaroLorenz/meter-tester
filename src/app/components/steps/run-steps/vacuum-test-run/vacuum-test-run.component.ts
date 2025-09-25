@@ -282,6 +282,10 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.cd.detectChanges();
     }
 
+    protected getGeneratorComponent(): GeneratorComponent<VacuumTestEssayStep> {
+        return this.generator;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
             takeUntil(this.abortExecution$),

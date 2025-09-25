@@ -14,6 +14,7 @@ import { MessagesService } from '../../../services/messages.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { ExecutionDirector } from './execution-director.model';
 import { GeneratorAlarmType } from '../enums/generator-alarm-type.model';
+import { DeviceStatus } from '../enums/device-status.model';
 
 @Component({
     template: '',
@@ -320,9 +321,22 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
             // abortar la ejecución, por si hay otro dispositivo en funcionamiento
             this.abort();
 
+            // Setear el estado del generador en error
+            this.setGeneratorErrorStatus();
+
             // Mostrar alerta roja al usuario usando MessagesService
             this.messagesService.error(GeneratorAlarmType.Overcurrent);
         });
+    }
+
+    /**
+     * Setea el estado del generador en error
+     */
+    private setGeneratorErrorStatus(): void {
+        const generator = this.getGeneratorComponent();
+        if (generator) {
+            generator.deviceStatus$.next(DeviceStatus.Error);
+        }
     }
 
     private executeRetryLogic(selectedSteps: EssayStep[]): void {
@@ -387,4 +401,10 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract restartResults(resultStatus: ResultStatus): void;
 
     abstract onRestart(): void;
+
+    /**
+     * Obtiene la referencia al componente generador
+     * Debe ser implementado por los componentes hijos que tengan generador
+     */
+    protected abstract getGeneratorComponent(): any;
 }
