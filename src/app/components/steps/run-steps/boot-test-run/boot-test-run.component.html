@@ -37,7 +37,8 @@
         <div class="mt-2">
             <app-pattern
                 #pattern
-                [currentStep]="currentStep"></app-pattern>
+                [currentStep]="currentStep"
+                (alarmGenerador)="handleGeneratorAlarm($event)"></app-pattern>
         </div>
     </p-tabPanel>
 

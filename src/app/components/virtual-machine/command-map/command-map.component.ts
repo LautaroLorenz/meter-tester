@@ -121,9 +121,9 @@ export class CommandMapComponent {
         // const irValue = Math.random() * 25.59;
         // const isValue = Math.random() * 25.59;
         // const itValue = Math.random() * 25.59;
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(2.41, 2, 2));
+        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
         const prValue = Math.random() * 2.55;

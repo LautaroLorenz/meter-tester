@@ -1,5 +1,13 @@
 import { SecondaryWindowService } from './../../../services/secondary-window.service';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
@@ -16,6 +24,7 @@ import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 import { PhasesToCommandPipe } from '../../../pipes/business/phases-to-command.pipe';
 import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.model';
+import { GeneratorAlarmType } from '../../../models/business/enums/generator-alarm-type.model';
 
 @Component({
     selector: 'app-pattern',
@@ -26,6 +35,7 @@ import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.
 export class PatternComponent<T extends EssayTemplateStep> extends MachineDeviceComponent implements OnInit {
     @Input() currentStep!: T;
     @Input() toggleable!: boolean;
+    @Output() alarmGenerador = new EventEmitter<GeneratorAlarmType>();
     override readonly device = Devices.PAT;
 
     hasRealTimeStatus = false;
@@ -127,6 +137,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // responder la constante obtenida desde el patrón físico.
         return this.write$(command).pipe(
             map((response) => this.mapConstantResponseWithStatus(response)),
+            tap((patternStatus) => this.checkAlarms(patternStatus, phaseL1, phaseL2, phaseL3)),
             tap((patternStatus) => this.updatePatternStatus(patternStatus))
         );
     }
@@ -222,6 +233,28 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             }
         }
         return constant;
+    }
+
+    private checkAlarms(patternStatus: PatternStatus, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): void {
+        this.checkOvercurrentAlarm(patternStatus, phaseL1, phaseL2, phaseL3);
+        // Aquí se pueden agregar más verificaciones de alarmas en el futuro
+    }
+
+    private checkOvercurrentAlarm(patternStatus: PatternStatus, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): void {
+        // Verificar si todas las corrientes del ensayo son menores o iguales a 2A
+        const allCurrentsUnder2A = phaseL1.current <= 2.0 && phaseL2.current <= 2.0 && phaseL3.current <= 2.0;
+
+        // Si todas las corrientes están bajo 2A, verificar si alguna supera 2.4A
+        if (allCurrentsUnder2A) {
+            const hasOvercurrent =
+                patternStatus.phaseL1.current > 2.4 ||
+                patternStatus.phaseL2.current > 2.4 ||
+                patternStatus.phaseL3.current > 2.4;
+
+            if (hasOvercurrent) {
+                this.alarmGenerador.emit(GeneratorAlarmType.Overcurrent);
+            }
+        }
     }
 
     private updatePatternStatus(newPatternStatus: PatternStatus): void {

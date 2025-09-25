@@ -10,8 +10,10 @@ import { Subject } from 'rxjs/internal/Subject';
 import { Observable, of } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
+import { MessagesService } from '../../../services/messages.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { ExecutionDirector } from './execution-director.model';
+import { GeneratorAlarmType } from '../enums/generator-alarm-type.model';
 
 @Component({
     template: '',
@@ -37,6 +39,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     protected readonly blockUIService = inject(BlockUIService);
     protected readonly deviceService = inject(DeviceService);
     protected readonly confirmationService = inject(ConfirmationService);
+    protected readonly messagesService = inject(MessagesService);
     protected readonly onDestroy = new Subject<void>();
 
     abstract readonly skipEnabled: boolean;
@@ -290,6 +293,32 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.runEssayService.getEssayStep(nextExecutionStep.id).get('executedStatus')?.setValue(StepStatus.Current);
 
         return true;
+    }
+
+    /**
+     * Maneja las alarmas del generador
+     * @param alarmType Tipo de alarma del generador
+     */
+    protected handleGeneratorAlarm(alarmType: GeneratorAlarmType): void {
+        switch (alarmType) {
+            case GeneratorAlarmType.Overcurrent:
+                this.handleOvercurrentAlarm();
+                break;
+        }
+    }
+
+    /**
+     * Maneja la alarma de sobrecorriente
+     */
+    private handleOvercurrentAlarm(): void {
+        // Apagar el generador inmediatamente
+        this.stopGenerator().subscribe(() => {
+            // Mostrar alerta roja al usuario usando MessagesService
+            this.messagesService.error(GeneratorAlarmType.Overcurrent);
+
+            // Detener el test actual
+            this.stopTest();
+        });
     }
 
     private executeRetryLogic(selectedSteps: EssayStep[]): void {
