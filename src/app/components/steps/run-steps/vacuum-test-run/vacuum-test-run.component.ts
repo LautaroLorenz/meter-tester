@@ -249,20 +249,24 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override stepExecutionDone(essayStep: VacuumTestEssayStep): void {
+        // Apagar el generador antes de continuar
+        this.stopGenerator().subscribe(() => {
+            // Llamar al método padre para marcar como Done
+            super.stepExecutionDone(essayStep);
+        });
+    }
+
+    override stopGenerator(): Observable<void> {
         // Bloquear la UI mientras se apaga el generador
         this.blockUIService.setBlocked(true);
 
-        // Apagar el generador antes de continuar
-        this.generator
-            .stop$()
-            .pipe(
-                finalize(() => {
-                    this.blockUIService.setBlocked(false);
-                    // Llamar al método padre para continuar
-                    super.stepExecutionDone(essayStep);
-                })
-            )
-            .subscribe();
+        // Apagar el generador
+        return this.generator.stop$().pipe(
+            map(() => void 0),
+            finalize(() => {
+                this.blockUIService.setBlocked(false);
+            })
+        );
     }
 
     override restartResults(resultStatus: ResultStatus): void {
