@@ -61,25 +61,25 @@
                     [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
             </app-calculator>
         </div>
-
-        <!-- Temporizadores -->
-        <div class="mt-2">
-            <!-- Tiempo mínimo -->
-            <app-count-timer
-                #countTimerMin
-                visibility="hidden"
-                [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
-                (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
-
-            <!-- Tiempo máximo -->
-            <app-count-timer
-                #countTimerMax
-                visibility="visible"
-                [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
-                (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
-        </div>
     </p-tabPanel>
 </p-tabView>
+
+<!-- Temporizadores -->
+<div class="mt-2">
+    <!-- Tiempo mínimo -->
+    <app-count-timer
+        #countTimerMin
+        visibility="hidden"
+        [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
+        (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
+
+    <!-- Tiempo máximo -->
+    <app-count-timer
+        #countTimerMax
+        visibility="visible"
+        [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
+        (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
+</div>
 
 <!-- Espacio adicional para el menú desplegable del split button -->
 <div style="height: 120px"></div>

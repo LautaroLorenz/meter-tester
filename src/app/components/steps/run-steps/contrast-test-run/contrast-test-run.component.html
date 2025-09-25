@@ -39,20 +39,6 @@
                 #pattern
                 [currentStep]="currentStep"></app-pattern>
         </div>
-
-        <!-- Execution mode -->
-        <div class="mt-2 execution-mode-panel">
-            <p-panel
-                header="Modo de ejecución"
-                styleClass="execution-panel">
-                <p-selectButton
-                    [options]="StepRunModes"
-                    [(ngModel)]="stepRunMode"
-                    optionLabel="label"
-                    optionValue="value"
-                    styleClass="execution-select-button"></p-selectButton>
-            </p-panel>
-        </div>
     </p-tabPanel>
 
     <p-tabPanel
@@ -77,22 +63,22 @@
                     [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
             </app-calculator>
         </div>
-
-        <!-- Execution mode -->
-        <div class="mt-2 execution-mode-panel">
-            <p-panel
-                header="Modo de ejecución"
-                styleClass="execution-panel">
-                <p-selectButton
-                    [options]="StepRunModes"
-                    [(ngModel)]="stepRunMode"
-                    optionLabel="label"
-                    optionValue="value"
-                    styleClass="execution-select-button"></p-selectButton>
-            </p-panel>
-        </div>
     </p-tabPanel>
 </p-tabView>
+
+<!-- Execution mode -->
+<div class="mt-2 execution-mode-panel">
+    <p-panel
+        header="Modo de ejecución"
+        styleClass="execution-panel">
+        <p-selectButton
+            [options]="StepRunModes"
+            [(ngModel)]="stepRunMode"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="execution-select-button"></p-selectButton>
+    </p-panel>
+</div>
 
 <!-- Espacio adicional para el menú desplegable del split button -->
 <div style="height: 120px"></div>

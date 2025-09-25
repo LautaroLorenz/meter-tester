@@ -61,17 +61,17 @@
                     [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
             </app-calculator>
         </div>
-
-        <!-- Temporizador -->
-        <div class="mt-2">
-            <app-count-timer
-                #countTimer
-                visibility="visible"
-                [durationSeconds]="currentStep.form_control_raw.durationSeconds"
-                (finishCount)="onTimerCountdownFinish()"></app-count-timer>
-        </div>
     </p-tabPanel>
 </p-tabView>
+
+<!-- Temporizador -->
+<div class="mt-2">
+    <app-count-timer
+        #countTimer
+        visibility="visible"
+        [durationSeconds]="currentStep.form_control_raw.durationSeconds"
+        (finishCount)="onTimerCountdownFinish()"></app-count-timer>
+</div>
 
 <!-- Espacio adicional para el menú desplegable del split button -->
 <div style="height: 120px"></div>
