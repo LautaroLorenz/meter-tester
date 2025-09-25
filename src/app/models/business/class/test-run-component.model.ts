@@ -1,13 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnDestroy,
-    OnInit,
-    inject,
-    ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { PreparationStep } from '../interafces/steps/preparation-step.model';
 import { EssayStep } from '../interafces/essay-step.model';
@@ -21,8 +12,6 @@ import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { ExecutionDirector } from './execution-director.model';
-import { RetryMode } from '../enums/retry-mode.enum';
-import { ExecutionMajorStepComponent } from '../../../components/major-steps/execution-major-step/execution-major-step.component';
 
 @Component({
     template: '',
@@ -31,8 +20,6 @@ import { ExecutionMajorStepComponent } from '../../../components/major-steps/exe
 export abstract class TestRunComponent<T extends EssayStep> implements OnInit, OnDestroy {
     @Input() currentStep!: T;
     @Input() preparationStep!: PreparationStep;
-
-    @ViewChild(ExecutionMajorStepComponent) executionMajorStepComponent?: ExecutionMajorStepComponent;
 
     tabIndex = 0;
     canExecute = false;
@@ -43,7 +30,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     showStepSelectionDialog = false;
     previousSteps: EssayStep[] = [];
-    selectedPreviousStep: EssayStep | null = null;
 
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
@@ -162,24 +148,22 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     onStepSelectionCancel(): void {
         this.showStepSelectionDialog = false;
-        this.selectedPreviousStep = null;
         this.cd.detectChanges();
     }
 
-    onStepSelectionConfirm(data: { step: EssayStep; retryMode: RetryMode }): void {
-        this.onRetryPreviousStep(data.step, data.retryMode);
+    onStepSelectionConfirm(data: { selectedSteps: EssayStep[] }): void {
+        this.onRetrySelectedSteps(data.selectedSteps);
         this.showStepSelectionDialog = false;
-        this.selectedPreviousStep = null;
         this.cd.detectChanges();
     }
 
-    onRetryPreviousStep(selectedStep: EssayStep, retryMode: RetryMode = RetryMode.FROM_STEP): void {
+    onRetrySelectedSteps(selectedSteps: EssayStep[]): void {
         // Deshabilitar el avance automático durante el retry
         this.setAutoAdvanceEnabled(false);
 
         // Primero apagar el generador antes de hacer retry
         this.stopGenerator().subscribe(() => {
-            this.executeRetryLogic(selectedStep, retryMode);
+            this.executeRetryLogic(selectedSteps);
 
             // Rehabilitar el avance automático después del retry
             this.setAutoAdvanceEnabled(true);
@@ -275,7 +259,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
      * this.setAutoAdvanceEnabled(true);
      */
     protected setAutoAdvanceEnabled(enabled: boolean): void {
-        this.executionMajorStepComponent?.setAutoAdvanceEnabled(enabled);
+        this.runEssayService.setAutoAdvanceEnabled(enabled);
     }
 
     /**
@@ -290,80 +274,73 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
      * }
      */
     protected advanceToNextStep(): boolean {
-        return this.executionMajorStepComponent?.advanceToNextStep() ?? false;
-    }
-
-    private executeRetryLogic(selectedStep: EssayStep, retryMode: RetryMode): void {
-        // Obtener todos los pasos de ejecución
         const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
         const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
 
-        // Encontrar el índice del paso seleccionado
-        const selectedStepIndex = executionSteps.findIndex((step) => step.id === selectedStep.id);
+        const nextExecutionStep = executionSteps.find(({ executedStatus }) => executedStatus === StepStatus.Pending);
 
-        if (selectedStepIndex === -1) {
-            return;
+        if (!nextExecutionStep) {
+            // No hay más steps pendientes, avanzar al siguiente major step
+            this.runEssayService.nextMajorStep();
+            return false;
         }
 
-        if (retryMode === RetryMode.FROM_STEP) {
-            // Modo: Desde el paso seleccionado y todos los posteriores
-            for (let i = selectedStepIndex; i < executionSteps.length; i++) {
-                const step = executionSteps[i];
-                this.runEssayService.getEssayStep(step.id).get('executedStatus')?.setValue(StepStatus.Pending);
+        // Marcar el siguiente step como Current
+        this.runEssayService.getEssayStep(nextExecutionStep.id).get('executedStatus')?.setValue(StepStatus.Current);
 
-                // Recalcular el estado de fotocélulas para este paso
-                const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
-                    executionSteps,
-                    i
-                );
-                this.runEssayService
-                    .getEssayStep(step.id)
-                    .get('photocellAdjustmentStatus')
-                    ?.setValue(photocellAdjustmentStatus);
-            }
-        } else {
-            // Modo: Solo el paso seleccionado y el actual
-            // Configurar el paso seleccionado como Pending primero
-            this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
+        return true;
+    }
 
-            // Recalcular el estado de fotocélulas para el paso seleccionado
-            const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
-                executionSteps,
-                selectedStepIndex
-            );
-            this.runEssayService
-                .getEssayStep(selectedStep.id)
-                .get('photocellAdjustmentStatus')
-                ?.setValue(photocellAdjustmentStatus);
-        }
+    private executeRetryLogic(selectedSteps: EssayStep[]): void {
+        console.log('selectedSteps', selectedSteps);
+        // // Obtener todos los pasos de ejecución
+        // const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        // const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
 
-        // Marcar el paso seleccionado como Current
-        this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+        // // Determinar si el current step está incluido en la selección
+        // const isCurrentStepSelected = selectedSteps.some((step) => step.id === this.currentStep.id);
+        // const nonCurrentSteps = selectedSteps.filter((step) => step.id !== this.currentStep.id);
 
-        // Reiniciar los resultados de los stands para el paso seleccionado
-        this.restartResults(ResultStatus.Pending);
+        // // Marcar los pasos no-current seleccionados como Pending y recalcular fotocélulas
+        // nonCurrentSteps.forEach((selectedStep) => {
+        //     const stepIndex = executionSteps.findIndex((step) => step.id === selectedStep.id);
+        //     if (stepIndex !== -1) {
+        //         // Marcar como Pending
+        //         this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
 
-        // Al final, marcar el paso actual como Pending (si existe y es diferente al seleccionado)
-        const currentStep = executionSteps.find(
-            (step) => step.executedStatus === StepStatus.Current && step.id !== selectedStep.id
-        );
-        if (currentStep) {
-            this.runEssayService.getEssayStep(currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
+        //         // Recalcular el estado de fotocélulas
+        //         const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
+        //             executionSteps,
+        //             stepIndex
+        //         );
+        //         this.runEssayService
+        //             .getEssayStep(selectedStep.id)
+        //             .get('photocellAdjustmentStatus')
+        //             ?.setValue(photocellAdjustmentStatus);
+        //     }
+        // });
 
-            // Recalcular el estado de fotocélulas para el paso actual
-            const currentStepIndex = executionSteps.findIndex((step) => step.id === currentStep.id);
-            const currentPhotocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
-                executionSteps,
-                currentStepIndex
-            );
-            this.runEssayService
-                .getEssayStep(currentStep.id)
-                .get('photocellAdjustmentStatus')
-                ?.setValue(currentPhotocellAdjustmentStatus);
-        }
+        // // Manejar el paso actual de forma especial
+        // if (isCurrentStepSelected) {
+        //     // Si el current step está seleccionado, marcarlo como Pending
+        //     // El estado de fotocélulas se deja como estaba
+        //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
 
-        // Forzar la detección de cambios para actualizar la UI
-        this.cd.detectChanges();
+        //     // Reiniciar los resultados de los stands para el paso actual
+        //     this.restartResults(ResultStatus.Pending);
+        // } else {
+        //     // Si el current step no está seleccionado, marcarlo como Done
+        //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Done);
+        // }
+
+        // // Marcar el primer paso seleccionado como Current (el más temprano)
+        // if (selectedSteps.length > 0) {
+        //     const firstSelectedStep = selectedSteps[0];
+        //     this.runEssayService.getEssayStep(firstSelectedStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+        // }
+
+        // // Forzar la detección de cambios para actualizar la UI
+        // this.cd.detectChanges();
     }
 
     private openStepSelectionDialog(): void {
@@ -373,7 +350,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
         // Obtener todos los pasos anteriores al actual
         this.previousSteps = executionSteps.slice(0, currentStepIndex);
-        this.selectedPreviousStep = null;
         this.showStepSelectionDialog = true;
         this.cd.detectChanges();
     }

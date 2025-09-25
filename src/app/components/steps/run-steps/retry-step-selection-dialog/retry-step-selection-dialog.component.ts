@@ -8,7 +8,6 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
-import { RetryMode } from '../../../../models/business/enums/retry-mode.enum';
 
 @Component({
     selector: 'app-retry-step-selection-dialog',
@@ -19,20 +18,22 @@ import { RetryMode } from '../../../../models/business/enums/retry-mode.enum';
 export class RetryStepSelectionDialogComponent implements OnChanges {
     @Input() visible = false;
     @Input() previousSteps: EssayStep[] = [];
-    @Input() selectedPreviousStep: EssayStep | null = null;
+    @Input() currentStep: EssayStep | null = null;
 
     @Output() visibleChange = new EventEmitter<boolean>();
-    @Output() selectedPreviousStepChange = new EventEmitter<EssayStep | null>();
     @Output() cancel = new EventEmitter<void>();
-    @Output() confirm = new EventEmitter<{ step: EssayStep; retryMode: RetryMode }>();
+    @Output() confirm = new EventEmitter<{ selectedSteps: EssayStep[] }>();
 
-    previousStepsWithDisplayName: Array<{ step: EssayStep; displayName: string }> = [];
-    selectedItem: { step: EssayStep; displayName: string } | null = null;
-    retryMode: RetryMode | null = null;
-    retryModeEnum = RetryMode;
+    stepsWithDisplayName: Array<{ step: EssayStep; displayName: string; isCurrent: boolean }> = [];
+    selectedSteps: EssayStep[] = [];
+    includeCurrentStep = false;
+
+    get canConfirm(): boolean {
+        return this.selectedSteps.length > 0 || this.includeCurrentStep;
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['previousSteps']) {
+        if (changes['previousSteps'] || changes['currentStep']) {
             this.generateDisplayNames();
         }
     }
@@ -46,34 +47,43 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     }
 
     onConfirmClick(): void {
-        if (this.selectedItem && this.retryMode) {
+        if (this.selectedSteps.length > 0 || this.includeCurrentStep) {
+            // Crear array con todos los pasos seleccionados
+            const allSelectedSteps = [...this.selectedSteps];
+
+            // Si el current step está seleccionado, agregarlo al array
+            if (this.includeCurrentStep && this.currentStep) {
+                allSelectedSteps.push(this.currentStep);
+            }
+
             this.confirm.emit({
-                step: this.selectedItem.step,
-                retryMode: this.retryMode
+                selectedSteps: allSelectedSteps
             });
         }
         this.visibleChange.emit(false);
-        this.selectedPreviousStepChange.emit(null);
     }
 
     onStepSelectionChange(event: any): void {
-        this.selectedItem = event.value;
-        const selectedStep = this.selectedItem ? this.selectedItem.step : null;
-        this.selectedPreviousStepChange.emit(selectedStep);
+        this.selectedSteps = event.value || [];
+    }
+
+    onCurrentStepToggle(): void {
+        this.includeCurrentStep = !this.includeCurrentStep;
     }
 
     private cancelDialog(): void {
-        this.selectedItem = null;
-        this.retryMode = null;
+        this.selectedSteps = [];
+        this.includeCurrentStep = false;
         this.visibleChange.emit(false);
-        this.selectedPreviousStepChange.emit(null);
         this.cancel.emit();
     }
 
     private generateDisplayNames(): void {
-        this.previousStepsWithDisplayName = this.previousSteps.map((step, index) => ({
+        // Solo mostrar los pasos anteriores, no el current
+        this.stepsWithDisplayName = this.previousSteps.map((step, index) => ({
             step: step,
-            displayName: this.getStepDisplayName(step, index + 1)
+            displayName: this.getStepDisplayName(step, index + 1),
+            isCurrent: false
         }));
     }
 

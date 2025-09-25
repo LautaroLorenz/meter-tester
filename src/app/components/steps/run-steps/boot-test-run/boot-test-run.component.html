@@ -84,11 +84,11 @@
 <!-- Espacio adicional para el menú desplegable del split button -->
 <div style="height: 120px"></div>
 
-<!-- Diálogo de selección de paso anterior -->
+<!-- Diálogo de selección de pasos para reintentar -->
 <app-retry-step-selection-dialog
     [(visible)]="showStepSelectionDialog"
     [previousSteps]="previousSteps"
-    [(selectedPreviousStep)]="selectedPreviousStep"
+    [currentStep]="currentStep"
     (cancel)="onStepSelectionCancel()"
     (confirm)="onStepSelectionConfirm($event)">
 </app-retry-step-selection-dialog>
