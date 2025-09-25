@@ -292,55 +292,52 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     private executeRetryLogic(selectedSteps: EssayStep[]): void {
-        console.log('selectedSteps', selectedSteps);
-        // // Obtener todos los pasos de ejecución
-        // const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
-        // const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        // 1. Si el current step no está seleccionado, marcarlo como Done
+        const isCurrentStepSelected = selectedSteps.some((step) => step.id === this.currentStep.id);
+        if (!isCurrentStepSelected) {
+            this.markStepAsDone(this.currentStep);
+        }
 
-        // // Determinar si el current step está incluido en la selección
-        // const isCurrentStepSelected = selectedSteps.some((step) => step.id === this.currentStep.id);
-        // const nonCurrentSteps = selectedSteps.filter((step) => step.id !== this.currentStep.id);
+        // 2. Para todos los pasos seleccionados: marcarlos como Pending y reiniciar estados
+        selectedSteps.forEach((step) => {
+            // Marcar como Pending
+            this.runEssayService.getEssayStep(step.id).get('executedStatus')?.setValue(StepStatus.Pending);
 
-        // // Marcar los pasos no-current seleccionados como Pending y recalcular fotocélulas
-        // nonCurrentSteps.forEach((selectedStep) => {
-        //     const stepIndex = executionSteps.findIndex((step) => step.id === selectedStep.id);
-        //     if (stepIndex !== -1) {
-        //         // Marcar como Pending
-        //         this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
+            // Reiniciar estado de fotocélulas según ExecutionDirector logic
+            this.resetPhotocellAdjustmentStatus(step);
 
-        //         // Recalcular el estado de fotocélulas
-        //         const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
-        //             executionSteps,
-        //             stepIndex
-        //         );
-        //         this.runEssayService
-        //             .getEssayStep(selectedStep.id)
-        //             .get('photocellAdjustmentStatus')
-        //             ?.setValue(photocellAdjustmentStatus);
-        //     }
-        // });
+            // Reiniciar estado de stands según ExecutionDirector logic
+            this.resetStandResults(step);
+        });
 
-        // // Manejar el paso actual de forma especial
-        // if (isCurrentStepSelected) {
-        //     // Si el current step está seleccionado, marcarlo como Pending
-        //     // El estado de fotocélulas se deja como estaba
-        //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
-        // } else {
-        //     // Si el current step no está seleccionado, marcarlo como Done
-        //     this.runEssayService.getEssayStep(this.currentStep.id).get('executedStatus')?.setValue(StepStatus.Done);
-        // }
+        // 3. Avanzar al siguiente step
+        this.advanceToNextStep();
+    }
 
-        // // Marcar el primer paso seleccionado como Current (el más temprano)
-        // if (selectedSteps.length > 0) {
-        //     const firstSelectedStep = selectedSteps[0];
-        //     this.runEssayService.getEssayStep(firstSelectedStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+    private resetPhotocellAdjustmentStatus(step: EssayStep): void {
+        // Obtener todos los pasos de ejecución para calcular el estado inicial
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((s) => 'executedStatus' in s);
+        const stepIndex = executionSteps.findIndex((s) => s.id === step.id);
 
-        //     // Reiniciar los resultados de los stands para el paso actual
-        //     this.restartResults(ResultStatus.Pending);
-        // }
+        if (stepIndex !== -1) {
+            const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
+                executionSteps,
+                stepIndex
+            );
+            this.runEssayService
+                .getEssayStep(step.id)
+                .get('photocellAdjustmentStatus')
+                ?.setValue(photocellAdjustmentStatus);
+        }
+    }
 
-        // // Forzar la detección de cambios para actualizar la UI
-        // this.cd.detectChanges();
+    private resetStandResults(step: EssayStep): void {
+        // Reiniciar el estado de los stands activos según ExecutionDirector logic
+        this.getActiveStands().forEach(({ index }) => {
+            const standResultStatus = ExecutionDirector.getInitialStandResultStatus(this.preparationStep, index);
+            this.runEssayService.getStandResult(step.id, index).patchValue({ resultStatus: standResultStatus });
+        });
     }
 
     private openStepSelectionDialog(): void {
