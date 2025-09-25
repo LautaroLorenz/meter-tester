@@ -182,13 +182,13 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     protected updateSplitButtonItems(): void {
         this.splitButtonItems = [
             {
-                label: 'Reintentar',
-                icon: 'pi pi-replay',
+                label: 'Reintentar paso',
+                icon: 'pi pi-refresh',
                 command: () => this.restart()
             },
             {
                 label: 'Ir a paso anterior',
-                icon: 'pi pi-undo',
+                icon: 'pi pi-step-backward',
                 command: () => this.retryPrevious(),
                 disabled: !this.hasPreviousStep
             }
