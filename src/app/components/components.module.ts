@@ -68,6 +68,7 @@ import { PreparationPdfReportComponent } from './steps/result-report/preparation
 import { IntegrationTestBuildFormComponent } from './steps/build-steps/integration-test-build-form/integration-test-build-form.component';
 import { IntegrationTestParamsComponent } from './steps/step-params/integration-test-params/integration-test-params.component';
 import { IntegrationTestRunComponent } from './steps/run-steps/integration-test-run/integration-test-run.component';
+import { PulsesProgressBarComponent } from './pulses-progress-bar/pulses-progress-bar.component';
 
 const AppComponents = [
     PageTitleComponent,
@@ -127,7 +128,8 @@ const AppComponents = [
     GeneratorComponent,
     IntegrationTestBuildFormComponent,
     IntegrationTestParamsComponent,
-    IntegrationTestRunComponent
+    IntegrationTestRunComponent,
+    PulsesProgressBarComponent
 ];
 
 const AppModules = [

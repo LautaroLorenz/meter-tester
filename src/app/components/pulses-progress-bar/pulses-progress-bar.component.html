@@ -1,0 +1,44 @@
+<ng-container *ngIf="visibility === 'visible'">
+    <p-panel
+        #panel
+        [toggleable]="false"
+        styleClass="progress-panel">
+        <ng-template pTemplate="header">
+            <div class="flex align-items-center gap-2">
+                <i
+                    class="pi pi-chart-line text-600"
+                    style="font-size: 0.9rem"
+                    pTooltip="Progreso de medición"
+                    tooltipPosition="right"></i>
+                <span class="text-700 font-medium text-sm">Progreso de medición -</span>
+                <div class="flex align-items-center gap-1">
+                    <span class="text-600 font-medium text-sm">{{ progressStatus.text }}</span>
+                </div>
+                <ng-container *ngIf="panel.collapsed">
+                    <span class="text-400">-</span>
+                    <span class="text-700 font-mono text-xs">{{ minPulsesCounted }} / {{ targetPulses }}</span>
+                </ng-container>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="content">
+            <div class="flex flex-column gap-1">
+                <div class="flex justify-content-between align-items-center">
+                    <span class="text-500 text-xs font-mono">0 pulsos</span>
+                    <span class="text-700 font-semibold text-sm font-mono">{{ percentage | number: '1.1-1' }}%</span>
+                    <span class="text-500 text-xs font-mono">{{ targetPulses }} pulsos</span>
+                </div>
+                <p-progressBar
+                    [value]="$any(percentage | number: '1.2-2')"
+                    [color]="color"
+                    styleClass="p-progressbar-compact">
+                </p-progressBar>
+                <div class="text-center mt-1">
+                    <span class="text-600 text-xs">
+                        Stand con menor progreso: {{ minPulsesCounted }} / {{ targetPulses }} pulsos
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+    </p-panel>
+</ng-container>

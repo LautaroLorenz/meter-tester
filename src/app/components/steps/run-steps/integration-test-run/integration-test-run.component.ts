@@ -3,7 +3,7 @@ import {
     IntegrationTestEssayStep,
     IntegrationTestStandResult
 } from '../../../../models/business/interafces/steps/integration-test-step.model';
-import { CountTimerComponent } from '../../../count-timer/count-timer.component';
+import { PulsesProgressBarComponent } from '../../../pulses-progress-bar/pulses-progress-bar.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import {
     switchMap,
@@ -18,11 +18,13 @@ import {
     defer,
     repeat,
     catchError,
-    EMPTY
+    EMPTY,
+    BehaviorSubject
 } from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
+import { ActiveStand } from '../../../../models/business/interafces/active-stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
@@ -39,7 +41,7 @@ import { Phase } from '../../../../models/business/interafces/phase.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTestEssayStep> implements OnDestroy {
-    @ViewChild('countTimer', { static: true }) countTimer!: CountTimerComponent;
+    @ViewChild('progressBar', { static: true }) progressBar!: PulsesProgressBarComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
     @ViewChild('pattern', { static: true }) pattern!: PatternComponent<IntegrationTestEssayStep>;
     @ViewChild('generator', { static: true }) generator!: GeneratorComponent<IntegrationTestEssayStep>;
@@ -57,25 +59,66 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.integrationTestRun;
 
+    // Progress tracking properties
+    isTestRunning = false;
+    private isTestRunningSubject$ = new BehaviorSubject<boolean>(false);
+
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
+
+    // Getters for progress bar component
+    get targetPulses(): number {
+        return this.currentStep.form_control_raw.durationPulses;
+    }
+
+    get standResults$(): Observable<IntegrationTestStandResult[]> {
+        // Create an observable from the current step's stand results
+        return new BehaviorSubject(this.currentStep.standResults);
+    }
+
+    get activeStands$(): Observable<ActiveStand[]> {
+        // Create an observable from the current step's active stands
+        return new BehaviorSubject(this.getActiveStands());
+    }
+
+    get isRunning$(): Observable<boolean> {
+        return this.isTestRunningSubject$.asObservable();
+    }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
+        this.isTestRunningSubject$.complete();
     }
 
-    onTimerCountdownFinish(): void {
-        this.stopTest();
+    /**
+     * Verifica si todos los stands activos han alcanzado el mínimo de pulsos requeridos
+     */
+    hasAllStandsReachedMinimumPulses(): boolean {
+        const targetPulses = this.currentStep.form_control_raw.durationPulses;
+        const activeStands = this.getActiveStands();
+
+        if (activeStands.length === 0) {
+            return false;
+        }
+
+        return activeStands.every(({ index: standIndex }) => {
+            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                this.currentStep.id,
+                standIndex
+            ).value;
+            const measuredPulses = standResult.measuredPulses as number;
+            return measuredPulses !== undefined && measuredPulses >= targetPulses;
+        });
     }
 
     onCalculatorResults(results: CommandResultResponse[]): void {
         // descartar resultados fuera de tiempo
-        if (!this.countTimer.isRunning) {
+        if (!this.isTestRunning) {
             return;
         }
 
-        // update measuredPulses and calculate measuredError
+        // update measuredPulses and calculate calculatedError
         this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
             const result: CommandResultResponse = results[resultIndex];
             // si no se recibe resultado, se limpia el valor actual
@@ -97,11 +140,10 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         });
         this.cd.detectChanges();
 
-        // revisar si algún puesto pasa a estado Falló
-        this.checkFailedStatus();
-        // si todos los stands activos fallaron, detener ensayo
-        if (this.isAllStandsFailed()) {
+        // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
+        if (this.hasAllStandsReachedMinimumPulses()) {
             this.stopTest();
+            return;
         }
     }
 
@@ -163,15 +205,17 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     }
 
     override onRestart(): void {
-        // recetea el contador
-        this.countTimer.reset();
+        // reset progress tracking
+        this.isTestRunning = false;
+        this.isTestRunningSubject$.next(false);
         this.canExecute = true;
     }
 
     override abort(): Observable<boolean> {
         this.abortExecution$.next();
         this.stopStep.next();
-        this.countTimer.stop();
+        this.isTestRunning = false;
+        this.isTestRunningSubject$.next(false);
         this.deviceService.abort();
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
@@ -208,9 +252,9 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     override startTest(): void {
         this.isExecuting = true;
+        this.isTestRunning = true;
+        this.isTestRunningSubject$.next(true);
         this.tabIndex = 1;
-        // recetea el contador
-        this.countTimer.reset();
         // apaga el calculador por si estaba encendido
         this.calculator
             .stop$(this.getActiveStands())
@@ -221,11 +265,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
                 // cambia el estado de los resultados en la pantalla
                 tap(() => this.restartResults(ResultStatus.WorkInProgress)),
-                // inicializa el contador
-                tap(() => {
-                    this.countTimer.start();
-                }),
-                // obtención de sultados en loop
+                // obtención de resultados en loop
                 switchMap(() => this.getResultsLoop$())
             )
             .subscribe();
@@ -233,8 +273,9 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     override stopTest(): void {
         this.stopStep.next();
-        // detener contadores
-        this.countTimer.stop();
+        // detener tracking de progreso
+        this.isTestRunning = false;
+        this.isTestRunningSubject$.next(false);
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())

@@ -65,13 +65,15 @@
     </p-tabPanel>
 </p-tabView>
 
-<!-- Temporizador -->
+<!-- Progress Bar -->
 <div class="mt-2">
-    <app-count-timer
-        #countTimer
+    <app-pulses-progress-bar
+        #progressBar
         visibility="visible"
-        [durationSeconds]="currentStep.form_control_raw.durationPulses"
-        (finishCount)="onTimerCountdownFinish()"></app-count-timer>
+        [targetPulses]="targetPulses"
+        [standResults$]="standResults$"
+        [activeStands$]="activeStands$"
+        [isRunning$]="isRunning$"></app-pulses-progress-bar>
 </div>
 
 <!-- Espacio adicional para el menú desplegable del split button -->
