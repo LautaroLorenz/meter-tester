@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+    ChangeDetectionStrategy,
+    OnChanges,
+    SimpleChanges
+} from '@angular/core';
 import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 
 @Component({
@@ -7,7 +15,7 @@ import { EssayStep } from '../../../../models/business/interafces/essay-step.mod
     styleUrls: ['./retry-step-selection-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RetryStepSelectionDialogComponent {
+export class RetryStepSelectionDialogComponent implements OnChanges {
     @Input() visible = false;
     @Input() previousSteps: EssayStep[] = [];
     @Input() selectedPreviousStep: EssayStep | null = null;
@@ -16,6 +24,14 @@ export class RetryStepSelectionDialogComponent {
     @Output() selectedPreviousStepChange = new EventEmitter<EssayStep | null>();
     @Output() cancel = new EventEmitter<void>();
     @Output() confirm = new EventEmitter<EssayStep>();
+
+    previousStepsWithDisplayName: Array<{ step: EssayStep; displayName: string }> = [];
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['previousSteps']) {
+            this.generateDisplayNames();
+        }
+    }
 
     onDialogHide(): void {
         this.visibleChange.emit(false);
@@ -37,7 +53,21 @@ export class RetryStepSelectionDialogComponent {
         this.selectedPreviousStepChange.emit(null);
     }
 
-    onStepSelectionChange(selectedStep: EssayStep | null): void {
+    onStepSelectionChange(selectedItem: { step: EssayStep; displayName: string } | null): void {
+        const selectedStep = selectedItem ? selectedItem.step : null;
         this.selectedPreviousStepChange.emit(selectedStep);
+    }
+
+    private generateDisplayNames(): void {
+        this.previousStepsWithDisplayName = this.previousSteps.map((step, index) => ({
+            step: step,
+            displayName: this.getStepDisplayName(step, index + 1)
+        }));
+    }
+
+    private getStepDisplayName(step: EssayStep, stepNumber: number): string {
+        const stepName = step.form_control_raw?.name as string;
+        const displayName = stepName || 'Sin nombre';
+        return `Paso ${stepNumber}: ${displayName}`;
     }
 }

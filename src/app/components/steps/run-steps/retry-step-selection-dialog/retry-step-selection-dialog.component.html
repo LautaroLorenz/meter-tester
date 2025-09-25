@@ -10,10 +10,10 @@
         <p>Selecciona el paso anterior al que deseas volver:</p>
 
         <p-listbox
-            [options]="previousSteps"
+            [options]="previousStepsWithDisplayName"
             [(ngModel)]="selectedPreviousStep"
             (ngModelChange)="onStepSelectionChange($event)"
-            optionLabel="form_control_raw.name"
+            optionLabel="displayName"
             [style]="{ width: '100%' }"
             [listStyle]="{ 'max-height': '300px' }">
         </p-listbox>
