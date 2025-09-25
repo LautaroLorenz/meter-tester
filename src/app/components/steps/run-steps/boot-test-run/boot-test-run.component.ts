@@ -114,6 +114,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
             repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
             catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.abortExecution$),
             takeUntil(this.onDestroy)
         );
 
@@ -126,6 +127,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                 this.currentStep.form_control_raw.phaseL3
             )
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),
                 switchMap(() => getPatternConstantLoop$)
@@ -146,6 +148,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override abort(): Observable<boolean> {
+        this.abortExecution$.next();
         this.stopStep.next();
         this.countTimerMin.stop();
         this.countTimerMax.stop();
@@ -206,6 +209,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.stop$),
                 // cambia el estado de los resultados en el calculador
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
@@ -283,6 +287,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
+            takeUntil(this.abortExecution$),
             takeUntil(this.stop$),
             switchMap(() => this.getResultsLoop$())
         );

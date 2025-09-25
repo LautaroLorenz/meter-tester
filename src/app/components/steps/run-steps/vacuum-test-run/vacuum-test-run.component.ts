@@ -135,6 +135,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
             repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
             catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.abortExecution$),
             takeUntil(this.onDestroy)
         );
 
@@ -142,6 +143,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.generator
             .start$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),
                 switchMap(() => getPatternConstantLoop$)
@@ -161,6 +163,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override abort(): Observable<boolean> {
+        this.abortExecution$.next();
         this.stopStep.next();
         this.countTimer.stop();
         this.deviceService.abort();
@@ -206,6 +209,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.stop$),
                 // cambia el estado de los resultados en el calculador
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
@@ -280,6 +284,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
         return this.getResults$().pipe(
+            takeUntil(this.abortExecution$),
             takeUntil(this.stop$),
             switchMap(() => this.getResultsLoop$())
         );

@@ -32,6 +32,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     showStepSelectionDialog = false;
     previousSteps: EssayStep[] = [];
+    abortExecution$ = new Subject<void>();
 
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
@@ -311,13 +312,16 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
      * Maneja la alarma de sobrecorriente
      */
     private handleOvercurrentAlarm(): void {
+        // stopea todas las rutinas de ejecución
+        this.abortExecution$.next();
+
         // Apagar el generador inmediatamente
         this.stopGenerator().subscribe(() => {
+            // abortar la ejecución, por si hay otro dispositivo en funcionamiento
+            this.abort();
+
             // Mostrar alerta roja al usuario usando MessagesService
             this.messagesService.error(GeneratorAlarmType.Overcurrent);
-
-            // Detener el test actual
-            this.stopTest();
         });
     }
 
