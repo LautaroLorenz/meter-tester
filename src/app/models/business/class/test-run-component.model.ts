@@ -191,16 +191,10 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
             }
         } else {
             // Modo: Solo el paso seleccionado
-            // Primero blanquear el estado del paso actual (si existe)
-            const currentStep = executionSteps.find((step) => step.executedStatus === StepStatus.Current);
-            if (currentStep) {
-                this.runEssayService.getEssayStep(currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
-            }
-
-            // Luego configurar el paso seleccionado
+            // Configurar el paso seleccionado como Pending primero
             this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
 
-            // Recalcular el estado de fotocélulas solo para el paso seleccionado
+            // Recalcular el estado de fotocélulas para el paso seleccionado
             const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
                 executionSteps,
                 selectedStepIndex
@@ -216,6 +210,28 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
         // Reiniciar los resultados de los stands para el paso seleccionado
         this.restartResults(ResultStatus.Pending);
+
+        // Al final, marcar el paso actual como Pending (si existe y es diferente al seleccionado)
+        const currentStep = executionSteps.find(
+            (step) => step.executedStatus === StepStatus.Current && step.id !== selectedStep.id
+        );
+        if (currentStep) {
+            this.runEssayService.getEssayStep(currentStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
+
+            // Recalcular el estado de fotocélulas para el paso actual
+            const currentStepIndex = executionSteps.findIndex((step) => step.id === currentStep.id);
+            const currentPhotocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
+                executionSteps,
+                currentStepIndex
+            );
+            this.runEssayService
+                .getEssayStep(currentStep.id)
+                .get('photocellAdjustmentStatus')
+                ?.setValue(currentPhotocellAdjustmentStatus);
+        }
+
+        // Forzar la detección de cambios para actualizar la UI
+        this.cd.detectChanges();
     }
 
     protected isAllStandsFailed(): boolean {
