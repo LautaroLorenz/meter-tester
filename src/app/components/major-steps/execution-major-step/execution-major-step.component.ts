@@ -122,6 +122,11 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.onDestroy),
                 tap((steps) => {
+                    // si el avance automatico no está hablitado
+                    if(!this.runEssayService.isAutoAdvanceEnabled) {
+                        return;
+                    }
+
                     // si todos los steps se ejecutaron, avanzar al siguiente major step
                     if (this.isAllStepsDone(steps)) {
                         // FIXME no funciona en el modo skip de todos los steps
@@ -132,9 +137,9 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
                         //   ) as string,
                         // });
                         this.runEssayService.nextMajorStep();
-                    }
+                    }     
                     // si un step paso a Executed Done y el avance automático está habilitado, avanzar con la ejecución del próximo
-                    if (this.runEssayService.isAutoAdvanceEnabled && this.isAnyCurrentStep(steps)) {
+                    if (this.isAnyCurrentStep(steps)) {
                         const nextExecutionStep = steps.find(
                             ({ executedStatus }) => executedStatus === StepStatus.Pending
                         );
