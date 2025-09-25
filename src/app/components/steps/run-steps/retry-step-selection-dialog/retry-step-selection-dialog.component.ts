@@ -89,10 +89,6 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
         this.selectedSteps = event.value || [];
     }
 
-    onCurrentStepToggle(): void {
-        this.includeCurrentStep = !this.includeCurrentStep;
-    }
-
     private cancelDialog(): void {
         this.selectedSteps = [];
         this.includeCurrentStep = false;
