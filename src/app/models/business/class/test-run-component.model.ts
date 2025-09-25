@@ -80,6 +80,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.executionSkip();
         this.updateSplitButtonItems();
         this.onStepInit();
+        this.restartResults(ResultStatus.Pending);
     }
 
     ngOnDestroy(): void {
@@ -305,9 +306,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
             // Reiniciar estado de fotocélulas según ExecutionDirector logic
             this.resetPhotocellAdjustmentStatus(step);
-
-            // Reiniciar estado de stands según ExecutionDirector logic
-            this.resetStandResults(step);
         });
 
         // 3. Avanzar al siguiente step
@@ -330,14 +328,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
                 .get('photocellAdjustmentStatus')
                 ?.setValue(photocellAdjustmentStatus);
         }
-    }
-
-    private resetStandResults(step: EssayStep): void {
-        // Reiniciar el estado de los stands activos según ExecutionDirector logic
-        this.getActiveStands().forEach(({ index }) => {
-            const standResultStatus = ExecutionDirector.getInitialStandResultStatus(this.preparationStep, index);
-            this.runEssayService.getStandResult(step.id, index).patchValue({ resultStatus: standResultStatus });
-        });
     }
 
     private openStepSelectionDialog(): void {
