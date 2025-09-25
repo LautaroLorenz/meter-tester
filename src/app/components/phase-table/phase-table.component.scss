@@ -1,18 +1,16 @@
 .phases-table ::ng-deep {
   td {
-    font-size: 13px;
+    font-size: 0.75rem !important;
   }
 
   // Estilos para fases activas (clásico y tranquilo)
   th.bg-gray-100 {
     background-color: #f3f4f6 !important;
-    color: #374151 !important;
     font-weight: 500;
   }
 
   td.bg-white {
     background-color: #ffffff !important;
-    color: #374151 !important;
     font-weight: 400;
   }
 
@@ -25,13 +23,11 @@
   // Sub-headers para fases activas (texto normal)
   th.bg-gray-100.text-gray-600 {
     background-color: #f3f4f6 !important;
-    color: #4b5563 !important;
   }
 
   // Sub-headers para fases inactivas (texto apagado)
   th.bg-gray-100.text-gray-400 {
     background-color: #f3f4f6 !important;
-    color: #9ca3af !important;
   }
 
   td.bg-gray-25 {
