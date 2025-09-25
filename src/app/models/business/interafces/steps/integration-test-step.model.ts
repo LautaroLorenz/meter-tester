@@ -29,7 +29,7 @@ export interface IntegrationTestStep extends EssayTemplateStep {
 
 export interface IntegrationTestStandResult extends StandResult {
     measuredPulses: number;
-    measuredError: number;
+    calculatedError: number;
 }
 
 export type IntegrationTestEssayStep = IntegrationTestStep &
@@ -110,7 +110,7 @@ export class IntegrationTestFormBuilder extends AbstractStepFormBuilder<Integrat
                     this.fb.nonNullable.group({
                         standIndex: index,
                         measuredPulses: undefined,
-                        measuredError: undefined,
+                        calculatedError: undefined,
                         resultStatus: ResultStatus.Unknown
                     }) as AbstractFormGroup<IntegrationTestStandResult>
             );

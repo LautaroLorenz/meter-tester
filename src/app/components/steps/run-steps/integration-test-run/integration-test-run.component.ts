@@ -82,18 +82,18 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
             if (result === undefined) {
                 this.runEssayService
                     .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                    .patchValue({ measuredPulses: undefined, measuredError: undefined });
+                    .patchValue({ measuredPulses: undefined, calculatedError: undefined });
                 return;
             }
 
             // Calcular el error porcentual
             const measuredPulses = result;
             const expectedPulses = this.currentStep.form_control_raw.durationPulses;
-            const measuredError = expectedPulses > 0 ? ((measuredPulses - expectedPulses) / expectedPulses) * 100 : 0;
+            const calculatedError = expectedPulses > 0 ? ((measuredPulses - expectedPulses) / expectedPulses) * 100 : 0;
 
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                .patchValue({ measuredPulses, measuredError });
+                .patchValue({ measuredPulses, calculatedError });
         });
         this.cd.detectChanges();
 
@@ -203,7 +203,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     override isFailCondition(result: IntegrationTestStandResult): boolean {
         const maxAllowedError = this.currentStep.form_control_raw.maxAllowedError;
-        return Math.abs(result.measuredError) > maxAllowedError;
+        return Math.abs(result.calculatedError) > maxAllowedError;
     }
 
     override startTest(): void {
@@ -283,7 +283,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         this.getActiveStands().forEach(({ index }) => {
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, index)
-                .patchValue({ resultStatus, measuredPulses: undefined, measuredError: undefined });
+                .patchValue({ resultStatus, measuredPulses: undefined, calculatedError: undefined });
         });
         this.cd.detectChanges();
     }
