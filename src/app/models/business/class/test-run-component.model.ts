@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
+import { ExecutionDirector } from './execution-director.model';
 
 @Component({
     template: '',
@@ -153,7 +154,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     onStepSelectionConfirm(selectedStep: EssayStep): void {
-        console.log(`${this.constructor.name} - onRetryPreviousStep:`, selectedStep);
         this.onRetryPreviousStep(selectedStep);
         this.showStepSelectionDialog = false;
         this.selectedPreviousStep = null;
@@ -161,7 +161,35 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     onRetryPreviousStep(selectedStep: EssayStep): void {
-        // Default implementation - can be overridden by child components if needed
+        // Obtener todos los pasos de ejecución
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+
+        // Encontrar el índice del paso seleccionado
+        const selectedStepIndex = executionSteps.findIndex((step) => step.id === selectedStep.id);
+
+        if (selectedStepIndex === -1) {
+            return;
+        }
+
+        // Resetear todos los pasos desde el seleccionado en adelante a Pending
+        for (let i = selectedStepIndex; i < executionSteps.length; i++) {
+            const step = executionSteps[i];
+            this.runEssayService.getEssayStep(step.id).get('executedStatus')?.setValue(StepStatus.Pending);
+
+            // Recalcular el estado de fotocélulas para este paso
+            const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(executionSteps, i);
+            this.runEssayService
+                .getEssayStep(step.id)
+                .get('photocellAdjustmentStatus')
+                ?.setValue(photocellAdjustmentStatus);
+        }
+
+        // Marcar el paso seleccionado como Current
+        this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+
+        // Reiniciar los resultados de los stands para el paso seleccionado
+        this.restartResults(ResultStatus.Pending);
     }
 
     protected isAllStandsFailed(): boolean {
