@@ -1,0 +1,87 @@
+<!-- Actions -->
+<div class="flex justify-content-between mb-4 gap-3">
+    <p-button
+        label="Omitir paso"
+        [outlined]="true"
+        severity="secondary"
+        (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+    <div class="flex gap-3">
+        <p-button
+            label="Comenzar medición"
+            icon="pi pi-play"
+            [outlined]="true"
+            [disabled]="isExecuting || !canExecute || canContinue"
+            (click)="startTest()"></p-button>
+
+        <p-splitButton
+            label="Continuar"
+            icon="pi pi-check"
+            [model]="splitButtonItems"
+            [disabled]="!canContinue"
+            [styleClass]="continueButtonStyleClass"
+            (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
+    </div>
+</div>
+
+<p-tabView [(activeIndex)]="tabIndex">
+    <p-tabPanel header="Control de la fuente">
+        <!-- Generador -->
+        <div class="mt-2">
+            <app-generator
+                #generator
+                [currentStep]="currentStep"></app-generator>
+        </div>
+
+        <!-- Patrón -->
+        <div class="mt-2">
+            <app-pattern
+                #pattern
+                [currentStep]="currentStep"
+                (alarmGenerador)="handleGeneratorAlarm($event)"></app-pattern>
+        </div>
+    </p-tabPanel>
+
+    <p-tabPanel
+        header="Proceso de medición"
+        [disabled]="!canExecute">
+        <!-- Parámetros del paso -->
+        <app-integration-test-params
+            [currentStep]="currentStep"
+            [showTexts]="true"></app-integration-test-params>
+
+        <!-- Calculador -->
+        <div class="mt-2">
+            <app-calculator
+                #calculator
+                [resultDecimalsQuantity]="2">
+                <app-stands-result
+                    [preparationStep]="preparationStep"
+                    [results]="currentStep.standResults"
+                    [resultsColumn]="resultsColumn"
+                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+            </app-calculator>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<!-- Temporizador -->
+<div class="mt-2">
+    <app-count-timer
+        #countTimer
+        visibility="visible"
+        [durationSeconds]="currentStep.form_control_raw.durationPulses"
+        (finishCount)="onTimerCountdownFinish()"></app-count-timer>
+</div>
+
+<!-- Espacio adicional para el menú desplegable del split button -->
+<div style="height: 120px"></div>
+
+<!-- Diálogo de selección de pasos para reintentar -->
+<app-retry-step-selection-dialog
+    [(visible)]="showStepSelectionDialog"
+    [previousSteps]="previousSteps"
+    [currentStep]="currentStep"
+    (cancel)="onStepSelectionCancel()"
+    (confirm)="onStepSelectionConfirm($event)">
+</app-retry-step-selection-dialog>
