@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnDestroy,
+    OnInit,
+    inject,
+    ViewChild
+} from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
 import { PreparationStep } from '../interafces/steps/preparation-step.model';
 import { EssayStep } from '../interafces/essay-step.model';
@@ -13,6 +22,7 @@ import { DeviceService } from '../../../services/device.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { ExecutionDirector } from './execution-director.model';
 import { RetryMode } from '../enums/retry-mode.enum';
+import { ExecutionMajorStepComponent } from '../../../components/major-steps/execution-major-step/execution-major-step.component';
 
 @Component({
     template: '',
@@ -21,6 +31,8 @@ import { RetryMode } from '../enums/retry-mode.enum';
 export abstract class TestRunComponent<T extends EssayStep> implements OnInit, OnDestroy {
     @Input() currentStep!: T;
     @Input() preparationStep!: PreparationStep;
+
+    @ViewChild(ExecutionMajorStepComponent) executionMajorStepComponent?: ExecutionMajorStepComponent;
 
     tabIndex = 0;
     canExecute = false;
@@ -162,10 +174,24 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     onRetryPreviousStep(selectedStep: EssayStep, retryMode: RetryMode = RetryMode.FROM_STEP): void {
+        // Deshabilitar el avance automático durante el retry
+        this.setAutoAdvanceEnabled(false);
+
         // Primero apagar el generador antes de hacer retry
         this.stopGenerator().subscribe(() => {
             this.executeRetryLogic(selectedStep, retryMode);
+
+            // Rehabilitar el avance automático después del retry
+            this.setAutoAdvanceEnabled(true);
         });
+    }
+
+    /**
+     * Marca un step como Done sin avanzar automáticamente al siguiente
+     * @param essayStep El step a marcar como Done
+     */
+    protected markStepAsDone(essayStep: EssayStep): void {
+        this.runEssayService.getEssayStep(essayStep.id).get('executedStatus')?.setValue(StepStatus.Done);
     }
 
     protected isAllStandsFailed(): boolean {
@@ -229,6 +255,42 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         // Este método debe ser sobrescrito en los componentes específicos
         // para ejecutar la lógica de apagado del generador
         return of(void 0);
+    }
+
+    /**
+     * Habilita o deshabilita el avance automático de steps
+     * @param enabled true para habilitar, false para deshabilitar
+     *
+     * @example
+     * // Deshabilitar avance automático para control manual
+     * this.setAutoAdvanceEnabled(false);
+     *
+     * // Marcar step como Done sin avanzar automáticamente
+     * this.markStepAsDone(this.currentStep);
+     *
+     * // Avanzar manualmente cuando sea necesario
+     * this.advanceToNextStep();
+     *
+     * // Rehabilitar avance automático
+     * this.setAutoAdvanceEnabled(true);
+     */
+    protected setAutoAdvanceEnabled(enabled: boolean): void {
+        this.executionMajorStepComponent?.setAutoAdvanceEnabled(enabled);
+    }
+
+    /**
+     * Avanza manualmente al siguiente step pendiente
+     * @returns true si se pudo avanzar, false si no hay más steps pendientes
+     *
+     * @example
+     * // Avanzar al siguiente step manualmente
+     * const advanced = this.advanceToNextStep();
+     * if (!advanced) {
+     *     console.log('No hay más steps pendientes');
+     * }
+     */
+    protected advanceToNextStep(): boolean {
+        return this.executionMajorStepComponent?.advanceToNextStep() ?? false;
     }
 
     private executeRetryLogic(selectedStep: EssayStep, retryMode: RetryMode): void {

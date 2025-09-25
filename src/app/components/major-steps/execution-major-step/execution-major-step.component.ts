@@ -25,6 +25,9 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
     readonly onDestroy = new Subject<void>();
     private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
 
+    // Flag para controlar si el avance automático está habilitado
+    private autoAdvanceEnabled = true;
+
     private readonly formatDate = inject(FormatDatePipe);
 
     constructor(
@@ -82,6 +85,39 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         this.runEssayService.getEssayStep(stepId).get('executedStatus')?.setValue(StepStatus.Skipped);
     }
 
+    /**
+     * Habilita o deshabilita el avance automático de steps
+     * @param enabled true para habilitar, false para deshabilitar
+     */
+    setAutoAdvanceEnabled(enabled: boolean): void {
+        this.autoAdvanceEnabled = enabled;
+    }
+
+    /**
+     * Avanza manualmente al siguiente step pendiente
+     * @returns true si se pudo avanzar, false si no hay más steps pendientes
+     */
+    advanceToNextStep(): boolean {
+        if (!this.executionSteps?.length) {
+            return false;
+        }
+
+        const nextExecutionStep = this.executionSteps.find(
+            ({ executedStatus }) => executedStatus === StepStatus.Pending
+        );
+
+        if (!nextExecutionStep) {
+            // No hay más steps pendientes, avanzar al siguiente major step
+            this.runEssayService.nextMajorStep();
+            return false;
+        }
+
+        // Marcar el siguiente step como Current
+        this.runEssayService.getEssayStep(nextExecutionStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+
+        return true;
+    }
+
     private start(): void {
         if (!this.executionSteps?.length) {
             return;
@@ -133,8 +169,8 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
                         // });
                         this.runEssayService.nextMajorStep();
                     }
-                    // si un step paso a Executed Done, avanzar con la ejecución del próximo
-                    if (this.isAnyCurrentStep(steps)) {
+                    // si un step paso a Executed Done y el avance automático está habilitado, avanzar con la ejecución del próximo
+                    if (this.autoAdvanceEnabled && this.isAnyCurrentStep(steps)) {
                         const nextExecutionStep = steps.find(
                             ({ executedStatus }) => executedStatus === StepStatus.Pending
                         );
