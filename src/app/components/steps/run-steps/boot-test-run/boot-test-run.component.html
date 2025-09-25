@@ -49,6 +49,19 @@
             [currentStep]="currentStep"
             [showTexts]="true"></app-boot-test-params>
 
+        <!-- Calculador -->
+        <div class="mt-2">
+            <app-calculator
+                #calculator
+                [resultDecimalsQuantity]="0">
+                <app-stands-result
+                    [preparationStep]="preparationStep"
+                    [results]="currentStep.standResults"
+                    [resultsColumn]="resultsColumn"
+                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+            </app-calculator>
+        </div>
+
         <!-- Temporizadores -->
         <div class="mt-2">
             <!-- Tiempo mínimo -->
@@ -64,19 +77,6 @@
                 visibility="visible"
                 [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
                 (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
-        </div>
-
-        <!-- Calculador -->
-        <div class="mt-2">
-            <app-calculator
-                #calculator
-                [resultDecimalsQuantity]="0">
-                <app-stands-result
-                    [preparationStep]="preparationStep"
-                    [results]="currentStep.standResults"
-                    [resultsColumn]="resultsColumn"
-                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
-            </app-calculator>
         </div>
     </p-tabPanel>
 </p-tabView>

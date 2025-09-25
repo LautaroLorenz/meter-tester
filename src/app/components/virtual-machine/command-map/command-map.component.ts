@@ -210,7 +210,7 @@ export class CommandMapComponent {
 
         // Resultados aleatorios para arranque/vacío: cantidad de impulsos
         // Valor máximo 16,777,215 (3 bytes)
-        const randomValue = Math.floor(Math.random() * 16777216); // 0 a 16,777,215
+        const randomValue = Math.floor(Math.random() * 500); // 0 a 16,777,215
         // NO usamos el byte de signo , de esa forma podemos enviar numeros de 3 bytes
         const sign = '';
 

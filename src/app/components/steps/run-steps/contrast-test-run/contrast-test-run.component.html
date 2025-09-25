@@ -49,6 +49,19 @@
             [currentStep]="currentStep"
             [showTexts]="true"></app-contrast-test-params>
 
+        <!-- Calculador -->
+        <div class="mt-2">
+            <app-calculator
+                #calculator
+                [resultDecimalsQuantity]="2">
+                <app-stands-result
+                    [preparationStep]="preparationStep"
+                    [results]="currentStep.standResults"
+                    [resultsColumn]="resultsColumn"
+                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
+            </app-calculator>
+        </div>
+
         <!-- Execution mode -->
         <div class="mt-2 execution-mode-panel">
             <p-panel
@@ -61,19 +74,6 @@
                     optionValue="value"
                     styleClass="execution-select-button"></p-selectButton>
             </p-panel>
-        </div>
-
-        <!-- Calculador -->
-        <div class="mt-2">
-            <app-calculator
-                #calculator
-                [resultDecimalsQuantity]="2">
-                <app-stands-result
-                    [preparationStep]="preparationStep"
-                    [results]="currentStep.standResults"
-                    [resultsColumn]="resultsColumn"
-                    [stepMeterConstant]="currentStep.form_control_raw.meterConstant"></app-stands-result>
-            </app-calculator>
         </div>
     </p-tabPanel>
 </p-tabView>
