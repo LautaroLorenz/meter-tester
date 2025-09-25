@@ -75,7 +75,7 @@
         icon="pi pi-check"
         [model]="splitButtonItems"
         [disabled]="!canContinue"
-        [styleClass]="allActiveStandsPassed ? 'p-button-success' : ''"
+        [styleClass]="allActiveStandsPassed ? 'p-button-success' : hasAnyStandFailed ? 'p-button-warning' : ''"
         (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
 </div>
 

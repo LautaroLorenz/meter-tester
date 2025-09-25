@@ -65,6 +65,13 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         });
     }
 
+    get hasAnyStandFailed(): boolean {
+        return this.getActiveStands().some(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Failed;
+        });
+    }
+
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
