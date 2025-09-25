@@ -35,6 +35,20 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     abstract readonly skipEnabled: boolean;
 
+    get allActiveStandsPassed(): boolean {
+        return this.getActiveStands().every(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Approved;
+        });
+    }
+
+    get hasAnyStandFailed(): boolean {
+        return this.getActiveStands().some(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Failed;
+        });
+    }
+
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();

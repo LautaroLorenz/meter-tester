@@ -58,20 +58,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
-    get allActiveStandsPassed(): boolean {
-        return this.getActiveStands().every(({ index }) => {
-            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
-            return result.resultStatus === ResultStatus.Approved;
-        });
-    }
-
-    get hasAnyStandFailed(): boolean {
-        return this.getActiveStands().some(({ index }) => {
-            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
-            return result.resultStatus === ResultStatus.Failed;
-        });
-    }
-
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
