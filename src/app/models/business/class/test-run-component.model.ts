@@ -27,6 +27,10 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
 
+    showStepSelectionDialog = false;
+    previousSteps: EssayStep[] = [];
+    selectedPreviousStep: EssayStep | null = null;
+
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
     protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
@@ -138,6 +142,25 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.onRestart();
     }
 
+    retryPrevious(): void {
+        this.openStepSelectionDialog();
+    }
+
+    onStepSelectionCancel(): void {
+        this.showStepSelectionDialog = false;
+        this.selectedPreviousStep = null;
+        this.cd.detectChanges();
+    }
+
+    onStepSelectionConfirm(): void {
+        if (this.selectedPreviousStep) {
+            this.onRetryPreviousStep(this.selectedPreviousStep);
+        }
+        this.showStepSelectionDialog = false;
+        this.selectedPreviousStep = null;
+        this.cd.detectChanges();
+    }
+
     protected isAllStandsFailed(): boolean {
         return this.getActiveStands().every(
             ({ index }) =>
@@ -195,6 +218,18 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         ];
     }
 
+    private openStepSelectionDialog(): void {
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        const currentStepIndex = executionSteps.findIndex((step) => step.id === this.currentStep.id);
+
+        // Obtener todos los pasos anteriores al actual
+        this.previousSteps = executionSteps.slice(0, currentStepIndex);
+        this.selectedPreviousStep = null;
+        this.showStepSelectionDialog = true;
+        this.cd.detectChanges();
+    }
+
     abstract onStepInit(): void;
 
     abstract abort(): Observable<boolean>;
@@ -209,5 +244,5 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     abstract onRestart(): void;
 
-    abstract retryPrevious(): void;
+    abstract onRetryPreviousStep(selectedStep: EssayStep): void;
 }

@@ -4,6 +4,7 @@ import {
     ContrastTestEssayStep,
     ContrastTestStandResult
 } from '../../../../models/business/interafces/steps/contrast-test-step.model';
+import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { APP_CONFIG } from '../../../../../environments/environment';
 import { StepRunMode } from '../../../../models/business/enums/step-run-mode';
@@ -226,9 +227,9 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.cd.detectChanges();
     }
 
-    retryPrevious(): void {
-        console.log('ContrastTestRunComponent - retryPrevious clicked');
-        // TODO: Implement retry previous functionality
+    override onRetryPreviousStep(selectedStep: EssayStep): void {
+        console.log('ContrastTestRunComponent - onRetryPreviousStep:', selectedStep);
+        // TODO: Implement retry previous step functionality
     }
 
     override stepExecutionDone(essayStep: ContrastTestEssayStep): void {

@@ -3,6 +3,7 @@ import {
     VacuumTestEssayStep,
     VacuumTestStandResult
 } from '../../../../models/business/interafces/steps/vacuum-step.model';
+import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import {
@@ -248,9 +249,9 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.cd.detectChanges();
     }
 
-    retryPrevious(): void {
-        console.log('VacuumTestRunComponent - retryPrevious clicked');
-        // TODO: Implement retry previous functionality
+    override onRetryPreviousStep(selectedStep: EssayStep): void {
+        console.log('VacuumTestRunComponent - onRetryPreviousStep:', selectedStep);
+        // TODO: Implement retry previous step functionality
     }
 
     override stepExecutionDone(essayStep: VacuumTestEssayStep): void {

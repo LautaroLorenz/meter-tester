@@ -4,6 +4,7 @@ import {
     BootTestEssayStep,
     BootTestStandResult
 } from '../../../../models/business/interafces/steps/boot-test-step.model';
+import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
@@ -251,9 +252,9 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.cd.detectChanges();
     }
 
-    retryPrevious(): void {
-        console.log('BootTestRunComponent - retryPrevious clicked');
-        // TODO: Implement retry previous functionality
+    override onRetryPreviousStep(selectedStep: EssayStep): void {
+        console.log('BootTestRunComponent - onRetryPreviousStep:', selectedStep);
+        // TODO: Implement retry previous step functionality
     }
 
     override stepExecutionDone(essayStep: BootTestEssayStep): void {
