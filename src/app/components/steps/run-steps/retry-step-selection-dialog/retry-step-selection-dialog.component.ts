@@ -26,7 +26,7 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     @Output() confirm = new EventEmitter<{ selectedSteps: EssayStep[] }>();
 
     stepsWithDisplayName: Array<{ step: EssayStep; displayName: string; isCurrent: boolean }> = [];
-    selectedSteps: EssayStep[] = [];
+    selectedSteps: Array<{ step: EssayStep; displayName: string; isCurrent: boolean }> = [];
     includeCurrentStep = false;
 
     constructor(private runEssayService: RunEssayService) {}
@@ -54,10 +54,12 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['previousSteps'] || changes['currentStep']) {
             this.generateDisplayNames();
+            this.selectAllByDefault();
         }
     }
 
     onDialogHide(): void {
+        this.resetSelections();
         this.cancelDialog();
     }
 
@@ -68,7 +70,7 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     onConfirmClick(): void {
         if (this.selectedSteps.length > 0 || this.includeCurrentStep) {
             // Extraer solo los objetos EssayStep de los pasos seleccionados del listbox
-            const finalSelectedSteps: EssayStep[] = this.selectedSteps.map((item: any) => item.step as EssayStep);
+            const finalSelectedSteps: EssayStep[] = this.selectedSteps.map((item) => item.step);
 
             // Si el current step checkbox está marcado, agregar el paso actual a la lista
             if (this.includeCurrentStep && this.currentStep) {
@@ -89,9 +91,21 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
         this.selectedSteps = event.value || [];
     }
 
-    private cancelDialog(): void {
+    private selectAllByDefault(): void {
+        // Seleccionar todos los pasos anteriores por defecto
+        // El p-listbox espera los objetos completos de stepsWithDisplayName
+        this.selectedSteps = [...this.stepsWithDisplayName];
+
+        // Seleccionar el paso actual por defecto
+        this.includeCurrentStep = true;
+    }
+
+    private resetSelections(): void {
         this.selectedSteps = [];
         this.includeCurrentStep = false;
+    }
+
+    private cancelDialog(): void {
         this.visibleChange.emit(false);
         this.cancel.emit();
     }
