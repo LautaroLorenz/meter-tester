@@ -6,7 +6,7 @@
         severity="secondary"
         (click)="stepExecutionSkip(this.currentStep)"></p-button>
 
-    <div class="flex gap-3">
+    <div class="flex gap-3 mt-2">
         <p-button
             label="Comenzar medición"
             icon="pi pi-play"
@@ -39,15 +39,31 @@
                 #pattern
                 [currentStep]="currentStep"></app-pattern>
         </div>
+
+        <!-- Execution mode -->
+        <div class="mt-2 execution-mode-panel">
+            <p-panel
+                header="Modo de ejecución"
+                styleClass="execution-panel">
+                <p-selectButton
+                    [options]="StepRunModes"
+                    [(ngModel)]="stepRunMode"
+                    optionLabel="label"
+                    optionValue="value"
+                    styleClass="execution-select-button"></p-selectButton>
+            </p-panel>
+        </div>
     </p-tabPanel>
 
     <p-tabPanel
         header="Proceso de medición"
         [disabled]="!canExecute">
-        <!-- Parámetros del paso -->
-        <app-contrast-test-params
-            [currentStep]="currentStep"
-            [showTexts]="true"></app-contrast-test-params>
+        <div class="mt-2 execution-mode-panel">
+            <!-- Parámetros del paso -->
+            <app-contrast-test-params
+                [currentStep]="currentStep"
+                [showTexts]="true"></app-contrast-test-params>
+        </div>
 
         <!-- Calculador -->
         <div class="mt-2">
