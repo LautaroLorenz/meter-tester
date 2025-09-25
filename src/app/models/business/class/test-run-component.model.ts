@@ -190,7 +190,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
                     ?.setValue(photocellAdjustmentStatus);
             }
         } else {
-            // Modo: Solo el paso seleccionado
+            // Modo: Solo el paso seleccionado y el actual
             // Configurar el paso seleccionado como Pending primero
             this.runEssayService.getEssayStep(selectedStep.id).get('executedStatus')?.setValue(StepStatus.Pending);
 

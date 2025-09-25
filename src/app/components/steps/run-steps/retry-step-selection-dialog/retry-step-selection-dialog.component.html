@@ -39,15 +39,17 @@
                 <div class="flex align-items-center">
                     <p-radioButton
                         name="retryMode"
-                        [value]="retryModeEnum.ONLY_STEP"
+                        [value]="retryModeEnum.ONLY_SELECTED_AND_CURRENT_STEP"
                         [(ngModel)]="retryMode"
-                        inputId="retryOnlyStep">
+                        inputId="retryOnlySelectedAndCurrentStep">
                     </p-radioButton>
                     <label
-                        for="retryOnlyStep"
+                        for="retryOnlySelectedAndCurrentStep"
                         class="ml-2">
-                        <strong>Solo el paso seleccionado</strong><br />
-                        <small class="text-muted">Reinicia únicamente el paso elegido, manteniendo los demás</small>
+                        <strong>Solo el paso seleccionado y el actual</strong><br />
+                        <small class="text-muted"
+                            >Reinicia el paso elegido y el paso actual, manteniendo el resto</small
+                        >
                     </label>
                 </div>
             </div>
