@@ -1,3 +1,27 @@
+<!-- Actions -->
+<div class="flex justify-content-end mb-4 gap-3">
+    <p-button
+        label="Omitir paso"
+        [outlined]="true"
+        severity="warning"
+        (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+    <p-button
+        label="Comenzar medición"
+        icon="pi pi-play"
+        [outlined]="true"
+        [disabled]="isExecuting || !canExecute || canContinue"
+        (click)="startTest()"></p-button>
+
+    <p-splitButton
+        label="Continuar"
+        icon="pi pi-check"
+        [model]="splitButtonItems"
+        [disabled]="!canContinue"
+        [styleClass]="allActiveStandsPassed ? 'p-button-success' : hasAnyStandFailed ? 'p-button-warning' : ''"
+        (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
+</div>
+
 <p-tabView [(activeIndex)]="tabIndex">
     <p-tabPanel header="Control de la fuente">
         <!-- Generador -->
@@ -55,29 +79,5 @@
     </p-tabPanel>
 </p-tabView>
 
-<!-- Actions -->
-<div class="flex justify-content-end mt-4 mb-8 gap-3">
-    <p-button
-        label="Omitir"
-        [outlined]="true"
-        severity="warning"
-        (click)="stepExecutionSkip(this.currentStep)"></p-button>
-
-    <p-button
-        label="Comenzar medición"
-        icon="pi pi-play"
-        [outlined]="true"
-        [disabled]="isExecuting || !canExecute || canContinue"
-        (click)="startTest()"></p-button>
-
-    <p-splitButton
-        label="Continuar"
-        icon="pi pi-check"
-        [model]="splitButtonItems"
-        [disabled]="!canContinue"
-        [styleClass]="allActiveStandsPassed ? 'p-button-success' : hasAnyStandFailed ? 'p-button-warning' : ''"
-        (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
-</div>
-
 <!-- Espacio adicional para el menú desplegable del split button -->
-<div style="height: 300px"></div>
+<div style="height: 100px"></div>
