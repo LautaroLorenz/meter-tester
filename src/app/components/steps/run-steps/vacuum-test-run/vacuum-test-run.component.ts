@@ -3,7 +3,6 @@ import {
     VacuumTestEssayStep,
     VacuumTestStandResult
 } from '../../../../models/business/interafces/steps/vacuum-step.model';
-import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import {
@@ -247,11 +246,6 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
-    }
-
-    override onRetryPreviousStep(selectedStep: EssayStep): void {
-        console.log('VacuumTestRunComponent - onRetryPreviousStep:', selectedStep);
-        // TODO: Implement retry previous step functionality
     }
 
     override stepExecutionDone(essayStep: VacuumTestEssayStep): void {

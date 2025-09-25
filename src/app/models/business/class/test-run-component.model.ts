@@ -153,10 +153,15 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     onStepSelectionConfirm(selectedStep: EssayStep): void {
+        console.log(`${this.constructor.name} - onRetryPreviousStep:`, selectedStep);
         this.onRetryPreviousStep(selectedStep);
         this.showStepSelectionDialog = false;
         this.selectedPreviousStep = null;
         this.cd.detectChanges();
+    }
+
+    onRetryPreviousStep(selectedStep: EssayStep): void {
+        // Default implementation - can be overridden by child components if needed
     }
 
     protected isAllStandsFailed(): boolean {
@@ -241,6 +246,4 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract restartResults(resultStatus: ResultStatus): void;
 
     abstract onRestart(): void;
-
-    abstract onRetryPreviousStep(selectedStep: EssayStep): void;
 }

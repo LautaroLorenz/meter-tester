@@ -4,7 +4,6 @@ import {
     BootTestEssayStep,
     BootTestStandResult
 } from '../../../../models/business/interafces/steps/boot-test-step.model';
-import { EssayStep } from '../../../../models/business/interafces/essay-step.model';
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
@@ -250,11 +249,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         // lo que no está en estado Falló, pasa a estado Aprobado
         this.setApprovedStatus();
         this.cd.detectChanges();
-    }
-
-    override onRetryPreviousStep(selectedStep: EssayStep): void {
-        console.log('BootTestRunComponent - onRetryPreviousStep:', selectedStep);
-        // TODO: Implement retry previous step functionality
     }
 
     override stepExecutionDone(essayStep: BootTestEssayStep): void {
