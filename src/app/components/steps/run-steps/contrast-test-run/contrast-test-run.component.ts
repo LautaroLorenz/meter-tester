@@ -59,13 +59,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         customStyles: 'font-size:14px;'
     };
 
-    readonly splitButtonItems = [
-        {
-            label: 'Reintentar',
-            icon: 'pi pi-replay',
-            command: () => this.restart()
-        }
-    ];
+    splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
 
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
@@ -147,6 +141,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     override onStepInit(): void {
+        this.updateSplitButtonItems();
         this.onRestart();
         this.prepareGeneratorBeforeExecution();
     }
@@ -234,6 +229,10 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.cd.detectChanges();
     }
 
+    retryPrevious(): void {
+        // TODO: Implement retry previous functionality
+    }
+
     override stepExecutionDone(essayStep: ContrastTestEssayStep): void {
         // Bloquear la UI mientras se apaga el generador
         this.blockUIService.setBlocked(true);
@@ -276,5 +275,21 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 this.currentStep.form_control_raw.meterConstant
             )
             .pipe(tap((results) => this.onCalculatorResults(results)));
+    }
+
+    private updateSplitButtonItems(): void {
+        this.splitButtonItems = [
+            {
+                label: 'Reintentar',
+                icon: 'pi pi-replay',
+                command: () => this.restart()
+            },
+            {
+                label: 'Ir a paso anterior',
+                icon: 'pi pi-undo',
+                command: () => this.retryPrevious(),
+                disabled: !this.hasPreviousStep
+            }
+        ];
     }
 }

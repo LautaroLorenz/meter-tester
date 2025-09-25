@@ -62,6 +62,13 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         return '';
     }
 
+    get hasPreviousStep(): boolean {
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        const currentStepIndex = executionSteps.findIndex((step) => step.id === this.currentStep.id);
+        return currentStepIndex > 0;
+    }
+
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();
