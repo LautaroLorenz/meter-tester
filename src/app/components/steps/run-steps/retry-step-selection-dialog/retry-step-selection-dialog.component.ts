@@ -26,6 +26,7 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     @Output() confirm = new EventEmitter<EssayStep>();
 
     previousStepsWithDisplayName: Array<{ step: EssayStep; displayName: string }> = [];
+    selectedItem: { step: EssayStep; displayName: string } | null = null;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['previousSteps']) {
@@ -34,28 +35,32 @@ export class RetryStepSelectionDialogComponent implements OnChanges {
     }
 
     onDialogHide(): void {
-        this.visibleChange.emit(false);
-        this.selectedPreviousStepChange.emit(null);
-        this.cancel.emit();
+        this.cancelDialog();
     }
 
     onCancelClick(): void {
-        this.visibleChange.emit(false);
-        this.selectedPreviousStepChange.emit(null);
-        this.cancel.emit();
+        this.cancelDialog();
     }
 
     onConfirmClick(): void {
-        if (this.selectedPreviousStep) {
-            this.confirm.emit(this.selectedPreviousStep);
+        if (this.selectedItem) {
+            this.confirm.emit(this.selectedItem.step);
         }
         this.visibleChange.emit(false);
         this.selectedPreviousStepChange.emit(null);
     }
 
-    onStepSelectionChange(selectedItem: { step: EssayStep; displayName: string } | null): void {
-        const selectedStep = selectedItem ? selectedItem.step : null;
+    onStepSelectionChange(event: any): void {
+        this.selectedItem = event.value;
+        const selectedStep = this.selectedItem ? this.selectedItem.step : null;
         this.selectedPreviousStepChange.emit(selectedStep);
+    }
+
+    private cancelDialog(): void {
+        this.selectedItem = null;
+        this.visibleChange.emit(false);
+        this.selectedPreviousStepChange.emit(null);
+        this.cancel.emit();
     }
 
     private generateDisplayNames(): void {

@@ -11,11 +11,12 @@
 
         <p-listbox
             [options]="previousStepsWithDisplayName"
-            [(ngModel)]="selectedPreviousStep"
-            (ngModelChange)="onStepSelectionChange($event)"
+            [(ngModel)]="selectedItem"
+            (onSelectionChange)="onStepSelectionChange($event)"
             optionLabel="displayName"
             [style]="{ width: '100%' }"
-            [listStyle]="{ 'max-height': '240px' }">
+            [listStyle]="{ 'max-height': '240px' }"
+            [multiple]="false">
         </p-listbox>
 
         <div class="flex justify-content-end gap-2">
@@ -28,7 +29,7 @@
             <p-button
                 label="Confirmar"
                 icon="pi pi-check"
-                [disabled]="!selectedPreviousStep"
+                [disabled]="!selectedItem"
                 (click)="onConfirmClick()">
             </p-button>
         </div>
