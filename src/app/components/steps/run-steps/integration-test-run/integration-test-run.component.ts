@@ -51,7 +51,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         header: 'Error (%)',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
-            return 'measuredError' in realItem ? realItem.measuredError?.toString() || '' : '';
+            return 'calculatedError' in realItem ? realItem.calculatedError?.toString() || '' : '';
         },
         headerStyle: 'min-width:90px;font-size:15px;',
         customStyles: 'font-size:14px;'
@@ -133,7 +133,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
             const measuredPulses = result;
             const expectedPulses = this.currentStep.form_control_raw.durationPulses;
             const calculatedError = expectedPulses > 0 ? ((measuredPulses - expectedPulses) / expectedPulses) * 100 : 0;
-
+            
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
                 .patchValue({ measuredPulses, calculatedError });

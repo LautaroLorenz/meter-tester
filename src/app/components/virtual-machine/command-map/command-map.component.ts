@@ -296,9 +296,12 @@ export class CommandMapComponent {
 
         // Incrementar contador aleatoriamente para TS02 solo si ha pasado el tiempo mínimo de espera
         const canUpdate = this.canUpdateRandomly(position);
-        const shouldIncrement = canUpdate && Math.random() < 0.75; // 75% de probabilidad de incrementar
+        const shouldIncrement = canUpdate && Math.random() < 0.5; // 50% de probabilidad de incrementar
+
         if (shouldIncrement) {
             this.positionMemory[position].ts02Counter++;
+            // Solo actualizar lastCommandTime cuando realmente incrementamos
+            this.positionMemory[position].lastCommandTime = new Date();
         }
 
         // La respuesta es directamente el valor del contador
@@ -317,8 +320,6 @@ export class CommandMapComponent {
         // Guardar la respuesta en la memoria del puesto si existe
         if (this.positionMemory[position]) {
             this.positionMemory[position].responsesSent.push(response);
-            // Actualizar el tiempo del último comando procesado
-            this.positionMemory[position].lastCommandTime = new Date();
         }
 
         return response;
