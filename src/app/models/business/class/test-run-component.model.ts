@@ -51,7 +51,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
 
     get continueButtonStyleClass(): string {
         if (!this.canContinue) {
-            return 'p-button-secondary';
+            return 'p-button-secondary opacity-30';
         }
         if (this.allActiveStandsPassed) {
             return 'p-button-success';
