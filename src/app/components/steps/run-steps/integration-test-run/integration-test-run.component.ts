@@ -116,8 +116,6 @@ export class IntegrationTestRunComponent
      */
     onInitialIntegratorChange(standIndex: number, value: number): void {
         if (this.essayManualValues[standIndex]) {
-            this.essayManualValues[standIndex].initialIntegrator = value || null;
-
             // Actualizar el servicio
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
@@ -130,8 +128,6 @@ export class IntegrationTestRunComponent
      */
     onFinalIntegratorChange(standIndex: number, value: number): void {
         if (this.essayManualValues[standIndex]) {
-            this.essayManualValues[standIndex].finalIntegrator = value || null;
-
             // Actualizar el servicio
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
@@ -464,7 +460,8 @@ export class IntegrationTestRunComponent
      * Sincroniza los datos de valores manuales del ensayo con los valores del servicio
      */
     private syncEssayManualValuesWithService(): void {
-        this.essayManualValues.forEach((data, index) => {
+        // Crear un nuevo array para que Angular detecte los cambios
+        this.essayManualValues = this.essayManualValues.map((data, index) => {
             if (data.isActive) {
                 const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
                     this.currentStep.id,
@@ -472,12 +469,16 @@ export class IntegrationTestRunComponent
                 );
                 const currentValue = standResult.value;
 
-                // Actualizar valores del servicio en initialValuesData
-                data.initialIntegrator = (currentValue?.initialIntegrator as number) ?? null;
-                data.finalIntegrator = (currentValue?.finalIntegrator as number) ?? null;
-                data.errorPercentage = (currentValue?.calculatedError as number) ?? null;
-                data.resultStatus = currentValue?.resultStatus || null;
+                // Retornar un nuevo objeto con los valores actualizados
+                return {
+                    ...data,
+                    initialIntegrator: (currentValue?.initialIntegrator as number) ?? data.initialIntegrator,
+                    finalIntegrator: (currentValue?.finalIntegrator as number) ?? data.finalIntegrator,
+                    errorPercentage: (currentValue?.calculatedError as number) ?? data.errorPercentage,
+                    resultStatus: currentValue?.resultStatus ?? data.resultStatus
+                };
             }
+            return data; // Retornar el objeto sin cambios para puestos inactivos
         });
     }
 
