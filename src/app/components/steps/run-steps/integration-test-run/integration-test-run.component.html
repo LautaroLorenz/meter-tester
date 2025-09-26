@@ -51,11 +51,11 @@
         <div class="mt-2">
             <app-stands-integration-values
                 [integrationValues]="essayManualValues"
-                [disableInitialIntegrator]="false"
-                [disableFinalIntegrator]="false"
-                [disableCalculateError]="false"
-                [disableManualApproval]="false"
-                [disableManualRejection]="false"
+                [disableInitialIntegrator]="isExecuting"
+                [disableFinalIntegrator]="!isUserInputEnabled"
+                [disableCalculateError]="!isUserInputEnabled"
+                [disableManualApproval]="!isUserInputEnabled"
+                [disableManualRejection]="!isUserInputEnabled"
                 (initialIntegratorChange)="onInitialIntegratorChange($event.standIndex, $event.value)"
                 (finalIntegratorChange)="onFinalIntegratorChange($event.standIndex, $event.value)"
                 (calculateError)="onCalculateError($event)"

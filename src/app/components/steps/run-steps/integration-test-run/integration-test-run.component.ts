@@ -71,6 +71,9 @@ export class IntegrationTestRunComponent
     // Essay manual values table properties
     essayManualValues: IntegrationValue[] = [];
 
+    // User input control
+    isUserInputEnabled = false;
+
     private isPreparingForUserInput = false;
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
@@ -345,8 +348,9 @@ export class IntegrationTestRunComponent
         this.stopStep.next();
         // detener tracking de progreso
         this.isTestRunning = false;
-        // resetear bandera de preparación para permitir reintentos
+        // resetear banderas para permitir reintentos
         this.isPreparingForUserInput = false;
+        this.isUserInputEnabled = false;
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
@@ -517,6 +521,8 @@ export class IntegrationTestRunComponent
                 tap(() => {
                     this.changeToManualValuesTab();
                     this.setStandsToPendingStatus();
+                    // Habilitar el ingreso de valores finales
+                    this.isUserInputEnabled = true;
                 }),
                 // Detener solo el calculador sin hacer stopTest completo
                 tap(() => this.stopCalculator()),
