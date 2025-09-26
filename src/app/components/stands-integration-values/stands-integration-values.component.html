@@ -61,15 +61,14 @@
                             (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
                         </p-inputNumber>
                     </div>
-                    <!-- Columna de estado del resultado -->
+                    <!-- Columna de resultado -->
                     <div
                         *ngSwitchCase="'resultStatus'"
                         class="flex justify-content-center">
-                        <span
+                        <app-result-status
                             *ngIf="rowData.isActive"
-                            class="text-xs">
-                            {{ rowData.resultStatus || '-' }}
-                        </span>
+                            [resultStatus]="rowData.resultStatus">
+                        </app-result-status>
                     </div>
                     <!-- Columna de acciones - botones para cada puesto -->
                     <div

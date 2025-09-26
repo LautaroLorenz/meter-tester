@@ -29,7 +29,7 @@ import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confi
 import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
 import { StandsResultComponent } from './stands-result/stands-result.component';
-import { ResultStatusComponent } from './result-status/result-status.component';
+import { ResultStatusModule } from './result-status/result-status.module';
 import { PatternComponent } from './machine/pattern/pattern.component';
 import { BootTestBuildFormComponent } from './steps/build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PreparationBuildFormComponent } from './steps/build-steps/preparation-build-form/preparation-build-form.component';
@@ -104,7 +104,6 @@ const AppComponents = [
     CalculatorComponent,
     DeviceStatusComponent,
     StandsResultComponent,
-    ResultStatusComponent,
     PatternComponent,
     PdfPageComponent,
     ReportStepSwitchComponent,
@@ -141,7 +140,8 @@ const AppModules = [
     MenuModule,
     PatternStatusModule,
     ClampModule,
-    StandsIntegrationValuesModule
+    StandsIntegrationValuesModule,
+    ResultStatusModule
 ];
 
 @NgModule({

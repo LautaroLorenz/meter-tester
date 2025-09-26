@@ -149,7 +149,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
             },
             {
-                header: 'Estado',
+                header: 'Resultado',
                 field: 'resultStatus',
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 80px;',
