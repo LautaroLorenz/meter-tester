@@ -16,6 +16,7 @@ export interface InitialValueData {
     year: string;
     initialIntegrator: number | null;
     finalIntegrator: number | null;
+    errorPercentage: number | null;
     isActive: boolean;
 }
 
@@ -109,6 +110,14 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 150px;',
                 customStyles: 'text-align: center;'
+            },
+            {
+                header: 'Error [%]',
+                field: (item: InitialValueData) =>
+                    item.isActive && item.errorPercentage !== null ? item.errorPercentage.toFixed(2) : '',
+                alignHorizontal: TC_AlignHorizontal.Number,
+                headerStyle: 'min-width: 100px;',
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
             }
         ];
     }

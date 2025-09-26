@@ -51,7 +51,7 @@ export class IntegrationTestRunComponent
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error (%)',
+        header: 'Error [%]',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'calculatedError' in realItem ? realItem.calculatedError?.toString() || '' : '';
@@ -416,6 +416,7 @@ export class IntegrationTestRunComponent
             year: stand.yearOfProduction || '',
             initialIntegrator: null,
             finalIntegrator: null,
+            errorPercentage: null,
             isActive: stand.isActive
         }));
     }
