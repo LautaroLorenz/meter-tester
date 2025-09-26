@@ -140,6 +140,18 @@ export class StandsIntegrationValuesComponent implements OnInit {
     }
 
     /**
+     * Limpia los valores de los inputs de integrador inicial y final
+     */
+    clearInputs(): void {
+        this.integrationValues.forEach((stand) => {
+            if (stand.isActive) {
+                stand.initialIntegrator = null;
+                stand.finalIntegrator = null;
+            }
+        });
+    }
+
+    /**
      * Inicializa las columnas de la tabla
      */
     private initializeColumns(): void {

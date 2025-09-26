@@ -5,6 +5,7 @@ import {
 } from '../../../../models/business/interafces/steps/integration-test-step.model';
 import { PulsesProgressBarComponent } from '../../../pulses-progress-bar/pulses-progress-bar.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
+import { StandsIntegrationValuesComponent } from '../../../stands-integration-values/stands-integration-values.component';
 import {
     switchMap,
     tap,
@@ -48,6 +49,7 @@ export class IntegrationTestRunComponent
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
     @ViewChild('pattern', { static: true }) pattern!: PatternComponent<IntegrationTestEssayStep>;
     @ViewChild('generator', { static: true }) generator!: GeneratorComponent<IntegrationTestEssayStep>;
+    @ViewChild('standsIntegrationValues', { static: true }) standsIntegrationValues!: StandsIntegrationValuesComponent;
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
@@ -204,6 +206,27 @@ export class IntegrationTestRunComponent
         // reset progress tracking
         this.isTestRunning = false;
         this.canExecute = true;
+
+        // Poner todos los puestos en estado Pending y blanquear valores
+        this.getActiveStands().forEach(({ index: standIndex }) => {
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({
+                    resultStatus: ResultStatus.Pending,
+                    initialIntegrator: undefined,
+                    finalIntegrator: undefined,
+                    measuredPulses: undefined,
+                    calculatedError: undefined
+                });
+        });
+
+        // Limpiar inputs usando el método del componente
+        this.standsIntegrationValues.clearInputs();
+
+        // Sincronizar el array local con los nuevos estados
+        this.syncEssayManualValuesWithService();
+
+        this.cd.detectChanges();
     }
 
     override abort(): Observable<boolean> {

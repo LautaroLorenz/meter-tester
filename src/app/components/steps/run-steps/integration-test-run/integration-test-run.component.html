@@ -50,6 +50,7 @@
         <!-- Tabla de puestos con valores iniciales -->
         <div class="mt-2">
             <app-stands-integration-values
+                #standsIntegrationValues
                 [integrationValues]="essayManualValues"
                 [disableInitialIntegrator]="isExecuting || canContinue"
                 [disableFinalIntegrator]="!isUserInputEnabled"
