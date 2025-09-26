@@ -56,7 +56,7 @@
                             [useGrouping]="false"
                             [minFractionDigits]="0"
                             [maxFractionDigits]="3"
-                            [disabled]="disableFinalIntegrator"
+                            [disabled]="disableFinalIntegrator || !canInputFinalIntegrator(rowIndex)"
                             placeholder="0.0"
                             class="text-center text-xs"
                             (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
@@ -84,6 +84,7 @@
                             severity="info"
                             pTooltip="Calcular"
                             tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
                             styleClass="p-button-sm"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onCalculateError(rowIndex)">
@@ -97,6 +98,7 @@
                             severity="success"
                             pTooltip="Aprobar"
                             tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
                             styleClass="p-button-sm"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualApproval(rowIndex)">
@@ -110,6 +112,7 @@
                             severity="danger"
                             pTooltip="Rechazar"
                             tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
                             styleClass="p-button-sm"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualRejection(rowIndex)">

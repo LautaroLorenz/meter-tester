@@ -54,6 +54,18 @@ export class StandsIntegrationValuesComponent implements OnInit {
     }
 
     /**
+     * Verifica si un stand tiene valor inicial para habilitar el input de valor final
+     */
+    canInputFinalIntegrator(standIndex: number): boolean {
+        const stand = this.integrationValues[standIndex];
+        if (!stand || !stand.isActive) {
+            return false;
+        }
+
+        return stand.initialIntegrator !== null && stand.initialIntegrator !== undefined && stand.initialIntegrator > 0;
+    }
+
+    /**
      * Verifica si un stand tiene tanto valor inicial como final para habilitar el cálculo
      */
     canCalculateError(standIndex: number): boolean {
