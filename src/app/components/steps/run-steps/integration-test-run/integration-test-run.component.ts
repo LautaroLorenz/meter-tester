@@ -51,10 +51,10 @@ export class IntegrationTestRunComponent
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error [%]',
+        header: 'Impulsos',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
-            return 'calculatedError' in realItem ? realItem.calculatedError?.toString() || '' : '';
+            return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() || '' : '';
         },
         headerStyle: 'min-width:90px;font-size:15px;',
         customStyles: 'font-size:14px;'
@@ -197,12 +197,10 @@ export class IntegrationTestRunComponent
 
             // Calcular el error porcentual
             const measuredPulses = result;
-            const expectedPulses = this.currentStep.form_control_raw.durationPulses;
-            const calculatedError = expectedPulses > 0 ? ((measuredPulses - expectedPulses) / expectedPulses) * 100 : 0;
 
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                .patchValue({ measuredPulses, calculatedError });
+                .patchValue({ measuredPulses });
         });
         this.cd.detectChanges();
 

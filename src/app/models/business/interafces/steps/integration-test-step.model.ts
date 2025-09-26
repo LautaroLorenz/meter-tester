@@ -29,7 +29,9 @@ export interface IntegrationTestStep extends EssayTemplateStep {
 
 export interface IntegrationTestStandResult extends StandResult {
     measuredPulses: number;
-    calculatedError: number;
+    calculatedError: number; // esta prop se muestra en el historial
+    initialIntegrator: number;
+    finalIntegrator: number;
 }
 
 export type IntegrationTestEssayStep = IntegrationTestStep &
@@ -111,6 +113,8 @@ export class IntegrationTestFormBuilder extends AbstractStepFormBuilder<Integrat
                         standIndex: index,
                         measuredPulses: undefined,
                         calculatedError: undefined,
+                        initialIntegrator: undefined,
+                        finalIntegrator: undefined,
                         resultStatus: ResultStatus.Unknown
                     }) as AbstractFormGroup<IntegrationTestStandResult>
             );
