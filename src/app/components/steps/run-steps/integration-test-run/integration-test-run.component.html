@@ -43,7 +43,13 @@
     </p-tabPanel>
 
     <p-tabPanel header="Carga de valores iniciales">
-        <!-- TODO -->
+        <!-- Tabla de puestos con valores iniciales -->
+        <div class="mt-2">
+            <app-stands-initial-values
+                [initialValuesData]="initialValuesData"
+                (initialIntegratorChange)="onInitialIntegratorChange($event.standIndex, $event.value)">
+            </app-stands-initial-values>
+        </div>
     </p-tabPanel>
 
     <p-tabPanel

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
     IntegrationTestEssayStep,
     IntegrationTestStandResult
@@ -22,7 +22,7 @@ import {
     timer,
     filter
 } from 'rxjs';
-import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
+import { InitialValueData } from '../../../stands-initial-values/stands-initial-values.component';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
@@ -39,14 +39,17 @@ import { PatternStatus } from '../../../../models/business/interafces/pattern-st
     styleUrls: ['./integration-test-run.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTestEssayStep> implements OnDestroy {
+export class IntegrationTestRunComponent
+    extends TestRunComponent<IntegrationTestEssayStep>
+    implements OnDestroy, OnInit
+{
     @ViewChild('progressBar', { static: true }) progressBar!: PulsesProgressBarComponent;
     @ViewChild('calculator', { static: true }) calculator!: CalculatorComponent;
     @ViewChild('pattern', { static: true }) pattern!: PatternComponent<IntegrationTestEssayStep>;
     @ViewChild('generator', { static: true }) generator!: GeneratorComponent<IntegrationTestEssayStep>;
 
-    readonly resultsColumn: TableColumn<StandStandResult> = {
-        alignHorizontal: TC_AlignHorizontal.Number,
+    readonly resultsColumn = {
+        alignHorizontal: 'Number' as const,
         header: 'Error (%)',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
@@ -60,6 +63,10 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
     // Progress tracking properties
     isTestRunning = false;
+
+    // TODO eliminar guardar el valor directamente sobre el stand
+    // Initial values table properties
+    initialValuesData: InitialValueData[] = [];
 
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
@@ -97,6 +104,20 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.stopStep.complete();
+    }
+
+    ngOnInit(): void {
+        super.ngOnInit();
+        this.initializeInitialValuesTable();
+    }
+
+    /**
+     * Maneja el cambio de valor en el integrador inicial
+     */
+    onInitialIntegratorChange(standIndex: number, value: number): void {
+        if (this.initialValuesData[standIndex]) {
+            this.initialValuesData[standIndex].initialIntegrator = value || 0;
+        }
     }
 
     /**
@@ -372,6 +393,19 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         return this.calculator
             .resultsTS02$(this.getActiveStands())
             .pipe(tap((results) => this.onCalculatorResults(results)));
+    }
+
+    /**
+     * Inicializa los datos de valores iniciales con los stands activos
+     */
+    private initializeInitialValuesTable(): void {
+        this.initialValuesData = this.getActiveStands().map(({ index, stand }) => ({
+            standNumber: (index + 1).toString().padStart(2, '0'),
+            meter: stand.foreign?.meter?.label || '',
+            serialNumber: stand.serialNumber || '',
+            year: stand.yearOfProduction || '',
+            initialIntegrator: 0
+        }));
     }
 
     /**
