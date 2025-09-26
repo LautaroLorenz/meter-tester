@@ -35,17 +35,17 @@ app-stands-integration-values {
 
   // Efectos hover para botones de acción
   .hover-info:hover {
-    color: #3b82f6 !important; // blue-500
-    background-color: rgba(59, 130, 246, 0.1) !important;
+    color: var(--primary-color) !important;
+    background-color: var(--primary-color-text) !important;
   }
 
   .hover-success:hover {
-    color: #10b981 !important; // emerald-500
-    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: var(--green-500) !important;
+    background-color: var(--green-100) !important;
   }
 
   .hover-danger:hover {
-    color: #ef4444 !important; // red-500
-    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: var(--orange-500) !important;
+    background-color: var(--orange-100) !important;
   }
 }
