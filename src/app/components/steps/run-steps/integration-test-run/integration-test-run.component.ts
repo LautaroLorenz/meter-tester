@@ -154,9 +154,45 @@ export class IntegrationTestRunComponent
      * Maneja el clic en el botón de calcular error
      */
     onCalculateError(standIndex: number): void {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const _ = standIndex;
-        // TODO: Implementar lógica de cálculo de error
+        const stand = this.essayManualValues[standIndex];
+        if (!stand || !stand.isActive) {
+            return;
+        }
+
+        const initialIntegrator = stand.initialIntegrator;
+        const finalIntegrator = stand.finalIntegrator;
+
+        // Validar que ambos valores estén presentes
+        if (
+            initialIntegrator === null ||
+            initialIntegrator === undefined ||
+            finalIntegrator === null ||
+            finalIntegrator === undefined
+        ) {
+            return;
+        }
+
+        // Calcular el error usando la fórmula: (valor final * 100 / inicial)
+        const calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
+        const maxAllowedError = this.currentStep.form_control_raw.maxAllowedError;
+
+        // Determinar el estado basado en la comparación con maxAllowedError
+        const resultStatus = Math.abs(calculatedError) > maxAllowedError ? ResultStatus.Failed : ResultStatus.Approved;
+
+        // Actualizar el stand result con el error calculado y el estado
+        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
+            calculatedError: calculatedError,
+            resultStatus: resultStatus
+        });
+
+        // Sincronizar el array local con el nuevo estado
+        this.syncEssayManualValuesWithService();
+        this.cd.detectChanges();
+
+        // Verificar si todos los stands tienen estado final
+        if (this.hasAllStandsFinalStatus()) {
+            this.stopTest();
+        }
     }
 
     /**
