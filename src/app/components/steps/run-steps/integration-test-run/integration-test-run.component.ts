@@ -194,10 +194,11 @@ export class IntegrationTestRunComponent
      * Maneja el clic en el botón de aprobación manual
      */
     onManualApproval(standIndex: number): void {
-        // Setear el stand-result en estado Aprobado
-        this.runEssayService
-            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-            .patchValue({ resultStatus: ResultStatus.Approved });
+        // Setear el stand-result en estado Aprobado con error calculado en 0
+        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
+            resultStatus: ResultStatus.Approved,
+            calculatedError: 0
+        });
 
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
@@ -208,10 +209,11 @@ export class IntegrationTestRunComponent
      * Maneja el clic en el botón de desaprobación manual
      */
     onManualRejection(standIndex: number): void {
-        // Setear el stand-result en estado Falló
-        this.runEssayService
-            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-            .patchValue({ resultStatus: ResultStatus.Failed });
+        // Setear el stand-result en estado Falló con error calculado en 99.99
+        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
+            resultStatus: ResultStatus.Failed,
+            calculatedError: 99.99
+        });
 
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
