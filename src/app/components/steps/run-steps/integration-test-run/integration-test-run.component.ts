@@ -331,27 +331,25 @@ export class IntegrationTestRunComponent
     }
 
     override startTest(): void {
-        this.isExecuting = true;
-        this.isTestRunning = true;
-        this.tabIndex = 2; // Ahora el tab "Proceso de medición" está en el índice 2
-        // apaga el calculador por si estaba encendido
-        this.calculator
-            .stop$(this.getActiveStands())
-            .pipe(
-                takeUntil(this.abortExecution$),
-                takeUntil(this.stop$),
-                // cambia el estado de los resultados en el calculador
-                switchMap(() => this.calculator.reset$(this.getActiveStands())),
-                // cambia el estado de los resultados en la pantalla
-                tap(() => this.restartResults(ResultStatus.WorkInProgress)),
-                // hacer la primera consulta TS02
-                switchMap(() => this.getResults$()),
-                // después de la primera consulta, cambiar el generador a modo normal
-                switchMap(() => this.switchGeneratorToNormalMode$()),
-                // continuar con la obtención de resultados en loop
-                switchMap(() => this.getResultsLoop$())
-            )
-            .subscribe();
+        // Verificar si hay valores iniciales faltantes
+        if (this.hasMissingInitialValues()) {
+            this.confirmationService.confirm({
+                message:
+                    'Algunos puestos no tienen valores iniciales ingresados. ¿Deseas continuar sin ingresar los valores iniciales?',
+                header: 'Valores iniciales faltantes',
+                icon: 'pi pi-exclamation-triangle',
+                acceptLabel: 'Continuar',
+                rejectLabel: 'Cancelar',
+                accept: () => {
+                    this.executeStartTest();
+                },
+                reject: () => {
+                    // No hacer nada, el usuario canceló
+                }
+            });
+        } else {
+            this.executeStartTest();
+        }
     }
 
     override stopTest(): void {
@@ -440,6 +438,49 @@ export class IntegrationTestRunComponent
                     )
             })
         );
+    }
+
+    /**
+     * Verifica si hay stands activos sin valores iniciales ingresados
+     */
+    private hasMissingInitialValues(): boolean {
+        const activeStands = this.getActiveStands();
+        return activeStands.some(({ index }) => {
+            const stand = this.essayManualValues[index];
+            return (
+                !stand ||
+                stand.initialIntegrator === null ||
+                stand.initialIntegrator === undefined ||
+                stand.initialIntegrator <= 0
+            );
+        });
+    }
+
+    /**
+     * Ejecuta el inicio del test
+     */
+    private executeStartTest(): void {
+        this.isExecuting = true;
+        this.isTestRunning = true;
+        this.tabIndex = 2; // Ahora el tab "Proceso de medición" está en el índice 2
+        // apaga el calculador por si estaba encendido
+        this.calculator
+            .stop$(this.getActiveStands())
+            .pipe(
+                takeUntil(this.abortExecution$),
+                takeUntil(this.stop$),
+                // cambia el estado de los resultados en el calculador
+                switchMap(() => this.calculator.reset$(this.getActiveStands())),
+                // cambia el estado de los resultados en la pantalla
+                tap(() => this.restartResults(ResultStatus.WorkInProgress)),
+                // hacer la primera consulta TS02
+                switchMap(() => this.getResults$()),
+                // después de la primera consulta, cambiar el generador a modo normal
+                switchMap(() => this.switchGeneratorToNormalMode$()),
+                // continuar con la obtención de resultados en loop
+                switchMap(() => this.getResultsLoop$())
+            )
+            .subscribe();
     }
 
     /**
