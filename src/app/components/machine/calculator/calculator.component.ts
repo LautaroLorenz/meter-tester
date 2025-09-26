@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
-import { Observable, map, tap, from, toArray, concatMap, delay } from 'rxjs';
+import { Observable, map, tap, from, toArray, concatMap } from 'rxjs';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum, MeterConstantUnitEnum } from '../../../models/business/constants/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
@@ -10,7 +10,6 @@ import { StandMeterConstantPipe } from '../../../pipes/business/stand-meter-cons
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { ActiveStand } from '../../../models/business/interafces/active-stand.model';
 import { CommandResultResponse } from '../../../models/business/interafces/stand-result.model';
-import { APP_CONFIG } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-calculator',
@@ -25,8 +24,6 @@ export class CalculatorComponent extends MachineDeviceComponent {
     override readonly device = Devices.CAL;
 
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
-
-    private readonly resultsDelayMs = APP_CONFIG.delays.resultsDelay;
 
     stop$(activeStands: ActiveStand[]): Observable<string[]> {
         const observables = activeStands.map(({ index }) => {
@@ -83,7 +80,6 @@ export class CalculatorComponent extends MachineDeviceComponent {
         });
         this.deviceStatus$.next(DeviceStatus.Working);
         return from(observables).pipe(
-            delay(this.resultsDelayMs),
             concatMap((obs) => obs),
             toArray(),
             map((responses) => this.mapTSxxResponse(responses))
@@ -100,7 +96,6 @@ export class CalculatorComponent extends MachineDeviceComponent {
         });
         this.deviceStatus$.next(DeviceStatus.Working);
         return from(observables).pipe(
-            delay(this.resultsDelayMs),
             concatMap((obs) => obs),
             toArray(),
             map((responses) => this.mapTSxxResponse(responses))

@@ -18,7 +18,9 @@ import {
     defer,
     repeat,
     catchError,
-    EMPTY
+    EMPTY,
+    timer,
+    filter
 } from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
@@ -295,10 +297,22 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
-        return this.getResults$().pipe(
-            takeUntil(this.abortExecution$),
-            takeUntil(this.stop$),
-            switchMap(() => this.getResultsLoop$())
+        return defer(() => this.getResults$()).pipe(
+            repeat({
+                delay: () =>
+                    timer(APP_CONFIG.delays.resultsDelay).pipe(
+                        takeUntil(this.abortExecution$),
+                        takeUntil(this.stop$),
+                        takeUntil(
+                            this.calculator.deviceStatus$.pipe(
+                                filter(
+                                    (status) =>
+                                        status === DeviceStatus.StopInProgress || status === DeviceStatus.Stopped
+                                )
+                            )
+                        )
+                    )
+            })
         );
     }
 

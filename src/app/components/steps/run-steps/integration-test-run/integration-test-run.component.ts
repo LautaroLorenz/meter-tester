@@ -18,7 +18,9 @@ import {
     defer,
     repeat,
     catchError,
-    EMPTY
+    EMPTY,
+    timer,
+    filter
 } from 'rxjs';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
@@ -30,7 +32,6 @@ import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
-import { Phase } from '../../../../models/business/interafces/phase.model';
 
 @Component({
     selector: 'app-integration-test-run',
@@ -335,10 +336,22 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     }
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
-        return this.getResults$().pipe(
-            takeUntil(this.abortExecution$),
-            takeUntil(this.stop$),
-            switchMap(() => this.getResultsLoop$())
+        return defer(() => this.getResults$()).pipe(
+            repeat({
+                delay: () =>
+                    timer(APP_CONFIG.delays.resultsDelay).pipe(
+                        takeUntil(this.abortExecution$),
+                        takeUntil(this.stop$),
+                        takeUntil(
+                            this.calculator.deviceStatus$.pipe(
+                                filter(
+                                    (status) =>
+                                        status === DeviceStatus.StopInProgress || status === DeviceStatus.Stopped
+                                )
+                            )
+                        )
+                    )
+            })
         );
     }
 

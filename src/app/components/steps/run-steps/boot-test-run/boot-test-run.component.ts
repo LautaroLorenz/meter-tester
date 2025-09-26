@@ -7,7 +7,21 @@ import {
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, finalize, Observable, takeUntil, Subject, of, map, repeat, catchError, EMPTY } from 'rxjs';
+import {
+    tap,
+    switchMap,
+    finalize,
+    Observable,
+    takeUntil,
+    Subject,
+    of,
+    map,
+    repeat,
+    catchError,
+    EMPTY,
+    timer,
+    filter
+} from 'rxjs';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
@@ -298,10 +312,22 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
-        return this.getResults$().pipe(
-            takeUntil(this.abortExecution$),
-            takeUntil(this.stop$),
-            switchMap(() => this.getResultsLoop$())
+        return defer(() => this.getResults$()).pipe(
+            repeat({
+                delay: () =>
+                    timer(APP_CONFIG.delays.resultsDelay).pipe(
+                        takeUntil(this.abortExecution$),
+                        takeUntil(this.stop$),
+                        takeUntil(
+                            this.calculator.deviceStatus$.pipe(
+                                filter(
+                                    (status) =>
+                                        status === DeviceStatus.StopInProgress || status === DeviceStatus.Stopped
+                                )
+                            )
+                        )
+                    )
+            })
         );
     }
 
