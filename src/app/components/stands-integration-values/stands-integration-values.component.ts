@@ -18,7 +18,7 @@ export interface IntegrationValue {
     year: string;
     initialIntegrator: number | null;
     finalIntegrator: number | null;
-    errorPercentage: number | null;
+    calculatedError: number | null;
     resultStatus: any;
     isActive: boolean;
 }
@@ -246,7 +246,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
             {
                 header: 'Error [%]',
                 field: (item: IntegrationValue) =>
-                    item.isActive && item.errorPercentage !== null ? item.errorPercentage.toFixed(2) : '',
+                    item.isActive && item.calculatedError !== null ? item.calculatedError.toFixed(2) : '',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 100px; width:100px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'

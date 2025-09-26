@@ -488,7 +488,7 @@ export class IntegrationTestRunComponent
             year: stand.yearOfProduction || '',
             initialIntegrator: null,
             finalIntegrator: null,
-            errorPercentage: null,
+            calculatedError: null,
             resultStatus: null,
             isActive: stand.isActive
         }));
@@ -513,7 +513,7 @@ export class IntegrationTestRunComponent
                     ...data,
                     initialIntegrator: (currentValue?.initialIntegrator as number) ?? data.initialIntegrator,
                     finalIntegrator: (currentValue?.finalIntegrator as number) ?? data.finalIntegrator,
-                    errorPercentage: (currentValue?.calculatedError as number) ?? data.errorPercentage,
+                    calculatedError: (currentValue?.calculatedError as number) ?? data.calculatedError,
                     resultStatus: currentValue?.resultStatus ?? data.resultStatus
                 };
             }
