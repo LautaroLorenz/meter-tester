@@ -120,6 +120,9 @@ export class IntegrationTestRunComponent
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
                 .patchValue({ initialIntegrator: value || undefined });
+
+            // Actualizar solo el valor en el array local sin crear nuevo array
+            this.essayManualValues[standIndex].initialIntegrator = value || null;
         }
     }
 
@@ -132,6 +135,9 @@ export class IntegrationTestRunComponent
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
                 .patchValue({ finalIntegrator: value || undefined });
+
+            // Actualizar solo el valor en el array local sin crear nuevo array
+            this.essayManualValues[standIndex].finalIntegrator = value || null;
         }
     }
 

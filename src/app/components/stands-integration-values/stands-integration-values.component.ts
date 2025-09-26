@@ -37,6 +37,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Input() disableCalculateError = false;
     @Input() disableManualApproval = false;
     @Input() disableManualRejection = false;
+
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() calculateError = new EventEmitter<number>();
@@ -50,6 +51,23 @@ export class StandsIntegrationValuesComponent implements OnInit {
 
     ngOnInit(): void {
         this.initializeColumns();
+    }
+
+    /**
+     * Verifica si un stand tiene tanto valor inicial como final para habilitar el cálculo
+     */
+    canCalculateError(standIndex: number): boolean {
+        const stand = this.integrationValues[standIndex];
+        if (!stand || !stand.isActive) {
+            return false;
+        }
+
+        return (
+            stand.initialIntegrator !== null &&
+            stand.initialIntegrator !== undefined &&
+            stand.finalIntegrator !== null &&
+            stand.finalIntegrator !== undefined
+        );
     }
 
     /**
@@ -82,7 +100,11 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de calcular error
      */
     onCalculateError(standIndex: number): void {
-        if (this.integrationValues[standIndex]?.isActive && !this.disableCalculateError) {
+        if (
+            this.integrationValues[standIndex]?.isActive &&
+            !this.disableCalculateError &&
+            this.canCalculateError(standIndex)
+        ) {
             this.calculateError.emit(standIndex);
         }
     }

@@ -80,7 +80,7 @@
                             icon="pi pi-calculator"
                             [text]="true"
                             [rounded]="false"
-                            [disabled]="disableCalculateError"
+                            [disabled]="disableCalculateError || !canCalculateError(rowIndex)"
                             severity="info"
                             pTooltip="Calcular"
                             tooltipPosition="top"
