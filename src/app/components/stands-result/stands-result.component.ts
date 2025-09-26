@@ -28,6 +28,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
     @Input() resultsColumn!: TableColumn<StandStandResult>;
     @Input() stepMeterConstant!: MeterConstantEnum;
     @Input() resultStatusColumnTemplate: TemplateRef<TableColumnTemplateContext<StandStandResult>> | undefined;
+    @Input() additionalColumns: TableColumn<StandStandResult>[] = [];
+    @Input() additionalColumnsPosition: 'before' | 'after' = 'before';
     @Input() limit: number | null = null;
     @Input() offset = 0;
     @Input() compactMode = false;
@@ -100,6 +102,12 @@ export class StandsResultComponent implements OnInit, OnChanges {
             headerStyle: 'min-width: 100px;',
             customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
         });
+
+        // Agregar columnas adicionales antes del error si se especifica
+        if (this.additionalColumnsPosition === 'before' && this.additionalColumns.length > 0) {
+            columns.push(...this.additionalColumns);
+        }
+
         if (!this.compactMode) {
             columns.push({
                 header: 'Año',
@@ -133,6 +141,11 @@ export class StandsResultComponent implements OnInit, OnChanges {
                 (this.resultsColumn.customStyles || '') +
                 ' font-family: monospace; font-weight: 500; font-size: 0.75rem;'
         });
+
+        // Agregar columnas adicionales después del error si se especifica
+        if (this.additionalColumnsPosition === 'after' && this.additionalColumns.length > 0) {
+            columns.push(...this.additionalColumns);
+        }
         columns.push({
             header: 'Resultado',
             template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
