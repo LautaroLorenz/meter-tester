@@ -161,18 +161,28 @@ export class IntegrationTestRunComponent
      * Maneja el clic en el botón de aprobación manual
      */
     onManualApproval(standIndex: number): void {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const _ = standIndex;
-        // TODO: Implementar lógica de aprobación manual
+        // Setear el stand-result en estado Aprobado
+        this.runEssayService
+            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+            .patchValue({ resultStatus: ResultStatus.Approved });
+
+        // Sincronizar el array local con el nuevo estado
+        this.syncEssayManualValuesWithService();
+        this.cd.detectChanges();
     }
 
     /**
      * Maneja el clic en el botón de desaprobación manual
      */
     onManualRejection(standIndex: number): void {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const _ = standIndex;
-        // TODO: Implementar lógica de desaprobación manual
+        // Setear el stand-result en estado Falló
+        this.runEssayService
+            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+            .patchValue({ resultStatus: ResultStatus.Failed });
+
+        // Sincronizar el array local con el nuevo estado
+        this.syncEssayManualValuesWithService();
+        this.cd.detectChanges();
     }
 
     /**
