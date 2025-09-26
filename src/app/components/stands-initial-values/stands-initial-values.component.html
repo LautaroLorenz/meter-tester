@@ -28,6 +28,7 @@
                         *ngSwitchCase="'initialIntegrator'"
                         class="flex justify-content-center">
                         <input
+                            *ngIf="rowData.isActive"
                             type="number"
                             pInputText
                             [(ngModel)]="rowData.initialIntegrator"

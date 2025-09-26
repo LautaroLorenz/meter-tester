@@ -396,15 +396,16 @@ export class IntegrationTestRunComponent
     }
 
     /**
-     * Inicializa los datos de valores iniciales con los stands activos
+     * Inicializa los datos de valores iniciales con todos los stands (activos e inactivos)
      */
     private initializeInitialValuesTable(): void {
-        this.initialValuesData = this.getActiveStands().map(({ index, stand }) => ({
+        this.initialValuesData = this.preparationStep.form_control_raw.map((stand, index) => ({
             standNumber: (index + 1).toString().padStart(2, '0'),
             meter: stand.foreign?.meter?.label || '',
             serialNumber: stand.serialNumber || '',
             year: stand.yearOfProduction || '',
-            initialIntegrator: 0
+            initialIntegrator: 0,
+            isActive: stand.isActive
         }));
     }
 

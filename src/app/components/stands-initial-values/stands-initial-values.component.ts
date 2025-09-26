@@ -7,6 +7,7 @@ export interface InitialValueData {
     serialNumber: string;
     year: string;
     initialIntegrator: number;
+    isActive: boolean;
 }
 
 @Component({
@@ -29,10 +30,13 @@ export class StandsInitialValuesComponent implements OnInit {
      * Maneja el cambio de valor en el integrador inicial
      */
     onInitialIntegratorChange(standIndex: number, value: number): void {
-        this.initialIntegratorChange.emit({
-            standIndex,
-            value: value || 0
-        });
+        // Solo permitir cambios en puestos activos
+        if (this.initialValuesData[standIndex]?.isActive) {
+            this.initialIntegratorChange.emit({
+                standIndex,
+                value: value || 0
+            });
+        }
     }
 
     /**
@@ -49,21 +53,21 @@ export class StandsInitialValuesComponent implements OnInit {
             },
             {
                 header: 'Medidor',
-                field: (item: InitialValueData) => item.meter,
+                field: (item: InitialValueData) => (item.isActive ? item.meter : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 200px;',
                 customStyles: 'font-size: 0.75rem;'
             },
             {
                 header: 'Nº de serie',
-                field: (item: InitialValueData) => item.serialNumber,
+                field: (item: InitialValueData) => (item.isActive ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 120px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Año',
-                field: (item: InitialValueData) => item.year,
+                field: (item: InitialValueData) => (item.isActive ? item.year : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 80px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
