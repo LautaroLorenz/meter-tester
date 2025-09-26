@@ -425,7 +425,9 @@ export class IntegrationTestRunComponent
                             )
                         )
                     )
-            })
+            }),
+            takeUntil(this.abortExecution$),
+            takeUntil(this.stop$)
         );
     }
 

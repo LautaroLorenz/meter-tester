@@ -319,7 +319,9 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
                             )
                         )
                     )
-            })
+            }),
+            takeUntil(this.abortExecution$),
+            takeUntil(this.stop$)
         );
     }
 

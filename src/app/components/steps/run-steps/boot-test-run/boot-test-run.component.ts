@@ -334,7 +334,9 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                             )
                         )
                     )
-            })
+            }),
+            takeUntil(this.abortExecution$),
+            takeUntil(this.stop$)
         );
     }
 

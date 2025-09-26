@@ -187,7 +187,6 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             );
         }
 
-
         // Si no hay dispositivos trabajando
         return of(true);
     }
@@ -298,7 +297,9 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                             )
                         )
                     )
-            })
+            }),
+            takeUntil(this.abortExecution$),
+            takeUntil(this.stop$)
         );
     }
 
