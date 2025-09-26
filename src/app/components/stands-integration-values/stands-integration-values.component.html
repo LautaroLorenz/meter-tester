@@ -27,17 +27,19 @@
                     <div
                         *ngSwitchCase="'initialIntegrator'"
                         class="flex justify-content-center">
-                        <input
+                        <p-inputNumber
                             *ngIf="rowData.isActive"
-                            type="number"
-                            pInputText
                             [(ngModel)]="rowData.initialIntegrator"
-                            [step]="0.1"
                             [min]="0"
                             [max]="99999999.9"
-                            class="w-20 text-center"
-                            placeholder="0.0"
-                            (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)" />
+                            [step]="1"
+                            [useGrouping]="false"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="1"
+                            placeholder="00000000.0"
+                            class="w-20 text-center h-6 text-xs"
+                            (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)">
+                        </p-inputNumber>
                     </div>
                     <!-- Otras columnas - usar app-table-column -->
                     <app-table-column

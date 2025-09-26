@@ -1,2 +1,33 @@
 // Estilos específicos para el componente stands-integration-values
 // Los estilos principales se heredan de PrimeNG y las clases de Tailwind
+
+app-stands-integration-values {
+  // Reducir el tamaño de los inputs del integrador inicial
+  .p-inputnumber {
+    height: 1.5rem !important;
+
+    .p-inputnumber-input {
+      height: 1.5rem !important;
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.75rem !important;
+      line-height: 1.25rem !important;
+    }
+
+    .p-inputnumber-button-group {
+      height: 1.5rem !important;
+
+      .p-button {
+        height: 0.75rem !important;
+        width: 1rem !important;
+        padding: 0 !important;
+        font-size: 0.5rem !important;
+      }
+    }
+  }
+
+  // Asegurar que las filas tengan altura uniforme
+  .p-datatable-tbody > tr > td {
+    padding: 0.25rem 0.5rem !important;
+    vertical-align: middle !important;
+  }
+}

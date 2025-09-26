@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 // PrimeNG imports
 import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 // App imports
 import { TableColumnModule } from '../table-column/table-column.module';
@@ -13,7 +13,7 @@ import { StandsIntegrationValuesComponent } from './stands-integration-values.co
 
 @NgModule({
     declarations: [StandsIntegrationValuesComponent],
-    imports: [CommonModule, FormsModule, TableModule, InputTextModule, TableColumnModule],
+    imports: [CommonModule, FormsModule, TableModule, InputNumberModule, TableColumnModule],
     exports: [StandsIntegrationValuesComponent]
 })
 export class StandsIntegrationValuesModule {}

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnInit,
+    Output,
+    EventEmitter,
+    ViewEncapsulation
+} from '@angular/core';
 import { TC_AlignHorizontal, TableColumn } from '../../models/core/table-column.model';
 
 export interface InitialValueData {
@@ -14,7 +22,8 @@ export interface InitialValueData {
     selector: 'app-stands-integration-values',
     templateUrl: './stands-integration-values.component.html',
     styleUrls: ['./stands-integration-values.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None
 })
 export class StandsIntegrationValuesComponent implements OnInit {
     @Input() initialValuesData: InitialValueData[] = [];
