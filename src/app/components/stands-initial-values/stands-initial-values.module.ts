@@ -6,11 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 
+// App imports
+import { TableColumnModule } from '../table-column/table-column.module';
+
 import { StandsInitialValuesComponent } from './stands-initial-values.component';
 
 @NgModule({
     declarations: [StandsInitialValuesComponent],
-    imports: [CommonModule, FormsModule, TableModule, InputTextModule],
+    imports: [CommonModule, FormsModule, TableModule, InputTextModule, TableColumnModule],
     exports: [StandsInitialValuesComponent]
 })
 export class StandsInitialValuesModule {}

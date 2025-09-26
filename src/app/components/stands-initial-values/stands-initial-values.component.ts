@@ -42,38 +42,38 @@ export class StandsInitialValuesComponent implements OnInit {
         this.initialValuesColumns = [
             {
                 header: 'Puesto',
-                field: 'standNumber',
+                field: (item: InitialValueData) => item.standNumber,
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px;',
-                customStyles: 'font-family: monospace; font-weight: 500;'
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Medidor',
-                field: 'meter',
+                field: (item: InitialValueData) => item.meter,
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 200px;',
-                customStyles: 'text-left;'
+                customStyles: 'font-size: 0.75rem;'
             },
             {
                 header: 'Nº de serie',
-                field: 'serialNumber',
+                field: (item: InitialValueData) => item.serialNumber,
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 120px;',
-                customStyles: 'font-family: monospace;'
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Año',
-                field: 'year',
+                field: (item: InitialValueData) => item.year,
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 80px;',
-                customStyles: 'font-family: monospace;'
+                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Integrador inicial',
                 field: 'initialIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 150px;',
-                customStyles: 'text-center;'
+                customStyles: 'text-align: center;'
             }
         ];
     }

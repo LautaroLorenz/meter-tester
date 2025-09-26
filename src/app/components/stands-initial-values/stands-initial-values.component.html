@@ -23,31 +23,7 @@
                 *ngFor="let col of columns"
                 class="text-center text-gray-700 font-medium text-xs">
                 <ng-container [ngSwitch]="col.field">
-                    <!-- Columna Puesto -->
-                    <span
-                        *ngSwitchCase="'standNumber'"
-                        class="font-mono font-semibold">
-                        {{ rowData.standNumber }}
-                    </span>
-                    <!-- Columna Medidor -->
-                    <span
-                        *ngSwitchCase="'meter'"
-                        class="text-left">
-                        {{ rowData.meter }}
-                    </span>
-                    <!-- Columna Nº de serie -->
-                    <span
-                        *ngSwitchCase="'serialNumber'"
-                        class="font-mono">
-                        {{ rowData.serialNumber }}
-                    </span>
-                    <!-- Columna Año -->
-                    <span
-                        *ngSwitchCase="'year'"
-                        class="font-mono">
-                        {{ rowData.year }}
-                    </span>
-                    <!-- Columna Integrador inicial -->
+                    <!-- Columna Integrador inicial - manejo especial para input -->
                     <div
                         *ngSwitchCase="'initialIntegrator'"
                         class="flex justify-content-center">
@@ -62,6 +38,12 @@
                             placeholder="0.0"
                             (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)" />
                     </div>
+                    <!-- Otras columnas - usar app-table-column -->
+                    <app-table-column
+                        *ngSwitchDefault
+                        [tableColumn]="col"
+                        [data]="rowData"
+                        [index]="rowIndex"></app-table-column>
                 </ng-container>
             </td>
         </tr>
