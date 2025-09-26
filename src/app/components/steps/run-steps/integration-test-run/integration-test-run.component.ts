@@ -150,7 +150,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
         // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
         if (this.hasAllStandsReachedMinimumPulses()) {
-            this.stopTest();
+            this.finalizeIntegrationTest();
             return;
         }
     }
@@ -372,5 +372,36 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
         return this.calculator
             .resultsTS02$(this.getActiveStands())
             .pipe(tap((results) => this.onCalculatorResults(results)));
+    }
+
+    /**
+     * Finaliza el test de integración con la secuencia requerida:
+     * 1. Cambiar generador a modo voltage (corriente en 0)
+     * 2. Consultar resultados una última vez
+     * 3. Detener el test
+     */
+    private finalizeIntegrationTest(): void {
+        this.isTestRunning = false; // Detener el loop de resultados
+
+        // Cambiar el generador a modo voltage (corriente en 0)
+        this.generator
+            .startVoltageMode$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+            .pipe(
+                // Después de cambiar a modo voltage, hacer una consulta final de resultados
+                switchMap(() => this.getResults$()),
+                // Finalmente detener el test
+                tap(() => this.stopTest()),
+                catchError(() => {
+                    // En caso de error, detener el test de todas formas
+                    this.stopTest();
+                    return EMPTY;
+                })
+            )
+            .subscribe();
     }
 }
