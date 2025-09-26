@@ -258,7 +258,7 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
     override startTest(): void {
         this.isExecuting = true;
         this.isTestRunning = true;
-        this.tabIndex = 1;
+        this.tabIndex = 2; // Ahora el tab "Proceso de medición" está en el índice 2
         // apaga el calculador por si estaba encendido
         this.calculator
             .stop$(this.getActiveStands())
