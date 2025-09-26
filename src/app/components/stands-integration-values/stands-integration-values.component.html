@@ -41,6 +41,24 @@
                             (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)">
                         </p-inputNumber>
                     </div>
+                    <!-- Columna Integrador final - manejo especial para input -->
+                    <div
+                        *ngSwitchCase="'finalIntegrator'"
+                        class="flex justify-content-center">
+                        <p-inputNumber
+                            *ngIf="rowData.isActive"
+                            [(ngModel)]="rowData.finalIntegrator"
+                            [min]="0"
+                            [max]="999999.999"
+                            [step]="1"
+                            [useGrouping]="false"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            placeholder="0.0"
+                            class="w-20 text-center h-6 text-xs"
+                            (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
+                        </p-inputNumber>
+                    </div>
                     <!-- Otras columnas - usar app-table-column -->
                     <app-table-column
                         *ngSwitchDefault

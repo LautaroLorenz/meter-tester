@@ -122,6 +122,15 @@ export class IntegrationTestRunComponent
     }
 
     /**
+     * Maneja el cambio de valor en el integrador final
+     */
+    onFinalIntegratorChange(standIndex: number, value: number): void {
+        if (this.initialValuesData[standIndex]) {
+            this.initialValuesData[standIndex].finalIntegrator = value || 0;
+        }
+    }
+
+    /**
      * Verifica si todos los stands activos han alcanzado el mínimo de pulsos requeridos
      */
     hasAllStandsReachedMinimumPulses(): boolean {
@@ -406,6 +415,7 @@ export class IntegrationTestRunComponent
             serialNumber: stand.serialNumber || '',
             year: stand.yearOfProduction || '',
             initialIntegrator: null,
+            finalIntegrator: null,
             isActive: stand.isActive
         }));
     }

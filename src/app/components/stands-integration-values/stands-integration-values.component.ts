@@ -15,6 +15,7 @@ export interface InitialValueData {
     serialNumber: string;
     year: string;
     initialIntegrator: number | null;
+    finalIntegrator: number | null;
     isActive: boolean;
 }
 
@@ -28,6 +29,7 @@ export interface InitialValueData {
 export class StandsIntegrationValuesComponent implements OnInit {
     @Input() initialValuesData: InitialValueData[] = [];
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
+    @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
 
     initialValuesColumns: TableColumn<InitialValueData>[] = [];
 
@@ -42,6 +44,19 @@ export class StandsIntegrationValuesComponent implements OnInit {
         // Solo permitir cambios en puestos activos
         if (this.initialValuesData[standIndex]?.isActive) {
             this.initialIntegratorChange.emit({
+                standIndex,
+                value: value || 0
+            });
+        }
+    }
+
+    /**
+     * Maneja el cambio de valor en el integrador final
+     */
+    onFinalIntegratorChange(standIndex: number, value: number | null): void {
+        // Solo permitir cambios en puestos activos
+        if (this.initialValuesData[standIndex]?.isActive) {
+            this.finalIntegratorChange.emit({
                 standIndex,
                 value: value || 0
             });
@@ -84,6 +99,13 @@ export class StandsIntegrationValuesComponent implements OnInit {
             {
                 header: 'Integrador inicial',
                 field: 'initialIntegrator',
+                alignHorizontal: TC_AlignHorizontal.Number,
+                headerStyle: 'min-width: 150px;',
+                customStyles: 'text-align: center;'
+            },
+            {
+                header: 'Integrador final',
+                field: 'finalIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 150px;',
                 customStyles: 'text-align: center;'
