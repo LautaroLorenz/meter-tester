@@ -165,10 +165,15 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
     }
 
     override abort(): Observable<boolean> {
+        // Detener todos los loops y timers
         this.abortExecution$.next();
         this.stopStep.next();
         this.countTimer.stop();
         this.deviceService.abort();
+
+        // Detener el generador inmediatamente para cortar el loop del patrón
+        const stopGenerator$ = this.generator.stop$();
+
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
                 this.calculator.deviceStatus$.value
@@ -177,7 +182,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         ) {
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
-                switchMap(() => this.generator.stop$()),
+                switchMap(() => stopGenerator$),
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
@@ -188,12 +193,14 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
             )
         ) {
             this.blockUIService.setBlocked(true);
-            return this.generator.stop$().pipe(
+            return stopGenerator$.pipe(
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
             );
         }
+
+        // Si no hay dispositivos trabajando
         return of(true);
     }
 
