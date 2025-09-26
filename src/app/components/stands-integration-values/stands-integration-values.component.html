@@ -68,34 +68,37 @@
                         <p-button
                             *ngIf="rowData.isActive"
                             icon="pi pi-calculator"
-                            size="small"
                             [text]="true"
-                            [rounded]="true"
+                            [rounded]="false"
                             severity="info"
                             pTooltip="Calcular error"
                             tooltipPosition="top"
+                            styleClass="p-button-sm"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onCalculateError(rowIndex)">
                         </p-button>
                         <p-button
                             *ngIf="rowData.isActive"
                             icon="pi pi-check"
-                            size="small"
                             [text]="true"
-                            [rounded]="true"
+                            [rounded]="false"
                             severity="success"
                             pTooltip="Aprobación manual"
                             tooltipPosition="top"
+                            styleClass="p-button-sm"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualApproval(rowIndex)">
                         </p-button>
                         <p-button
                             *ngIf="rowData.isActive"
                             icon="pi pi-times"
-                            size="small"
                             [text]="true"
-                            [rounded]="true"
+                            [rounded]="false"
                             severity="danger"
                             pTooltip="Desaprobación manual"
                             tooltipPosition="top"
+                            styleClass="p-button-sm"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualRejection(rowIndex)">
                         </p-button>
                     </div>
