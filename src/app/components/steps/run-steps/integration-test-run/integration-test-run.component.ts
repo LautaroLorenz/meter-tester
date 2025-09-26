@@ -153,44 +153,11 @@ export class IntegrationTestRunComponent
     /**
      * Maneja el clic en el botón de calcular error
      */
-    onCalculateError(standIndex: number): void {
-        const stand = this.essayManualValues[standIndex];
-        if (!stand || !stand.isActive) {
-            return;
-        }
+    onCalculateError(standIndexOrArray: number | number[]): void {
+        const standIndexes = Array.isArray(standIndexOrArray) ? standIndexOrArray : [standIndexOrArray];
 
-        const initialIntegrator = stand.initialIntegrator;
-        const finalIntegrator = stand.finalIntegrator;
-
-        // Validar que ambos valores estén presentes
-        if (
-            initialIntegrator === null ||
-            initialIntegrator === undefined ||
-            finalIntegrator === null ||
-            finalIntegrator === undefined
-        ) {
-            return;
-        }
-
-        // Calcular el error usando la fórmula: (valor final * 100 / inicial)
-        let calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
-
-        // Limitar el error calculado a un máximo de 99.99
-        calculatedError = Math.min(Math.abs(calculatedError), 99.99) * Math.sign(calculatedError);
-
-        const maxAllowedError = this.currentStep.form_control_raw.maxAllowedError;
-
-        // Determinar el estado basado en la comparación con maxAllowedError
-        const resultStatus = Math.abs(calculatedError) > maxAllowedError ? ResultStatus.Failed : ResultStatus.Approved;
-
-        // Actualizar el stand result con el error calculado y el estado
-        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
-            calculatedError: calculatedError,
-            resultStatus: resultStatus
-        });
-
-        // Sincronizar el array local con el nuevo estado
-        this.syncEssayManualValuesWithService();
+        // Procesar todos los stands en lote de forma optimizada
+        this.processBatchCalculateError(standIndexes);
         this.cd.detectChanges();
     }
 
@@ -540,6 +507,55 @@ export class IntegrationTestRunComponent
                 .patchValue({
                     resultStatus,
                     calculatedError
+                });
+        });
+
+        // Sincronizar el array local con el nuevo estado una sola vez
+        this.syncEssayManualValuesWithService();
+    }
+
+    /**
+     * Procesa el cálculo de error en lote de forma optimizada
+     */
+    private processBatchCalculateError(standIndexes: number[]): void {
+        const maxAllowedError = this.currentStep.form_control_raw.maxAllowedError;
+
+        // Procesar todos los stands en lote
+        standIndexes.forEach((standIndex) => {
+            const stand = this.essayManualValues[standIndex];
+            if (!stand || !stand.isActive) {
+                return;
+            }
+
+            const initialIntegrator = stand.initialIntegrator;
+            const finalIntegrator = stand.finalIntegrator;
+
+            // Validar que ambos valores estén presentes
+            if (
+                initialIntegrator === null ||
+                initialIntegrator === undefined ||
+                finalIntegrator === null ||
+                finalIntegrator === undefined
+            ) {
+                return;
+            }
+
+            // Calcular el error usando la fórmula: (valor final * 100 / inicial)
+            let calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
+
+            // Limitar el error calculado a un máximo de 99.99
+            calculatedError = Math.min(Math.abs(calculatedError), 99.99) * Math.sign(calculatedError);
+
+            // Determinar el estado basado en la comparación con maxAllowedError
+            const resultStatus =
+                Math.abs(calculatedError) > maxAllowedError ? ResultStatus.Failed : ResultStatus.Approved;
+
+            // Actualizar el stand result con el error calculado y el estado
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({
+                    calculatedError: calculatedError,
+                    resultStatus: resultStatus
                 });
         });
 

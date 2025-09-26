@@ -40,7 +40,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
 
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
-    @Output() calculateError = new EventEmitter<number>();
+    @Output() calculateError = new EventEmitter<number | number[]>();
     @Output() manualApproval = new EventEmitter<number | number[]>();
     @Output() manualRejection = new EventEmitter<number | number[]>();
 
@@ -177,11 +177,14 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Calcula el error para todos los stands que pueden ser calculados
      */
     onCalculateAllErrors(): void {
-        this.integrationValues.forEach((stand, index) => {
-            if (stand.isActive && this.canCalculateError(index)) {
-                this.calculateError.emit(index);
-            }
-        });
+        const calculableStandIndexes = this.integrationValues
+            .map((stand, index) => ({ stand, index }))
+            .filter(({ stand, index }) => stand.isActive && this.canCalculateError(index))
+            .map(({ index }) => index);
+
+        if (calculableStandIndexes.length > 0) {
+            this.calculateError.emit(calculableStandIndexes);
+        }
     }
 
     /**
