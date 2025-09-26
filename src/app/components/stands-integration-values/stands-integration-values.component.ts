@@ -14,7 +14,7 @@ export interface InitialValueData {
     meter: string;
     serialNumber: string;
     year: string;
-    initialIntegrator: number;
+    initialIntegrator: number | null;
     isActive: boolean;
 }
 
@@ -38,7 +38,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
     /**
      * Maneja el cambio de valor en el integrador inicial
      */
-    onInitialIntegratorChange(standIndex: number, value: number): void {
+    onInitialIntegratorChange(standIndex: number, value: number | null): void {
         // Solo permitir cambios en puestos activos
         if (this.initialValuesData[standIndex]?.isActive) {
             this.initialIntegratorChange.emit({

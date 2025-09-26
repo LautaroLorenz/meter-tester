@@ -405,7 +405,7 @@ export class IntegrationTestRunComponent
             meter: stand.foreign?.meter?.label || '',
             serialNumber: stand.serialNumber || '',
             year: stand.yearOfProduction || '',
-            initialIntegrator: 0,
+            initialIntegrator: null,
             isActive: stand.isActive
         }));
     }
