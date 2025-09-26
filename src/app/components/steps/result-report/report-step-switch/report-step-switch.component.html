@@ -19,4 +19,9 @@
         *ngSwitchCase="Steps.ContrastTest"
         [essayStep]="essayStep | stepAs"
         [preparationStep]="preparationStep"></app-contrast-test-pdf-report>
+
+    <app-integration-test-pdf-report
+        *ngSwitchCase="Steps.IntegrationTest"
+        [essayStep]="essayStep | stepAs"
+        [preparationStep]="preparationStep"></app-integration-test-pdf-report>
 </ng-container>
