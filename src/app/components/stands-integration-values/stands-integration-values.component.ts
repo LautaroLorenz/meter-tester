@@ -33,6 +33,9 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Input() disableFinalIntegrator = false;
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
+    @Output() calculateError = new EventEmitter<number>();
+    @Output() manualApproval = new EventEmitter<number>();
+    @Output() manualRejection = new EventEmitter<number>();
 
     initialValuesColumns: TableColumn<InitialValueData>[] = [];
 
@@ -63,6 +66,33 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 standIndex,
                 value: value || 0
             });
+        }
+    }
+
+    /**
+     * Maneja el clic en el botón de calcular error
+     */
+    onCalculateError(standIndex: number): void {
+        if (this.initialValuesData[standIndex]?.isActive) {
+            this.calculateError.emit(standIndex);
+        }
+    }
+
+    /**
+     * Maneja el clic en el botón de aprobación manual
+     */
+    onManualApproval(standIndex: number): void {
+        if (this.initialValuesData[standIndex]?.isActive) {
+            this.manualApproval.emit(standIndex);
+        }
+    }
+
+    /**
+     * Maneja el clic en el botón de desaprobación manual
+     */
+    onManualRejection(standIndex: number): void {
+        if (this.initialValuesData[standIndex]?.isActive) {
+            this.manualRejection.emit(standIndex);
         }
     }
 
@@ -120,6 +150,13 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 100px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
+            },
+            {
+                header: '',
+                field: 'actions',
+                alignHorizontal: TC_AlignHorizontal.Text,
+                headerStyle: 'min-width: 120px;',
+                customStyles: 'text-align: center;'
             }
         ];
     }

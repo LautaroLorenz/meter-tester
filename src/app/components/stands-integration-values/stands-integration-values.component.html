@@ -61,6 +61,44 @@
                             (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
                         </p-inputNumber>
                     </div>
+                    <!-- Columna de acciones - botones para cada puesto -->
+                    <div
+                        *ngSwitchCase="'actions'"
+                        class="flex justify-content-center gap-1">
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-calculator"
+                            size="small"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="info"
+                            pTooltip="Calcular error"
+                            tooltipPosition="top"
+                            (click)="onCalculateError(rowIndex)">
+                        </p-button>
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-check"
+                            size="small"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="success"
+                            pTooltip="Aprobación manual"
+                            tooltipPosition="top"
+                            (click)="onManualApproval(rowIndex)">
+                        </p-button>
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-times"
+                            size="small"
+                            [text]="true"
+                            [rounded]="true"
+                            severity="danger"
+                            pTooltip="Desaprobación manual"
+                            tooltipPosition="top"
+                            (click)="onManualRejection(rowIndex)">
+                        </p-button>
+                    </div>
                     <!-- Otras columnas - usar app-table-column -->
                     <app-table-column
                         *ngSwitchDefault

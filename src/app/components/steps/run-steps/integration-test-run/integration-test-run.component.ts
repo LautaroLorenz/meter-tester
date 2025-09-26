@@ -131,6 +131,33 @@ export class IntegrationTestRunComponent
     }
 
     /**
+     * Maneja el clic en el botón de calcular error
+     */
+    onCalculateError(standIndex: number): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _ = standIndex;
+        // TODO: Implementar lógica de cálculo de error
+    }
+
+    /**
+     * Maneja el clic en el botón de aprobación manual
+     */
+    onManualApproval(standIndex: number): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _ = standIndex;
+        // TODO: Implementar lógica de aprobación manual
+    }
+
+    /**
+     * Maneja el clic en el botón de desaprobación manual
+     */
+    onManualRejection(standIndex: number): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _ = standIndex;
+        // TODO: Implementar lógica de desaprobación manual
+    }
+
+    /**
      * Verifica si todos los stands activos han alcanzado el mínimo de pulsos requeridos
      */
     hasAllStandsReachedMinimumPulses(): boolean {

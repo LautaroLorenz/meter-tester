@@ -50,7 +50,10 @@
                 [disableInitialIntegrator]="false"
                 [disableFinalIntegrator]="false"
                 (initialIntegratorChange)="onInitialIntegratorChange($event.standIndex, $event.value)"
-                (finalIntegratorChange)="onFinalIntegratorChange($event.standIndex, $event.value)">
+                (finalIntegratorChange)="onFinalIntegratorChange($event.standIndex, $event.value)"
+                (calculateError)="onCalculateError($event)"
+                (manualApproval)="onManualApproval($event)"
+                (manualRejection)="onManualRejection($event)">
             </app-stands-integration-values>
         </div>
     </p-tabPanel>
