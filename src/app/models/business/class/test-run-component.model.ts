@@ -177,6 +177,42 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     }
 
     /**
+     * Detiene la ejecución del test actual
+     * - Bloquea la UI
+     * - Llama a abort
+     * - Espera que abort termine
+     * - Resetea el estado de ajuste de fotocélulas según la lógica de execution director
+     * - Mantiene el paso como current
+     */
+    stopExecution(): void {
+        // Bloquear la UI
+        this.blockUIService.setBlocked(true);
+
+        // Llamar a abort y esperar que termine
+        this.abort().subscribe({
+            next: () => {
+                // Resetea el estado de ajuste de fotocélulas según la lógica de execution director
+                this.resetPhotocellAdjustmentStatus(this.currentStep);
+
+                // Mantener el paso como current (no cambiar el executedStatus)
+
+                // Desbloquear la UI
+                this.blockUIService.setBlocked(false);
+
+                // Detectar cambios
+                this.cd.detectChanges();
+            },
+            error: () => {
+                // Desbloquear la UI incluso si hay error
+                this.blockUIService.setBlocked(false);
+
+                // Detectar cambios
+                this.cd.detectChanges();
+            }
+        });
+    }
+
+    /**
      * Marca un step como Done sin avanzar automáticamente al siguiente
      * @param essayStep El step a marcar como Done
      */

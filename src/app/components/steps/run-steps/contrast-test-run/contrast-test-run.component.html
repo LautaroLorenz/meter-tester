@@ -1,10 +1,19 @@
 <!-- Actions -->
 <div class="flex justify-content-between mb-4 gap-3">
-    <p-button
-        label="Omitir paso"
-        [outlined]="true"
-        severity="secondary"
-        (click)="stepExecutionSkip(this.currentStep)"></p-button>
+    <div class="flex gap-3">
+        <p-button
+            label="Omitir paso"
+            [outlined]="true"
+            severity="secondary"
+            (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+        <p-button
+            label="Detener ejecución"
+            [outlined]="true"
+            severity="secondary"
+            [disabled]="!isExecuting"
+            (click)="stopExecution()"></p-button>
+    </div>
 
     <div class="flex gap-3">
         <p-button
