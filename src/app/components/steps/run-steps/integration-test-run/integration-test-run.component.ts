@@ -22,7 +22,7 @@ import {
     timer,
     filter
 } from 'rxjs';
-import { InitialValueData } from '../../../stands-integration-values/stands-integration-values.component';
+import { IntegrationValue } from '../../../stands-integration-values/stands-integration-values.component';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
@@ -65,9 +65,8 @@ export class IntegrationTestRunComponent
     // Progress tracking properties
     isTestRunning = false;
 
-    // TODO eliminar guardar el valor directamente sobre el stand
-    // Initial values table properties
-    initialValuesData: InitialValueData[] = [];
+    // Essay manual values table properties
+    essayManualValues: IntegrationValue[] = [];
 
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
@@ -109,15 +108,20 @@ export class IntegrationTestRunComponent
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.initializeInitialValuesTable();
+        this.initializeEssayManualValuesTable();
     }
 
     /**
      * Maneja el cambio de valor en el integrador inicial
      */
     onInitialIntegratorChange(standIndex: number, value: number): void {
-        if (this.initialValuesData[standIndex]) {
-            this.initialValuesData[standIndex].initialIntegrator = value || 0;
+        if (this.essayManualValues[standIndex]) {
+            this.essayManualValues[standIndex].initialIntegrator = value || null;
+
+            // Actualizar el servicio
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({ initialIntegrator: value || undefined });
         }
     }
 
@@ -125,8 +129,13 @@ export class IntegrationTestRunComponent
      * Maneja el cambio de valor en el integrador final
      */
     onFinalIntegratorChange(standIndex: number, value: number): void {
-        if (this.initialValuesData[standIndex]) {
-            this.initialValuesData[standIndex].finalIntegrator = value || 0;
+        if (this.essayManualValues[standIndex]) {
+            this.essayManualValues[standIndex].finalIntegrator = value || null;
+
+            // Actualizar el servicio
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({ finalIntegrator: value || undefined });
         }
     }
 
@@ -202,6 +211,9 @@ export class IntegrationTestRunComponent
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
                 .patchValue({ measuredPulses });
         });
+
+        // Sincronizar los datos de la tabla con los valores del servicio
+        this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
 
         // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
@@ -431,10 +443,10 @@ export class IntegrationTestRunComponent
     }
 
     /**
-     * Inicializa los datos de valores iniciales con todos los stands (activos e inactivos)
+     * Inicializa los datos de valores manuales del ensayo con todos los stands (activos e inactivos)
      */
-    private initializeInitialValuesTable(): void {
-        this.initialValuesData = this.preparationStep.form_control_raw.map((stand, index) => ({
+    private initializeEssayManualValuesTable(): void {
+        this.essayManualValues = this.preparationStep.form_control_raw.map((stand, index) => ({
             standNumber: (index + 1).toString().padStart(2, '0'),
             meter: stand.foreign?.meter?.label || '',
             serialNumber: stand.serialNumber || '',
@@ -445,6 +457,28 @@ export class IntegrationTestRunComponent
             resultStatus: null,
             isActive: stand.isActive
         }));
+        this.syncEssayManualValuesWithService();
+    }
+
+    /**
+     * Sincroniza los datos de valores manuales del ensayo con los valores del servicio
+     */
+    private syncEssayManualValuesWithService(): void {
+        this.essayManualValues.forEach((data, index) => {
+            if (data.isActive) {
+                const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                    this.currentStep.id,
+                    index
+                );
+                const currentValue = standResult.value;
+
+                // Actualizar valores del servicio en initialValuesData
+                data.initialIntegrator = (currentValue?.initialIntegrator as number) ?? null;
+                data.finalIntegrator = (currentValue?.finalIntegrator as number) ?? null;
+                data.errorPercentage = (currentValue?.calculatedError as number) ?? null;
+                data.resultStatus = currentValue?.resultStatus || null;
+            }
+        });
     }
 
     /**

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { TC_AlignHorizontal, TableColumn, TableColumnTemplateContext } from '../../models/core/table-column.model';
 
-export interface InitialValueData {
+export interface IntegrationValue {
     standNumber: string;
     meter: string;
     serialNumber: string;
@@ -31,7 +31,7 @@ export interface InitialValueData {
     encapsulation: ViewEncapsulation.None
 })
 export class StandsIntegrationValuesComponent implements OnInit {
-    @Input() initialValuesData: InitialValueData[] = [];
+    @Input() integrationValues: IntegrationValue[] = [];
     @Input() disableInitialIntegrator = false;
     @Input() disableFinalIntegrator = false;
     @Input() disableCalculateError = false;
@@ -44,9 +44,9 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Output() manualRejection = new EventEmitter<number>();
 
     @ViewChild('meterColumnTmp', { static: true })
-    meterColumnTmp!: TemplateRef<TableColumnTemplateContext<InitialValueData>>;
+    meterColumnTmp!: TemplateRef<TableColumnTemplateContext<IntegrationValue>>;
 
-    initialValuesColumns: TableColumn<InitialValueData>[] = [];
+    columns: TableColumn<IntegrationValue>[] = [];
 
     ngOnInit(): void {
         this.initializeColumns();
@@ -57,7 +57,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      */
     onInitialIntegratorChange(standIndex: number, value: number | null): void {
         // Solo permitir cambios en puestos activos
-        if (this.initialValuesData[standIndex]?.isActive) {
+        if (this.integrationValues[standIndex]?.isActive) {
             this.initialIntegratorChange.emit({
                 standIndex,
                 value: value || 0
@@ -70,7 +70,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      */
     onFinalIntegratorChange(standIndex: number, value: number | null): void {
         // Solo permitir cambios en puestos activos
-        if (this.initialValuesData[standIndex]?.isActive) {
+        if (this.integrationValues[standIndex]?.isActive) {
             this.finalIntegratorChange.emit({
                 standIndex,
                 value: value || 0
@@ -82,7 +82,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de calcular error
      */
     onCalculateError(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive && !this.disableCalculateError) {
+        if (this.integrationValues[standIndex]?.isActive && !this.disableCalculateError) {
             this.calculateError.emit(standIndex);
         }
     }
@@ -91,7 +91,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de aprobación manual
      */
     onManualApproval(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive && !this.disableManualApproval) {
+        if (this.integrationValues[standIndex]?.isActive && !this.disableManualApproval) {
             this.manualApproval.emit(standIndex);
         }
     }
@@ -100,7 +100,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de desaprobación manual
      */
     onManualRejection(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive && !this.disableManualRejection) {
+        if (this.integrationValues[standIndex]?.isActive && !this.disableManualRejection) {
             this.manualRejection.emit(standIndex);
         }
     }
@@ -109,10 +109,10 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Inicializa las columnas de la tabla
      */
     private initializeColumns(): void {
-        this.initialValuesColumns = [
+        this.columns = [
             {
                 header: 'Puesto',
-                field: (item: InitialValueData) => item.standNumber,
+                field: (item: IntegrationValue) => item.standNumber,
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px; width: 60px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
@@ -124,7 +124,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
             },
             {
                 header: 'Nº de serie',
-                field: (item: InitialValueData) => (item.isActive ? item.serialNumber : ''),
+                field: (item: IntegrationValue) => (item.isActive ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 120px; width: 120px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
@@ -145,7 +145,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
             },
             {
                 header: 'Error [%]',
-                field: (item: InitialValueData) =>
+                field: (item: IntegrationValue) =>
                     item.isActive && item.errorPercentage !== null ? item.errorPercentage.toFixed(2) : '',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 100px; width:100px;',
