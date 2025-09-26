@@ -169,6 +169,11 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
+
+        // Verificar si todos los stands tienen estado final
+        if (this.hasAllStandsFinalStatus()) {
+            this.stopTest();
+        }
     }
 
     /**
@@ -183,102 +188,11 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
-    }
 
-    /**
-     * Verifica si todos los stands activos han alcanzado el mínimo de pulsos requeridos
-     */
-    hasAllStandsReachedMinimumPulses(): boolean {
-        const targetPulses = this.currentStep.form_control_raw.durationPulses;
-        const activeStands = this.getActiveStands();
-
-        if (activeStands.length === 0) {
-            return false;
+        // Verificar si todos los stands tienen estado final
+        if (this.hasAllStandsFinalStatus()) {
+            this.stopTest();
         }
-
-        return activeStands.every(({ index: standIndex }) => {
-            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
-                this.currentStep.id,
-                standIndex
-            ).value;
-            const measuredPulses = standResult.measuredPulses as number;
-            return measuredPulses !== undefined && measuredPulses >= targetPulses;
-        });
-    }
-
-    onCalculatorResults(results: CommandResultResponse[]): void {
-        // descartar resultados fuera de tiempo
-        if (!this.isTestRunning) {
-            return;
-        }
-
-        // update measuredPulses and calculate calculatedError
-        this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
-            const result: CommandResultResponse = results[resultIndex];
-            // si no se recibe resultado, se limpia el valor actual
-            if (result === undefined) {
-                this.runEssayService
-                    .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                    .patchValue({ measuredPulses: undefined, calculatedError: undefined });
-                return;
-            }
-
-            // Calcular el error porcentual
-            const measuredPulses = result;
-
-            this.runEssayService
-                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                .patchValue({ measuredPulses });
-        });
-
-        // Sincronizar los datos de la tabla con los valores del servicio
-        this.syncEssayManualValuesWithService();
-        this.cd.detectChanges();
-
-        // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
-        if (this.hasAllStandsReachedMinimumPulses() && !this.isPreparingForUserInput) {
-            this.isPreparingForUserInput = true;
-            this.prepareForUserInput();
-            return;
-        }
-    }
-
-    /**
-     * preparar el generador y el patrón
-     */
-    prepareGeneratorBeforeExecution(): void {
-        // consulta la constante del patron en loop
-        const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
-            this.pattern.constant$(
-                this.currentStep.form_control_raw.meterConstant,
-                this.currentStep.form_control_raw.phaseL1,
-                this.currentStep.form_control_raw.phaseL2,
-                this.currentStep.form_control_raw.phaseL3
-            )
-        ).pipe(
-            // tap((result) => results), <- si fuera necesario consumir el pattern status
-            // Repite indefinidamente tras completar (puedes agregar delay si querés)
-            repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
-            catchError(() => EMPTY), // evita romper el loop por errores
-            takeUntil(this.abortExecution$),
-            takeUntil(this.onDestroy)
-        );
-
-        // inicializa el generador y luego consulta la constante del patrón en loop
-        this.generator
-            .startVoltageMode$(
-                this.currentStep.form_control_raw.meterConstant,
-                this.currentStep.form_control_raw.phaseL1,
-                this.currentStep.form_control_raw.phaseL2,
-                this.currentStep.form_control_raw.phaseL3
-            )
-            .pipe(
-                takeUntil(this.abortExecution$),
-                takeUntil(this.onDestroy),
-                tap(() => (this.canExecute = true)),
-                switchMap(() => getPatternConstantLoop$)
-            )
-            .subscribe();
     }
 
     override onStepInit(): void {
@@ -621,5 +535,121 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con los nuevos estados
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
+    }
+
+    /**
+     * Verifica si todos los stands activos tienen un estado final (aprobado o rechazado)
+     */
+    private hasAllStandsFinalStatus(): boolean {
+        const activeStands = this.getActiveStands();
+        if (activeStands.length === 0) {
+            return false;
+        }
+
+        return activeStands.every(({ index: standIndex }) => {
+            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                this.currentStep.id,
+                standIndex
+            ).value;
+            return (
+                standResult.resultStatus === ResultStatus.Approved || standResult.resultStatus === ResultStatus.Failed
+            );
+        });
+    }
+
+    /**
+     * Verifica si todos los stands activos han alcanzado el mínimo de pulsos requeridos
+     */
+    private hasAllStandsReachedMinimumPulses(): boolean {
+        const targetPulses = this.currentStep.form_control_raw.durationPulses;
+        const activeStands = this.getActiveStands();
+
+        if (activeStands.length === 0) {
+            return false;
+        }
+
+        return activeStands.every(({ index: standIndex }) => {
+            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                this.currentStep.id,
+                standIndex
+            ).value;
+            const measuredPulses = standResult.measuredPulses as number;
+            return measuredPulses !== undefined && measuredPulses >= targetPulses;
+        });
+    }
+
+    private onCalculatorResults(results: CommandResultResponse[]): void {
+        // descartar resultados fuera de tiempo
+        if (!this.isTestRunning) {
+            return;
+        }
+
+        // update measuredPulses and calculate calculatedError
+        this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
+            const result: CommandResultResponse = results[resultIndex];
+            // si no se recibe resultado, se limpia el valor actual
+            if (result === undefined) {
+                this.runEssayService
+                    .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                    .patchValue({ measuredPulses: undefined, calculatedError: undefined });
+                return;
+            }
+
+            // Calcular el error porcentual
+            const measuredPulses = result;
+
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({ measuredPulses });
+        });
+
+        // Sincronizar los datos de la tabla con los valores del servicio
+        this.syncEssayManualValuesWithService();
+        this.cd.detectChanges();
+
+        // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
+        if (this.hasAllStandsReachedMinimumPulses() && !this.isPreparingForUserInput) {
+            this.isPreparingForUserInput = true;
+            this.prepareForUserInput();
+            return;
+        }
+    }
+
+    /**
+     * preparar el generador y el patrón
+     */
+    private prepareGeneratorBeforeExecution(): void {
+        // consulta la constante del patron en loop
+        const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
+            this.pattern.constant$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+        ).pipe(
+            // tap((result) => results), <- si fuera necesario consumir el pattern status
+            // Repite indefinidamente tras completar (puedes agregar delay si querés)
+            repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
+            catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.abortExecution$),
+            takeUntil(this.onDestroy)
+        );
+
+        // inicializa el generador y luego consulta la constante del patrón en loop
+        this.generator
+            .startVoltageMode$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
+            .pipe(
+                takeUntil(this.abortExecution$),
+                takeUntil(this.onDestroy),
+                tap(() => (this.canExecute = true)),
+                switchMap(() => getPatternConstantLoop$)
+            )
+            .subscribe();
     }
 }
