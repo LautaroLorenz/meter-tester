@@ -197,30 +197,22 @@ export class IntegrationTestRunComponent
     /**
      * Maneja el clic en el botón de aprobación manual
      */
-    onManualApproval(standIndex: number): void {
-        // Setear el stand-result en estado Aprobado con error calculado en 0
-        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
-            resultStatus: ResultStatus.Approved,
-            calculatedError: 0
-        });
+    onManualApproval(standIndexOrArray: number | number[]): void {
+        const standIndexes = Array.isArray(standIndexOrArray) ? standIndexOrArray : [standIndexOrArray];
 
-        // Sincronizar el array local con el nuevo estado
-        this.syncEssayManualValuesWithService();
+        // Procesar todos los stands en lote de forma optimizada
+        this.processBatchApproval(standIndexes, ResultStatus.Approved, 0);
         this.cd.detectChanges();
     }
 
     /**
      * Maneja el clic en el botón de desaprobación manual
      */
-    onManualRejection(standIndex: number): void {
-        // Setear el stand-result en estado Falló con error calculado en 99.99
-        this.runEssayService.getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex).patchValue({
-            resultStatus: ResultStatus.Failed,
-            calculatedError: 99.99
-        });
+    onManualRejection(standIndexOrArray: number | number[]): void {
+        const standIndexes = Array.isArray(standIndexOrArray) ? standIndexOrArray : [standIndexOrArray];
 
-        // Sincronizar el array local con el nuevo estado
-        this.syncEssayManualValuesWithService();
+        // Procesar todos los stands en lote de forma optimizada
+        this.processBatchApproval(standIndexes, ResultStatus.Failed, 99.99);
         this.cd.detectChanges();
     }
 
@@ -535,6 +527,24 @@ export class IntegrationTestRunComponent
             }
             return data; // Retornar el objeto sin cambios para puestos inactivos
         });
+    }
+
+    /**
+     * Procesa la aprobación/rechazo en lote de forma optimizada
+     */
+    private processBatchApproval(standIndexes: number[], resultStatus: ResultStatus, calculatedError: number): void {
+        // Actualizar todos los stands en lote
+        standIndexes.forEach((standIndex) => {
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
+                .patchValue({
+                    resultStatus,
+                    calculatedError
+                });
+        });
+
+        // Sincronizar el array local con el nuevo estado una sola vez
+        this.syncEssayManualValuesWithService();
     }
 
     /**

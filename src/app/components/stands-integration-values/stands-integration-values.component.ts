@@ -41,8 +41,8 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() calculateError = new EventEmitter<number>();
-    @Output() manualApproval = new EventEmitter<number>();
-    @Output() manualRejection = new EventEmitter<number>();
+    @Output() manualApproval = new EventEmitter<number | number[]>();
+    @Output() manualRejection = new EventEmitter<number | number[]>();
 
     @ViewChild('meterColumnTmp', { static: true })
     meterColumnTmp!: TemplateRef<TableColumnTemplateContext<IntegrationValue>>;
@@ -188,22 +188,28 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Aprueba todos los stands activos
      */
     onApproveAll(): void {
-        this.integrationValues.forEach((stand, index) => {
-            if (stand.isActive && !this.disableManualApproval) {
-                this.manualApproval.emit(index);
-            }
-        });
+        const activeStandIndexes = this.integrationValues
+            .map((stand, index) => ({ stand, index }))
+            .filter(({ stand }) => stand.isActive && !this.disableManualApproval)
+            .map(({ index }) => index);
+
+        if (activeStandIndexes.length > 0) {
+            this.manualApproval.emit(activeStandIndexes);
+        }
     }
 
     /**
      * Rechaza todos los stands activos
      */
     onRejectAll(): void {
-        this.integrationValues.forEach((stand, index) => {
-            if (stand.isActive && !this.disableManualRejection) {
-                this.manualRejection.emit(index);
-            }
-        });
+        const activeStandIndexes = this.integrationValues
+            .map((stand, index) => ({ stand, index }))
+            .filter(({ stand }) => stand.isActive && !this.disableManualRejection)
+            .map(({ index }) => index);
+
+        if (activeStandIndexes.length > 0) {
+            this.manualRejection.emit(activeStandIndexes);
+        }
     }
 
     /**
