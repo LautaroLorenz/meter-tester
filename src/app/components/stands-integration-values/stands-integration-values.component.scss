@@ -32,4 +32,20 @@ app-stands-integration-values {
     padding: 0.25rem 0.5rem !important;
     vertical-align: middle !important;
   }
+
+  // Efectos hover para botones de acción
+  .hover-info:hover {
+    color: #3b82f6 !important; // blue-500
+    background-color: rgba(59, 130, 246, 0.1) !important;
+  }
+
+  .hover-success:hover {
+    color: #10b981 !important; // emerald-500
+    background-color: rgba(16, 185, 129, 0.1) !important;
+  }
+
+  .hover-danger:hover {
+    color: #ef4444 !important; // red-500
+    background-color: rgba(239, 68, 68, 0.1) !important;
+  }
 }

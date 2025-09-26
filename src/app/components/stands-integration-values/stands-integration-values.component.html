@@ -85,7 +85,7 @@
                             pTooltip="Calcular"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
-                            styleClass="p-button-sm"
+                            styleClass="p-button-sm hover-info"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onCalculateError(rowIndex)">
                         </p-button>
@@ -95,11 +95,11 @@
                             [text]="true"
                             [rounded]="false"
                             [disabled]="disableManualApproval"
-                            severity="success"
+                            severity="info"
                             pTooltip="Aprobar"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
-                            styleClass="p-button-sm"
+                            styleClass="p-button-sm hover-success"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualApproval(rowIndex)">
                         </p-button>
@@ -109,11 +109,11 @@
                             [text]="true"
                             [rounded]="false"
                             [disabled]="disableManualRejection"
-                            severity="danger"
+                            severity="info"
                             pTooltip="Rechazar"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
-                            styleClass="p-button-sm"
+                            styleClass="p-button-sm hover-danger"
                             [style]="{ width: '2rem', height: '2rem', padding: '0' }"
                             (click)="onManualRejection(rowIndex)">
                         </p-button>
