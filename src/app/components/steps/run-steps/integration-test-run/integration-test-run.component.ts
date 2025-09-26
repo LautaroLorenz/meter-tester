@@ -356,10 +356,6 @@ export class IntegrationTestRunComponent
                 })
             )
             .subscribe();
-        // revisar si algún puesto pasa a estado Falló
-        this.checkFailedStatus();
-        // lo que no está en estado Falló, pasa a estado Aprobado
-        this.setApprovedStatus();
         this.cd.detectChanges();
     }
 
