@@ -47,6 +47,8 @@
         <div class="mt-2">
             <app-stands-integration-values
                 [initialValuesData]="initialValuesData"
+                [disableInitialIntegrator]="false"
+                [disableFinalIntegrator]="false"
                 (initialIntegratorChange)="onInitialIntegratorChange($event.standIndex, $event.value)"
                 (finalIntegratorChange)="onFinalIntegratorChange($event.standIndex, $event.value)">
             </app-stands-integration-values>

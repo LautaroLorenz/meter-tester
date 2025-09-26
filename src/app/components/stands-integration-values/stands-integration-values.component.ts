@@ -29,6 +29,8 @@ export interface InitialValueData {
 })
 export class StandsIntegrationValuesComponent implements OnInit {
     @Input() initialValuesData: InitialValueData[] = [];
+    @Input() disableInitialIntegrator = false;
+    @Input() disableFinalIntegrator = false;
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
 
