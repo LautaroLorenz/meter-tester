@@ -173,7 +173,11 @@ export class IntegrationTestRunComponent
         }
 
         // Calcular el error usando la fórmula: (valor final * 100 / inicial)
-        const calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
+        let calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
+
+        // Limitar el error calculado a un máximo de 99.99
+        calculatedError = Math.min(Math.abs(calculatedError), 99.99) * Math.sign(calculatedError);
+
         const maxAllowedError = this.currentStep.form_control_raw.maxAllowedError;
 
         // Determinar el estado basado en la comparación con maxAllowedError
