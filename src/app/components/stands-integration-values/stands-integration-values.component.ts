@@ -11,12 +11,12 @@ export interface InitialValueData {
 }
 
 @Component({
-    selector: 'app-stands-initial-values',
-    templateUrl: './stands-initial-values.component.html',
-    styleUrls: ['./stands-initial-values.component.scss'],
+    selector: 'app-stands-integration-values',
+    templateUrl: './stands-integration-values.component.html',
+    styleUrls: ['./stands-integration-values.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StandsInitialValuesComponent implements OnInit {
+export class StandsIntegrationValuesComponent implements OnInit {
     @Input() initialValuesData: InitialValueData[] = [];
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
 

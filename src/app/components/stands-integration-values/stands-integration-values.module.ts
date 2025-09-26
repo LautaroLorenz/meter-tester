@@ -9,11 +9,11 @@ import { InputTextModule } from 'primeng/inputtext';
 // App imports
 import { TableColumnModule } from '../table-column/table-column.module';
 
-import { StandsInitialValuesComponent } from './stands-initial-values.component';
+import { StandsIntegrationValuesComponent } from './stands-integration-values.component';
 
 @NgModule({
-    declarations: [StandsInitialValuesComponent],
+    declarations: [StandsIntegrationValuesComponent],
     imports: [CommonModule, FormsModule, TableModule, InputTextModule, TableColumnModule],
-    exports: [StandsInitialValuesComponent]
+    exports: [StandsIntegrationValuesComponent]
 })
-export class StandsInitialValuesModule {}
+export class StandsIntegrationValuesModule {}

@@ -69,7 +69,7 @@ import { IntegrationTestBuildFormComponent } from './steps/build-steps/integrati
 import { IntegrationTestParamsComponent } from './steps/step-params/integration-test-params/integration-test-params.component';
 import { IntegrationTestRunComponent } from './steps/run-steps/integration-test-run/integration-test-run.component';
 import { PulsesProgressBarComponent } from './pulses-progress-bar/pulses-progress-bar.component';
-import { StandsInitialValuesModule } from './stands-initial-values/stands-initial-values.module';
+import { StandsIntegrationValuesModule } from './stands-integration-values/stands-integration-values.module';
 
 const AppComponents = [
     PageTitleComponent,
@@ -141,7 +141,7 @@ const AppModules = [
     MenuModule,
     PatternStatusModule,
     ClampModule,
-    StandsInitialValuesModule
+    StandsIntegrationValuesModule
 ];
 
 @NgModule({

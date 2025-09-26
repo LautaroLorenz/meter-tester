@@ -22,7 +22,8 @@ import {
     timer,
     filter
 } from 'rxjs';
-import { InitialValueData } from '../../../stands-initial-values/stands-initial-values.component';
+import { InitialValueData } from '../../../stands-integration-values/stands-integration-values.component';
+import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
@@ -48,8 +49,8 @@ export class IntegrationTestRunComponent
     @ViewChild('pattern', { static: true }) pattern!: PatternComponent<IntegrationTestEssayStep>;
     @ViewChild('generator', { static: true }) generator!: GeneratorComponent<IntegrationTestEssayStep>;
 
-    readonly resultsColumn = {
-        alignHorizontal: 'Number' as const,
+    readonly resultsColumn: TableColumn<StandStandResult> = {
+        alignHorizontal: TC_AlignHorizontal.Number,
         header: 'Error (%)',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
