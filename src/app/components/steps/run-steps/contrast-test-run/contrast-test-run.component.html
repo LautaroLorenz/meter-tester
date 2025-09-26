@@ -25,7 +25,9 @@
 </div>
 
 <p-tabView [(activeIndex)]="tabIndex">
-    <p-tabPanel header="Control de la fuente">
+    <p-tabPanel
+        header="Control de la fuente"
+        leftIcon="pi pi-cog">
         <!-- Generador -->
         <div class="mt-2">
             <app-generator
@@ -44,6 +46,7 @@
 
     <p-tabPanel
         header="Proceso de medición"
+        leftIcon="pi pi-chart-line"
         [disabled]="!canExecute">
         <div class="mt-2 execution-mode-panel">
             <!-- Parámetros del paso -->
