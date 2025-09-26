@@ -152,6 +152,60 @@ export class StandsIntegrationValuesComponent implements OnInit {
     }
 
     /**
+     * Verifica si se pueden calcular todos los errores
+     */
+    canCalculateAllErrors(): boolean {
+        return this.integrationValues.some((stand, index) => stand.isActive && this.canCalculateError(index));
+    }
+
+    /**
+     * Verifica si se pueden aprobar todos los stands
+     */
+    canApproveAll(): boolean {
+        return this.integrationValues.some((stand) => stand.isActive && !this.disableManualApproval);
+    }
+
+    /**
+     * Verifica si se pueden rechazar todos los stands
+     */
+    canRejectAll(): boolean {
+        return this.integrationValues.some((stand) => stand.isActive && !this.disableManualRejection);
+    }
+
+    /**
+     * Calcula el error para todos los stands que pueden ser calculados
+     */
+    onCalculateAllErrors(): void {
+        this.integrationValues.forEach((stand, index) => {
+            if (stand.isActive && this.canCalculateError(index)) {
+                this.calculateError.emit(index);
+            }
+        });
+    }
+
+    /**
+     * Aprueba todos los stands activos
+     */
+    onApproveAll(): void {
+        this.integrationValues.forEach((stand, index) => {
+            if (stand.isActive && !this.disableManualApproval) {
+                this.manualApproval.emit(index);
+            }
+        });
+    }
+
+    /**
+     * Rechaza todos los stands activos
+     */
+    onRejectAll(): void {
+        this.integrationValues.forEach((stand, index) => {
+            if (stand.isActive && !this.disableManualRejection) {
+                this.manualRejection.emit(index);
+            }
+        });
+    }
+
+    /**
      * Inicializa las columnas de la tabla
      */
     private initializeColumns(): void {

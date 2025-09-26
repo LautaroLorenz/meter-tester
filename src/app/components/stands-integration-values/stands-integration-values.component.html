@@ -10,7 +10,52 @@
                 *ngFor="let col of columns"
                 class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider"
                 [style]="col.headerStyle">
-                {{ col.header }}
+                <div
+                    *ngIf="col.field === 'actions'"
+                    class="flex flex-column align-items-center gap-1">
+                    <div class="flex justify-content-center gap-1">
+                        <p-button
+                            icon="pi pi-calculator"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableCalculateError || !canCalculateAllErrors()"
+                            severity="info"
+                            pTooltip="Calcular todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-info"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onCalculateAllErrors()">
+                        </p-button>
+                        <p-button
+                            icon="pi pi-check"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualApproval || !canApproveAll()"
+                            severity="info"
+                            pTooltip="Aprobar todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-success"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onApproveAll()">
+                        </p-button>
+                        <p-button
+                            icon="pi pi-times"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualRejection || !canRejectAll()"
+                            severity="info"
+                            pTooltip="Rechazar todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-danger"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onRejectAll()">
+                        </p-button>
+                    </div>
+                </div>
+                <span *ngIf="col.field !== 'actions'">{{ col.header }}</span>
             </th>
         </tr>
     </ng-template>
