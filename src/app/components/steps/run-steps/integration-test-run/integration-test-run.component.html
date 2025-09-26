@@ -64,6 +64,17 @@
                 (manualRejection)="onManualRejection($event)">
             </app-stands-integration-values>
         </div>
+
+        <!-- Botón de confirmar resultado -->
+        <div class="mt-3 flex justify-content-end">
+            <p-button
+                label="Confirmar resultado"
+                icon="pi pi-check"
+                [disabled]="!canConfirmResult()"
+                severity="info"
+                (click)="onConfirmResult()">
+            </p-button>
+        </div>
     </p-tabPanel>
 
     <p-tabPanel

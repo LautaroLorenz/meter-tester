@@ -188,11 +188,6 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
-
-        // Verificar si todos los stands tienen estado final
-        if (this.hasAllStandsFinalStatus()) {
-            this.stopTest();
-        }
     }
 
     /**
@@ -207,11 +202,6 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
-
-        // Verificar si todos los stands tienen estado final
-        if (this.hasAllStandsFinalStatus()) {
-            this.stopTest();
-        }
     }
 
     /**
@@ -226,11 +216,6 @@ export class IntegrationTestRunComponent
         // Sincronizar el array local con el nuevo estado
         this.syncEssayManualValuesWithService();
         this.cd.detectChanges();
-
-        // Verificar si todos los stands tienen estado final
-        if (this.hasAllStandsFinalStatus()) {
-            this.stopTest();
-        }
     }
 
     override onStepInit(): void {
@@ -263,6 +248,22 @@ export class IntegrationTestRunComponent
         this.syncEssayManualValuesWithService();
 
         this.cd.detectChanges();
+    }
+
+    /**
+     * Verifica si se puede confirmar el resultado (todos los stands activos tienen estado final)
+     */
+    canConfirmResult(): boolean {
+        return this.hasAllStandsFinalStatus() && !this.canContinue;
+    }
+
+    /**
+     * Maneja el clic en el botón de confirmar resultado
+     */
+    onConfirmResult(): void {
+        if (this.canConfirmResult()) {
+            this.stopTest();
+        }
     }
 
     override abort(): Observable<boolean> {
