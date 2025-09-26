@@ -140,13 +140,14 @@ export class StandsIntegrationValuesComponent implements OnInit {
     }
 
     /**
-     * Limpia los valores de los inputs de integrador inicial y final
+     * Limpia los valores de los inputs de integrador inicial, final y error calculado
      */
     clearInputs(): void {
         this.integrationValues.forEach((stand) => {
             if (stand.isActive) {
                 stand.initialIntegrator = null;
                 stand.finalIntegrator = null;
+                stand.calculatedError = null;
             }
         });
     }
