@@ -52,6 +52,28 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
         return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));
     }
 
+    startVoltageMode$(
+        stepMeterConstant: MeterConstantEnum,
+        phaseL1: Phase,
+        phaseL2: Phase,
+        phaseL3: Phase
+    ): Observable<string> {
+        // Crear fases con corriente en 0, manteniendo los demás valores
+        const phaseL1VoltageMode: Phase = {
+            ...phaseL1,
+            current: 0
+        };
+        const phaseL2VoltageMode: Phase = {
+            ...phaseL2,
+            current: 0
+        };
+        const phaseL3VoltageMode: Phase = {
+            ...phaseL3,
+            current: 0
+        };
+        return this.start$(stepMeterConstant, phaseL1VoltageMode, phaseL2VoltageMode, phaseL3VoltageMode);
+    }
+
     stop$(): Observable<string> {
         if (APP_CONFIG.generatorType === GeneratorEnum.Manual) {
             return of('');
