@@ -317,7 +317,9 @@ export class IntegrationTestRunComponent
                     this.executeStartTest();
                 },
                 reject: () => {
-                    // No hacer nada, el usuario canceló
+                    // Cambiar al tab de ingreso de valores cuando el usuario cancela
+                    this.tabIndex = 1;
+                    this.cd.detectChanges();
                 }
             });
         } else {
