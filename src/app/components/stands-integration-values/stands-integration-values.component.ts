@@ -17,6 +17,7 @@ export interface InitialValueData {
     initialIntegrator: number | null;
     finalIntegrator: number | null;
     errorPercentage: number | null;
+    resultStatus: any;
     isActive: boolean;
 }
 
@@ -126,24 +127,17 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
-                header: 'Año',
-                field: (item: InitialValueData) => (item.isActive ? item.year : ''),
-                alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 80px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
-            },
-            {
                 header: 'Integrador inicial',
                 field: 'initialIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 150px;',
+                headerStyle: 'min-width: 120px;',
                 customStyles: 'text-align: center;'
             },
             {
                 header: 'Integrador final',
                 field: 'finalIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 150px;',
+                headerStyle: 'min-width: 120px;',
                 customStyles: 'text-align: center;'
             },
             {
@@ -153,6 +147,13 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 100px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
+            },
+            {
+                header: 'Estado',
+                field: 'resultStatus',
+                alignHorizontal: TC_AlignHorizontal.Text,
+                headerStyle: 'min-width: 80px;',
+                customStyles: 'text-align: center;'
             },
             {
                 header: '',

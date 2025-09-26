@@ -442,6 +442,7 @@ export class IntegrationTestRunComponent
             initialIntegrator: null,
             finalIntegrator: null,
             errorPercentage: null,
+            resultStatus: null,
             isActive: stand.isActive
         }));
     }

@@ -38,7 +38,7 @@
                             [maxFractionDigits]="3"
                             [disabled]="disableInitialIntegrator"
                             placeholder="0.0"
-                            class="w-20 text-center h-6 text-xs"
+                            class="text-center text-xs"
                             (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)">
                         </p-inputNumber>
                     </div>
@@ -57,9 +57,19 @@
                             [maxFractionDigits]="3"
                             [disabled]="disableFinalIntegrator"
                             placeholder="0.0"
-                            class="w-20 text-center h-6 text-xs"
+                            class="text-center text-xs"
                             (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
                         </p-inputNumber>
+                    </div>
+                    <!-- Columna de estado del resultado -->
+                    <div
+                        *ngSwitchCase="'resultStatus'"
+                        class="flex justify-content-center">
+                        <span
+                            *ngIf="rowData.isActive"
+                            class="text-xs">
+                            {{ rowData.resultStatus || '-' }}
+                        </span>
                     </div>
                     <!-- Columna de acciones - botones para cada puesto -->
                     <div

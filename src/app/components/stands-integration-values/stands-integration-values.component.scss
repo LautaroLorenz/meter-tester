@@ -7,6 +7,8 @@ app-stands-integration-values {
     height: 1.75rem !important;
 
     .p-inputnumber-input {
+      min-width: 2rem !important;
+      width: 100% !important;
       height: 1.75rem !important;
       padding: 0.25rem 0.5rem !important;
       font-size: 0.75rem !important;
