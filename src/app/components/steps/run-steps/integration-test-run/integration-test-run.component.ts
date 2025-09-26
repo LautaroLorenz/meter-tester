@@ -71,6 +71,7 @@ export class IntegrationTestRunComponent
     // Essay manual values table properties
     essayManualValues: IntegrationValue[] = [];
 
+    private isFinalizing = false;
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
@@ -222,7 +223,8 @@ export class IntegrationTestRunComponent
         this.cd.detectChanges();
 
         // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
-        if (this.hasAllStandsReachedMinimumPulses()) {
+        if (this.hasAllStandsReachedMinimumPulses() && !this.isFinalizing) {
+            this.isFinalizing = true;
             this.finalizeIntegrationTest();
             return;
         }
@@ -343,6 +345,8 @@ export class IntegrationTestRunComponent
         this.stopStep.next();
         // detener tracking de progreso
         this.isTestRunning = false;
+        // resetear bandera de finalización para permitir reintentos
+        this.isFinalizing = false;
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
@@ -490,14 +494,14 @@ export class IntegrationTestRunComponent
     /**
      * Finaliza el test de integración con la secuencia requerida:
      * 1. Cambiar generador a modo voltage (corriente en 0)
-     * 2. Consultar resultados una última vez
+     * 2. Hacer una consulta final de resultados (una sola vez, sin loop)
      * 3. Cambiar al tab "Ingreso de valores"
      * 4. Poner todos los stands en estado "Pending"
-     * 5. Detener el test
+     * 5. Detener solo el calculador (sin hacer stopTest completo)
+     *
+     * Nota: Se usa la bandera isFinalizing para evitar loops infinitos
      */
     private finalizeIntegrationTest(): void {
-        this.isTestRunning = false; // Detener el loop de resultados
-
         // Cambiar el generador a modo voltage (corriente en 0)
         this.generator
             .startVoltageMode$(
@@ -507,19 +511,33 @@ export class IntegrationTestRunComponent
                 this.currentStep.form_control_raw.phaseL3
             )
             .pipe(
-                // Después de cambiar a modo voltage, hacer una consulta final de resultados
+                // Hacer una consulta final de resultados (una sola vez, sin loop)
                 switchMap(() => this.getResults$()),
                 // Cambiar al tab "Ingreso de valores" y poner stands en estado Pending
                 tap(() => {
                     this.changeToManualValuesTab();
                     this.setStandsToPendingStatus();
                 }),
-                // Finalmente detener el test
-                tap(() => this.stopTest()),
+                // Detener solo el calculador sin hacer stopTest completo
+                tap(() => this.stopCalculator()),
                 catchError(() => {
-                    // En caso de error, detener el test de todas formas
-                    this.stopTest();
+                    // En caso de error, detener el calculador de todas formas
+                    this.stopCalculator();
                     return EMPTY;
+                })
+            )
+            .subscribe();
+    }
+
+    /**
+     * Detiene solo el calculador sin hacer stopTest completo
+     */
+    private stopCalculator(): void {
+        this.calculator
+            .stop$(this.getActiveStands())
+            .pipe(
+                finalize(() => {
+                    this.cd.detectChanges();
                 })
             )
             .subscribe();
