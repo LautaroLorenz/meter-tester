@@ -109,57 +109,57 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 header: 'Puesto',
                 field: (item: InitialValueData) => item.standNumber,
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 60px;',
+                headerStyle: 'min-width: 60px; width: 60px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Medidor',
                 field: (item: InitialValueData) => (item.isActive ? item.meter : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width: 200px;',
+                headerStyle: 'min-width: 150px; width: 150px;',
                 customStyles: 'font-size: 0.75rem;'
             },
             {
                 header: 'Nº de serie',
                 field: (item: InitialValueData) => (item.isActive ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width: 120px;',
+                headerStyle: 'min-width: 120px; width: 120px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Integrador inicial',
                 field: 'initialIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 120px;',
-                customStyles: 'text-align: center;'
+                headerStyle: 'min-width: 142px; width: 142px;',
+                customStyles: 'text-align: center; width: 134px;'
             },
             {
                 header: 'Integrador final',
                 field: 'finalIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 120px;',
-                customStyles: 'text-align: center;'
+                headerStyle: 'min-width: 134px; width: 134px;',
+                customStyles: 'text-align: center; width: 134px;'
             },
             {
                 header: 'Error [%]',
                 field: (item: InitialValueData) =>
                     item.isActive && item.errorPercentage !== null ? item.errorPercentage.toFixed(2) : '',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 100px;',
+                headerStyle: 'min-width: 100px; width:100px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
             },
             {
                 header: 'Resultado',
                 field: 'resultStatus',
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width: 80px;',
+                headerStyle: 'min-width: 80px; width:100px;',
                 customStyles: 'text-align: center;'
             },
             {
                 header: '',
                 field: 'actions',
                 alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width: 120px;',
+                headerStyle: 'min-width: 120px; width: 120px;',
                 customStyles: 'text-align: center;'
             }
         ];
