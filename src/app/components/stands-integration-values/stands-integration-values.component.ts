@@ -31,6 +31,9 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Input() initialValuesData: InitialValueData[] = [];
     @Input() disableInitialIntegrator = false;
     @Input() disableFinalIntegrator = false;
+    @Input() disableCalculateError = false;
+    @Input() disableManualApproval = false;
+    @Input() disableManualRejection = false;
     @Output() initialIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() finalIntegratorChange = new EventEmitter<{ standIndex: number; value: number }>();
     @Output() calculateError = new EventEmitter<number>();
@@ -73,7 +76,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de calcular error
      */
     onCalculateError(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive) {
+        if (this.initialValuesData[standIndex]?.isActive && !this.disableCalculateError) {
             this.calculateError.emit(standIndex);
         }
     }
@@ -82,7 +85,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de aprobación manual
      */
     onManualApproval(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive) {
+        if (this.initialValuesData[standIndex]?.isActive && !this.disableManualApproval) {
             this.manualApproval.emit(standIndex);
         }
     }
@@ -91,7 +94,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
      * Maneja el clic en el botón de desaprobación manual
      */
     onManualRejection(standIndex: number): void {
-        if (this.initialValuesData[standIndex]?.isActive) {
+        if (this.initialValuesData[standIndex]?.isActive && !this.disableManualRejection) {
             this.manualRejection.emit(standIndex);
         }
     }
