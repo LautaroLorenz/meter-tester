@@ -65,6 +65,9 @@ export class IntegrationTestRunComponent
     // Progress tracking properties
     isTestRunning = false;
 
+    // Tab management
+    tabIndex = 0;
+
     // Essay manual values table properties
     essayManualValues: IntegrationValue[] = [];
 
@@ -488,7 +491,9 @@ export class IntegrationTestRunComponent
      * Finaliza el test de integración con la secuencia requerida:
      * 1. Cambiar generador a modo voltage (corriente en 0)
      * 2. Consultar resultados una última vez
-     * 3. Detener el test
+     * 3. Cambiar al tab "Ingreso de valores"
+     * 4. Poner todos los stands en estado "Pending"
+     * 5. Detener el test
      */
     private finalizeIntegrationTest(): void {
         this.isTestRunning = false; // Detener el loop de resultados
@@ -504,6 +509,11 @@ export class IntegrationTestRunComponent
             .pipe(
                 // Después de cambiar a modo voltage, hacer una consulta final de resultados
                 switchMap(() => this.getResults$()),
+                // Cambiar al tab "Ingreso de valores" y poner stands en estado Pending
+                tap(() => {
+                    this.changeToManualValuesTab();
+                    this.setStandsToPendingStatus();
+                }),
                 // Finalmente detener el test
                 tap(() => this.stopTest()),
                 catchError(() => {
@@ -513,5 +523,28 @@ export class IntegrationTestRunComponent
                 })
             )
             .subscribe();
+    }
+
+    /**
+     * Cambia al tab "Ingreso de valores"
+     */
+    private changeToManualValuesTab(): void {
+        this.tabIndex = 1; // Cambiar al tab "Ingreso de valores"
+        this.cd.detectChanges();
+    }
+
+    /**
+     * Pone todos los stands activos en estado "Pending"
+     */
+    private setStandsToPendingStatus(): void {
+        this.getActiveStands().forEach(({ index }) => {
+            this.runEssayService
+                .getStandResult<IntegrationTestStandResult>(this.currentStep.id, index)
+                .patchValue({ resultStatus: ResultStatus.Pending });
+        });
+
+        // Sincronizar el array local con los nuevos estados
+        this.syncEssayManualValuesWithService();
+        this.cd.detectChanges();
     }
 }
