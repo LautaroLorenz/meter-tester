@@ -71,7 +71,7 @@ export class IntegrationTestRunComponent
     // Essay manual values table properties
     essayManualValues: IntegrationValue[] = [];
 
-    private isFinalizing = false;
+    private isPreparingForUserInput = false;
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
 
@@ -223,9 +223,9 @@ export class IntegrationTestRunComponent
         this.cd.detectChanges();
 
         // Verificar si todos los stands activos han alcanzado el mínimo de pulsos requeridos
-        if (this.hasAllStandsReachedMinimumPulses() && !this.isFinalizing) {
-            this.isFinalizing = true;
-            this.finalizeIntegrationTest();
+        if (this.hasAllStandsReachedMinimumPulses() && !this.isPreparingForUserInput) {
+            this.isPreparingForUserInput = true;
+            this.prepareForUserInput();
             return;
         }
     }
@@ -345,8 +345,8 @@ export class IntegrationTestRunComponent
         this.stopStep.next();
         // detener tracking de progreso
         this.isTestRunning = false;
-        // resetear bandera de finalización para permitir reintentos
-        this.isFinalizing = false;
+        // resetear bandera de preparación para permitir reintentos
+        this.isPreparingForUserInput = false;
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
@@ -492,16 +492,16 @@ export class IntegrationTestRunComponent
     }
 
     /**
-     * Finaliza el test de integración con la secuencia requerida:
+     * Prepara el entorno para que el usuario pueda ingresar los valores finales:
      * 1. Cambiar generador a modo voltage (corriente en 0)
      * 2. Hacer una consulta final de resultados (una sola vez, sin loop)
      * 3. Cambiar al tab "Ingreso de valores"
      * 4. Poner todos los stands en estado "Pending"
      * 5. Detener solo el calculador (sin hacer stopTest completo)
      *
-     * Nota: Se usa la bandera isFinalizing para evitar loops infinitos
+     * Nota: Se usa la bandera isPreparingForUserInput para evitar loops del calculador
      */
-    private finalizeIntegrationTest(): void {
+    private prepareForUserInput(): void {
         // Cambiar el generador a modo voltage (corriente en 0)
         this.generator
             .startVoltageMode$(
