@@ -20,7 +20,7 @@ export const APP_CONFIG: Environment = {
     virtualMachine: true,
     logsHistory: false,
     delays: {
-        patternCheckCycleDelay: 15000,
+        patternCheckCycleDelay: 50,
         resultsDelay: 50,
         loopDelay: 50
     }
