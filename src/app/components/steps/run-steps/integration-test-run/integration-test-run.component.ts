@@ -158,33 +158,14 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
      * preparar el generador y el patrón
      */
     prepareGeneratorBeforeExecution(): void {
-        const phaseL1: Phase = {
-            ...this.currentStep.form_control_raw.phaseL1,
-            isActive: true,
-            anglePhi: 0,
-            current: 0,
-            powerFactor: 0,
-            powerFactorLetter: 'L'
-        };
-        const phaseL2: Phase = {
-            ...this.currentStep.form_control_raw.phaseL2,
-            isActive: true,
-            anglePhi: 0,
-            current: 0,
-            powerFactor: 0,
-            powerFactorLetter: 'L'
-        };
-        const phaseL3: Phase = {
-            ...this.currentStep.form_control_raw.phaseL3,
-            isActive: true,
-            anglePhi: 0,
-            current: 0,
-            powerFactor: 0,
-            powerFactorLetter: 'L'
-        };
         // consulta la constante del patron en loop
         const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
-            this.pattern.constant$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
+            this.pattern.constant$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
         ).pipe(
             // tap((result) => results), <- si fuera necesario consumir el pattern status
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
@@ -196,7 +177,12 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
 
         // inicializa el generador y luego consulta la constante del patrón en loop
         this.generator
-            .start$(this.currentStep.form_control_raw.meterConstant, phaseL1, phaseL2, phaseL3)
+            .startVoltageMode$(
+                this.currentStep.form_control_raw.meterConstant,
+                this.currentStep.form_control_raw.phaseL1,
+                this.currentStep.form_control_raw.phaseL2,
+                this.currentStep.form_control_raw.phaseL3
+            )
             .pipe(
                 takeUntil(this.abortExecution$),
                 takeUntil(this.onDestroy),
@@ -269,7 +255,11 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
                 // cambia el estado de los resultados en la pantalla
                 tap(() => this.restartResults(ResultStatus.WorkInProgress)),
-                // obtención de resultados en loop
+                // hacer la primera consulta TS02
+                switchMap(() => this.getResults$()),
+                // después de la primera consulta, cambiar el generador a modo normal
+                switchMap(() => this.switchGeneratorToNormalMode$()),
+                // continuar con la obtención de resultados en loop
                 switchMap(() => this.getResultsLoop$())
             )
             .subscribe();
@@ -349,6 +339,19 @@ export class IntegrationTestRunComponent extends TestRunComponent<IntegrationTes
             takeUntil(this.abortExecution$),
             takeUntil(this.stop$),
             switchMap(() => this.getResultsLoop$())
+        );
+    }
+
+    /**
+     * Cambia el generador de modo tensión a modo normal después de la primera consulta TS02
+     */
+    private switchGeneratorToNormalMode$(): Observable<string> {
+        // Enviar comando start normal (no voltage mode) al generador
+        return this.generator.start$(
+            this.currentStep.form_control_raw.meterConstant,
+            this.currentStep.form_control_raw.phaseL1,
+            this.currentStep.form_control_raw.phaseL2,
+            this.currentStep.form_control_raw.phaseL3
         );
     }
 
