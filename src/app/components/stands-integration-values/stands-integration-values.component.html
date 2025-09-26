@@ -126,3 +126,14 @@
         </tr>
     </ng-template>
 </p-table>
+
+<ng-template
+    #meterColumnTmp
+    let-item="item"
+    let-index="index">
+    <div class="meter-column text-xs text-gray-700">
+        <app-clamp [lines]="1">
+            {{ item.isActive ? item.meter : '' }}
+        </app-clamp>
+    </div>
+</ng-template>

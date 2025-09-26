@@ -11,6 +11,7 @@ import { TooltipModule } from 'primeng/tooltip';
 // App imports
 import { TableColumnModule } from '../table-column/table-column.module';
 import { ResultStatusModule } from '../result-status/result-status.module';
+import { ClampModule } from '../clamp/clamp.module';
 
 import { StandsIntegrationValuesComponent } from './stands-integration-values.component';
 
@@ -24,7 +25,8 @@ import { StandsIntegrationValuesComponent } from './stands-integration-values.co
         ButtonModule,
         TooltipModule,
         TableColumnModule,
-        ResultStatusModule
+        ResultStatusModule,
+        ClampModule
     ],
     exports: [StandsIntegrationValuesComponent]
 })

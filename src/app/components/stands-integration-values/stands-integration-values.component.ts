@@ -5,9 +5,11 @@ import {
     OnInit,
     Output,
     EventEmitter,
-    ViewEncapsulation
+    ViewEncapsulation,
+    TemplateRef,
+    ViewChild
 } from '@angular/core';
-import { TC_AlignHorizontal, TableColumn } from '../../models/core/table-column.model';
+import { TC_AlignHorizontal, TableColumn, TableColumnTemplateContext } from '../../models/core/table-column.model';
 
 export interface InitialValueData {
     standNumber: string;
@@ -40,6 +42,9 @@ export class StandsIntegrationValuesComponent implements OnInit {
     @Output() calculateError = new EventEmitter<number>();
     @Output() manualApproval = new EventEmitter<number>();
     @Output() manualRejection = new EventEmitter<number>();
+
+    @ViewChild('meterColumnTmp', { static: true })
+    meterColumnTmp!: TemplateRef<TableColumnTemplateContext<InitialValueData>>;
 
     initialValuesColumns: TableColumn<InitialValueData>[] = [];
 
@@ -114,10 +119,8 @@ export class StandsIntegrationValuesComponent implements OnInit {
             },
             {
                 header: 'Medidor',
-                field: (item: InitialValueData) => (item.isActive ? item.meter : ''),
-                alignHorizontal: TC_AlignHorizontal.Text,
-                headerStyle: 'min-width: 150px; width: 150px;',
-                customStyles: 'font-size: 0.75rem;'
+                template: this.meterColumnTmp,
+                headerStyle: 'min-width: 150px; width: 150px;'
             },
             {
                 header: 'Nº de serie',
