@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { take, tap } from 'rxjs';
 import { IpcService } from '../../../../services/ipc.service';
+import { APP_CONFIG } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-system-info-dialog',
@@ -12,7 +13,7 @@ export class SystemInfoDialogComponent implements OnInit {
     @Output() displayChange = new EventEmitter<boolean>();
 
     systemInfo = {
-        hardwareVersion: 'CE8p-v6',
+        hardwareVersion: `CE${APP_CONFIG.standsQuantity}p-v6`,
         softwareVersion: '6.3.0',
         dataBaseVersion: ''
     };
