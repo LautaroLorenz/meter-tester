@@ -62,7 +62,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
             return false;
         }
 
-        return stand.initialIntegrator !== null && stand.initialIntegrator !== undefined && stand.initialIntegrator > 0;
+        return stand.initialIntegrator !== null && stand.initialIntegrator !== undefined;
     }
 
     /**

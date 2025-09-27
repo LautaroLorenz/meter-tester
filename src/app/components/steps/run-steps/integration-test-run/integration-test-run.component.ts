@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import {
     IntegrationTestEssayStep,
     IntegrationTestStandResult
@@ -34,6 +34,8 @@ import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-constant.pipe';
+import { MeterConstantUnitEnum } from '../../../../models/business/constants/meter-constant.model';
 
 @Component({
     selector: 'app-integration-test-run',
@@ -79,6 +81,7 @@ export class IntegrationTestRunComponent
     private isPreparingForUserInput = false;
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
+    private readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
     // Getters for progress bar component
     get targetPulses(): number {
@@ -128,10 +131,10 @@ export class IntegrationTestRunComponent
             // Actualizar el servicio
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                .patchValue({ initialIntegrator: value || undefined });
+                .patchValue({ initialIntegrator: value !== null && value !== undefined ? value : undefined });
 
             // Actualizar solo el valor en el array local sin crear nuevo array
-            this.essayManualValues[standIndex].initialIntegrator = value || null;
+            this.essayManualValues[standIndex].initialIntegrator = value !== null && value !== undefined ? value : null;
         }
     }
 
@@ -143,10 +146,10 @@ export class IntegrationTestRunComponent
             // Actualizar el servicio
             this.runEssayService
                 .getStandResult<IntegrationTestStandResult>(this.currentStep.id, standIndex)
-                .patchValue({ finalIntegrator: value || undefined });
+                .patchValue({ finalIntegrator: value !== null && value !== undefined ? value : undefined });
 
             // Actualizar solo el valor en el array local sin crear nuevo array
-            this.essayManualValues[standIndex].finalIntegrator = value || null;
+            this.essayManualValues[standIndex].finalIntegrator = value !== null && value !== undefined ? value : null;
         }
     }
 
@@ -219,7 +222,7 @@ export class IntegrationTestRunComponent
      * Verifica si se puede confirmar el resultado (todos los stands activos tienen estado final)
      */
     canConfirmResult(): boolean {
-        return this.hasAllStandsFinalStatus() && !this.canContinue;
+        return this.hasAllStandsFinalStatus() && this.isUserInputEnabled;
     }
 
     /**
@@ -397,12 +400,7 @@ export class IntegrationTestRunComponent
         const activeStands = this.getActiveStands();
         return activeStands.some(({ index }) => {
             const stand = this.essayManualValues[index];
-            return (
-                !stand ||
-                stand.initialIntegrator === null ||
-                stand.initialIntegrator === undefined ||
-                stand.initialIntegrator <= 0
-            );
+            return !stand || stand.initialIntegrator === null || stand.initialIntegrator === undefined;
         });
     }
 
@@ -515,6 +513,57 @@ export class IntegrationTestRunComponent
     }
 
     /**
+     * Calcula el error porcentual basado en los valores del integrador, impulsos medidos y constante del medidor
+     * @param initialIntegrator Valor inicial del integrador (kWh)
+     * @param finalIntegrator Valor final del integrador (kWh)
+     * @param measuredPulses Impulsos medidos para ese puesto
+     * @param meterConstant Constante del medidor que se está usando en el ensayo (activa o reactiva). Unidad y valor
+     * @returns Error calculado limitado a un máximo de 99.99
+     */
+    private calculateError(
+        initialIntegrator: number,
+        finalIntegrator: number,
+        measuredPulses: number,
+        meterConstant: { unit: string; value: number }
+    ): number {
+        // Calcular la energía medida por el medidor (diferencia entre integrador final e inicial)
+        const measuredEnergy = finalIntegrator - initialIntegrator;
+
+        // Calcular la energía estimada basada en los impulsos medidos y la constante del medidor
+        let estimatedEnergy: number;
+
+        if (
+            meterConstant.unit === MeterConstantUnitEnum.impKwh ||
+            meterConstant.unit === MeterConstantUnitEnum.impKvarh
+        ) {
+            // Caso I: imp/kWh o imp/kvarh
+            // Fórmula: Xs / km
+            estimatedEnergy = measuredPulses / meterConstant.value;
+        } else if (
+            meterConstant.unit === MeterConstantUnitEnum.whImp ||
+            meterConstant.unit === MeterConstantUnitEnum.varhImp
+        ) {
+            // Caso W: wh/imp o varh/imp
+            // Fórmula: Xs * Km / 1000
+            estimatedEnergy = (measuredPulses * meterConstant.value) / 1000;
+        } else {
+            // Fallback: si no se reconoce la unidad error máximo
+            return 99.99;
+        }
+
+        // Calcular el error porcentual: (energía medida - energía estimada) / energía estimada * 100
+        let calculatedError = 0;
+        if (estimatedEnergy !== 0) {
+            calculatedError = ((measuredEnergy - estimatedEnergy) / estimatedEnergy) * 100;
+        }
+
+        // Limitar el error calculado a un máximo de 99.99
+        calculatedError = Math.min(Math.abs(calculatedError), 99.99) * Math.sign(calculatedError);
+
+        return calculatedError;
+    }
+
+    /**
      * Procesa el cálculo de error en lote de forma optimizada
      */
     private processBatchCalculateError(standIndexes: number[]): void {
@@ -522,13 +571,13 @@ export class IntegrationTestRunComponent
 
         // Procesar todos los stands en lote
         standIndexes.forEach((standIndex) => {
-            const stand = this.essayManualValues[standIndex];
-            if (!stand || !stand.isActive) {
+            const essayStand = this.essayManualValues[standIndex];
+            if (!essayStand || !essayStand.isActive) {
                 return;
             }
 
-            const initialIntegrator = stand.initialIntegrator;
-            const finalIntegrator = stand.finalIntegrator;
+            const initialIntegrator = essayStand.initialIntegrator;
+            const finalIntegrator = essayStand.finalIntegrator;
 
             // Validar que ambos valores estén presentes
             if (
@@ -540,11 +589,35 @@ export class IntegrationTestRunComponent
                 return;
             }
 
-            // Calcular el error usando la fórmula: (valor final * 100 / inicial)
-            let calculatedError = Math.round(((finalIntegrator * 100) / initialIntegrator) * 100) / 100;
+            // Obtener los impulsos medidos y la constante del medidor
+            const standResult = this.runEssayService.getStandResult<IntegrationTestStandResult>(
+                this.currentStep.id,
+                standIndex
+            ).value;
+            const measuredPulses = (standResult.measuredPulses as number) || 0;
 
-            // Limitar el error calculado a un máximo de 99.99
-            calculatedError = Math.min(Math.abs(calculatedError), 99.99) * Math.sign(calculatedError);
+            // Obtener la información del medidor del puesto
+            const preparationStand = this.preparationStep.form_control_raw[standIndex];
+            const meter = preparationStand.foreign?.meter;
+            const stepMeterConstant = this.currentStep.form_control_raw.meterConstant;
+
+            // Obtener valor y unidad de la constante del medidor usando el pipe
+            const meterConstantValue =
+                Number(this.standMeterConstantPipe.transform(stepMeterConstant, meter, 'OnlyValue')) || 0;
+            const meterConstantUnit = this.standMeterConstantPipe.transform(stepMeterConstant, meter, 'OnlyUnit');
+
+            const meterConstant = {
+                unit: meterConstantUnit,
+                value: meterConstantValue
+            };
+
+            // Calcular el error usando la fórmula
+            const calculatedError = this.calculateError(
+                initialIntegrator,
+                finalIntegrator,
+                measuredPulses,
+                meterConstant
+            );
 
             // Determinar el estado basado en la comparación con maxAllowedError
             const resultStatus =
