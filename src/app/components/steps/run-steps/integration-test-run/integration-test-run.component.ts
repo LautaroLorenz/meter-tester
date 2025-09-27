@@ -283,12 +283,12 @@ export class IntegrationTestRunComponent
         // Verificar si hay valores iniciales faltantes
         if (this.hasMissingInitialValues()) {
             this.confirmationService.confirm({
-                message:
-                    'Algunos puestos no tienen valores iniciales ingresados. ¿Deseas continuar sin ingresar los valores iniciales?',
-                header: 'Valores iniciales faltantes',
+                message: 'Algunos puestos no tienen valores iniciales.<br>¿Continuar sin completar estos valores?',
+                header: 'Faltan valores iniciales',
                 icon: 'pi pi-exclamation-triangle',
                 acceptLabel: 'Continuar',
                 rejectLabel: 'Cancelar',
+                acceptButtonStyleClass: 'p-button-warning',
                 accept: () => {
                     this.executeStartTest();
                 },
