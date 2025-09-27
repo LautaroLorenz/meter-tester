@@ -21,7 +21,8 @@ function setupParser() {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
         commandBuffer += chunk;
-
+        // TODO eliminar console.log
+        console.log('commandBuffer', commandBuffer);
         // Procesar todos los comandos completos en el buffer
         processCommands();
     });
@@ -31,14 +32,22 @@ function processCommands() {
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
+        // TODO eliminar console.log
+        console.log('recognizedCommand', recognizedCommand);
 
         if (recognizedCommand) {
             const { command, commandSize } = recognizedCommand;
 
             // Verificar que el comando tenga el tamaño correcto
+            // TODO eliminar console.log
+            console.log('command.length', command.length, 'commandSize.size', commandSize.size);
             if (command.length === commandSize.size) {
                 // Verificar que termine en 'Z'
+                // TODO eliminar console.log
+                console.log('command.endsWith(CHAR_END)', command.endsWith(CHAR_END));
                 if (command.endsWith(CHAR_END)) {
+                    // TODO eliminar console.log
+                    console.log('validateDividers', validateDividers(command, commandSize.dividerPositions));
                     // Verificar que los dividers estén en las posiciones correctas
                     if (validateDividers(command, commandSize.dividerPositions)) {
                         // Comando válido encontrado
