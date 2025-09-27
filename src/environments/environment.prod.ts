@@ -5,7 +5,7 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: true,
     environment: 'PROD',
-    standsQuantity: 8,
+    standsQuantity: 20,
     generatorType: GeneratorEnum.Manual,
     patternType: PatternEnum.Virtual,
     skipSteps: {
