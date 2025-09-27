@@ -7,7 +7,21 @@ import {
 import { CountTimerComponent } from '../../../count-timer/count-timer.component';
 import { CalculatorComponent } from '../../../machine/calculator/calculator.component';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
-import { tap, switchMap, finalize, Observable, takeUntil, Subject, of, map, repeat, catchError, EMPTY } from 'rxjs';
+import {
+    tap,
+    switchMap,
+    finalize,
+    Observable,
+    takeUntil,
+    Subject,
+    of,
+    map,
+    repeat,
+    catchError,
+    EMPTY,
+    timer,
+    filter
+} from 'rxjs';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
@@ -114,6 +128,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
             repeat({ delay: APP_CONFIG.delays.patternCheckCycleDelay }), // delay configurado por environment
             catchError(() => EMPTY), // evita romper el loop por errores
+            takeUntil(this.abortExecution$),
             takeUntil(this.onDestroy)
         );
 
@@ -126,6 +141,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
                 this.currentStep.form_control_raw.phaseL3
             )
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.onDestroy),
                 tap(() => (this.canExecute = true)),
                 switchMap(() => getPatternConstantLoop$)
@@ -146,10 +162,16 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override abort(): Observable<boolean> {
+        // Detener todos los loops y timers
+        this.abortExecution$.next();
         this.stopStep.next();
         this.countTimerMin.stop();
         this.countTimerMax.stop();
         this.deviceService.abort();
+
+        // Detener el generador inmediatamente para cortar el loop del patrón
+        const stopGenerator$ = this.generator.stop$();
+
         if (
             [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
                 this.calculator.deviceStatus$.value
@@ -158,7 +180,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         ) {
             this.blockUIService.setBlocked(true);
             return this.calculator.stop$(this.getActiveStands()).pipe(
-                switchMap(() => this.generator.stop$()),
+                switchMap(() => stopGenerator$),
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
@@ -169,12 +191,14 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             )
         ) {
             this.blockUIService.setBlocked(true);
-            return this.generator.stop$().pipe(
+            return stopGenerator$.pipe(
                 map(() => true),
                 tap(() => this.blockUIService.setBlocked(false)),
                 tap(() => (this.isExecuting = false))
             );
         }
+
+        // Si no hay dispositivos trabajando
         return of(true);
     }
 
@@ -206,6 +230,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
+                takeUntil(this.abortExecution$),
                 takeUntil(this.stop$),
                 // cambia el estado de los resultados en el calculador
                 switchMap(() => this.calculator.reset$(this.getActiveStands())),
@@ -252,20 +277,24 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
     }
 
     override stepExecutionDone(essayStep: BootTestEssayStep): void {
+        // Apagar el generador antes de continuar
+        this.stopGenerator().subscribe(() => {
+            // Llamar al método padre para marcar como Done
+            super.stepExecutionDone(essayStep);
+        });
+    }
+
+    override stopGenerator(): Observable<void> {
         // Bloquear la UI mientras se apaga el generador
         this.blockUIService.setBlocked(true);
 
-        // Apagar el generador antes de continuar
-        this.generator
-            .stop$()
-            .pipe(
-                finalize(() => {
-                    this.blockUIService.setBlocked(false);
-                    // Llamar al método padre para continuar
-                    super.stepExecutionDone(essayStep);
-                })
-            )
-            .subscribe();
+        // Apagar el generador
+        return this.generator.stop$().pipe(
+            map(() => void 0),
+            finalize(() => {
+                this.blockUIService.setBlocked(false);
+            })
+        );
     }
 
     override restartResults(resultStatus: ResultStatus): void {
@@ -277,10 +306,37 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.cd.detectChanges();
     }
 
+    protected getGeneratorComponent(): GeneratorComponent<BootTestEssayStep> {
+        return this.generator;
+    }
+
+    protected getCalculatorComponent(): CalculatorComponent {
+        return this.calculator;
+    }
+
+    protected getPatternComponent(): PatternComponent<BootTestEssayStep> {
+        return this.pattern;
+    }
+
     private getResultsLoop$(): Observable<CommandResultResponse[]> {
-        return this.getResults$().pipe(
-            takeUntil(this.stop$),
-            switchMap(() => this.getResultsLoop$())
+        return defer(() => this.getResults$()).pipe(
+            repeat({
+                delay: () =>
+                    timer(APP_CONFIG.delays.resultsDelay).pipe(
+                        takeUntil(this.abortExecution$),
+                        takeUntil(this.stop$),
+                        takeUntil(
+                            this.calculator.deviceStatus$.pipe(
+                                filter(
+                                    (status) =>
+                                        status === DeviceStatus.StopInProgress || status === DeviceStatus.Stopped
+                                )
+                            )
+                        )
+                    )
+            }),
+            takeUntil(this.abortExecution$),
+            takeUntil(this.stop$)
         );
     }
 

@@ -1,5 +1,42 @@
+<!-- Actions -->
+<div class="flex justify-content-between mb-4 gap-3">
+    <div class="flex gap-3">
+        <p-button
+            label="Omitir paso"
+            [outlined]="true"
+            severity="secondary"
+            (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+        <p-button
+            label="Detener ejecución"
+            [outlined]="true"
+            severity="secondary"
+            [disabled]="!isExecuting"
+            (click)="stopExecution()"></p-button>
+    </div>
+
+    <div class="flex gap-3">
+        <p-button
+            label="Comenzar medición"
+            icon="pi pi-play"
+            [outlined]="true"
+            [disabled]="isExecuting || !canExecute || canContinue"
+            (click)="startTest()"></p-button>
+
+        <p-splitButton
+            label="Continuar"
+            icon="pi pi-check"
+            [model]="splitButtonItems"
+            [disabled]="!canContinue"
+            [styleClass]="continueButtonStyleClass"
+            (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
+    </div>
+</div>
+
 <p-tabView [(activeIndex)]="tabIndex">
-    <p-tabPanel header="Control de la fuente">
+    <p-tabPanel
+        header="Control de la fuente"
+        leftIcon="pi pi-cog">
         <!-- Generador -->
         <div class="mt-2">
             <app-generator
@@ -11,34 +48,19 @@
         <div class="mt-2">
             <app-pattern
                 #pattern
-                [currentStep]="currentStep"></app-pattern>
+                [currentStep]="currentStep"
+                (alarmGenerador)="handleGeneratorAlarm($event)"></app-pattern>
         </div>
     </p-tabPanel>
 
     <p-tabPanel
         header="Proceso de medición"
+        leftIcon="pi pi-chart-line"
         [disabled]="!canExecute">
         <!-- Parámetros del paso -->
         <app-boot-test-params
             [currentStep]="currentStep"
             [showTexts]="true"></app-boot-test-params>
-
-        <!-- Temporizadores -->
-        <div class="mt-2">
-            <!-- Tiempo mínimo -->
-            <app-count-timer
-                #countTimerMin
-                visibility="hidden"
-                [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
-                (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
-
-            <!-- Tiempo máximo -->
-            <app-count-timer
-                #countTimerMax
-                visibility="visible"
-                [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
-                (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
-        </div>
 
         <!-- Calculador -->
         <div class="mt-2">
@@ -55,31 +77,31 @@
     </p-tabPanel>
 </p-tabView>
 
-<!-- Actions -->
-<div class="flex justify-content-end mt-4 mb-8 gap-3">
-    <p-button
-        label="Omitir"
-        [outlined]="true"
-        severity="warning"
-        (click)="stepExecutionSkip(this.currentStep)"></p-button>
+<!-- Temporizadores -->
+<div class="mt-2">
+    <!-- Tiempo mínimo -->
+    <app-count-timer
+        #countTimerMin
+        visibility="hidden"
+        [durationSeconds]="currentStep.form_control_raw.minDurationSeconds"
+        (finishCount)="onMinTimerCountdownFinish()"></app-count-timer>
 
-    <p-button
-        label="Comenzar medición"
-        icon="pi pi-play"
-        [outlined]="true"
-        [disabled]="isExecuting || !canExecute || canContinue"
-        (click)="startTest()"></p-button>
-
-    <p-button
-        label="Reintentar"
-        icon="pi pi-replay"
-        [outlined]="true"
-        [disabled]="!canContinue"
-        (click)="restart()"></p-button>
-
-    <p-button
-        label="Continuar"
-        [outlined]="false"
-        [disabled]="!canContinue"
-        (click)="stepExecutionDone(this.currentStep)"></p-button>
+    <!-- Tiempo máximo -->
+    <app-count-timer
+        #countTimerMax
+        visibility="visible"
+        [durationSeconds]="currentStep.form_control_raw.maxDurationSeconds"
+        (finishCount)="onMaxTimerCountdownFinish()"></app-count-timer>
 </div>
+
+<!-- Espacio adicional para el menú desplegable del split button -->
+<div style="height: 120px"></div>
+
+<!-- Diálogo de selección de pasos para reintentar -->
+<app-retry-step-selection-dialog
+    [(visible)]="showStepSelectionDialog"
+    [previousSteps]="previousSteps"
+    [currentStep]="currentStep"
+    (cancel)="onStepSelectionCancel()"
+    (confirm)="onStepSelectionConfirm($event)">
+</app-retry-step-selection-dialog>

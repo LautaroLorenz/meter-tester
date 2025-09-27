@@ -15,9 +15,9 @@ import { PhotocellAdjustmentStatus } from '../../enums/photocell-adjustment-stat
 export interface VacuumTestFormControlRaw {
     name: string;
     meterConstant: MeterConstantEnum;
-    phaseL1: Pick<Phase, 'voltage'>;
-    phaseL2: Pick<Phase, 'voltage'>;
-    phaseL3: Pick<Phase, 'voltage'>;
+    phaseL1: Pick<Phase, 'isActive' | 'voltage'>;
+    phaseL2: Pick<Phase, 'isActive' | 'voltage'>;
+    phaseL3: Pick<Phase, 'isActive' | 'voltage'>;
     maxAllowedPulses: number;
     durationSeconds: number;
 }
@@ -48,12 +48,15 @@ export class VacuumTestFormBuilder extends AbstractStepFormBuilder<VacuumTestSte
                 name: undefined,
                 meterConstant: [undefined, Validators.required.bind(this)],
                 phaseL1: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
                 }),
                 phaseL2: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
                 }),
                 phaseL3: fb.nonNullable.group({
+                    isActive: [true],
                     voltage: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(500)]]
                 }),
                 maxAllowedPulses: [undefined, [Validators.required.bind(this), Validators.min(0), Validators.max(99)]],

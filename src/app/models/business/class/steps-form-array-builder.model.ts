@@ -6,6 +6,7 @@ import { PreparationFormBuilder } from '../interafces/steps/preparation-step.mod
 import { VacuumTestFormBuilder } from '../interafces/steps/vacuum-step.model';
 import { ContrastTestFormBuilder } from '../interafces/steps/contrast-test-step.model';
 import { BootTestFormBuilder } from '../interafces/steps/boot-test-step.model';
+import { IntegrationTestFormBuilder } from '../interafces/steps/integration-test-step.model';
 import { StepFormBuilder } from './step-form-builder.model';
 import { Steps } from '../enums/steps.model';
 
@@ -66,6 +67,9 @@ export class StepsBuilder {
                 break;
             case Steps.VacuumTest:
                 builderAny = new VacuumTestFormBuilder();
+                break;
+            case Steps.IntegrationTest:
+                builderAny = new IntegrationTestFormBuilder();
                 break;
             default:
                 throw new Error('Builder not found');

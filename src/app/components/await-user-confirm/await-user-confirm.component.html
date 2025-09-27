@@ -3,11 +3,6 @@
         <ng-template pTemplate="header">
             <div class="-my-2 flex align-items-center justify-content-between w-full">
                 <span class="p-panel-title">{{ headerText }}</span>
-                <i
-                    *ngIf="!confirmed"
-                    class="pi pi-exclamation-triangle text-color-secondary"
-                    style="font-size: 1.5rem"
-                    [ngStyle]="{ order: 2 }"></i>
             </div>
         </ng-template>
         <ng-template pTemplate="content">

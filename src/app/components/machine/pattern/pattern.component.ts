@@ -1,5 +1,13 @@
 import { SecondaryWindowService } from './../../../services/secondary-window.service';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
@@ -15,6 +23,8 @@ import { EssayTemplateStep } from '../../../models/business/database/essay-templ
 import { PatternEnum } from '../../../models/business/enums/pattern-enum.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 import { PhasesToCommandPipe } from '../../../pipes/business/phases-to-command.pipe';
+import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.model';
+import { GeneratorAlarmType } from '../../../models/business/enums/generator-alarm-type.model';
 
 @Component({
     selector: 'app-pattern',
@@ -25,6 +35,7 @@ import { PhasesToCommandPipe } from '../../../pipes/business/phases-to-command.p
 export class PatternComponent<T extends EssayTemplateStep> extends MachineDeviceComponent implements OnInit {
     @Input() currentStep!: T;
     @Input() toggleable!: boolean;
+    @Output() alarmGenerador = new EventEmitter<GeneratorAlarmType>();
     override readonly device = Devices.PAT;
 
     hasRealTimeStatus = false;
@@ -35,13 +46,6 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     private secondaryWindowId: number | null = null;
     private virtualConstants: VirtualPattern[] = [];
     private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
-    private readonly EMPTY_PHASE: Phase = {
-        voltage: 0,
-        current: 0,
-        anglePhi: 0,
-        powerFactor: 0,
-        powerFactorLetter: 'L'
-    };
 
     constructor(
         protected readonly deviceService: DeviceService,
@@ -101,9 +105,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             const virtualConstant = this.getVirtualConstant(maxCurrent);
             return of({
                 constant: virtualConstant,
-                phaseL1: this.EMPTY_PHASE,
-                phaseL2: this.EMPTY_PHASE,
-                phaseL3: this.EMPTY_PHASE
+                phaseL1: EMPTY_PHASE,
+                phaseL2: EMPTY_PHASE,
+                phaseL3: EMPTY_PHASE
             });
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
@@ -133,14 +137,17 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // responder la constante obtenida desde el patrón físico.
         return this.write$(command).pipe(
             map((response) => this.mapConstantResponseWithStatus(response)),
+            tap((patternStatus) => this.checkAlarms(patternStatus, phaseL1, phaseL2, phaseL3)),
             tap((patternStatus) => this.updatePatternStatus(patternStatus))
         );
     }
 
     async openSecondaryWindow(): Promise<void> {
         this.secondaryWindowId = await this.secondaryWindowService.openWindow(this.PATTERN_WINDOW_URL, {
-            height: 360,
-            inspector: false
+            height: 260,
+            width: 520,
+            inspector: false,
+            alwaysOnTop: true
         });
     }
 
@@ -149,9 +156,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         const constant = Number(blocks[3]);
         return {
             constant,
-            phaseL1: this.EMPTY_PHASE,
-            phaseL2: this.EMPTY_PHASE,
-            phaseL3: this.EMPTY_PHASE
+            phaseL1: EMPTY_PHASE,
+            phaseL2: EMPTY_PHASE,
+            phaseL3: EMPTY_PHASE
         };
     }
 
@@ -180,21 +187,21 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         return {
             constant,
             phaseL1: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL1,
                 current: currentL1,
                 powerFactor: powerFactorL1.value,
                 powerFactorLetter: powerFactorL1.type
             },
             phaseL2: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL2,
                 current: currentL2,
                 powerFactor: powerFactorL2.value,
                 powerFactorLetter: powerFactorL2.type
             },
             phaseL3: {
-                ...this.EMPTY_PHASE,
+                ...EMPTY_PHASE,
                 voltage: voltageL3,
                 current: currentL3,
                 powerFactor: powerFactorL3.value,
@@ -226,6 +233,28 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             }
         }
         return constant;
+    }
+
+    private checkAlarms(patternStatus: PatternStatus, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): void {
+        this.checkOvercurrentAlarm(patternStatus, phaseL1, phaseL2, phaseL3);
+        // Aquí se pueden agregar más verificaciones de alarmas en el futuro
+    }
+
+    private checkOvercurrentAlarm(patternStatus: PatternStatus, phaseL1: Phase, phaseL2: Phase, phaseL3: Phase): void {
+        // Verificar si todas las corrientes del ensayo son menores o iguales a 2A
+        const allCurrentsUnder2A = phaseL1.current <= 2.0 && phaseL2.current <= 2.0 && phaseL3.current <= 2.0;
+
+        // Si todas las corrientes están bajo 2A, verificar si alguna supera 2.4A
+        if (allCurrentsUnder2A) {
+            const hasOvercurrent =
+                patternStatus.phaseL1.current > 2.4 ||
+                patternStatus.phaseL2.current > 2.4 ||
+                patternStatus.phaseL3.current > 2.4;
+
+            if (hasOvercurrent) {
+                this.alarmGenerador.emit(GeneratorAlarmType.Overcurrent);
+            }
+        }
     }
 
     private updatePatternStatus(newPatternStatus: PatternStatus): void {

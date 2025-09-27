@@ -1,3 +1,14 @@
+<!-- Skip Button -->
+<div class="flex justify-content-end mb-4 gap-3">
+    <p-button
+        label="Omitir paso"
+        [outlined]="true"
+        severity="secondary"
+        size="small"
+        styleClass="p-button-sm"
+        (click)="skipStep()"></p-button>
+</div>
+
 <ng-container [ngSwitch]="generatorType">
     <!-- Generador SemiautomaticPYC5050 -->
     <app-await-user-confirm

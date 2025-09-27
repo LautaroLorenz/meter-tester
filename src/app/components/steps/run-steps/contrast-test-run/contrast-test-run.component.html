@@ -1,5 +1,42 @@
+<!-- Actions -->
+<div class="flex justify-content-between mb-4 gap-3">
+    <div class="flex gap-3">
+        <p-button
+            label="Omitir paso"
+            [outlined]="true"
+            severity="secondary"
+            (click)="stepExecutionSkip(this.currentStep)"></p-button>
+
+        <p-button
+            label="Detener ejecución"
+            [outlined]="true"
+            severity="secondary"
+            [disabled]="!isExecuting"
+            (click)="stopExecution()"></p-button>
+    </div>
+
+    <div class="flex gap-3">
+        <p-button
+            label="Comenzar medición"
+            icon="pi pi-play"
+            [outlined]="true"
+            [disabled]="isExecuting || !canExecute || canContinue"
+            (click)="startTest()"></p-button>
+
+        <p-splitButton
+            label="Continuar"
+            icon="pi pi-check"
+            [model]="splitButtonItems"
+            [disabled]="!canContinue"
+            [styleClass]="continueButtonStyleClass"
+            (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
+    </div>
+</div>
+
 <p-tabView [(activeIndex)]="tabIndex">
-    <p-tabPanel header="Control de la fuente">
+    <p-tabPanel
+        header="Control de la fuente"
+        leftIcon="pi pi-cog">
         <!-- Generador -->
         <div class="mt-2">
             <app-generator
@@ -11,30 +48,20 @@
         <div class="mt-2">
             <app-pattern
                 #pattern
-                [currentStep]="currentStep"></app-pattern>
+                [currentStep]="currentStep"
+                (alarmGenerador)="handleGeneratorAlarm($event)"></app-pattern>
         </div>
     </p-tabPanel>
 
     <p-tabPanel
         header="Proceso de medición"
+        leftIcon="pi pi-chart-line"
         [disabled]="!canExecute">
-        <!-- Parámetros del paso -->
-        <app-contrast-test-params
-            [currentStep]="currentStep"
-            [showTexts]="true"></app-contrast-test-params>
-
-        <!-- Execution mode -->
         <div class="mt-2 execution-mode-panel">
-            <p-panel
-                header="Modo de ejecución"
-                styleClass="execution-panel">
-                <p-selectButton
-                    [options]="StepRunModes"
-                    [(ngModel)]="stepRunMode"
-                    optionLabel="label"
-                    optionValue="value"
-                    styleClass="execution-select-button"></p-selectButton>
-            </p-panel>
+            <!-- Parámetros del paso -->
+            <app-contrast-test-params
+                [currentStep]="currentStep"
+                [showTexts]="true"></app-contrast-test-params>
         </div>
 
         <!-- Calculador -->
@@ -52,31 +79,28 @@
     </p-tabPanel>
 </p-tabView>
 
-<!-- Actions -->
-<div class="flex justify-content-end mt-4 mb-8 gap-3">
-    <p-button
-        label="Omitir"
-        [outlined]="true"
-        severity="warning"
-        (click)="stepExecutionSkip(this.currentStep)"></p-button>
-
-    <p-button
-        label="Comenzar medición"
-        icon="pi pi-play"
-        [outlined]="true"
-        [disabled]="isExecuting || !canExecute || canContinue"
-        (click)="startTest()"></p-button>
-
-    <p-button
-        label="Reintentar"
-        icon="pi pi-replay"
-        [outlined]="true"
-        [disabled]="!canContinue"
-        (click)="restart()"></p-button>
-
-    <p-button
-        label="Continuar"
-        [outlined]="false"
-        [disabled]="!canContinue"
-        (click)="stepExecutionDone(this.currentStep)"></p-button>
+<!-- Execution mode -->
+<div class="mt-2 execution-mode-panel">
+    <p-panel
+        header="Modo de ejecución"
+        styleClass="execution-panel">
+        <p-selectButton
+            [options]="StepRunModes"
+            [(ngModel)]="stepRunMode"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="execution-select-button"></p-selectButton>
+    </p-panel>
 </div>
+
+<!-- Espacio adicional para el menú desplegable del split button -->
+<div style="height: 120px"></div>
+
+<!-- Diálogo de selección de pasos para reintentar -->
+<app-retry-step-selection-dialog
+    [(visible)]="showStepSelectionDialog"
+    [previousSteps]="previousSteps"
+    [currentStep]="currentStep"
+    (cancel)="onStepSelectionCancel()"
+    (confirm)="onStepSelectionConfirm($event)">
+</app-retry-step-selection-dialog>

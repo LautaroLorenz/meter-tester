@@ -44,6 +44,7 @@ import { ChipModule } from 'primeng/chip';
 import { BlockUIModule } from 'primeng/blockui';
 import { CalendarModule } from 'primeng/calendar';
 import { TabViewModule } from 'primeng/tabview';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 const PrimeNgModules = [
     MenubarModule,
@@ -88,7 +89,8 @@ const PrimeNgModules = [
     ChipModule,
     BlockUIModule,
     CalendarModule,
-    TabViewModule
+    TabViewModule,
+    RadioButtonModule
 ];
 
 const PrimeNgServices = [MessageService, ConfirmationService];

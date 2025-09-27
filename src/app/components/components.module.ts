@@ -29,7 +29,7 @@ import { AwaitUserConfirmComponent } from './await-user-confirm/await-user-confi
 import { CalculatorComponent } from './machine/calculator/calculator.component';
 import { DeviceStatusComponent } from './machine/device-status/device-status.component';
 import { StandsResultComponent } from './stands-result/stands-result.component';
-import { ResultStatusComponent } from './result-status/result-status.component';
+import { ResultStatusModule } from './result-status/result-status.module';
 import { PatternComponent } from './machine/pattern/pattern.component';
 import { BootTestBuildFormComponent } from './steps/build-steps/boot-test-build-form/boot-test-build-form.component';
 import { PreparationBuildFormComponent } from './steps/build-steps/preparation-build-form/preparation-build-form.component';
@@ -46,6 +46,7 @@ import { BootTestPdfReportComponent } from './steps/result-report/boot-test-pdf-
 import { ContrastTestParamsComponent } from './steps/step-params/contrast-test-params/contrast-test-params.component';
 import { ContrastTestRunComponent } from './steps/run-steps/contrast-test-run/contrast-test-run.component';
 import { ContrastTestPdfReportComponent } from './steps/result-report/contrast-test-pdf-report/contrast-test-pdf-report.component';
+import { RetryStepSelectionDialogComponent } from './steps/run-steps/retry-step-selection-dialog/retry-step-selection-dialog.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterDetailComponent } from './details/meter-detail/meter-detail.component';
 import { StandUsedWidgetComponent } from './statics-widgets/stand-used-widget/stand-used-widget.component';
@@ -64,6 +65,12 @@ import { GeneratorComponent } from './machine/generator/generator.component';
 import { PatternStatusModule } from './machine/pattern/components/pattern-status/pattern-status.module';
 import { ClampModule } from './clamp/clamp.module';
 import { PreparationPdfReportComponent } from './steps/result-report/preparation-pdf-report/preparation-pdf-report.component';
+import { IntegrationTestBuildFormComponent } from './steps/build-steps/integration-test-build-form/integration-test-build-form.component';
+import { IntegrationTestParamsComponent } from './steps/step-params/integration-test-params/integration-test-params.component';
+import { IntegrationTestRunComponent } from './steps/run-steps/integration-test-run/integration-test-run.component';
+import { IntegrationTestPdfReportComponent } from './steps/result-report/integration-test-pdf-report/integration-test-pdf-report.component';
+import { PulsesProgressBarComponent } from './pulses-progress-bar/pulses-progress-bar.component';
+import { StandsIntegrationValuesModule } from './stands-integration-values/stands-integration-values.module';
 
 const AppComponents = [
     PageTitleComponent,
@@ -98,7 +105,6 @@ const AppComponents = [
     CalculatorComponent,
     DeviceStatusComponent,
     StandsResultComponent,
-    ResultStatusComponent,
     PatternComponent,
     PdfPageComponent,
     ReportStepSwitchComponent,
@@ -109,6 +115,7 @@ const AppComponents = [
     ContrastTestParamsComponent,
     ContrastTestRunComponent,
     ContrastTestPdfReportComponent,
+    RetryStepSelectionDialogComponent,
     PreparationPdfReportComponent,
     MeterDetailComponent,
     StandUsedWidgetComponent,
@@ -119,7 +126,12 @@ const AppComponents = [
     PhaseTableComponent,
     HelpTextComponent,
     CopyStandDialogComponent,
-    GeneratorComponent
+    GeneratorComponent,
+    IntegrationTestBuildFormComponent,
+    IntegrationTestParamsComponent,
+    IntegrationTestRunComponent,
+    IntegrationTestPdfReportComponent,
+    PulsesProgressBarComponent
 ];
 
 const AppModules = [
@@ -129,7 +141,9 @@ const AppModules = [
     BlockUiModule,
     MenuModule,
     PatternStatusModule,
-    ClampModule
+    ClampModule,
+    StandsIntegrationValuesModule,
+    ResultStatusModule
 ];
 
 @NgModule({

@@ -14,7 +14,8 @@ export const APP_CONFIG: Environment = {
         preparationMajorStep: false,
         vacuumTestRun: false,
         bootTestRun: false,
-        contrastTestRun: false
+        contrastTestRun: false,
+        integrationTestRun: false
     },
     virtualMachine: false,
     logsHistory: false,

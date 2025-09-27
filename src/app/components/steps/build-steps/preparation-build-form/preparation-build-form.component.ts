@@ -23,6 +23,7 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
     meters$!: Observable<StandMeter[]>;
     showCopyDialog = false;
     copyDialogSourceIndex!: number;
+    allStandsActive = false;
 
     readonly YearOfProductionConstants = YearOfProductionConstants;
 
@@ -41,6 +42,15 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
     openCopyDialog(index: number): void {
         this.copyDialogSourceIndex = index;
         this.showCopyDialog = true;
+    }
+
+    toggleAllStands(): void {
+        const newState = !this.allStandsActive;
+        this.allStandsActive = newState;
+
+        this.standsFormArray.controls.forEach((standFormGroup) => {
+            standFormGroup.get('isActive')?.setValue(newState);
+        });
     }
 
     override buildForm(fb: FormBuilder): AbstractFormGroup<PreparationStep> {
@@ -97,12 +107,18 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
                         standFormGroup.get('meter_id')?.updateValueAndValidity();
                         standFormGroup.get('serialNumber')?.updateValueAndValidity();
                         standFormGroup.get('yearOfProduction')?.updateValueAndValidity();
+
+                        // Update the toggle button state
+                        this.updateAllStandsActiveState();
                     })
                 )
                 .subscribe();
 
             standFormGroup.get('isActive')?.updateValueAndValidity();
         });
+
+        // Initialize the toggle button state
+        this.updateAllStandsActiveState();
     }
 
     override afterSuperPatchInitValue(): void {
@@ -114,5 +130,12 @@ export class PreparationBuildFormComponent extends StepBuildFormComponent<Prepar
             const name = `${(index + 1).toString().padStart(2, '0')}`;
             group.get('name')?.setValue(name);
         });
+    }
+
+    private updateAllStandsActiveState(): void {
+        const activeCount = this.standsFormArray.controls.filter(
+            (standFormGroup) => standFormGroup.get('isActive')?.value === true
+        ).length;
+        this.allStandsActive = activeCount === this.standsFormArray.controls.length;
     }
 }

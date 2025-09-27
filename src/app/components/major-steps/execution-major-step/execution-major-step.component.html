@@ -3,7 +3,9 @@
         <ng-container *ngIf="currentStep.photocellAdjustmentStatus === PhotocellAdjustmentStatus.Pending">
             <app-photocell-adjusment-request
                 [meterConstant]="currentStep.form_control_raw.meterConstant"
-                (adjustmentDone)="photocellAdjustmentDone(currentStep.id)"></app-photocell-adjusment-request>
+                [stepNumber]="currentStep.order"
+                (adjustmentDone)="photocellAdjustmentDone(currentStep.id)"
+                (stepSkipped)="stepExecutionSkipped(currentStep.id)"></app-photocell-adjusment-request>
         </ng-container>
 
         <ng-container

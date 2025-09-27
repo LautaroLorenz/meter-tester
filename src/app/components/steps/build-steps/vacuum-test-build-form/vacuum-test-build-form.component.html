@@ -1,4 +1,4 @@
-<fom
+<form
     novalidate
     [formGroup]="form">
     <ng-container formGroupName="form_control_raw">
@@ -92,6 +92,7 @@
                         faseLabel="L1"
                         voltageFormControlName="voltage"
                         voltageLabel="U1"
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"
                         [showCopyButton]="true"
                         (copyClick)="
@@ -108,6 +109,7 @@
                         faseLabel="L2"
                         voltageFormControlName="voltage"
                         voltageLabel="U2"
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
 
@@ -117,9 +119,10 @@
                         faseLabel="L3"
                         voltageFormControlName="voltage"
                         voltageLabel="U3"
+                        isActiveFormControlName="isActive"
                         [meterConstantEnum]="form.get('form_control_raw.meterConstant')?.value"></app-phase-form-group>
                 </div>
             </div>
         </div>
     </ng-container>
-</fom>
+</form>

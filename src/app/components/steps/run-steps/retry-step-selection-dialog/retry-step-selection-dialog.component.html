@@ -1,0 +1,57 @@
+<!-- Diálogo de selección de pasos para reintentar -->
+<p-dialog
+    header="Reintentar pasos anteriores"
+    [(visible)]="visible"
+    [modal]="true"
+    [style]="{ width: '60vw' }"
+    [closable]="true"
+    (onHide)="onDialogHide()">
+    <div class="flex flex-column gap-3">
+        <p>Selecciona los pasos que deseas volver a ejecutar</p>
+
+        <p-listbox
+            [options]="stepsWithDisplayName"
+            [(ngModel)]="selectedSteps"
+            (onSelectionChange)="onStepSelectionChange($event)"
+            optionLabel="displayName"
+            [style]="{ width: '100%' }"
+            [listStyle]="{ 'max-height': '300px' }"
+            [multiple]="true"
+            [checkbox]="true"
+            [showToggleAll]="false">
+        </p-listbox>
+
+        <div
+            class="current-step-option"
+            *ngIf="currentStep">
+            <div class="flex align-items-center gap-2 p-2 border-1 border-300 border-round">
+                <p-checkbox
+                    [(ngModel)]="includeCurrentStep"
+                    [binary]="true"
+                    inputId="includeCurrentStep">
+                </p-checkbox>
+                <label
+                    for="includeCurrentStep"
+                    class="flex flex-column">
+                    <strong>{{ getCurrentStepDisplayName() }}</strong>
+                    <small class="text-muted">Marcar paso actual, para reintentarlo más adelante.</small>
+                </label>
+            </div>
+        </div>
+
+        <div class="flex justify-content-end gap-2">
+            <p-button
+                label="Cancelar"
+                icon="pi pi-times"
+                [text]="true"
+                (click)="onCancelClick()">
+            </p-button>
+            <p-button
+                label="Confirmar"
+                icon="pi pi-check"
+                [disabled]="!canConfirm"
+                (click)="onConfirmClick()">
+            </p-button>
+        </div>
+    </div>
+</p-dialog>

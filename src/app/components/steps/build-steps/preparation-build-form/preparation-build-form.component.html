@@ -5,10 +5,29 @@
     responsiveLayout="scroll">
     <ng-template pTemplate="header">
         <tr>
-            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Activo</th>
-            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Puesto</th>
-            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">Modelo</th>
-            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
+            <th
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-satand-is-active">
+                <div class="flex flex-col align-items-center gap-1">
+                    <span>Activo</span>
+                    <p-button
+                        [icon]="allStandsActive ? 'pi pi-times' : 'pi pi-check'"
+                        [outlined]="true"
+                        size="small"
+                        (click)="toggleAllStands()"
+                        [pTooltip]="allStandsActive ? 'Desactivar todos' : 'Activar todos'"
+                        tooltipPosition="bottom"
+                        styleClass="p-button-sm"></p-button>
+                </div>
+            </th>
+            <th
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-satand-index">
+                Puesto
+            </th>
+            <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-model">
+                Modelo
+            </th>
+            <th
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider col-year-of-production">
                 Año de fabricación
             </th>
             <th class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider">
@@ -84,7 +103,8 @@
                         (click)="openCopyDialog(i)"
                         [disabled]="!standForm.get('isActive')!.value"
                         pTooltip="Copiar valores a otros puestos"
-                        tooltipPosition="left"></p-button>
+                        tooltipPosition="left"
+                        [style]="{ height: '2rem', width: '2rem' }"></p-button>
                 </td>
             </tr>
         </ng-container>

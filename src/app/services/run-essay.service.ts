@@ -8,7 +8,7 @@ import { StepsBuilder } from '../models/business/class/steps-form-array-builder.
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AbstractFormGroup } from '../models/core/abstract-form-group.model';
 import { EssayTemplateStep } from '../models/business/database/essay-template-step.model';
-import { Observable, ReplaySubject, filter, map, take, tap } from 'rxjs';
+import { Observable, ReplaySubject, filter, map, take, tap, BehaviorSubject } from 'rxjs';
 import { StandResult } from '../models/business/interafces/stand-result.model';
 import { IpcService } from './ipc.service';
 import { PreparationStep } from '../models/business/interafces/steps/preparation-step.model';
@@ -24,6 +24,9 @@ export class RunEssayService {
     private _runEssay$!: ReplaySubject<RunEssay>;
     private essaySteps!: FormArray<AbstractFormGroup<EssayStep>>;
     private _runEssayForm!: RunEssayForm;
+
+    // Control del avance automático de steps
+    private _autoAdvanceEnabled$ = new BehaviorSubject<boolean>(true);
 
     constructor(
         private readonly fb: FormBuilder,
@@ -66,6 +69,14 @@ export class RunEssayService {
 
     get runEssay$(): Observable<RunEssay> {
         return this._runEssay$.asObservable();
+    }
+
+    get autoAdvanceEnabled$(): Observable<boolean> {
+        return this._autoAdvanceEnabled$.asObservable();
+    }
+
+    get isAutoAdvanceEnabled(): boolean {
+        return this._autoAdvanceEnabled$.value;
     }
 
     get runEssayForm(): RunEssayForm {
@@ -151,5 +162,9 @@ export class RunEssayService {
 
     nextMajorStep(): void {
         this._majorStepStatusMap$.next(MajorStepsDirector.getMajorStepStatusMap(this.essaySteps.value as EssayStep[]));
+    }
+
+    setAutoAdvanceEnabled(enabled: boolean): void {
+        this._autoAdvanceEnabled$.next(enabled);
     }
 }

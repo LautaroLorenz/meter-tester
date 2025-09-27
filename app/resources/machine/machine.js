@@ -203,7 +203,7 @@ exports.default = {
             if (!port) {
                 throw new Error('No se pudo abrir el puerto USB');
             }
-            return new serialport_1.SerialPort({ path: port.path, baudRate: 9600 });
+            return new serialport_1.SerialPort({ path: port.path, baudRate: 19200 });
         }
         catch (err) {
             connectionLogs = err;

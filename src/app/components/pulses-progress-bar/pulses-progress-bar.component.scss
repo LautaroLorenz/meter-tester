@@ -1,0 +1,30 @@
+::ng-deep {
+  .progress-panel {
+    .p-panel-header {
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .p-panel-content {
+      background: #ffffff;
+      padding: 0.75rem;
+    }
+  }
+
+  .p-progressbar-compact {
+    height: 6px;
+
+    .p-progressbar {
+      border-radius: 3px;
+    }
+
+    .p-progressbar-value {
+      border-radius: 3px;
+    }
+
+    .p-progressbar-label {
+      display: none !important;
+    }
+  }
+}

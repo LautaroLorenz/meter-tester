@@ -238,6 +238,9 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
                 if ('measuredError' in result) {
                     resultValue = result.measuredError as number;
                 }
+                if ('calculatedError' in result) {
+                    resultValue = result.calculatedError as number;
+                }
                 const historyEssayStepStand: Omit<HistoryEssayStepStand, 'id' | 'history_essay_id' | 'foreign'> = {
                     saved_time: savedTime,
                     essay_name: this.runEssay.essayName,

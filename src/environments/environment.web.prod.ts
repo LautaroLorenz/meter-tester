@@ -10,12 +10,18 @@ export const APP_CONFIG: Environment = {
     patternType: PatternEnum.Virtual,
     skipSteps: {
         photocellAdjustmentRequest: false,
-        verificationMajorStep: false,
-        preparationMajorStep: false,
+        verificationMajorStep: true,
+        preparationMajorStep: true,
         vacuumTestRun: false,
         bootTestRun: false,
-        contrastTestRun: false
+        contrastTestRun: false,
+        integrationTestRun: false
     },
-    virtualMachine: false,
-    logsHistory: false
+    virtualMachine: true,
+    logsHistory: false,
+    delays: {
+        patternCheckCycleDelay: 50,
+        resultsDelay: 50,
+        loopDelay: 50
+    }
 };

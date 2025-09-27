@@ -5,6 +5,7 @@ import { CommandDirector } from '../../../models/business/class/command-director
 import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { CommandFormatterUtil } from '../../../utils/command-formatter.util';
+import { PositionMemoryMap } from '../../../models/business/interafces/position-memory.model';
 
 @Component({
     selector: 'app-command-map',
@@ -85,6 +86,9 @@ export class CommandMapComponent {
 
     private readonly cdr = inject(ChangeDetectorRef);
 
+    // Memoria por puesto para hacer ensayos más realistas
+    private positionMemory: PositionMemoryMap = {};
+
     get(command: string): VMCommandMap | undefined {
         const item = this.map.find((item) => {
             // Usar directamente el patrón ya escapado
@@ -92,7 +96,21 @@ export class CommandMapComponent {
             const matches = regex.test(command);
             return matches;
         });
+
         if (item) {
+            // Extraer el puesto del comando si es del calculador
+            const position = this.extractPositionFromCommand(command);
+
+            if (position) {
+                // Actualizar memoria del puesto
+                this.updatePositionMemory(position, command);
+
+                // Verificar si es RESET o STOP para limpiar memoria
+                if (this.isResetOrStopCommand(command)) {
+                    this.clearPositionMemory(position);
+                }
+            }
+
             item.lastResponse = item.automaticResponse(command);
             item.formatedLastResponse = CommandFormatterUtil.formatCommandForDisplay(item.lastResponse);
             this.cdr.detectChanges();
@@ -118,12 +136,23 @@ export class CommandMapComponent {
         blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
 
         // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
-        // const irValue = Math.random() * 25.59;
-        // const isValue = Math.random() * 25.59;
-        // const itValue = Math.random() * 25.59;
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
-        blocks.push(CommandDirector.encodeCompactNumber(5, 2, 2));
+        // Simular alarma de sobrecorriente con 5% de probabilidad
+        const shouldTriggerOvercurrent = Math.random() < 0.03; // 5% de probabilidad
+
+        if (shouldTriggerOvercurrent) {
+            // Simular sobrecorriente: todas las corrientes bajo 2A, pero una supera 2.4A
+            blocks.push(CommandDirector.encodeCompactNumber(1.5, 2, 2)); // L1: 1.5A (bajo 2A)
+            blocks.push(CommandDirector.encodeCompactNumber(2.4, 2, 2)); // L2: 2.41A (sobrecorriente)
+            blocks.push(CommandDirector.encodeCompactNumber(1.8, 2, 2)); // L3: 1.8A (bajo 2A)
+        } else {
+            // Valores normales
+            const irValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            const isValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            const itValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
+            blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
+        }
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
         const prValue = Math.random() * 2.55;
@@ -154,8 +183,8 @@ export class CommandMapComponent {
         const blocks = CommandDirector.getBlocks(command);
 
         // El puesto está en el bloque 2 (índice 2) del comando
-        // Comando: B|SC|PUESTO|STOP|Z
-        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        // Comando: B|SC|PUESTO|COMANDO|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=COMANDO, [4]=Z
         const position = blocks[2];
 
         const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
@@ -164,7 +193,15 @@ export class CommandMapComponent {
         // Incluir espacio de resultados vacio para mantener longitud fija (3 bytes)
         responseBlocks.push('   ');
         responseBlocks.push(CommandDirector.CHAR_END);
-        return responseBlocks.join(CommandDirector.DIVIDER);
+
+        const response = responseBlocks.join(CommandDirector.DIVIDER);
+
+        // Guardar la respuesta en la memoria del puesto si existe
+        if (this.positionMemory[position]) {
+            this.positionMemory[position].responsesSent.push(response);
+        }
+
+        return response;
     }
 
     private getCalculatorAutomaticTS01Response(command: string): string {
@@ -172,24 +209,57 @@ export class CommandMapComponent {
         const blocks = CommandDirector.getBlocks(command);
 
         // El puesto está en el bloque 2 (índice 2) del comando
-        // Comando: B|SC|PUESTO|STOP|Z
-        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        // Comando: B|SC|PUESTO|RESULT_TS01|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=RESULT_TS01, [4]=Z
         const position = blocks[2];
 
         const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
         // Incluir el puesto en la respuesta
         responseBlocks.push(position);
 
-        // Resultados aleatorios -9999 a 9999
-        // Generar valor entre -9999 y 9999
-        const randomValue = Math.floor(Math.random() * 19999) - 9999; // -9999 a 9999
-        const sign = randomValue < 0 ? '-' : ' ';
-        const absoluteValue = Math.abs(randomValue);
+        // Obtener o crear memoria del puesto
+        if (!this.positionMemory[position]) {
+            // Generar tiempo de espera aleatorio entre 0 y 3 segundos
+            const minWaitSeconds = Math.random() * 3; // 0 a 3 segundos
+
+            this.positionMemory[position] = {
+                position,
+                commandsReceived: [],
+                responsesSent: [],
+                ts02Counter: 0,
+                lastUpdate: new Date(),
+                minWaitSeconds,
+                lastCommandTime: new Date()
+            };
+        }
+
+        // Incrementar contador con probabilidad solo si ha pasado el tiempo mínimo de espera
+        const canUpdate = this.canUpdateRandomly(position);
+        const shouldIncrement = canUpdate && Math.random() < 0.7;
+        if (shouldIncrement) {
+            this.positionMemory[position].ts02Counter++;
+        }
+
+        // Usar el contador como base para el valor, con un rango más realista
+        // El contador se usa para generar un valor más consistente
+        const baseValue = this.positionMemory[position].ts02Counter * 100;
+        const randomVariation = Math.floor(Math.random() * 200) - 100; // -100 a +100
+        const finalValue = Math.max(-9999, Math.min(9999, baseValue + randomVariation));
+
+        const sign = finalValue < 0 ? '-' : ' ';
+        const absoluteValue = Math.abs(finalValue);
 
         // Para contraste: punto fijo con 2 decimales, usar 2 bytes para el número entero
         // El punto fijo va en el medio, no se codifica con decimales
         const encodedValue = CommandDirector.encodeCompactNumber(absoluteValue, 2, 0);
         responseBlocks.push(`${sign}${encodedValue}`);
+
+        // Guardar la respuesta en la memoria del puesto
+        const response = responseBlocks.join(CommandDirector.DIVIDER);
+        this.positionMemory[position].responsesSent.push(response);
+
+        // Actualizar el tiempo del último comando procesado
+        this.positionMemory[position].lastCommandTime = new Date();
 
         responseBlocks.push(CommandDirector.CHAR_END);
         return responseBlocks.join(CommandDirector.DIVIDER);
@@ -200,25 +270,147 @@ export class CommandMapComponent {
         const blocks = CommandDirector.getBlocks(command);
 
         // El puesto está en el bloque 2 (índice 2) del comando
-        // Comando: B|SC|PUESTO|STOP|Z
-        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=STOP, [4]=Z
+        // Comando: B|SC|PUESTO|RESULT_TS02|Z
+        // Bloques: [0]=B, [1]=SC, [2]=PUESTO, [3]=RESULT_TS02, [4]=Z
         const position = blocks[2];
 
         const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
         // Incluir el puesto en la respuesta
         responseBlocks.push(position);
 
-        // Resultados aleatorios para arranque/vacío: cantidad de impulsos
-        // Valor máximo 16,777,215 (3 bytes)
-        const randomValue = Math.floor(Math.random() * 16777216); // 0 a 16,777,215
-        // NO usamos el byte de signo , de esa forma podemos enviar numeros de 3 bytes
+        // Obtener o crear memoria del puesto
+        if (!this.positionMemory[position]) {
+            // Generar tiempo de espera aleatorio entre 0 y 3 segundos
+            const minWaitSeconds = Math.random() * 3; // 0 a 3 segundos
+
+            this.positionMemory[position] = {
+                position,
+                commandsReceived: [],
+                responsesSent: [],
+                ts02Counter: 0,
+                lastUpdate: new Date(),
+                minWaitSeconds,
+                lastCommandTime: new Date()
+            };
+        }
+
+        // Incrementar contador aleatoriamente para TS02 solo si ha pasado el tiempo mínimo de espera
+        const canUpdate = this.canUpdateRandomly(position);
+        const shouldIncrement = canUpdate && Math.random() < 0.5; // 50% de probabilidad de incrementar
+
+        if (shouldIncrement) {
+            this.positionMemory[position].ts02Counter++;
+            // Solo actualizar lastCommandTime cuando realmente incrementamos
+            this.positionMemory[position].lastCommandTime = new Date();
+        }
+
+        // La respuesta es directamente el valor del contador
+        const finalValue = this.positionMemory[position].ts02Counter;
+        // NO usamos el byte de signo, de esa forma podemos enviar numeros de 3 bytes
         const sign = '';
 
         // Para arranque/vacío: cantidad de impulsos, usar 3 bytes
-        const encodedValue = CommandDirector.encodeCompactNumber(randomValue, 3, 0);
+        const encodedValue = CommandDirector.encodeCompactNumber(finalValue, 3, 0);
         responseBlocks.push(`${sign}${encodedValue}`);
 
         responseBlocks.push(CommandDirector.CHAR_END);
-        return responseBlocks.join(CommandDirector.DIVIDER);
+
+        const response = responseBlocks.join(CommandDirector.DIVIDER);
+
+        // Guardar la respuesta en la memoria del puesto si existe
+        if (this.positionMemory[position]) {
+            this.positionMemory[position].responsesSent.push(response);
+        }
+
+        return response;
+    }
+
+    /**
+     * Extrae el puesto del comando del calculador
+     * @param command Comando completo
+     * @returns Número de puesto o null si no es un comando del calculador
+     */
+    private extractPositionFromCommand(command: string): string | null {
+        const blocks = CommandDirector.getBlocks(command);
+        // Para comandos del calculador: B|SC|PUESTO|COMANDO|Z
+        // El puesto está en el bloque 2 (índice 2)
+        if (blocks.length >= 3 && blocks[1] === 'SC') {
+            return blocks[2];
+        }
+        return null;
+    }
+
+    /**
+     * Actualiza la memoria del puesto con el comando recibido
+     * @param position Número de puesto
+     * @param command Comando recibido
+     */
+    private updatePositionMemory(position: string, command: string): void {
+        if (!this.positionMemory[position]) {
+            // Generar tiempo de espera aleatorio entre 0 y 3 segundos
+            const minWaitSeconds = Math.random() * 3; // 0 a 3 segundos
+
+            this.positionMemory[position] = {
+                position,
+                commandsReceived: [],
+                responsesSent: [],
+                ts02Counter: 0,
+                lastUpdate: new Date(),
+                minWaitSeconds,
+                lastCommandTime: new Date()
+            };
+        }
+
+        this.positionMemory[position].commandsReceived.push(command);
+        this.positionMemory[position].lastUpdate = new Date();
+    }
+
+    /**
+     * Verifica si el comando es RESET o STOP
+     * @param command Comando a verificar
+     * @returns true si es RESET o STOP
+     */
+    private isResetOrStopCommand(command: string): boolean {
+        const blocks = CommandDirector.getBlocks(command);
+        if (blocks.length >= 4 && blocks[1] === 'SC') {
+            const commandType = blocks[3];
+            return (
+                commandType === COMMANDS.Software.Calculator.RESET || commandType === COMMANDS.Software.Calculator.STOP
+            );
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si ha pasado el tiempo mínimo de espera para el puesto
+     * @param position Número de puesto
+     * @returns true si puede actualizarse aleatoriamente
+     */
+    private canUpdateRandomly(position: string): boolean {
+        const memory = this.positionMemory[position];
+        if (!memory) return false;
+
+        const now = new Date();
+        const timeSinceLastCommand = (now.getTime() - memory.lastCommandTime.getTime()) / 1000; // en segundos
+
+        return timeSinceLastCommand >= memory.minWaitSeconds;
+    }
+
+    /**
+     * Limpia la memoria del puesto especificado
+     * @param position Número de puesto
+     */
+    private clearPositionMemory(position: string): void {
+        if (this.positionMemory[position]) {
+            // Regenerar tiempo de espera aleatorio entre 0 y 3 segundos
+            const minWaitSeconds = Math.random() * 3; // 0 a 3 segundos
+
+            this.positionMemory[position].commandsReceived = [];
+            this.positionMemory[position].responsesSent = [];
+            this.positionMemory[position].ts02Counter = 0;
+            this.positionMemory[position].lastUpdate = new Date();
+            this.positionMemory[position].minWaitSeconds = minWaitSeconds;
+            this.positionMemory[position].lastCommandTime = new Date();
+        }
     }
 }

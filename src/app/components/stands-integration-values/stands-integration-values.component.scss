@@ -1,0 +1,51 @@
+// Estilos específicos para el componente stands-integration-values
+// Los estilos principales se heredan de PrimeNG y las clases de Tailwind
+
+app-stands-integration-values {
+  // Reducir el tamaño de los inputs del integrador inicial
+  .p-inputnumber {
+    height: 1.75rem !important;
+
+    .p-inputnumber-input {
+      min-width: 2rem !important;
+      width: 100% !important;
+      height: 1.75rem !important;
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.75rem !important;
+      line-height: 1.25rem !important;
+    }
+
+    .p-inputnumber-button-group {
+      height: 1.75rem !important;
+
+      .p-button {
+        height: 0.75rem !important;
+        width: 1rem !important;
+        padding: 0 !important;
+        font-size: 0.5rem !important;
+      }
+    }
+  }
+
+  // Asegurar que las filas tengan altura uniforme
+  .p-datatable-tbody > tr > td {
+    padding: 0.25rem 0.5rem !important;
+    vertical-align: middle !important;
+  }
+
+  // Efectos hover para botones de acción
+  .hover-info:hover {
+    color: var(--primary-color) !important;
+    background-color: var(--primary-color-text) !important;
+  }
+
+  .hover-success:hover {
+    color: var(--green-500) !important;
+    background-color: var(--green-100) !important;
+  }
+
+  .hover-danger:hover {
+    color: var(--orange-500) !important;
+    background-color: var(--orange-100) !important;
+  }
+}

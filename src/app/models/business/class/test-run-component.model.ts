@@ -7,10 +7,14 @@ import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 import { ActiveStand } from '../interafces/active-stand.model';
 import { Subject } from 'rxjs/internal/Subject';
-import { Observable } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
+import { MessagesService } from '../../../services/messages.service';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
+import { ExecutionDirector } from './execution-director.model';
+import { GeneratorAlarmType } from '../enums/generator-alarm-type.model';
+import { DeviceStatus } from '../enums/device-status.model';
 
 @Component({
     template: '',
@@ -25,20 +29,63 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     canContinue = false;
     isExecuting = false;
 
+    splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
+
+    showStepSelectionDialog = false;
+    previousSteps: EssayStep[] = [];
+    abortExecution$ = new Subject<void>();
+
     protected readonly runEssayService = inject(RunEssayService);
     protected readonly cd = inject(ChangeDetectorRef);
     protected readonly EnumAsOptionPipe = inject(EnumAsOptionPipe);
     protected readonly blockUIService = inject(BlockUIService);
     protected readonly deviceService = inject(DeviceService);
     protected readonly confirmationService = inject(ConfirmationService);
+    protected readonly messagesService = inject(MessagesService);
     protected readonly onDestroy = new Subject<void>();
 
     abstract readonly skipEnabled: boolean;
 
+    get allActiveStandsPassed(): boolean {
+        return this.getActiveStands().every(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Approved;
+        });
+    }
+
+    get hasAnyStandFailed(): boolean {
+        return this.getActiveStands().some(({ index }) => {
+            const result = this.runEssayService.getStandResult(this.currentStep.id, index).getRawValue();
+            return result.resultStatus === ResultStatus.Failed;
+        });
+    }
+
+    get continueButtonStyleClass(): string {
+        if (!this.canContinue) {
+            return 'p-button-secondary opacity-30';
+        }
+        if (this.allActiveStandsPassed) {
+            return 'p-button-success';
+        }
+        if (this.hasAnyStandFailed) {
+            return 'p-button-warning';
+        }
+        return '';
+    }
+
+    get hasPreviousStep(): boolean {
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        const currentStepIndex = executionSteps.findIndex((step) => step.id === this.currentStep.id);
+        return currentStepIndex > 0;
+    }
+
     ngOnInit(): void {
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();
+        this.updateSplitButtonItems();
         this.onStepInit();
+        this.restartResults(ResultStatus.Pending);
     }
 
     ngOnDestroy(): void {
@@ -101,6 +148,78 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.onRestart();
     }
 
+    retryPrevious(): void {
+        this.openStepSelectionDialog();
+    }
+
+    onStepSelectionCancel(): void {
+        this.showStepSelectionDialog = false;
+        this.cd.detectChanges();
+    }
+
+    onStepSelectionConfirm(data: { selectedSteps: EssayStep[] }): void {
+        this.onRetrySelectedSteps(data.selectedSteps);
+        this.showStepSelectionDialog = false;
+        this.cd.detectChanges();
+    }
+
+    onRetrySelectedSteps(selectedSteps: EssayStep[]): void {
+        // Deshabilitar el avance automático durante el retry
+        this.setAutoAdvanceEnabled(false);
+
+        // Primero apagar el generador antes de hacer retry
+        this.stopGenerator().subscribe(() => {
+            this.executeRetryLogic(selectedSteps);
+
+            // Rehabilitar el avance automático después del retry
+            this.setAutoAdvanceEnabled(true);
+        });
+    }
+
+    /**
+     * Detiene la ejecución del test actual
+     * - Bloquea la UI
+     * - Llama a abort
+     * - Espera que abort termine
+     * - Resetea el estado de ajuste de fotocélulas según la lógica de execution director
+     * - Mantiene el paso como current
+     */
+    stopExecution(): void {
+        // Bloquear la UI
+        this.blockUIService.setBlocked(true);
+
+        // Llamar a abort y esperar que termine
+        this.abort().subscribe({
+            next: () => {
+                // Resetea el estado de ajuste de fotocélulas según la lógica de execution director
+                this.resetPhotocellAdjustmentStatus(this.currentStep);
+
+                // Mantener el paso como current (no cambiar el executedStatus)
+
+                // Desbloquear la UI
+                this.blockUIService.setBlocked(false);
+
+                // Detectar cambios
+                this.cd.detectChanges();
+            },
+            error: () => {
+                // Desbloquear la UI incluso si hay error
+                this.blockUIService.setBlocked(false);
+
+                // Detectar cambios
+                this.cd.detectChanges();
+            }
+        });
+    }
+
+    /**
+     * Marca un step como Done sin avanzar automáticamente al siguiente
+     * @param essayStep El step a marcar como Done
+     */
+    protected markStepAsDone(essayStep: EssayStep): void {
+        this.runEssayService.getEssayStep(essayStep.id).get('executedStatus')?.setValue(StepStatus.Done);
+    }
+
     protected isAllStandsFailed(): boolean {
         return this.getActiveStands().every(
             ({ index }) =>
@@ -142,6 +261,171 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.startTest();
     }
 
+    protected updateSplitButtonItems(): void {
+        this.splitButtonItems = [
+            {
+                label: 'Reiniciar paso',
+                icon: 'pi pi-replay',
+                command: () => this.restart()
+            },
+            {
+                label: 'Reintentar otros pasos',
+                icon: 'pi pi-history',
+                command: () => this.retryPrevious(),
+                disabled: !this.hasPreviousStep
+            }
+        ];
+    }
+
+    protected stopGenerator(): Observable<void> {
+        // Este método debe ser sobrescrito en los componentes específicos
+        // para ejecutar la lógica de apagado del generador
+        return of(void 0);
+    }
+
+    /**
+     * Habilita o deshabilita el avance automático de steps
+     * @param enabled true para habilitar, false para deshabilitar
+     *
+     * @example
+     * // Deshabilitar avance automático para control manual
+     * this.setAutoAdvanceEnabled(false);
+     *
+     * // Marcar step como Done sin avanzar automáticamente
+     * this.markStepAsDone(this.currentStep);
+     *
+     * // Avanzar manualmente cuando sea necesario
+     * this.advanceToNextStep();
+     *
+     * // Rehabilitar avance automático
+     * this.setAutoAdvanceEnabled(true);
+     */
+    protected setAutoAdvanceEnabled(enabled: boolean): void {
+        this.runEssayService.setAutoAdvanceEnabled(enabled);
+    }
+
+    /**
+     * Avanza manualmente al siguiente step pendiente
+     * @returns true si se pudo avanzar, false si no hay más steps pendientes
+     *
+     * @example
+     * // Avanzar al siguiente step manualmente
+     * const advanced = this.advanceToNextStep();
+     * if (!advanced) {
+     *     console.log('No hay más steps pendientes');
+     * }
+     */
+    protected advanceToNextStep(): boolean {
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+
+        const nextExecutionStep = executionSteps.find(({ executedStatus }) => executedStatus === StepStatus.Pending);
+
+        if (!nextExecutionStep) {
+            // No hay más steps pendientes, avanzar al siguiente major step
+            this.runEssayService.nextMajorStep();
+            return false;
+        }
+
+        // Marcar el siguiente step como Current
+        this.runEssayService.getEssayStep(nextExecutionStep.id).get('executedStatus')?.setValue(StepStatus.Current);
+
+        return true;
+    }
+
+    /**
+     * Maneja las alarmas del generador
+     * @param alarmType Tipo de alarma del generador
+     */
+    protected handleGeneratorAlarm(alarmType: GeneratorAlarmType): void {
+        switch (alarmType) {
+            case GeneratorAlarmType.Overcurrent:
+                this.handleOvercurrentAlarm();
+                break;
+        }
+    }
+
+    /**
+     * Maneja la alarma de sobrecorriente
+     */
+    private handleOvercurrentAlarm(): void {
+        // stopea todas las rutinas de ejecución
+        this.abortExecution$.next();
+
+        // Apagar el generador inmediatamente
+        this.stopGenerator()
+            .pipe(
+                // abortar la ejecución, por si hay otro dispositivo en funcionamiento
+                switchMap(() => this.abort())
+            )
+            .subscribe(() => {
+                // Setear el estado del generador en error
+                this.setGeneratorErrorStatus();
+
+                // Mostrar alerta roja al usuario usando MessagesService
+                this.messagesService.error(GeneratorAlarmType.Overcurrent);
+            });
+    }
+
+    /**
+     * Setea el estado del generador en error
+     */
+    private setGeneratorErrorStatus(): void {
+        const generator = this.getGeneratorComponent();
+        if (generator) {
+            generator.deviceStatus$.next(DeviceStatus.Error);
+        }
+    }
+
+    private executeRetryLogic(selectedSteps: EssayStep[]): void {
+        // 1. Si el current step no está seleccionado, marcarlo como Done
+        const isCurrentStepSelected = selectedSteps.some((step) => step.id === this.currentStep.id);
+        if (!isCurrentStepSelected) {
+            this.markStepAsDone(this.currentStep);
+        }
+
+        // 2. Para todos los pasos seleccionados: marcarlos como Pending y reiniciar estados
+        selectedSteps.forEach((step) => {
+            // Marcar como Pending
+            this.runEssayService.getEssayStep(step.id).get('executedStatus')?.setValue(StepStatus.Pending);
+
+            // Reiniciar estado de fotocélulas según ExecutionDirector logic
+            this.resetPhotocellAdjustmentStatus(step);
+        });
+
+        // 3. Avanzar al siguiente step
+        this.advanceToNextStep();
+    }
+
+    private resetPhotocellAdjustmentStatus(step: EssayStep): void {
+        // Obtener todos los pasos de ejecución para calcular el estado inicial
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((s) => 'executedStatus' in s);
+        const stepIndex = executionSteps.findIndex((s) => s.id === step.id);
+
+        if (stepIndex !== -1) {
+            const photocellAdjustmentStatus = ExecutionDirector.getInitialPhotocellAdjustmentStatus(
+                executionSteps,
+                stepIndex
+            );
+            this.runEssayService
+                .getEssayStep(step.id)
+                .get('photocellAdjustmentStatus')
+                ?.setValue(photocellAdjustmentStatus);
+        }
+    }
+
+    private openStepSelectionDialog(): void {
+        const essaySteps = this.runEssayService.runEssayForm.getRawValue().essaySteps as EssayStep[];
+        const executionSteps = essaySteps.filter((step) => 'executedStatus' in step);
+        const currentStepIndex = executionSteps.findIndex((step) => step.id === this.currentStep.id);
+
+        // Obtener todos los pasos anteriores al actual
+        this.previousSteps = executionSteps.slice(0, currentStepIndex);
+        this.showStepSelectionDialog = true;
+        this.cd.detectChanges();
+    }
+
     abstract onStepInit(): void;
 
     abstract abort(): Observable<boolean>;
@@ -155,4 +439,22 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     abstract restartResults(resultStatus: ResultStatus): void;
 
     abstract onRestart(): void;
+
+    /**
+     * Obtiene la referencia al componente generador
+     * Debe ser implementado por los componentes hijos que tengan generador
+     */
+    protected abstract getGeneratorComponent(): any;
+
+    /**
+     * Obtiene la referencia al componente calculator
+     * Debe ser implementado por los componentes hijos que tengan calculator
+     */
+    protected abstract getCalculatorComponent(): any;
+
+    /**
+     * Obtiene la referencia al componente pattern
+     * Debe ser implementado por los componentes hijos que tengan pattern
+     */
+    protected abstract getPatternComponent(): any;
 }

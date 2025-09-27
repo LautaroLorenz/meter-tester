@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { PatternStatusWindowModule } from './pages/pattern-status-window/pattern-status-window.module';
+import { AlwaysOnTopToggleModule } from './components/always-on-top-toggle/always-on-top-toggle.module';
 
 const routes: Routes = [
     {
@@ -14,7 +15,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [CommonModule, RouterModule.forChild(routes), PatternStatusWindowModule],
+    imports: [CommonModule, RouterModule.forChild(routes), PatternStatusWindowModule, AlwaysOnTopToggleModule],
     providers: []
 })
 export class SecondaryWindowModule {}

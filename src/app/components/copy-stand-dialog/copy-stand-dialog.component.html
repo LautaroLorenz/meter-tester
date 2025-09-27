@@ -5,7 +5,7 @@
     [style]="{ width: '30rem' }"
     [closable]="false">
     <div class="p-fluid">
-        <p>Selecciona los puestos a los que quieres copiar los datos:</p>
+        <p>Seleccionar puestos a los que se copiarán los datos:</p>
 
         <button
             pButton
@@ -17,10 +17,10 @@
             *ngFor="let target of targets"
             class="target-checkbox">
             <p-checkbox
-                [label]="target.name"
-                [disabled]="!target.isActive"
+                [label]="getLabel(target)"
+                [disabled]="!target.isActive || target.isSource"
                 [binary]="true"
-                [ngModel]="selectedIndexes.has(target.index)"
+                [ngModel]="target.isSource ? true : selectedIndexes.has(target.index)"
                 (onChange)="toggle(target.index)">
             </p-checkbox>
         </div>

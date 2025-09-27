@@ -8,6 +8,7 @@ import { PhotocellAdjustmentStatus } from '../../../models/business/enums/photoc
 import { PreparationEssayStep } from '../../../models/business/interafces/steps/preparation-step.model';
 import { FormatDatePipe } from '../../../pipes/core/fomat-date.pipe';
 import { WakeLockService } from '../../../services/wake-lock.service';
+import { SecondaryWindowService } from '../../../services/secondary-window.service';
 
 @Component({
     selector: 'app-execution-major-step',
@@ -22,13 +23,15 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
 
     readonly PhotocellAdjustmentStatus = PhotocellAdjustmentStatus;
     readonly onDestroy = new Subject<void>();
+    private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
 
     private readonly formatDate = inject(FormatDatePipe);
 
     constructor(
         private readonly runEssayService: RunEssayService,
         private readonly wakeLockService: WakeLockService,
-    ) { }
+        private readonly secondaryWindowService: SecondaryWindowService
+    ) {}
 
     get executionSteps$(): Observable<EssayStep[]> {
         return this.runEssayService.executionSteps$.pipe(
@@ -50,16 +53,20 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
         forkJoin({
             executionSteps: this.executionSteps$.pipe(take(1)),
             preparationStep: this.preparationStep$.pipe(take(1))
-        }).pipe(
-            switchMap((result) => this.wakeLockService.activateWakeLock().pipe(map(() => result))),
-            tap(({ executionSteps, preparationStep }) => this.initExecutionsProps(executionSteps, preparationStep))
-        ).subscribe(() => this.start());
+        })
+            .pipe(
+                switchMap((result) => this.wakeLockService.activateWakeLock().pipe(map(() => result))),
+                tap(({ executionSteps, preparationStep }) => this.initExecutionsProps(executionSteps, preparationStep))
+            )
+            .subscribe(() => this.start());
 
         this.observeExecutionSteps();
     }
 
     ngOnDestroy(): void {
         this.wakeLockService.deactivateWakeLock().pipe(take(1)).subscribe();
+        // Cerrar la ventana secundaria patrón (si no esta abierta no pasa nada)
+        void this.secondaryWindowService.closeWindowByUrl(this.PATTERN_WINDOW_URL);
         this.onDestroy.next();
         this.onDestroy.complete();
     }
@@ -69,6 +76,10 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
             .getEssayStep(stepId)
             .get('photocellAdjustmentStatus')
             ?.setValue(PhotocellAdjustmentStatus.Done);
+    }
+
+    stepExecutionSkipped(stepId: number): void {
+        this.runEssayService.getEssayStep(stepId).get('executedStatus')?.setValue(StepStatus.Skipped);
     }
 
     private start(): void {
@@ -111,6 +122,11 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.onDestroy),
                 tap((steps) => {
+                    // si el avance automatico no está hablitado
+                    if(!this.runEssayService.isAutoAdvanceEnabled) {
+                        return;
+                    }
+
                     // si todos los steps se ejecutaron, avanzar al siguiente major step
                     if (this.isAllStepsDone(steps)) {
                         // FIXME no funciona en el modo skip de todos los steps
@@ -121,8 +137,8 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
                         //   ) as string,
                         // });
                         this.runEssayService.nextMajorStep();
-                    }
-                    // si un step paso a Executed Done, avanzar con la ejecución del próximo
+                    }     
+                    // si un step paso a Executed Done y el avance automático está habilitado, avanzar con la ejecución del próximo
                     if (this.isAnyCurrentStep(steps)) {
                         const nextExecutionStep = steps.find(
                             ({ executedStatus }) => executedStatus === StepStatus.Pending
@@ -136,13 +152,15 @@ export class ExecutionMajorStepComponent implements OnInit, OnDestroy {
                             .get('executedStatus')
                             ?.setValue(StepStatus.Current);
                     }
-                }),
+                })
             )
             .subscribe();
     }
 
     private isAllStepsDone(executionSteps: EssayStep[]): boolean {
-        return executionSteps.every(({ executedStatus }) => executedStatus === StepStatus.Done || executedStatus === StepStatus.Skipped);
+        return executionSteps.every(
+            ({ executedStatus }) => executedStatus === StepStatus.Done || executedStatus === StepStatus.Skipped
+        );
     }
 
     private isAnyCurrentStep(executionSteps: EssayStep[]): boolean {

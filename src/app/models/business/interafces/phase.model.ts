@@ -1,4 +1,5 @@
 export interface Phase {
+    isActive: boolean;
     voltage: number;
     current: number;
     anglePhi: number;

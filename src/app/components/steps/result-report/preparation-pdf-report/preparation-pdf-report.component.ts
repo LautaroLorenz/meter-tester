@@ -84,7 +84,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Active)}`,
                 field: (item): string =>
-                    this.standMeterConstantPipe.transform(MeterConstantEnum.Active, item?.foreign.meter),
+                    this.standMeterConstantPipe.transform(MeterConstantEnum.Active, item?.foreign?.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
                 headerStyle: 'min-width: 100px; white-space: nowrap;',
                 customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
@@ -92,7 +92,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Reactive)}`,
                 field: (item): string =>
-                    this.standMeterConstantPipe.transform(MeterConstantEnum.Reactive, item?.foreign.meter),
+                    this.standMeterConstantPipe.transform(MeterConstantEnum.Reactive, item?.foreign?.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
                 headerStyle: 'min-width: 100px; white-space: nowrap;',
                 customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'

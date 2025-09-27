@@ -2,5 +2,6 @@ export enum Steps {
     Preparation = 1,
     VacuumTest = 2,
     ContrastTest = 3,
-    BootTest = 4
+    BootTest = 4,
+    IntegrationTest = 5
 }

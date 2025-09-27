@@ -69,6 +69,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     }
 
     const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
+    const alwaysOnTop = options && 'alwaysOnTop' in options ? !!options.alwaysOnTop : false;
     const window = new BrowserWindow({
         ...openOffset(options),
         webPreferences: {
@@ -77,7 +78,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
             contextIsolation: false,
             devTools: openInspector
         },
-        alwaysOnTop: false,
+        alwaysOnTop: alwaysOnTop,
         ...options
     });
     window.setMenuBarVisibility(false);
@@ -160,6 +161,25 @@ export default {
             );
             if (!windowItem) return false;
             return windowItem.isReady;
+        });
+
+        // Toggle always on top for a specific window
+        ipcMain.handle('set-window-always-on-top', async (_, { windowId, alwaysOnTop }) => {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (windowItem && windowItem.window && !windowItem.window.isDestroyed()) {
+                windowItem.window.setAlwaysOnTop(alwaysOnTop);
+                return true;
+            }
+            return false;
+        });
+
+        // Get always on top state for a specific window
+        ipcMain.handle('get-window-always-on-top', async (_, { windowId }) => {
+            const windowItem = openedWindows.find((item) => item.id === windowId);
+            if (windowItem && windowItem.window && !windowItem.window.isDestroyed()) {
+                return windowItem.window.isAlwaysOnTop();
+            }
+            return false;
         });
     }
 };

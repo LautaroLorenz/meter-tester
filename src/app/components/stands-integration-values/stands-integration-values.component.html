@@ -1,0 +1,187 @@
+<p-table
+    styleClass="p-datatable-gridlines mx-3 p-datatable-sm"
+    [value]="integrationValues"
+    [columns]="columns">
+    <ng-template
+        pTemplate="header"
+        let-columns>
+        <tr>
+            <th
+                *ngFor="let col of columns"
+                class="text-center bg-gray-100 text-gray-600 font-medium text-xs uppercase tracking-wider"
+                [style]="col.headerStyle">
+                <div
+                    *ngIf="col.field === 'actions'"
+                    class="flex flex-column align-items-center gap-1">
+                    <div class="flex justify-content-center gap-1">
+                        <p-button
+                            icon="pi pi-calculator"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableCalculateError || !canCalculateAllErrors()"
+                            severity="info"
+                            pTooltip="Calcular todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-info"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onCalculateAllErrors()">
+                        </p-button>
+                        <p-button
+                            icon="pi pi-check"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualApproval || !canApproveAll()"
+                            severity="info"
+                            pTooltip="Aprobar todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-success"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onApproveAll()">
+                        </p-button>
+                        <p-button
+                            icon="pi pi-times"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualRejection || !canRejectAll()"
+                            severity="info"
+                            pTooltip="Rechazar todos"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-danger"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onRejectAll()">
+                        </p-button>
+                    </div>
+                </div>
+                <span *ngIf="col.field !== 'actions'">{{ col.header }}</span>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex">
+        <tr>
+            <td
+                *ngFor="let col of columns"
+                class="text-center text-gray-700 font-medium text-xs">
+                <ng-container [ngSwitch]="col.field">
+                    <!-- Columna Integrador inicial - manejo especial para input -->
+                    <div
+                        *ngSwitchCase="'initialIntegrator'"
+                        class="flex justify-content-center">
+                        <p-inputNumber
+                            *ngIf="rowData.isActive"
+                            [ngModel]="rowData.initialIntegrator"
+                            [min]="0"
+                            [max]="999999.999"
+                            [step]="1"
+                            [useGrouping]="false"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [disabled]="disableInitialIntegrator"
+                            placeholder="0.0"
+                            class="text-center text-xs"
+                            (ngModelChange)="onInitialIntegratorChange(rowIndex, $event)">
+                        </p-inputNumber>
+                    </div>
+                    <!-- Columna Integrador final - manejo especial para input -->
+                    <div
+                        *ngSwitchCase="'finalIntegrator'"
+                        class="flex justify-content-center">
+                        <p-inputNumber
+                            *ngIf="rowData.isActive"
+                            [ngModel]="rowData.finalIntegrator"
+                            [min]="0"
+                            [max]="999999.999"
+                            [step]="1"
+                            [useGrouping]="false"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [disabled]="disableFinalIntegrator || !canInputFinalIntegrator(rowIndex)"
+                            placeholder="0.0"
+                            class="text-center text-xs"
+                            (ngModelChange)="onFinalIntegratorChange(rowIndex, $event)">
+                        </p-inputNumber>
+                    </div>
+                    <!-- Columna de resultado -->
+                    <div
+                        *ngSwitchCase="'resultStatus'"
+                        class="flex justify-content-center">
+                        <app-result-status
+                            *ngIf="rowData.isActive"
+                            [resultStatus]="rowData.resultStatus">
+                        </app-result-status>
+                    </div>
+                    <!-- Columna de acciones - botones para cada puesto -->
+                    <div
+                        *ngSwitchCase="'actions'"
+                        class="flex justify-content-center gap-1">
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-calculator"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableCalculateError || !canCalculateError(rowIndex)"
+                            severity="info"
+                            pTooltip="Calcular"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-info"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onCalculateError(rowIndex)">
+                        </p-button>
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-check"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualApproval"
+                            severity="info"
+                            pTooltip="Aprobar"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-success"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onManualApproval(rowIndex)">
+                        </p-button>
+                        <p-button
+                            *ngIf="rowData.isActive"
+                            icon="pi pi-times"
+                            [text]="true"
+                            [rounded]="false"
+                            [disabled]="disableManualRejection"
+                            severity="info"
+                            pTooltip="Rechazar"
+                            tooltipPosition="top"
+                            [tooltipOptions]="{ showDelay: 500 }"
+                            styleClass="p-button-sm hover-danger"
+                            [style]="{ width: '2rem', height: '2rem', padding: '0' }"
+                            (click)="onManualRejection(rowIndex)">
+                        </p-button>
+                    </div>
+                    <!-- Otras columnas - usar app-table-column -->
+                    <app-table-column
+                        *ngSwitchDefault
+                        [tableColumn]="col"
+                        [data]="rowData"
+                        [index]="rowIndex"></app-table-column>
+                </ng-container>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<ng-template
+    #meterColumnTmp
+    let-item="item"
+    let-index="index">
+    <div class="meter-column text-xs text-gray-700">
+        <app-clamp [lines]="1">
+            {{ item.isActive ? item.meter : '' }}
+        </app-clamp>
+    </div>
+</ng-template>

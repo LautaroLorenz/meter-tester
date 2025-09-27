@@ -1,0 +1,28 @@
+<app-pdf-page>
+    <div class="flex flex-column p-3 gap-4">
+        <!-- Parámetros -->
+        <app-integration-test-params
+            [currentStep]="essayStep"
+            [showTexts]="false"></app-integration-test-params>
+
+        <!-- Fases -->
+        <app-phase-table
+            [showTexts]="false"
+            [phaseL1]="essayStep.form_control_raw.phaseL1"
+            [phaseL2]="essayStep.form_control_raw.phaseL2"
+            [phaseL3]="essayStep.form_control_raw.phaseL3"
+            [meterConstantEnum]="essayStep.form_control_raw.meterConstant"></app-phase-table>
+
+        <!-- Resultados -->
+        <div class="-mx-3">
+            <app-stands-result
+                [preparationStep]="preparationStep"
+                [results]="essayStep.standResults"
+                [resultsColumn]="resultsColumn"
+                [stepMeterConstant]="essayStep.form_control_raw.meterConstant"
+                [additionalColumns]="additionalColumns"
+                [additionalColumnsPosition]="'before'"
+                [compactMode]="true"></app-stands-result>
+        </div>
+    </div>
+</app-pdf-page>

@@ -12,6 +12,7 @@ import { DeviceStatus } from '../../../models/business/enums/device-status.model
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
+import { EMPTY_PHASE } from '../../../models/business/constants/phase-constants.model';
 
 @Component({
     selector: 'app-generator',
@@ -51,14 +52,37 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
         return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));
     }
 
+    startVoltageMode$(
+        stepMeterConstant: MeterConstantEnum,
+        phaseL1: Phase,
+        phaseL2: Phase,
+        phaseL3: Phase
+    ): Observable<string> {
+        // Crear fases con corriente en 0, manteniendo los demás valores
+        const phaseL1VoltageMode: Phase = {
+            ...phaseL1,
+            current: 0
+        };
+        const phaseL2VoltageMode: Phase = {
+            ...phaseL2,
+            current: 0
+        };
+        const phaseL3VoltageMode: Phase = {
+            ...phaseL3,
+            current: 0
+        };
+        return this.start$(stepMeterConstant, phaseL1VoltageMode, phaseL2VoltageMode, phaseL3VoltageMode);
+    }
+
     stop$(): Observable<string> {
         if (APP_CONFIG.generatorType === GeneratorEnum.Manual) {
             return of('');
         }
         this.deviceStatus$.next(DeviceStatus.StopInProgress);
-        return this.write$(this.buildCommand(COMMANDS.Software.Generator.STOP)).pipe(
-            tap(() => this.deviceStatus$.next(DeviceStatus.Stopped))
-        );
+        const commandBlocks: string[] = [COMMANDS.Software.Generator.STOP];
+        commandBlocks.push(...this.phasesToCommandPipe.transform(EMPTY_PHASE, EMPTY_PHASE, EMPTY_PHASE));
+        const command = this.buildCommand(...commandBlocks);
+        return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Stopped)));
     }
 
     ngOnInit(): void {

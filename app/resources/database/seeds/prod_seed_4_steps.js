@@ -6,7 +6,7 @@ const { runSeed } = require('../seeds-updater');
  */
 exports.seed = async function (knex) {
   const table = 'steps';
-  const curretVersion = '1.0.0';
+  const curretVersion = '1.1.0';
   await runSeed(knex, table, curretVersion, async () => {
     await knex(table)
       .insert([
@@ -28,6 +28,11 @@ exports.seed = async function (knex) {
         {
           id: 4,
           name: 'Prueba de arranque',
+          userSelectableOnCreateEssayTemplate: true,
+        },
+        {
+          id: 5,
+          name: 'Prueba de integración',
           userSelectableOnCreateEssayTemplate: true,
         },
       ])
