@@ -7,7 +7,7 @@ import { ResultStatus } from '../enums/result-status.model';
 import { EnumAsOptionPipe } from '../../../pipes/core/enum-as-option.pipe';
 import { ActiveStand } from '../interafces/active-stand.model';
 import { Subject } from 'rxjs/internal/Subject';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { DeviceService } from '../../../services/device.service';
 import { MessagesService } from '../../../services/messages.service';
@@ -353,18 +353,18 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.abortExecution$.next();
 
         // Apagar el generador inmediatamente
-        this.stopGenerator().subscribe(() => {
-            // abortar la ejecución, por si hay otro dispositivo en funcionamiento
-            this.abort();
+        this.stopGenerator()
+            .pipe(
+                // abortar la ejecución, por si hay otro dispositivo en funcionamiento
+                switchMap(() => this.abort())
+            )
+            .subscribe(() => {
+                // Setear el estado del generador en error
+                this.setGeneratorErrorStatus();
 
-            // Setear el estado del generador en error
-            this.setGeneratorErrorStatus();
-            this.setCalculatorErrorStatus();
-            this.setPatternUnknownStatus();
-
-            // Mostrar alerta roja al usuario usando MessagesService
-            this.messagesService.error(GeneratorAlarmType.Overcurrent);
-        });
+                // Mostrar alerta roja al usuario usando MessagesService
+                this.messagesService.error(GeneratorAlarmType.Overcurrent);
+            });
     }
 
     /**
@@ -374,26 +374,6 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         const generator = this.getGeneratorComponent();
         if (generator) {
             generator.deviceStatus$.next(DeviceStatus.Error);
-        }
-    }
-
-    /**
-     * Setea el estado del calculator en unknown
-     */
-    private setCalculatorErrorStatus(): void {
-        const calculator = this.getCalculatorComponent();
-        if (calculator) {
-            calculator.deviceStatus$.next(DeviceStatus.Error);
-        }
-    }
-
-    /**
-     * Setea el estado del pattern en unknown
-     */
-    private setPatternUnknownStatus(): void {
-        const pattern = this.getPatternComponent();
-        if (pattern) {
-            pattern.deviceStatus$.next(DeviceStatus.Unknown);
         }
     }
 
