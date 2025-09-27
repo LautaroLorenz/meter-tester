@@ -14,6 +14,14 @@ let connectionLogs: any;
 
 // Buffer para acumular datos hasta encontrar el final del comando
 let commandBuffer = '';
+// Timeout para esperar datos adicionales
+let dataTimeout: NodeJS.Timeout | null = null;
+// Tiempo de espera en milisegundos (ajustable)
+const DATA_WAIT_TIMEOUT = 100; // 100ms de espera
+// Tiempo máximo de espera
+const MAX_DATA_WAIT_TIMEOUT = 500; // 500ms máximo
+// Contador de intentos de procesamiento
+let processingAttempts = 0;
 
 // Función para configurar el parser personalizado
 function setupParser() {
@@ -21,14 +29,31 @@ function setupParser() {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
         commandBuffer += chunk;
-        // TODO eliminar console.log
-        console.log('commandBuffer', commandBuffer);
-        // Procesar todos los comandos completos en el buffer
-        processCommands();
+
+        // Cancelar timeout anterior si existe
+        if (dataTimeout) {
+            clearTimeout(dataTimeout);
+        }
+
+        // Calcular timeout adaptativo
+        const adaptiveTimeout = Math.min(DATA_WAIT_TIMEOUT + processingAttempts * 10, MAX_DATA_WAIT_TIMEOUT);
+
+        console.log(`Esperando ${adaptiveTimeout}ms antes de procesar (intento ${processingAttempts + 1})`);
+
+        // Establecer nuevo timeout para procesar después de un breve período
+        dataTimeout = setTimeout(() => {
+            processCommands();
+            dataTimeout = null;
+        }, adaptiveTimeout);
     });
 }
 
 function processCommands() {
+    processingAttempts++;
+    console.log(`Procesando comandos (intento ${processingAttempts}), buffer length:`, commandBuffer.length);
+
+    const initialBufferLength = commandBuffer.length;
+
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
@@ -56,6 +81,7 @@ function processCommands() {
 
                         // Remover el comando procesado del buffer
                         commandBuffer = commandBuffer.substring(command.length);
+                        processingAttempts = 0; // Resetear contador al procesar exitosamente
                         continue;
                     } else {
                         // Remover el comando completo ya que sabemos su tamaño
@@ -69,6 +95,7 @@ function processCommands() {
                 }
             } else if (command.length < commandSize.size) {
                 // No tenemos suficientes datos, esperar más
+                console.log('Comando incompleto, esperando más datos...');
                 break;
             } else {
                 // El comando es más largo de lo esperado, remover el comando completo
@@ -79,6 +106,11 @@ function processCommands() {
             // No se encontró ningún patrón reconocido, remover el primer carácter
             commandBuffer = commandBuffer.substring(1);
         }
+    }
+
+    // Si no se procesó nada y el buffer no cambió, incrementar timeout
+    if (commandBuffer.length === initialBufferLength && commandBuffer.length > 0) {
+        console.log('No se procesó ningún comando, incrementando timeout para el próximo intento');
     }
 }
 
@@ -116,6 +148,14 @@ function validateDividers(command: string, dividerPositions: number[]): boolean 
         }
     }
     return true;
+}
+
+// Función para limpiar el timeout al cerrar la conexión
+function clearDataTimeout() {
+    if (dataTimeout) {
+        clearTimeout(dataTimeout);
+        dataTimeout = null;
+    }
 }
 
 const machineResponse$ = new Subject<string>();
@@ -252,5 +292,9 @@ export default {
             });
         });
     },
-    onSoftwareWrite$: _onSoftwareWrite$.asObservable()
+    onSoftwareWrite$: _onSoftwareWrite$.asObservable(),
+    // Nueva función para limpiar recursos
+    cleanup: () => {
+        clearDataTimeout();
+    }
 };
