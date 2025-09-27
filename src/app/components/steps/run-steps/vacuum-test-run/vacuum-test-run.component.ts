@@ -51,7 +51,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         header: 'Impulsos',
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | VacuumTestStandResult;
-            return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
+            return 'measuredPulses' in realItem ? realItem?.measuredPulses?.toString() : '';
         },
         headerStyle: 'min-width:90px;font-size:15px;',
         customStyles: 'font-size:14px;'
