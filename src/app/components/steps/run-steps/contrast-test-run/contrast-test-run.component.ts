@@ -108,8 +108,6 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 resultStatus === ResultStatus.Locked &&
                 previousResultStatus !== ResultStatus.Locked
             ) {
-                // TODO eliminar console.log
-                console.log('enviar stop a puesto', `${standIndex + 1}`, `resultado[${result}]`);
                 this.calculator.stop$(standIndex).subscribe();
             }
         });

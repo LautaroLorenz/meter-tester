@@ -147,8 +147,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
     }
 
     private mapTSxxResponse(commands: string[]): CommandResultResponse[] {
-        return commands.map((command, index) => {
-            console.log(`index [${index + 1}] - command [${command}]`);
+        return commands.map((command) => {
             const blocks = CommandDirector.getBlocks(command);
 
             // El resultado está en el bloque 3 (índice 3)
