@@ -14,6 +14,14 @@ let connectionLogs: any;
 
 // Buffer para acumular datos hasta encontrar el final del comando
 let commandBuffer = '';
+// Timeout para esperar datos adicionales
+let dataTimeout: NodeJS.Timeout | null = null;
+// Tiempo de espera en milisegundos (ajustable)
+const DATA_WAIT_TIMEOUT = 100; // 100ms de espera
+// Tiempo máximo de espera
+const MAX_DATA_WAIT_TIMEOUT = 500; // 500ms máximo
+// Contador de intentos de procesamiento
+let processingAttempts = 0;
 
 // Función para configurar el parser personalizado
 function setupParser() {
@@ -21,33 +29,37 @@ function setupParser() {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
         commandBuffer += chunk;
-        // TODO eliminar console.log
-        console.log('commandBuffer', commandBuffer);
-        // Procesar todos los comandos completos en el buffer
-        processCommands();
+
+        // Cancelar timeout anterior si existe
+        if (dataTimeout) {
+            clearTimeout(dataTimeout);
+        }
+
+        // Calcular timeout adaptativo
+        const adaptiveTimeout = Math.min(DATA_WAIT_TIMEOUT + processingAttempts * 10, MAX_DATA_WAIT_TIMEOUT);
+
+        // Establecer nuevo timeout para procesar después de un breve período
+        dataTimeout = setTimeout(() => {
+            processCommands();
+            dataTimeout = null;
+        }, adaptiveTimeout);
     });
 }
 
 function processCommands() {
+    processingAttempts++;
+
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
-        // TODO eliminar console.log
-        console.log('recognizedCommand', recognizedCommand);
 
         if (recognizedCommand) {
             const { command, commandSize } = recognizedCommand;
 
             // Verificar que el comando tenga el tamaño correcto
-            // TODO eliminar console.log
-            console.log('command.length', command.length, 'commandSize.size', commandSize.size);
             if (command.length === commandSize.size) {
                 // Verificar que termine en 'Z'
-                // TODO eliminar console.log
-                console.log('command.endsWith(CHAR_END)', command.endsWith(CHAR_END));
                 if (command.endsWith(CHAR_END)) {
-                    // TODO eliminar console.log
-                    console.log('validateDividers', validateDividers(command, commandSize.dividerPositions));
                     // Verificar que los dividers estén en las posiciones correctas
                     if (validateDividers(command, commandSize.dividerPositions)) {
                         // Comando válido encontrado
@@ -56,6 +68,7 @@ function processCommands() {
 
                         // Remover el comando procesado del buffer
                         commandBuffer = commandBuffer.substring(command.length);
+                        processingAttempts = 0; // Resetear contador al procesar exitosamente
                         continue;
                     } else {
                         // Remover el comando completo ya que sabemos su tamaño
@@ -68,7 +81,6 @@ function processCommands() {
                     continue;
                 }
             } else if (command.length < commandSize.size) {
-                // No tenemos suficientes datos, esperar más
                 break;
             } else {
                 // El comando es más largo de lo esperado, remover el comando completo
@@ -116,6 +128,14 @@ function validateDividers(command: string, dividerPositions: number[]): boolean 
         }
     }
     return true;
+}
+
+// Función para limpiar el timeout al cerrar la conexión
+function clearDataTimeout() {
+    if (dataTimeout) {
+        clearTimeout(dataTimeout);
+        dataTimeout = null;
+    }
 }
 
 const machineResponse$ = new Subject<string>();
@@ -252,5 +272,9 @@ export default {
             });
         });
     },
-    onSoftwareWrite$: _onSoftwareWrite$.asObservable()
+    onSoftwareWrite$: _onSoftwareWrite$.asObservable(),
+    // Nueva función para limpiar recursos
+    cleanup: () => {
+        clearDataTimeout();
+    }
 };
