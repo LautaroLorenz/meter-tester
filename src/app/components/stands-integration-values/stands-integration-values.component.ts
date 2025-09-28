@@ -10,6 +10,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { TC_AlignHorizontal, TableColumn, TableColumnTemplateContext } from '../../models/core/table-column.model';
+import { formatHeaderWithUnits } from '../../utils/table-utils';
 
 export interface IntegrationValue {
     standNumber: string;
@@ -221,26 +222,26 @@ export class StandsIntegrationValuesComponent implements OnInit {
     private initializeColumns(): void {
         this.columns = [
             {
-                header: 'Puesto',
+                header: formatHeaderWithUnits('Puesto'),
                 field: (item: IntegrationValue) => item.standNumber,
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px; width: 60px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
-                header: 'Medidor',
+                header: formatHeaderWithUnits('Medidor'),
                 template: this.meterColumnTmp,
                 headerStyle: 'min-width: 150px; width: 150px;'
             },
             {
-                header: 'Nº de serie',
+                header: formatHeaderWithUnits('Nº de serie'),
                 field: (item: IntegrationValue) => (item.isActive ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 120px; width: 120px;',
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
-                header: 'Intg. Inicial [kWh]',
+                header: formatHeaderWithUnits('Intg. Inicial [kWh]'),
                 field: 'initialIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 132px; width: 132px;',
@@ -248,7 +249,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 headerTooltip: 'Integrador inicial [kWh]'
             },
             {
-                header: 'Intg. Final [kWh]',
+                header: formatHeaderWithUnits('Intg. Final [kWh]'),
                 field: 'finalIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 124px; width: 124px;',
@@ -256,7 +257,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 headerTooltip: 'Integrador final [kWh]'
             },
             {
-                header: 'Error [%]',
+                header: formatHeaderWithUnits('Error [%]'),
                 field: (item: IntegrationValue) =>
                     item.isActive && item.calculatedError !== null ? item.calculatedError.toFixed(2) : '',
                 alignHorizontal: TC_AlignHorizontal.Number,
@@ -264,7 +265,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
             },
             {
-                header: 'Resultado',
+                header: formatHeaderWithUnits('Resultado'),
                 field: 'resultStatus',
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 80px; width:100px;',
