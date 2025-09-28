@@ -50,7 +50,6 @@ function setupParser() {
 }
 function processCommands() {
     processingAttempts++;
-    const initialBufferLength = commandBuffer.length;
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
