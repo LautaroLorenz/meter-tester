@@ -662,6 +662,14 @@ export class IntegrationTestRunComponent
                 this.currentStep.form_control_raw.phaseL3
             )
             .pipe(
+                // Cambiar el estado de los resultados a locked
+                tap(() => {
+                    this.getActiveStands().forEach(({ index }) => {
+                        this.runEssayService
+                            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, index)
+                            .patchValue({ resultStatus: ResultStatus.Finalizing });
+                    });
+                }),
                 // Hacer una consulta final de resultados (una sola vez, sin loop)
                 switchMap(() => this.getResults$()),
                 // Cambiar al tab "Ingreso de valores" y poner stands en estado Pending

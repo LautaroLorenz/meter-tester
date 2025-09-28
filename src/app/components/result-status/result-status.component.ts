@@ -42,6 +42,8 @@ export class ResultStatusComponent {
                 return 'surface';
             case ResultStatus.WorkInProgress:
                 return 'info';
+            case ResultStatus.Finalizing:
+                return 'info';
             case ResultStatus.Locked:
                 return 'surface';
             case ResultStatus.Approved:
@@ -60,6 +62,8 @@ export class ResultStatusComponent {
                 return 'Esperando';
             case ResultStatus.WorkInProgress:
                 return 'Calculando';
+            case ResultStatus.Finalizing:
+                return 'Finalizando';
             case ResultStatus.Locked:
                 return 'Final';
             case ResultStatus.Approved:
@@ -74,6 +78,7 @@ export class ResultStatusComponent {
             case ResultStatus.Unknown:
             case ResultStatus.NotApply:
             case ResultStatus.Pending:
+            case ResultStatus.Finalizing:
                 return undefined;
             case ResultStatus.Locked:
                 return 'pi pi-lock';
