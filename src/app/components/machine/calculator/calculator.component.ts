@@ -74,10 +74,10 @@ export class CalculatorComponent extends MachineDeviceComponent {
      *
      * Funcionamiento:
      * 1. Genera comandos para todos los stands activos con los parámetros proporcionados
-     * 2. Para stands locked: crea observable mock que emite respuesta con signo 'x'
+     * 2. Para stands locked: crea observable mock que emite respuesta con signo 'X'
      * 3. Para stands activos: usa el observable real que hace la comunicación
      * 4. Procesa todas las respuestas de forma unificada con mapTSxxResponse
-     * 5. Stands locked automáticamente devuelven undefined (por signo 'x')
+     * 5. Stands locked automáticamente devuelven undefined (por signo 'X')
      *
      * @param activeStands Array de stands activos en el test
      * @param patternConstant Constante del patrón para el cálculo
@@ -97,11 +97,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
         const observables = activeStands.map((activeStand) => {
             const standIndex = activeStand.index;
 
-            // Si el stand está locked, crear observable mock con signo 'x'
+            // Si el stand está locked, crear observable mock con signo 'X'
             if (lockedStands?.has(standIndex)) {
                 const { standNumber } = this.createStandBlock(standIndex);
-                // Crear respuesta mock con signo 'x' para que sea ignorada
-                const mockResponse = `B|CS|${standNumber.toString().padStart(2, '0')}|x00|Z`;
+                // Crear respuesta mock con signo 'X' para que sea ignorada
+                const mockResponse = `B|CS|${standNumber.toString().padStart(2, '0')}|X00|Z`;
                 return of(mockResponse);
             }
 
@@ -148,8 +148,6 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     private mapTSxxResponse(commands: string[]): CommandResultResponse[] {
         return commands.map((command) => {
-            // TODO eliminar console.log
-            console.log('command', `${command}`);
             const blocks = CommandDirector.getBlocks(command);
 
             // El resultado está en el bloque 3 (índice 3)
@@ -165,7 +163,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
             const sign = resultBlock.charAt(0); // '-' o ' ' o 'X'
             const encodedValue = resultBlock.substring(1); // 2 caracteres con el valor codificado
 
-            // Si el signo es 'x', ignorar este resultado
+            // Si el signo es 'X', ignorar este resultado
             if (sign === 'X') {
                 return undefined;
             }
