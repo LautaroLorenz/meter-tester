@@ -240,18 +240,20 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
             },
             {
-                header: 'Integrador inicial',
+                header: 'Intg. Inicial [kWh]',
                 field: 'initialIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 142px; width: 142px;',
-                customStyles: 'text-align: center; width: 134px;'
+                headerStyle: 'min-width: 132px; width: 132px;',
+                customStyles: 'text-align: center;',
+                headerTooltip: 'Integrador inicial [kWh]'
             },
             {
-                header: 'Integrador final',
+                header: 'Intg. Final [kWh]',
                 field: 'finalIntegrator',
                 alignHorizontal: TC_AlignHorizontal.Number,
-                headerStyle: 'min-width: 134px; width: 134px;',
-                customStyles: 'text-align: center; width: 134px;'
+                headerStyle: 'min-width: 124px; width: 124px;',
+                customStyles: 'text-align: center;',
+                headerTooltip: 'Integrador final [kWh]'
             },
             {
                 header: 'Error [%]',

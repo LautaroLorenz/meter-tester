@@ -55,7 +55,13 @@
                         </p-button>
                     </div>
                 </div>
-                <span *ngIf="col.field !== 'actions'">{{ col.header }}</span>
+                <span
+                    *ngIf="col.field !== 'actions'"
+                    [pTooltip]="col.headerTooltip"
+                    tooltipPosition="top"
+                    [tooltipOptions]="{ showDelay: 500 }">
+                    {{ col.header }}
+                </span>
             </th>
         </tr>
     </ng-template>
