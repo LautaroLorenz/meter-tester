@@ -83,6 +83,7 @@ export interface TableColumnBase {
     headerTooltip?: string;
     headerStyle?: string;
     customStyles?: string;
+    tooltipStyleClass?: string;
 }
 
 export interface TableColumnField<T = any> extends TableColumnBase {

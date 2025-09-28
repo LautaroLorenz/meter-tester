@@ -59,7 +59,7 @@
                     *ngIf="col.field !== 'actions'"
                     [pTooltip]="col.headerTooltip"
                     tooltipPosition="top"
-                    [tooltipOptions]="{ showDelay: 500 }">
+                    [tooltipOptions]="{ showDelay: 500, tooltipStyleClass: col.tooltipStyleClass }">
                     {{ col.header }}
                 </span>
             </th>

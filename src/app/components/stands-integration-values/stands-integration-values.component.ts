@@ -246,7 +246,8 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 132px; width: 132px;',
                 customStyles: 'text-align: center;',
-                headerTooltip: 'Integrador inicial [kWh]'
+                headerTooltip: 'Integrador inicial [kWh]',
+                tooltipStyleClass: 'tooltip-wide'
             },
             {
                 header: formatHeaderWithUnits('Intg. Final [kWh]'),
@@ -254,7 +255,8 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 124px; width: 124px;',
                 customStyles: 'text-align: center;',
-                headerTooltip: 'Integrador final [kWh]'
+                headerTooltip: 'Integrador final [kWh]',
+                tooltipStyleClass: 'tooltip-wide'
             },
             {
                 header: formatHeaderWithUnits('Error [%]'),
