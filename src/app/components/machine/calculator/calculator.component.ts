@@ -162,11 +162,11 @@ export class CalculatorComponent extends MachineDeviceComponent {
             }
 
             // Extraer signo y valor codificado
-            const sign = resultBlock.charAt(0); // '-' o ' ' o 'x'
+            const sign = resultBlock.charAt(0); // '-' o ' ' o 'X'
             const encodedValue = resultBlock.substring(1); // 2 caracteres con el valor codificado
 
             // Si el signo es 'x', ignorar este resultado
-            if (sign === 'x') {
+            if (sign === 'X') {
                 return undefined;
             }
 
