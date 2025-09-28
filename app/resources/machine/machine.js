@@ -21,17 +21,36 @@ let portList;
 let connectionLogs;
 // Buffer para acumular datos hasta encontrar el final del comando
 let commandBuffer = '';
+// Timeout para esperar datos adicionales
+let dataTimeout = null;
+// Tiempo de espera en milisegundos (ajustable)
+const DATA_WAIT_TIMEOUT = 100; // 100ms de espera
+// Tiempo máximo de espera
+const MAX_DATA_WAIT_TIMEOUT = 500; // 500ms máximo
+// Contador de intentos de procesamiento
+let processingAttempts = 0;
 // Función para configurar el parser personalizado
 function setupParser() {
     serialPort.on('data', (data) => {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
         commandBuffer += chunk;
-        // Procesar todos los comandos completos en el buffer
-        processCommands();
+        // Cancelar timeout anterior si existe
+        if (dataTimeout) {
+            clearTimeout(dataTimeout);
+        }
+        // Calcular timeout adaptativo
+        const adaptiveTimeout = Math.min(DATA_WAIT_TIMEOUT + processingAttempts * 10, MAX_DATA_WAIT_TIMEOUT);
+        // Establecer nuevo timeout para procesar después de un breve período
+        dataTimeout = setTimeout(() => {
+            processCommands();
+            dataTimeout = null;
+        }, adaptiveTimeout);
     });
 }
 function processCommands() {
+    processingAttempts++;
+    const initialBufferLength = commandBuffer.length;
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
@@ -48,6 +67,7 @@ function processCommands() {
                         machineResponse$.next(command);
                         // Remover el comando procesado del buffer
                         commandBuffer = commandBuffer.substring(command.length);
+                        processingAttempts = 0; // Resetear contador al procesar exitosamente
                         continue;
                     }
                     else {
@@ -63,7 +83,6 @@ function processCommands() {
                 }
             }
             else if (command.length < commandSize.size) {
-                // No tenemos suficientes datos, esperar más
                 break;
             }
             else {
@@ -112,6 +131,13 @@ function validateDividers(command, dividerPositions) {
         }
     }
     return true;
+}
+// Función para limpiar el timeout al cerrar la conexión
+function clearDataTimeout() {
+    if (dataTimeout) {
+        clearTimeout(dataTimeout);
+        dataTimeout = null;
+    }
 }
 const machineResponse$ = new rxjs_1.Subject();
 const _onSoftwareWrite$ = new rxjs_1.Subject();
@@ -231,6 +257,10 @@ exports.default = {
             });
         }));
     },
-    onSoftwareWrite$: _onSoftwareWrite$.asObservable()
+    onSoftwareWrite$: _onSoftwareWrite$.asObservable(),
+    // Nueva función para limpiar recursos
+    cleanup: () => {
+        clearDataTimeout();
+    }
 };
 //# sourceMappingURL=machine.js.map

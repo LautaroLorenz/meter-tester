@@ -38,8 +38,6 @@ function setupParser() {
         // Calcular timeout adaptativo
         const adaptiveTimeout = Math.min(DATA_WAIT_TIMEOUT + processingAttempts * 10, MAX_DATA_WAIT_TIMEOUT);
 
-        console.log(`Esperando ${adaptiveTimeout}ms antes de procesar (intento ${processingAttempts + 1})`);
-
         // Establecer nuevo timeout para procesar después de un breve período
         dataTimeout = setTimeout(() => {
             processCommands();
@@ -50,29 +48,19 @@ function setupParser() {
 
 function processCommands() {
     processingAttempts++;
-    console.log(`Procesando comandos (intento ${processingAttempts}), buffer length:`, commandBuffer.length);
-
     const initialBufferLength = commandBuffer.length;
 
     while (commandBuffer.length > 0) {
         // Buscar el primer comando que coincida con algún patrón
         const recognizedCommand = findRecognizedCommand(commandBuffer);
-        // TODO eliminar console.log
-        console.log('recognizedCommand', recognizedCommand);
 
         if (recognizedCommand) {
             const { command, commandSize } = recognizedCommand;
 
             // Verificar que el comando tenga el tamaño correcto
-            // TODO eliminar console.log
-            console.log('command.length', command.length, 'commandSize.size', commandSize.size);
             if (command.length === commandSize.size) {
                 // Verificar que termine en 'Z'
-                // TODO eliminar console.log
-                console.log('command.endsWith(CHAR_END)', command.endsWith(CHAR_END));
                 if (command.endsWith(CHAR_END)) {
-                    // TODO eliminar console.log
-                    console.log('validateDividers', validateDividers(command, commandSize.dividerPositions));
                     // Verificar que los dividers estén en las posiciones correctas
                     if (validateDividers(command, commandSize.dividerPositions)) {
                         // Comando válido encontrado
@@ -94,8 +82,6 @@ function processCommands() {
                     continue;
                 }
             } else if (command.length < commandSize.size) {
-                // No tenemos suficientes datos, esperar más
-                console.log('Comando incompleto, esperando más datos...');
                 break;
             } else {
                 // El comando es más largo de lo esperado, remover el comando completo
@@ -106,11 +92,6 @@ function processCommands() {
             // No se encontró ningún patrón reconocido, remover el primer carácter
             commandBuffer = commandBuffer.substring(1);
         }
-    }
-
-    // Si no se procesó nada y el buffer no cambió, incrementar timeout
-    if (commandBuffer.length === initialBufferLength && commandBuffer.length > 0) {
-        console.log('No se procesó ningún comando, incrementando timeout para el próximo intento');
     }
 }
 
