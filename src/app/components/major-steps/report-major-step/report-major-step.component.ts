@@ -9,11 +9,10 @@ import {
     ViewChildren
 } from '@angular/core';
 import { RunEssayService } from '../../../services/run-essay.service';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { RunEssay } from '../../../models/business/interafces/run-essay.model';
 import { BlockUIService } from '../../../services/block-ui.service';
 import { MessagesService } from '../../../services/messages.service';
+import { PdfGenerationService } from '../../../services/pdf-generation.service';
 import { EssayStep } from '../../../models/business/interafces/essay-step.model';
 import { MajorStepsDirector } from '../../../models/business/class/major-steps-director.model';
 import { MajorSteps } from '../../../models/business/enums/major-steps.model';
@@ -62,7 +61,8 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         private readonly cd: ChangeDetectorRef,
         private readonly historyEssayService: HistoryEssayService,
         private readonly navigationService: NavigationService,
-        private readonly staticsService: StaticsService
+        private readonly staticsService: StaticsService,
+        private readonly pdfGenerationService: PdfGenerationService
     ) {
         this.runEssay = this.runEssayService.runEssayForm.getRawValue() as RunEssay;
         this.executionSteps = MajorStepsDirector.stepsByMajorStep(
@@ -79,7 +79,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         if (!this.executionSteps?.length) {
             this.exit();
         }
-        this.fileName = this.getFileName();
+        this.fileName = this.pdfGenerationService.generateFileName('reporte', this.runEssay.essayName);
         // reseteamos el valor que se esta mostrando para cada puesto en el calculador
         this.calculator.reset$(this.runEssayService.getActiveStands(this.preparationStep)).subscribe();
     }
@@ -93,16 +93,21 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
 
     downloadPDF(): void {
         this.isDownloading = true;
-        this.blockUIService.setBlocked(true);
         this.cd.detectChanges();
-        this.createPDF(this.fileName)
+
+        const pages = this.getPages();
+        const pdfPages = pages.map((page) => ({ html: page.html }));
+
+        this.pdfGenerationService
+            .generatePDFFromPages(pdfPages, this.fileName, { scale: 1.5, useCORS: true })
             .then(() => {
-                this.blockUIService.setBlocked(false);
                 this.isDownloading = false;
                 this.isFileDownloaded = true;
                 this.cd.detectChanges();
             })
             .catch(() => {
+                this.isDownloading = false;
+                this.cd.detectChanges();
                 this.messagesService.error('No se pudo crear el reporte');
             });
     }
@@ -113,38 +118,6 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
 
     saveAndExit(): void {
         this.saveOnHistory$().subscribe(() => this.exit());
-    }
-
-    private async createPDF(fileName: string): Promise<void> {
-        const pages = this.getPages();
-        const PDF = new jsPDF('p', 'mm', 'a4', true);
-        for (let index = 0; index < pages.length; index++) {
-            const page = pages[index];
-            if (index > 0) {
-                PDF.addPage();
-            }
-            const canvas = await html2canvas(page.html, {
-                scale: 1.5,
-                useCORS: true
-            });
-            const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg');
-            const width = PDF.internal.pageSize.getWidth();
-            const height = PDF.internal.pageSize.getHeight();
-            PDF.addImage(imageGeneratedFromTemplate, 'JPEG', 0, 0, width, height, undefined, 'FAST');
-        }
-        return PDF.save(fileName, { returnPromise: true });
-    }
-
-    private getFileName(): string {
-        const date = new Date();
-        const day = date.getDay().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear().toString().padStart(4, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
-        const formatedDate = `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`;
-        return `reporte_${this.runEssay.essayName}_${formatedDate}.pdf`;
     }
 
     private getPages(): PdfPageComponent[] {

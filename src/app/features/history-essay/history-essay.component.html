@@ -15,6 +15,14 @@
         <button
             pButton
             pRipple
+            label="Descargar PDF"
+            icon="pi pi-download"
+            class="p-button p-button-outlined p-button-info mr-2"
+            [disabled]="isDownloading"
+            (click)="downloadPDF()"></button>
+        <button
+            pButton
+            pRipple
             label="Eliminar"
             icon="pi pi-trash"
             class="p-button p-button-outlined p-button-danger"
@@ -23,7 +31,9 @@
 </app-page-title>
 
 <ng-container *ngIf="preparationStep && executionSteps">
-    <div class="report flex flex-column gap-4 align-items-center mt-4">
+    <div
+        #report
+        class="report flex flex-column gap-4 align-items-center mt-4">
         <app-report-step-switch
             [preparationStep]="preparationStep"
             [showPreparation]="true">
