@@ -61,7 +61,7 @@ export class ResultStatusComponent {
             case ResultStatus.WorkInProgress:
                 return 'Calculando';
             case ResultStatus.Locked:
-                return 'Bloqueado';
+                return 'Final';
             case ResultStatus.Approved:
                 return 'OK';
             case ResultStatus.Failed:
