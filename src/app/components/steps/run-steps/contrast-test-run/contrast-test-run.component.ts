@@ -78,7 +78,10 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
 
             // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
-                stand.patchValue({ measuredError: undefined });
+                // No limpiar el resultado si el stand ya está bloqueado
+                if (stand.getRawValue().resultStatus !== ResultStatus.Locked) {
+                    stand.patchValue({ measuredError: undefined });
+                }
                 return;
             }
             // bloqueo de resultado actual según modo de ejecución
@@ -106,7 +109,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 previousResultStatus !== ResultStatus.Locked
             ) {
                 // TODO eliminar console.log
-                console.log('enviar stop a puesto', `${standIndex + 1}`,`resultado[${result}]`);
+                console.log('enviar stop a puesto', `${standIndex + 1}`, `resultado[${result}]`);
                 this.calculator.stop$(standIndex).subscribe();
             }
         });
