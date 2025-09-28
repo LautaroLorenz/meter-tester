@@ -28,6 +28,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     canExecute = false;
     canContinue = false;
     isExecuting = false;
+    isStopTestInProgress = false;
 
     splitButtonItems: Array<{ label: string; icon: string; command: () => void; disabled?: boolean }> = [];
 
@@ -92,6 +93,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.runEssayService.canDeactivate = null;
         this.onDestroy.next();
         this.onDestroy.complete();
+        this.isStopTestInProgress = false;
     }
 
     getActiveStands(): ActiveStand[] {

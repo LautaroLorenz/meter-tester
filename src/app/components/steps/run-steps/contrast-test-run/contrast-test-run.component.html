@@ -23,10 +23,10 @@
             (click)="startTest()"></p-button>
 
         <p-splitButton
-            label="Continuar"
-            icon="pi pi-check"
+            [label]="isStopTestInProgress ? 'Deteniendo...' : 'Continuar'"
+            [icon]="isStopTestInProgress ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
             [model]="splitButtonItems"
-            [disabled]="!canContinue"
+            [disabled]="!canContinue || isStopTestInProgress"
             [styleClass]="continueButtonStyleClass"
             (onClick)="stepExecutionDone(this.currentStep)"></p-splitButton>
     </div>

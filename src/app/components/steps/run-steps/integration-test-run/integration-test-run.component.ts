@@ -310,11 +310,18 @@ export class IntegrationTestRunComponent
         // resetear banderas para permitir reintentos
         this.isPreparingForUserInput = false;
         this.isUserInputEnabled = false;
+
+        // Mostrar estado de carga en el botón continuar
+        this.isStopTestInProgress = true;
+        this.cd.detectChanges();
+
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
                 finalize(() => {
+                    // Ocultar estado de carga
+                    this.isStopTestInProgress = false;
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
@@ -326,7 +333,6 @@ export class IntegrationTestRunComponent
                 })
             )
             .subscribe();
-        this.cd.detectChanges();
     }
 
     override stepExecutionDone(essayStep: IntegrationTestEssayStep): void {
