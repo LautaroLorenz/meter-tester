@@ -17,20 +17,22 @@
 
         <div class="flex justify-content-end mb-8 gap-3">
             <p-button
+                label="Salir sin guardar"
                 [disabled]="isSaving"
                 (click)="exit()"
                 [outlined]="true">
-                Salir sin guardar
             </p-button>
             <p-button
+                icon="pi pi-download"
+                label="Descargar PDF"
+                [outlined]="true"
                 [disabled]="isDownloading"
                 (click)="downloadPDF()">
-                Descargar PDF
             </p-button>
             <p-button
+                label="Guardar y salir"
                 [disabled]="isSaving"
                 (click)="saveAndExit()">
-                Guardar y salir
             </p-button>
         </div>
     </div>
