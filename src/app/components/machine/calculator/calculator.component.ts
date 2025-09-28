@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
-import { Observable, map, tap, from, toArray, concatMap } from 'rxjs';
+import { Observable, map, tap, from, toArray, concatMap, of } from 'rxjs';
 import { Stand } from '../../../models/business/interafces/stand.model';
 import { MeterConstantEnum, MeterConstantUnitEnum } from '../../../models/business/constants/meter-constant.model';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
@@ -25,7 +25,21 @@ export class CalculatorComponent extends MachineDeviceComponent {
 
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
 
-    stop$(activeStands: ActiveStand[]): Observable<string[]> {
+    stop$(activeStands: ActiveStand[]): Observable<string[]>;
+    stop$(standIndex: number): Observable<string>;
+    stop$(activeStandsOrIndex: ActiveStand[] | number): Observable<string[] | string> {
+        // Handle single stand case
+        if (typeof activeStandsOrIndex === 'number') {
+            const standIndex = activeStandsOrIndex;
+            const { standNumber, standBlock } = this.createStandBlock(standIndex);
+            const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
+            return this.write$(command, () =>
+                this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
+            );
+        }
+
+        // Handle multiple stands case (original logic)
+        const activeStands = activeStandsOrIndex;
         const observables = activeStands.map(({ index }) => {
             const { standNumber, standBlock } = this.createStandBlock(index);
             const command = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
@@ -55,15 +69,44 @@ export class CalculatorComponent extends MachineDeviceComponent {
         );
     }
 
+    /**
+     * Solicita resultados de medición TS01 a los stands activos.
+     *
+     * Funcionamiento:
+     * 1. Genera comandos para todos los stands activos con los parámetros proporcionados
+     * 2. Para stands locked: crea observable mock que emite respuesta con signo 'x'
+     * 3. Para stands activos: usa el observable real que hace la comunicación
+     * 4. Procesa todas las respuestas de forma unificada con mapTSxxResponse
+     * 5. Stands locked automáticamente devuelven undefined (por signo 'x')
+     *
+     * @param activeStands Array de stands activos en el test
+     * @param patternConstant Constante del patrón para el cálculo
+     * @param stepMeterPulses Pulsos del medidor configurados en el paso
+     * @param stepMeterConstant Constante del medidor configurada en el paso
+     * @param lockedStands Set opcional de índices de stands que están locked
+     * @returns Observable que emite array de resultados con la misma longitud que activeStands
+     */
     resultsTS01$(
         activeStands: ActiveStand[],
         patternConstant: number,
         stepMeterPulses: number,
-        stepMeterConstant: MeterConstantEnum
+        stepMeterConstant: MeterConstantEnum,
+        lockedStands?: Set<number>
     ): Observable<CommandResultResponse[]> {
         // B|SC|P|T|xKPx|Xs|IxKm|Z
         const observables = activeStands.map((activeStand) => {
-            const { standNumber, standBlock } = this.createStandBlock(activeStand.index);
+            const standIndex = activeStand.index;
+
+            // Si el stand está locked, crear observable mock con signo 'x'
+            if (lockedStands?.has(standIndex)) {
+                const { standNumber } = this.createStandBlock(standIndex);
+                // Crear respuesta mock con signo 'x' para que sea ignorada
+                const mockResponse = `B|CS|${standNumber.toString().padStart(2, '0')}|x00|Z`;
+                return of(mockResponse);
+            }
+
+            // Stand activo: usar observable real
+            const { standNumber, standBlock } = this.createStandBlock(standIndex);
             const pattern = CommandDirector.encodeCompactNumber(patternConstant, 4, 0);
             const pulses = CommandDirector.encodeCompactNumber(stepMeterPulses, 2, 0);
             const meterConstant = this.getMeterConstantBlock(stepMeterConstant, activeStand.stand);
@@ -78,6 +121,7 @@ export class CalculatorComponent extends MachineDeviceComponent {
                 this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
             );
         });
+
         this.deviceStatus$.next(DeviceStatus.Working);
         return from(observables).pipe(
             concatMap((obs) => obs),
@@ -116,8 +160,13 @@ export class CalculatorComponent extends MachineDeviceComponent {
             }
 
             // Extraer signo y valor codificado
-            const sign = resultBlock.charAt(0); // '-' o ' '
+            const sign = resultBlock.charAt(0); // '-' o ' ' o 'x'
             const encodedValue = resultBlock.substring(1); // 2 caracteres con el valor codificado
+
+            // Si el signo es 'x', ignorar este resultado
+            if (sign === 'x') {
+                return undefined;
+            }
 
             // Decodificar el valor usando CommandDirector con los decimales apropiados
             const decodedValue = CommandDirector.decodeCompactNumber(encodedValue, this.resultDecimalsQuantity);
