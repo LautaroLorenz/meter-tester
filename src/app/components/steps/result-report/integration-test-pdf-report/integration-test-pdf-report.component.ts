@@ -75,10 +75,12 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
         if (hasIntegratorValues) {
             this.additionalColumns = [
                 {
-                    header: 'Integrador inicial',
+                    header: 'Integrador inicial [kWh]',
                     field: (item: StandStandResult): string => {
                         const realItem = item as Stand | IntegrationTestStandResult;
-                        return 'initialIntegrator' in realItem && realItem.initialIntegrator !== null
+                        return 'initialIntegrator' in realItem &&
+                            realItem.initialIntegrator !== null &&
+                            realItem.initialIntegrator !== undefined
                             ? realItem.initialIntegrator.toFixed(1)
                             : '';
                     },
@@ -87,10 +89,12 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                     customStyles: 'font-family: monospace; font-weight: 500; font-size: 14px;'
                 },
                 {
-                    header: 'Integrador final',
+                    header: 'Integrador final [kWh]',
                     field: (item: StandStandResult): string => {
                         const realItem = item as Stand | IntegrationTestStandResult;
-                        return 'finalIntegrator' in realItem && realItem.finalIntegrator !== null
+                        return 'finalIntegrator' in realItem &&
+                            realItem.finalIntegrator !== null &&
+                            realItem.finalIntegrator !== undefined
                             ? realItem.finalIntegrator.toFixed(1)
                             : '';
                     },
