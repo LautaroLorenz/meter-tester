@@ -38,7 +38,9 @@
         class="report flex flex-column gap-4 align-items-center mt-4">
         <app-report-step-switch
             [preparationStep]="preparationStep"
-            [showPreparation]="true">
+            [showPreparation]="true"
+            [essayName]="historyEssay?.run_raw?.essayName"
+            [executionDate]="historyEssay?.run_raw?.startDate">
         </app-report-step-switch>
 
         <ng-container *ngFor="let essayStep of executionSteps">

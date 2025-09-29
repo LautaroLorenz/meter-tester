@@ -1,6 +1,37 @@
 <app-pdf-page>
     <div class="flex flex-column p-3 gap-4">
         <span class="text-color-secondary font-medium">Preparación</span>
+
+        <!-- Información del ensayo -->
+        <!-- <div
+            *ngIf="companyName || brandDescription || essayName || executionDate"
+            class="flex flex-column gap-2 mb-3">
+            <div
+                *ngIf="companyName"
+                class="text-sm">
+                <span class="font-medium text-gray-600">Empresa:</span>
+                <span class="ml-2 text-gray-800">{{ companyName }}</span>
+            </div>
+            <div
+                *ngIf="brandDescription"
+                class="text-sm">
+                <span class="font-medium text-gray-600">Descripción de marca:</span>
+                <span class="ml-2 text-gray-800">{{ brandDescription }}</span>
+            </div>
+            <div
+                *ngIf="essayName"
+                class="text-sm">
+                <span class="font-medium text-gray-600">Nombre de ensayo:</span>
+                <span class="ml-2 text-gray-800">{{ essayName }}</span>
+            </div>
+            <div
+                *ngIf="executionDate"
+                class="text-sm">
+                <span class="font-medium text-gray-600">Fecha de ejecución:</span>
+                <span class="ml-2 text-gray-800">{{ executionDate | date: 'dd/MM/yyyy' }}</span>
+            </div>
+        </div> -->
+
         <div class="-mx-3">
             <p-table
                 styleClass="p-datatable-gridlines mx-3 p-datatable-sm stands-result-table"

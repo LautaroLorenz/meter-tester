@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     forwardRef,
     inject,
@@ -24,6 +25,8 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { MeterConstantEnum } from '../../../../models/business/constants/meter-constant.model';
 import { MeterConstantPipe } from '../../../../pipes/business/meter-constant.pipe';
 import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-constant.pipe';
+import { ClientSettingsService } from '../../../../services/client-settings.service';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-preparation-pdf-report',
@@ -39,13 +42,19 @@ import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-c
 })
 export class PreparationPdfReportComponent extends PdfReportComponent implements OnInit, OnChanges {
     @Input() preparationStep!: PreparationEssayStep;
+    @Input() essayName?: string;
+    @Input() executionDate?: string;
     @ViewChild('meterColumnTmp', { static: true }) meterColumnTmp!: TemplateRef<TableColumnTemplateContext<Stand>>;
 
     columns: TableColumn<Stand>[] = [];
     value: Stand[] = [];
+    companyName = '';
+    brandDescription = '';
 
     readonly meterConstantPipe = inject(MeterConstantPipe);
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
+    readonly clientSettingsService = inject(ClientSettingsService);
+    readonly cdr = inject(ChangeDetectorRef);
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.preparationStep) {
@@ -54,6 +63,9 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
     }
 
     ngOnInit(): void {
+        // Cargar client-settings
+        this.loadClientSettings();
+
         this.columns = [
             {
                 header: 'Puesto',
@@ -108,5 +120,22 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
             return [];
         }
         return preparationStep.form_control_raw;
+    }
+
+    private loadClientSettings(): void {
+        this.clientSettingsService
+            .getClientSettings$()
+            .pipe(finalize(() => this.cdr.detectChanges()))
+            .subscribe({
+                next: (settings) => {
+                    this.companyName = settings.companyName;
+                    this.brandDescription = settings.brandDescription;
+                },
+                error: () => {
+                    // Usar valores por defecto en caso de error
+                    this.companyName = '';
+                    this.brandDescription = '';
+                }
+            });
     }
 }

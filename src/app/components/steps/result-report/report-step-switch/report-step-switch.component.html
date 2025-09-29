@@ -1,5 +1,8 @@
 <ng-container *ngIf="showPreparation && preparationStep">
-    <app-preparation-pdf-report [preparationStep]="preparationStep"></app-preparation-pdf-report>
+    <app-preparation-pdf-report
+        [preparationStep]="preparationStep"
+        [essayName]="essayName"
+        [executionDate]="executionDate"></app-preparation-pdf-report>
 </ng-container>
 
 <ng-container
