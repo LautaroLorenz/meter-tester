@@ -41,7 +41,7 @@ export class PhaseTableComponent {
     }
 
     getPhaseCellStyles(): string {
-        return 'font-family: monospace; font-weight: 500; font-size: 0.75rem;';
+        return 'font-family: monospace; font-weight: 500; font-size: 0.75rem; white-space: nowrap;';
     }
 
     getSubHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
@@ -70,11 +70,11 @@ export class PhaseTableComponent {
     getDisplayValue(phase: Phase | Partial<Phase> | undefined, field: 'voltage' | 'current' | 'powerFactor'): string {
         if (this.shouldShowValue(phase, field)) {
             if (field === 'voltage') {
-                return `${phase?.voltage || 0} [V]`;
+                return `${(phase?.voltage || 0).toFixed(1)}[V]`;
             } else if (field === 'current') {
-                return `${phase?.current || 0} [A]`;
+                return `${(phase?.current || 0).toFixed(3)}[A]`;
             } else if (field === 'powerFactor') {
-                return `${phase?.powerFactor || 0}${phase?.powerFactorLetter || ''}`;
+                return `${(phase?.powerFactor || 0).toFixed(2)}${phase?.powerFactorLetter || ''}`;
             }
         }
         return '--';

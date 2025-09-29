@@ -31,9 +31,24 @@
     font-style: italic;
   }
 
+  th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   // Mejorar la separación visual
   .p-datatable-tbody > tr > td {
     border-left: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
+  }
+
+  // Ancho uniforme usando table-layout: fixed
+  .p-datatable-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .p-datatable-tbody > tr > td {
+    // width: 11.11%; // 100% / 9 columnas = ~11.11% cada una
   }
 }
