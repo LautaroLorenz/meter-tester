@@ -50,7 +50,6 @@ export class CommandProcessor {
      */
     processDataChunk(chunk: string): void {
         this.dataBuffer += chunk;
-        console.log('🔍 [COMMAND_PROCESSOR] Datos recibidos:', this.dataBuffer);
         // Si no hay respuesta pendiente, descartar datos
         if (!this.pendingResponse) {
             this.dataBuffer = '';
@@ -137,7 +136,6 @@ export class CommandProcessor {
     private validateDividers(response: string, dividerPositions: number[]): boolean {
         for (const position of dividerPositions) {
             if (position >= response.length) {
-                console.log(`[COMMAND_PROCESSOR] ERROR: Posición ${position} fuera de rango (${response.length})`);
                 return false;
             }
             if (response[position] !== DIVIDER) {
