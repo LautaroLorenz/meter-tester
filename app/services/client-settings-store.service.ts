@@ -1,6 +1,6 @@
 import { ClientSettings, DEFAULT_CLIENT_SETTINGS } from '../resources/client-settings/client-settings';
+import * as Store from 'electron-store';
 
-const Store = require('electron-store');
 const store = new Store({
     name: 'client-settings'
 });
