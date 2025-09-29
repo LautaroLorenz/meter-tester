@@ -33,6 +33,7 @@ import { DeviceStatus } from '../../../../models/business/enums/device-status.mo
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
 import { Phase } from '../../../../models/business/interafces/phase.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-vacuum-test-run',
@@ -48,7 +49,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Impulsos',
+        header: formatHeaderWithUnits('Impulsos'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | VacuumTestStandResult;
             return 'measuredPulses' in realItem ? realItem?.measuredPulses?.toString() : '';

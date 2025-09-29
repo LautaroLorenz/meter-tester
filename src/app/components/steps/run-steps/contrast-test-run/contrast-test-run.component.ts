@@ -33,6 +33,7 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-contrast-test-run',
@@ -52,7 +53,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     readonly StepRunModes: EnumAsOption[] = this.EnumAsOptionPipe.transform('StepRunMode', StepRunMode);
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error [%]',
+        header: formatHeaderWithUnits('Error [%]'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | ContrastTestStandResult;
             return 'measuredError' in realItem ? realItem.measuredError?.toFixed(2) : '';

@@ -34,6 +34,7 @@ import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-constant.pipe';
 import { MeterConstantUnitEnum } from '../../../../models/business/constants/meter-constant.model';
 
@@ -55,7 +56,7 @@ export class IntegrationTestRunComponent
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Impulsos',
+        header: formatHeaderWithUnits('Impulsos'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() || '' : '';

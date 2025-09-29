@@ -32,6 +32,7 @@ import { GeneratorComponent } from '../../../machine/generator/generator.compone
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
 import { merge } from 'rxjs/internal/observable/merge';
 import { defer } from 'rxjs/internal/observable/defer';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-boot-test-run',
@@ -50,7 +51,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Impulsos',
+        header: formatHeaderWithUnits('Impulsos'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | BootTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
