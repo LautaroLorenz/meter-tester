@@ -35,17 +35,34 @@ export class PdfGenerationService {
         fileName: string,
         options: PdfGenerationOptions = {}
     ): Promise<void> {
-        const { scale = 1.5, useCORS = false, format = 'a4', orientation = 'portrait' } = options;
+        const { scale = 1.5, format = 'a4', orientation = 'portrait' } = options;
 
-        const PDF = new jsPDF(orientation, 'mm', format, true);
+        const PDF = new jsPDF({
+            orientation,
+            unit: 'mm',
+            format,
+            compress: true,
+            precision: 2
+        });
+
         const canvas = await html2canvas(element, {
             scale,
-            useCORS
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            removeContainer: true,
+            foreignObjectRendering: false,
+            imageTimeout: 0
         });
-        const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg');
+
+        const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg', 0.8);
         const width = PDF.internal.pageSize.getWidth();
         const height = PDF.internal.pageSize.getHeight();
+
         PDF.addImage(imageGeneratedFromTemplate, 'JPEG', 0, 0, width, height, undefined, 'FAST');
+
+        // Limpieza de memoria - liberar canvas
+        canvas.remove();
 
         return PDF.save(fileName, { returnPromise: true });
     }
@@ -57,23 +74,41 @@ export class PdfGenerationService {
      * @param options Opciones de configuración para la generación
      */
     async generatePDFFromPages(pages: PdfPage[], fileName: string, options: PdfGenerationOptions = {}): Promise<void> {
-        const { scale = 1.5, useCORS = false, format = 'a4', orientation = 'portrait' } = options;
+        const { scale = 1.5, format = 'a4', orientation = 'portrait' } = options;
 
-        const PDF = new jsPDF(orientation, 'mm', format, true);
+        const PDF = new jsPDF({
+            orientation,
+            unit: 'mm',
+            format,
+            compress: true,
+            precision: 2
+        });
 
         for (let index = 0; index < pages.length; index++) {
             const page = pages[index];
+
             if (index > 0) {
                 PDF.addPage();
             }
+
             const canvas = await html2canvas(page.html, {
                 scale,
-                useCORS
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                removeContainer: true,
+                foreignObjectRendering: false,
+                imageTimeout: 0
             });
-            const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg');
+
+            const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg', 0.8);
             const width = PDF.internal.pageSize.getWidth();
             const height = PDF.internal.pageSize.getHeight();
+
             PDF.addImage(imageGeneratedFromTemplate, 'JPEG', 0, 0, width, height, undefined, 'FAST');
+
+            // Limpieza de memoria - liberar canvas
+            canvas.remove();
         }
 
         return PDF.save(fileName, { returnPromise: true });
