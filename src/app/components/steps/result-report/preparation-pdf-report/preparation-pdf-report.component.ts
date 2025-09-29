@@ -131,7 +131,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 next: (settings) => {
                     this.companyName = settings.companyName;
                     this.brandDescription = settings.brandDescription;
-                    this.companyLogo = 'assets/icons/edet-logo.png';
+                    this.companyLogo = 'assets/icons/company-logo.png';
                 },
                 error: () => {
                     // Usar valores por defecto en caso de error
