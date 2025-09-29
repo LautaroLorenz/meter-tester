@@ -1,4 +1,4 @@
-import { ClientSettings, DEFAULT_CLIENT_SETTINGS } from '../client-settings';
+import { ClientSettings, DEFAULT_CLIENT_SETTINGS } from '../resources/client-settings/client-settings';
 
 const Store = require('electron-store');
 const store = new Store({

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientSettingsStoreService = void 0;
-const client_settings_1 = require("../client-settings");
+const client_settings_1 = require("../resources/client-settings/client-settings");
 const Store = require('electron-store');
 const store = new Store({
     name: 'client-settings'

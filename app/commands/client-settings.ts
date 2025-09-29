@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { ClientSettingsStoreService } from '../services/client-settings-store.service';
-import { ClientSettings } from '../client-settings';
+import { ClientSettings } from '../resources/client-settings/client-settings';
 
 let clientSettingsStore: ClientSettingsStoreService;
 
