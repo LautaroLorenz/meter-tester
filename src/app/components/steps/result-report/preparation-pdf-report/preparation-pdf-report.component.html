@@ -1,34 +1,31 @@
 <app-pdf-page>
     <div class="flex flex-column p-3 gap-4">
-        <span class="text-color-secondary font-medium">Preparación</span>
-
-        <!-- Información del ensayo -->
-        <div
-            *ngIf="companyName || brandDescription || essayName || executionDate"
-            class="flex flex-column gap-2 mb-3">
+        <!-- Header de la Empresa -->
+        <div class="company-header mb-4">
             <div
                 *ngIf="companyName"
-                class="text-sm">
-                <span class="font-medium text-gray-600">Empresa:</span>
-                <span class="ml-2 text-gray-800">{{ companyName }}</span>
+                class="company-name-header">
+                {{ companyName }}
             </div>
             <div
                 *ngIf="brandDescription"
-                class="text-sm">
-                <span class="font-medium text-gray-600">Descripción de marca:</span>
-                <span class="ml-2 text-gray-800">{{ brandDescription }}</span>
+                class="company-description-header">
+                {{ brandDescription }}
             </div>
-            <div
-                *ngIf="essayName"
-                class="text-sm">
-                <span class="font-medium text-gray-600">Nombre de ensayo:</span>
-                <span class="ml-2 text-gray-800">{{ essayName }}</span>
+        </div>
+
+        <!-- Header del Reporte -->
+        <div class="report-header mb-4">
+            <div class="flex justify-content-start align-items-center mb-3">
+                <h1 class="report-title m-0">Reporte - {{ essayName || 'Ensayo' }}</h1>
             </div>
+
+            <!-- Fecha de ejecución -->
             <div
                 *ngIf="executionDate"
-                class="text-sm">
-                <span class="font-medium text-gray-600">Fecha de ejecución:</span>
-                <span class="ml-2 text-gray-800">{{ executionDate | date: 'dd/MM/yyyy' }}</span>
+                class="execution-date-section">
+                <span class="date-label">Fecha de ejecución:</span>
+                <span class="date-value">{{ executionDate | date: 'dd/MM/yyyy' }}</span>
             </div>
         </div>
 
