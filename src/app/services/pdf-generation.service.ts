@@ -19,6 +19,29 @@ export interface PdfPage {
     providedIn: 'root'
 })
 export class PdfGenerationService {
+    // Configuración común para jsPDF
+    private readonly defaultPdfConfig = {
+        unit: 'mm' as const,
+        compress: true,
+        precision: 2
+    };
+
+    // Configuración común para html2canvas
+    private readonly defaultCanvasConfig = {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        removeContainer: true,
+        foreignObjectRendering: false,
+        imageTimeout: 0
+    };
+
+    // Configuración común para imagen
+    private readonly defaultImageConfig = {
+        format: 'image/jpeg' as const,
+        quality: 0.8
+    };
+
     constructor(
         private readonly blockUIService: BlockUIService,
         private readonly messagesService: MessagesService
@@ -39,23 +62,19 @@ export class PdfGenerationService {
 
         const PDF = new jsPDF({
             orientation,
-            unit: 'mm',
             format,
-            compress: true,
-            precision: 2
+            ...this.defaultPdfConfig
         });
 
         const canvas = await html2canvas(element, {
             scale,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            removeContainer: true,
-            foreignObjectRendering: false,
-            imageTimeout: 0
+            ...this.defaultCanvasConfig
         });
 
-        const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg', 0.8);
+        const imageGeneratedFromTemplate = canvas.toDataURL(
+            this.defaultImageConfig.format,
+            this.defaultImageConfig.quality
+        );
         const width = PDF.internal.pageSize.getWidth();
         const height = PDF.internal.pageSize.getHeight();
 
@@ -78,10 +97,8 @@ export class PdfGenerationService {
 
         const PDF = new jsPDF({
             orientation,
-            unit: 'mm',
             format,
-            compress: true,
-            precision: 2
+            ...this.defaultPdfConfig
         });
 
         for (let index = 0; index < pages.length; index++) {
@@ -93,15 +110,13 @@ export class PdfGenerationService {
 
             const canvas = await html2canvas(page.html, {
                 scale,
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                removeContainer: true,
-                foreignObjectRendering: false,
-                imageTimeout: 0
+                ...this.defaultCanvasConfig
             });
 
-            const imageGeneratedFromTemplate = canvas.toDataURL('image/jpeg', 0.8);
+            const imageGeneratedFromTemplate = canvas.toDataURL(
+                this.defaultImageConfig.format,
+                this.defaultImageConfig.quality
+            );
             const width = PDF.internal.pageSize.getWidth();
             const height = PDF.internal.pageSize.getHeight();
 
