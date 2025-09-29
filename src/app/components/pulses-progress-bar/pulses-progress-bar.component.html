@@ -19,9 +19,9 @@
         <ng-template pTemplate="content">
             <div class="flex flex-column gap-1">
                 <div class="flex justify-content-between align-items-center">
-                    <span class="text-500 text-xs font-mono">0 pulsos</span>
-                    <span class="text-700 font-semibold text-sm font-mono">{{ percentage | number: '1.1-1' }}%</span>
-                    <span class="text-500 text-xs font-mono">{{ targetPulses }} pulsos</span>
+                    <span class="text-500 text-xs font-mono">0 [impulsos]</span>
+                    <span class="text-700 font-semibold text-sm font-mono">{{ pulsesCounted }} [impulsos]</span>
+                    <span class="text-500 text-xs font-mono">{{ targetPulses }} [impulsos]</span>
                 </div>
                 <p-progressBar
                     [value]="$any(percentage | number: '1.2-2')"
