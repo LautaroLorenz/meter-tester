@@ -4,7 +4,8 @@ import { BindingInterface } from '@serialport/bindings-interface';
 import { BehaviorSubject, Observable, Subject, filter, firstValueFrom, from, tap, timeout } from 'rxjs';
 import { SerialPortStream } from '@serialport/stream';
 import { CommandDirector } from './command-director';
-import { CommandProcessor, CommandProcessorConfig, CommandProcessorCallbacks } from './command-processor';
+import { CommandProcessor, CommandProcessorCallbacks } from './command-processor';
+import virtualMachine from '../virtual-machine/virtual-machine';
 
 let logsSenders: WebContents[] = [];
 let serialPort: SerialPortStream<BindingInterface>;
@@ -26,6 +27,9 @@ function setupParser() {
 
     // Crear instancia del procesador
     commandProcessor = new CommandProcessor(callbacks);
+
+    // Configurar el commandProcessor en la máquina virtual
+    virtualMachine.setCommandProcessor(commandProcessor);
 
     serialPort.on('data', (data) => {
         // Use 'latin1' encoding to preserve all byte values (0-255)
@@ -149,18 +153,24 @@ export default {
     },
     observeSoftwareWrite: (observable: Observable<string>) => {
         observable.subscribe(async (command) => {
+            // Iniciar procesamiento de respuesta esperada ANTES de enviar el comando
+            commandProcessor.startResponseProcessing(command);
+
             // escribir por el puerto USB
             const buffer = Buffer.from(command, 'latin1');
+
             await new Promise((resolve) => {
                 serialPort.write(buffer, (err) => {
                     if (err !== null && err !== undefined) {
-                        console.error('No se pudo enviar el comando', err);
+                        console.error('[MACHINE] ERROR: No se pudo enviar el comando', err);
                         resolve(false);
+                    } else {
                     }
                 });
                 serialPort.drain((err) => {
                     if (err !== null && err !== undefined) {
-                        console.error('No se pudo esperar a que se envie el comando', err);
+                        console.error('[MACHINE] ERROR: No se pudo esperar a que se envie el comando', err);
+                    } else {
                     }
                     resolve(err === null || err === undefined);
                 });

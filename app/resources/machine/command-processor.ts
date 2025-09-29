@@ -1,31 +1,47 @@
-import { CommandsSizes, CommandSize } from './command-size';
-import { CHAR_END, DIVIDER } from './constants';
-
-export interface CommandProcessorConfig {
-    dataWaitTimeout: number; // Timeout base para búsqueda de patrones (ms)
-}
+import { getExpectedResponse, CommandMapping } from './command-size';
+import { CHAR_START, CHAR_END, DIVIDER } from './constants';
 
 export interface CommandProcessorCallbacks {
     onCommandReceived: (command: string) => void;
     onCommandLog: (command: string) => void;
 }
 
-export class CommandProcessor {
-    private commandBuffer = '';
-    private dataTimeout: NodeJS.Timeout | null = null;
-    private callbacks: CommandProcessorCallbacks;
+interface PendingResponse {
+    expectedMapping: CommandMapping;
+    startTime: number;
+    timeoutId: NodeJS.Timeout | null;
+}
 
-    // Límite dinámico basado en el mayor tamaño de comando * 10
-    private readonly MAX_BUFFER_SIZE: number;
-    private readonly MAX_TIMEOUT_ATTEMPTS = 50;
-    private timeoutAttempts = 0;
+export class CommandProcessor {
+    private dataBuffer = '';
+    private pendingResponse: PendingResponse | null = null;
+    private callbacks: CommandProcessorCallbacks;
+    private readonly PROCESSING_TIMEOUT = 100; // 100ms máximo para procesar respuesta
 
     constructor(callbacks: CommandProcessorCallbacks) {
         this.callbacks = callbacks;
+    }
 
-        // Calcular límite dinámico basado en el mayor tamaño de comando * 10
-        const maxCommandSize = Math.max(...CommandsSizes.map((cmd) => cmd.size));
-        this.MAX_BUFFER_SIZE = maxCommandSize * 10;
+    /**
+     * Inicia el procesamiento de una respuesta esperada para un comando enviado
+     * @param sentCommand - Comando que se envió
+     */
+    startResponseProcessing(sentCommand: string): void {
+        const expectedMapping = getExpectedResponse(sentCommand);
+
+        if (!expectedMapping) {
+            return;
+        }
+
+        // Limpiar respuesta pendiente anterior si existe
+        this.clearPendingResponse();
+
+        // Configurar nueva respuesta pendiente (sin timeout aún)
+        this.pendingResponse = {
+            expectedMapping,
+            startTime: 0, // Se establecerá cuando se reciba CHAR_START
+            timeoutId: null // Se creará cuando se reciba CHAR_START
+        };
     }
 
     /**
@@ -33,155 +49,98 @@ export class CommandProcessor {
      * @param chunk - Datos recibidos como string
      */
     processDataChunk(chunk: string): void {
-        this.commandBuffer += chunk;
+        this.dataBuffer += chunk;
 
-        // Verificar límite de buffer (protección contra memory leak)
-        if (this.commandBuffer.length > this.MAX_BUFFER_SIZE) {
-            this.clearBuffer();
+        // Si no hay respuesta pendiente, descartar datos
+        if (!this.pendingResponse) {
+            this.dataBuffer = '';
             return;
         }
 
-        // Cancelar timeout anterior si existe
-        if (this.dataTimeout) {
-            clearTimeout(this.dataTimeout);
+        // a. Start Character Detection - Iniciar timer cuando se reciba CHAR_START
+        if (this.dataBuffer.length > 0 && this.dataBuffer[0] === CHAR_START && this.pendingResponse.startTime === 0) {
+            this.pendingResponse.startTime = Date.now();
+            this.pendingResponse.timeoutId = setTimeout(() => {
+                this.discardFrame();
+            }, this.PROCESSING_TIMEOUT);
         }
 
-        // Buscar comando reconocido para calcular timeout inteligente
-        const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
-
-        if (recognizedCommand) {
-            // Resetear contador cuando encuentra patrón válido
-            this.timeoutAttempts = 0;
-
-            const { commandSize, startIndex } = recognizedCommand;
-            const remainingChars = commandSize.size - (this.commandBuffer.length - startIndex);
-
-            if (remainingChars <= 0) {
-                // Comando completo - procesar inmediatamente
-                this.processCommands();
-                return;
-            }
-
-            // Calcular timeout inteligente basado en caracteres faltantes
-            const estimatedTime = this.calculateSmartTimeout(remainingChars);
-
-            this.dataTimeout = setTimeout(() => {
-                this.processCommands();
-                this.dataTimeout = null;
-            }, estimatedTime);
-        } else {
-            // Incrementar contador de intentos
-            this.timeoutAttempts++;
-
-            // Si excedemos intentos máximos, limpiar buffer
-            if (this.timeoutAttempts > this.MAX_TIMEOUT_ATTEMPTS) {
-                this.clearBuffer();
-                return;
-            }
-
-            // No se reconoce patrón - timeout corto para buscar patrones
-            this.dataTimeout = setTimeout(() => {
-                this.processCommands();
-                this.dataTimeout = null;
-            }, 10); // 10ms para detectar patrones
+        // Verificar si tenemos suficientes datos para procesar
+        if (this.dataBuffer.length < this.pendingResponse.expectedMapping.responseSize) {
+            return; // Esperar más datos
         }
+
+        // Procesar la respuesta
+        this.processResponse();
     }
 
     /**
-     * Procesa todos los comandos completos en el buffer
+     * Procesa la respuesta actual según el algoritmo mejorado
      */
-    private processCommands(): void {
-        while (this.commandBuffer.length > 0) {
-            // Buscar el primer comando que coincida con algún patrón
-            const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
-
-            if (recognizedCommand) {
-                const { command, commandSize, startIndex } = recognizedCommand;
-
-                // Verificar que el comando tenga el tamaño correcto
-                if (command.length === commandSize.size) {
-                    // Verificar que termine en 'Z'
-                    if (command.endsWith(CHAR_END)) {
-                        // Verificar que los dividers estén en las posiciones correctas
-                        if (this.validateDividers(command, commandSize.dividerPositions)) {
-                            // Comando válido encontrado
-                            this.callbacks.onCommandLog(command);
-                            this.callbacks.onCommandReceived(command);
-
-                            // Remover el comando procesado del buffer (incluyendo ruido antes)
-                            this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
-                            continue;
-                        } else {
-                            // Remover el comando completo ya que sabemos su tamaño (incluyendo ruido)
-                            this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
-                            continue;
-                        }
-                    } else {
-                        // Remover el comando completo ya que sabemos su tamaño (incluyendo ruido)
-                        this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
-                        continue;
-                    }
-                } else if (command.length < commandSize.size) {
-                    break;
-                } else {
-                    // El comando es más largo de lo esperado, remover el comando completo (incluyendo ruido)
-                    this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
-                    continue;
-                }
-            } else {
-                // No se encontró ningún patrón reconocido, remover el primer carácter
-                this.commandBuffer = this.commandBuffer.substring(1);
-            }
+    private processResponse(): void {
+        if (!this.pendingResponse) {
+            return;
         }
+
+        const { expectedMapping } = this.pendingResponse;
+        const response = this.dataBuffer.substring(0, expectedMapping.responseSize);
+
+        // a. Start Character Detection
+        if (response[0] !== CHAR_START) {
+            this.discardFrame();
+            return;
+        }
+
+        // b. Pattern Validation
+        if (!this.validatePattern(response, expectedMapping)) {
+            this.discardFrame();
+            return;
+        }
+
+        // c. Command Size Validation
+        if (response.length !== expectedMapping.responseSize) {
+            this.discardFrame();
+            return;
+        }
+
+        // d. End Character Validation
+        if (response[response.length - 1] !== CHAR_END) {
+            this.discardFrame();
+            return;
+        }
+
+        // e. Divider Positions Validation
+        if (!this.validateDividers(response, expectedMapping.responseDividerPositions)) {
+            this.discardFrame();
+            return;
+        }
+
+        // Respuesta válida encontrada
+        this.clearPendingResponse();
+        this.callbacks.onCommandLog(response);
+        this.callbacks.onCommandReceived(response);
+        this.dataBuffer = '';
     }
 
     /**
-     * Busca un comando reconocido en el buffer
-     * @param buffer - Buffer de datos a analizar
-     * @returns Comando encontrado, su tamaño y posición, o null si no se encuentra
+     * Valida que el patrón de la respuesta coincida con el esperado
      */
-    private findRecognizedCommand(
-        buffer: string
-    ): { command: string; commandSize: CommandSize; startIndex: number } | null {
-        for (const commandSize of CommandsSizes) {
-            // Buscar el patrón en cualquier parte del buffer, no solo al inicio
-            const regex = new RegExp(commandSize.pattern);
-            const match = buffer.match(regex);
-
-            if (match) {
-                const startIndex = match.index!;
-                const endIndex = startIndex + commandSize.size;
-
-                // Verificar que tenemos suficientes caracteres para el comando completo
-                if (buffer.length >= endIndex) {
-                    // Extraer comando válido y reportar ruido eliminado
-                    const command = buffer.substring(startIndex, endIndex);
-                    return { command, commandSize, startIndex };
-                } else {
-                    // No tenemos suficientes datos para este comando
-                    return null;
-                }
-            }
-        }
-        return null;
+    private validatePattern(response: string, expectedMapping: CommandMapping): boolean {
+        const regex = new RegExp(`^${expectedMapping.expectedResponse}`);
+        const isValid = regex.test(response);
+        return isValid;
     }
 
     /**
      * Valida que los dividers estén en las posiciones correctas
-     * @param command - Comando a validar
-     * @param dividerPositions - Posiciones donde deben estar los dividers
-     * @returns true si los dividers están en las posiciones correctas
      */
-    private validateDividers(command: string, dividerPositions: number[]): boolean {
+    private validateDividers(response: string, dividerPositions: number[]): boolean {
         for (const position of dividerPositions) {
-            // Verificar que la posición esté dentro del rango del comando
-            if (position < command.length) {
-                // Verificar que en esa posición haya un divider '|'
-                if (command[position] !== DIVIDER) {
-                    return false;
-                }
-            } else {
-                // Si la posición está fuera del rango, el comando no es válido
+            if (position >= response.length) {
+                console.log(`[COMMAND_PROCESSOR] ERROR: Posición ${position} fuera de rango (${response.length})`);
+                return false;
+            }
+            if (response[position] !== DIVIDER) {
                 return false;
             }
         }
@@ -189,55 +148,47 @@ export class CommandProcessor {
     }
 
     /**
+     * Descarta el frame actual y limpia el estado
+     */
+    private discardFrame(): void {
+        this.clearPendingResponse();
+        this.dataBuffer = '';
+    }
+
+    /**
+     * Limpia la respuesta pendiente y sus timeouts
+     */
+    private clearPendingResponse(): void {
+        if (this.pendingResponse) {
+            if (this.pendingResponse.timeoutId) {
+                clearTimeout(this.pendingResponse.timeoutId);
+            }
+            this.pendingResponse = null;
+        }
+    }
+
+    /**
      * Limpia el timeout y resetea el estado del procesador
      */
     cleanup(): void {
-        if (this.dataTimeout) {
-            clearTimeout(this.dataTimeout);
-            this.dataTimeout = null;
-        }
-        this.commandBuffer = '';
-        this.timeoutAttempts = 0;
+        this.clearPendingResponse();
+        this.dataBuffer = '';
     }
 
     /**
-     * Limpia el buffer y resetea contadores (para casos de error)
+     * Obtiene el estado actual del procesador (útil para debugging)
      */
-    private clearBuffer(): void {
-        this.commandBuffer = '';
-        this.timeoutAttempts = 0;
-        if (this.dataTimeout) {
-            clearTimeout(this.dataTimeout);
-            this.dataTimeout = null;
-        }
-    }
-
-    /**
-     * Obtiene el estado actual del buffer (útil para debugging)
-     */
-    getBufferState(): { bufferLength: number; maxBufferSize: number; timeoutAttempts: number } {
+    getState(): {
+        hasPendingResponse: boolean;
+        bufferLength: number;
+        expectedResponse?: string;
+        expectedSize?: number;
+    } {
         return {
-            bufferLength: this.commandBuffer.length,
-            maxBufferSize: this.MAX_BUFFER_SIZE,
-            timeoutAttempts: this.timeoutAttempts
+            hasPendingResponse: this.pendingResponse !== null,
+            bufferLength: this.dataBuffer.length,
+            expectedResponse: this.pendingResponse?.expectedMapping.expectedResponse,
+            expectedSize: this.pendingResponse?.expectedMapping.responseSize
         };
-    }
-
-    /**
-     * Calcula el timeout inteligente basado en caracteres faltantes
-     * @param remainingChars - Caracteres que faltan para completar el comando
-     * @param baudRate - Velocidad del puerto serie (opcional, por defecto 19200)
-     * @returns Tiempo estimado en milisegundos
-     */
-    private calculateSmartTimeout(remainingChars: number, baudRate: number = 19200): number {
-        // Calcular tiempo por carácter basado en baud rate
-        // 19200 baud ≈ 1920 caracteres/segundo ≈ 0.52ms por carácter
-        const msPerChar = 1000 / (baudRate / 10); // Aproximación para caracteres de 8 bits
-
-        // Timeout = caracteres faltantes * tiempo por carácter + margen de seguridad
-        const estimatedTime = remainingChars * msPerChar + 5; // +5ms margen
-
-        // Limitar entre 5ms (mínimo) y 50ms (máximo)
-        return Math.max(5, Math.min(50, estimatedTime));
     }
 }

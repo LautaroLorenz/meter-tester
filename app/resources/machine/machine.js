@@ -14,6 +14,7 @@ const serialport_1 = require("serialport");
 const rxjs_1 = require("rxjs");
 const command_director_1 = require("./command-director");
 const command_processor_1 = require("./command-processor");
+const virtual_machine_1 = require("../virtual-machine/virtual-machine");
 let logsSenders = [];
 let serialPort;
 let portList;
@@ -32,6 +33,8 @@ function setupParser() {
     };
     // Crear instancia del procesador
     commandProcessor = new command_processor_1.CommandProcessor(callbacks);
+    // Configurar el commandProcessor en la máquina virtual
+    virtual_machine_1.default.setCommandProcessor(commandProcessor);
     serialPort.on('data', (data) => {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
@@ -137,18 +140,24 @@ exports.default = {
     }),
     observeSoftwareWrite: (observable) => {
         observable.subscribe((command) => __awaiter(void 0, void 0, void 0, function* () {
+            // Iniciar procesamiento de respuesta esperada ANTES de enviar el comando
+            commandProcessor.startResponseProcessing(command);
             // escribir por el puerto USB
             const buffer = Buffer.from(command, 'latin1');
             yield new Promise((resolve) => {
                 serialPort.write(buffer, (err) => {
                     if (err !== null && err !== undefined) {
-                        console.error('No se pudo enviar el comando', err);
+                        console.error('[MACHINE] ERROR: No se pudo enviar el comando', err);
                         resolve(false);
+                    }
+                    else {
                     }
                 });
                 serialPort.drain((err) => {
                     if (err !== null && err !== undefined) {
-                        console.error('No se pudo esperar a que se envie el comando', err);
+                        console.error('[MACHINE] ERROR: No se pudo esperar a que se envie el comando', err);
+                    }
+                    else {
                     }
                     resolve(err === null || err === undefined);
                 });

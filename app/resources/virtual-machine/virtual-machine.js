@@ -21,6 +21,7 @@ const TRANSMISSION_CONFIG = {
     systemJitter: 2 // 2ms jitter variable
 };
 let secondaryWindowItem = null;
+let commandProcessor = null;
 /**
  * Calcula el delay de transmisión realista para un carácter
  * @param config - Configuración de transmisión
@@ -111,16 +112,28 @@ exports.default = {
         electron_1.ipcMain.handle('virtual-machine-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
             if (!(serialPort === null || serialPort === void 0 ? void 0 : serialPort.destroyed) && ((_a = serialPort.port) === null || _a === void 0 ? void 0 : _a.isOpen)) {
-                // Simular transmisión realista carácter por carácter
-                simulateRealisticTransmission(command, serialPort);
+                // // Simular transmisión realista carácter por carácter
+                // simulateRealisticTransmission(command, serialPort);
+                // por ahora no simulamos delays
+                const buffer = Buffer.from(command, 'latin1');
+                serialPort.port.emitData(buffer);
             }
         }));
     },
     getMockSerialPort: () => serialPort,
+    setCommandProcessor: (processor) => {
+        commandProcessor = processor;
+    },
     observeSoftwareWrite: (observable) => {
         observable.subscribe((command) => {
             var _a;
             if ((secondaryWindowItem === null || secondaryWindowItem === void 0 ? void 0 : secondaryWindowItem.window) && !((_a = secondaryWindowItem.window) === null || _a === void 0 ? void 0 : _a.isDestroyed())) {
+                // Iniciar procesamiento de respuesta esperada ANTES de enviar el comando
+                if (commandProcessor) {
+                    commandProcessor.startResponseProcessing(command);
+                }
+                else {
+                }
                 secondaryWindowItem.window.webContents.send('handle-software-write', command);
             }
         });

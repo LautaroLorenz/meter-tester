@@ -4,6 +4,7 @@ import { SerialPortStream } from '@serialport/stream';
 import { Observable } from 'rxjs';
 import secondaryWindow from '../secondary-window/secondary-window';
 import { WindowItem } from '../secondary-window/models/window-item.model';
+import { CommandProcessor } from '../machine/command-processor';
 
 // Configuración de simulación de transmisión real
 interface TransmissionConfig {
@@ -23,6 +24,7 @@ const TRANSMISSION_CONFIG: TransmissionConfig = {
 };
 
 let secondaryWindowItem: WindowItem | null = null;
+let commandProcessor: CommandProcessor | null = null;
 
 /**
  * Calcula el delay de transmisión realista para un carácter
@@ -129,15 +131,28 @@ export default {
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
         ipcMain.handle('virtual-machine-write', async (_, { command }) => {
             if (!serialPort?.destroyed && serialPort.port?.isOpen) {
-                // Simular transmisión realista carácter por carácter
-                simulateRealisticTransmission(command, serialPort);
+                // // Simular transmisión realista carácter por carácter
+                // simulateRealisticTransmission(command, serialPort);
+
+                // por ahora no simulamos delays
+                const buffer = Buffer.from(command, 'latin1');
+                serialPort.port.emitData(buffer);
             }
         });
     },
     getMockSerialPort: () => serialPort,
+    setCommandProcessor: (processor: CommandProcessor) => {
+        commandProcessor = processor;
+    },
     observeSoftwareWrite: (observable: Observable<string>) => {
         observable.subscribe((command) => {
             if (secondaryWindowItem?.window && !secondaryWindowItem.window?.isDestroyed()) {
+                // Iniciar procesamiento de respuesta esperada ANTES de enviar el comando
+                if (commandProcessor) {
+                    commandProcessor.startResponseProcessing(command);
+                } else {
+                }
+
                 secondaryWindowItem.window.webContents.send('handle-software-write', command);
             }
         });
