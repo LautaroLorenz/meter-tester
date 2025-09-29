@@ -4,8 +4,78 @@ import { SerialPortStream } from '@serialport/stream';
 import { Observable } from 'rxjs';
 import secondaryWindow from '../secondary-window/secondary-window';
 import { WindowItem } from '../secondary-window/models/window-item.model';
+import { CommandProcessor } from '../machine/command-processor';
+
+// Configuración de simulación de transmisión real
+interface TransmissionConfig {
+    baudRate: number; // Velocidad de transmisión
+    cableDelay: number; // Delay del cable (ms)
+    machineProcessingDelay: number; // Delay fijo del procesador de la máquina (ms)
+    hardwareBufferDelay: number; // Delay del buffer de hardware (ms)
+    systemJitter: number; // Jitter variable del sistema (ms)
+}
+
+const TRANSMISSION_CONFIG: TransmissionConfig = {
+    baudRate: 19200, // 19200 baud
+    cableDelay: 0.1, // 20m cable ≈ 0.1ms (despreciable)
+    machineProcessingDelay: 5, // 5ms fijo del procesador
+    hardwareBufferDelay: 1.5, // 1.5ms buffer hardware
+    systemJitter: 2 // 2ms jitter variable
+};
 
 let secondaryWindowItem: WindowItem | null = null;
+let commandProcessor: CommandProcessor | null = null;
+
+/**
+ * Calcula el delay de transmisión realista para un carácter
+ * @param config - Configuración de transmisión
+ * @returns Delay en milisegundos
+ */
+function calculateCharTransmissionDelay(config: TransmissionConfig): number {
+    // Tiempo por carácter basado en baud rate
+    const charTime = 1000 / (config.baudRate / 10); // ~0.52ms para 19200 baud
+
+    // Delay por carácter = tiempo por carácter + delays fijos por carácter + jitter variable
+    const fixedDelay = config.cableDelay + config.hardwareBufferDelay;
+    const jitter = Math.random() * config.systemJitter; // Jitter aleatorio 0-2ms
+
+    return charTime + fixedDelay + jitter;
+}
+
+/**
+ * Simula transmisión realista carácter por carácter
+ * @param command - Comando a transmitir
+ * @param serialPort - Puerto serie mock
+ */
+function simulateRealisticTransmission(command: string, serialPort: SerialPortStream<MockBindingInterface>): void {
+    let charIndex = 0;
+
+    function transmitNextChar(): void {
+        if (charIndex >= command.length) {
+            return; // Transmisión completada
+        }
+
+        // Emitir un solo carácter
+        const char = command[charIndex];
+        const buffer = Buffer.from(char, 'latin1');
+        if (serialPort.port) {
+            serialPort.port.emitData(buffer);
+        }
+
+        charIndex++;
+
+        // Calcular delay para el siguiente carácter
+        const delay = calculateCharTransmissionDelay(TRANSMISSION_CONFIG);
+
+        // Programar siguiente carácter
+        setTimeout(transmitNextChar, delay);
+    }
+
+    // Aplicar machineProcessingDelay una sola vez al inicio del comando
+    setTimeout(() => {
+        transmitNextChar();
+    }, TRANSMISSION_CONFIG.machineProcessingDelay);
+}
 
 MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
 const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream({
@@ -15,6 +85,32 @@ const serialPort: SerialPortStream<MockBindingInterface> = new SerialPortStream(
 });
 
 export default {
+    /**
+     * Actualiza la configuración de transmisión
+     * @param config - Nueva configuración de transmisión
+     */
+    updateTransmissionConfig: (config: Partial<TransmissionConfig>) => {
+        Object.assign(TRANSMISSION_CONFIG, config);
+    },
+
+    /**
+     * Obtiene la configuración actual de transmisión
+     */
+    getTransmissionConfig: (): TransmissionConfig => {
+        return { ...TRANSMISSION_CONFIG };
+    },
+
+    /**
+     * Calcula el tiempo total de transmisión para un comando
+     * @param commandLength - Longitud del comando
+     * @returns Tiempo total estimado en milisegundos
+     */
+    calculateTotalTransmissionTime: (commandLength: number): number => {
+        const charDelay = calculateCharTransmissionDelay(TRANSMISSION_CONFIG);
+        // machineProcessingDelay se aplica una sola vez al inicio del comando
+        return TRANSMISSION_CONFIG.machineProcessingDelay + charDelay * commandLength;
+    },
+
     register: () => {
         ipcMain.handle('open-virtual-machine', async () => {
             secondaryWindowItem = secondaryWindow.openWindow('maquina-virtual');
@@ -35,16 +131,28 @@ export default {
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
         ipcMain.handle('virtual-machine-write', async (_, { command }) => {
             if (!serialPort?.destroyed && serialPort.port?.isOpen) {
-                // Convert string to Buffer using latin1 encoding to preserve all byte values
+                // // Simular transmisión realista carácter por carácter
+                // simulateRealisticTransmission(command, serialPort);
+
+                // por ahora no simulamos delays
                 const buffer = Buffer.from(command, 'latin1');
                 serialPort.port.emitData(buffer);
             }
         });
     },
     getMockSerialPort: () => serialPort,
+    setCommandProcessor: (processor: CommandProcessor) => {
+        commandProcessor = processor;
+    },
     observeSoftwareWrite: (observable: Observable<string>) => {
         observable.subscribe((command) => {
             if (secondaryWindowItem?.window && !secondaryWindowItem.window?.isDestroyed()) {
+                // Iniciar procesamiento de respuesta esperada ANTES de enviar el comando
+                if (commandProcessor) {
+                    commandProcessor.startResponseProcessing(command);
+                } else {
+                }
+
                 secondaryWindowItem.window.webContents.send('handle-software-write', command);
             }
         });

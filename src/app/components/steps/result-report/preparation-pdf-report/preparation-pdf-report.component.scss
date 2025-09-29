@@ -98,6 +98,20 @@
   padding: 0.75rem 0 1.5rem 0;
 }
 
+// Título de la tabla de referencias
+.table-title-section {
+  padding: 0 1rem;
+}
+
+.table-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6c757d;
+  letter-spacing: 0.25px;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
 // Tabla de resultados
 ::ng-deep .stands-result-table {
   .p-datatable-thead > tr > th {
