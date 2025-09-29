@@ -50,6 +50,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
     value: Stand[] = [];
     companyName = '';
     brandDescription = '';
+    companyLogo = '';
 
     readonly meterConstantPipe = inject(MeterConstantPipe);
     readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
@@ -130,11 +131,13 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 next: (settings) => {
                     this.companyName = settings.companyName;
                     this.brandDescription = settings.brandDescription;
+                    this.companyLogo = 'assets/icons/edet-logo.png';
                 },
                 error: () => {
                     // Usar valores por defecto en caso de error
                     this.companyName = '';
                     this.brandDescription = '';
+                    this.companyLogo = '';
                 }
             });
     }

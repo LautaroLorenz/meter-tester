@@ -3,8 +3,13 @@
         <!-- Header de la hoja con fecha -->
         <div class="page-header">
             <div class="company-info">
+                <img
+                    *ngIf="companyLogo"
+                    [src]="companyLogo"
+                    [alt]="companyName"
+                    class="company-logo" />
                 <div
-                    *ngIf="companyName"
+                    *ngIf="!companyLogo && companyName"
                     class="company-name-header">
                     {{ companyName }}
                 </div>
@@ -17,7 +22,7 @@
             <div
                 *ngIf="executionDate"
                 class="execution-date-header">
-                <span class="date-label">FECHA DE EJECUCIÓN:</span>
+                <span class="date-label">FECHA DE EJECUCIÓN</span>
                 <span class="date-value">{{ executionDate | date: 'dd/MM/yyyy' }}</span>
             </div>
         </div>
