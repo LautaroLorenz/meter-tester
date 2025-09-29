@@ -13,130 +13,35 @@ const electron_1 = require("electron");
 const serialport_1 = require("serialport");
 const rxjs_1 = require("rxjs");
 const command_director_1 = require("./command-director");
-const command_size_1 = require("./command-size");
-const constants_1 = require("./constants");
+const command_processor_1 = require("./command-processor");
 let logsSenders = [];
 let serialPort;
 let portList;
 let connectionLogs;
-// Buffer para acumular datos hasta encontrar el final del comando
-let commandBuffer = '';
-// Timeout para esperar datos adicionales
-let dataTimeout = null;
-// Tiempo de espera en milisegundos (ajustable)
-const DATA_WAIT_TIMEOUT = 100; // 100ms de espera
-// Tiempo máximo de espera
-const MAX_DATA_WAIT_TIMEOUT = 500; // 500ms máximo
-// Contador de intentos de procesamiento
-let processingAttempts = 0;
+let commandProcessor;
 // Función para configurar el parser personalizado
 function setupParser() {
+    // Configuración del procesador de comandos
+    const config = {
+        dataWaitTimeout: 100,
+        maxDataWaitTimeout: 500 // 500ms máximo
+    };
+    // Callbacks para manejar comandos recibidos
+    const callbacks = {
+        onCommandReceived: (command) => {
+            machineResponse$.next(command);
+        },
+        onCommandLog: (command) => {
+            addCommandLog(command);
+        }
+    };
+    // Crear instancia del procesador
+    commandProcessor = new command_processor_1.CommandProcessor(config, callbacks);
     serialPort.on('data', (data) => {
         // Use 'latin1' encoding to preserve all byte values (0-255)
         const chunk = data.toString('latin1');
-        commandBuffer += chunk;
-        // Cancelar timeout anterior si existe
-        if (dataTimeout) {
-            clearTimeout(dataTimeout);
-        }
-        // Calcular timeout adaptativo
-        const adaptiveTimeout = Math.min(DATA_WAIT_TIMEOUT + processingAttempts * 10, MAX_DATA_WAIT_TIMEOUT);
-        // Establecer nuevo timeout para procesar después de un breve período
-        dataTimeout = setTimeout(() => {
-            processCommands();
-            dataTimeout = null;
-        }, adaptiveTimeout);
+        commandProcessor.processDataChunk(chunk);
     });
-}
-function processCommands() {
-    processingAttempts++;
-    while (commandBuffer.length > 0) {
-        // Buscar el primer comando que coincida con algún patrón
-        const recognizedCommand = findRecognizedCommand(commandBuffer);
-        if (recognizedCommand) {
-            const { command, commandSize } = recognizedCommand;
-            // Verificar que el comando tenga el tamaño correcto
-            if (command.length === commandSize.size) {
-                // Verificar que termine en 'Z'
-                if (command.endsWith(constants_1.CHAR_END)) {
-                    // Verificar que los dividers estén en las posiciones correctas
-                    if (validateDividers(command, commandSize.dividerPositions)) {
-                        // Comando válido encontrado
-                        addCommandLog(command);
-                        machineResponse$.next(command);
-                        // Remover el comando procesado del buffer
-                        commandBuffer = commandBuffer.substring(command.length);
-                        processingAttempts = 0; // Resetear contador al procesar exitosamente
-                        continue;
-                    }
-                    else {
-                        // Remover el comando completo ya que sabemos su tamaño
-                        commandBuffer = commandBuffer.substring(command.length);
-                        continue;
-                    }
-                }
-                else {
-                    // Remover el comando completo ya que sabemos su tamaño
-                    commandBuffer = commandBuffer.substring(command.length);
-                    continue;
-                }
-            }
-            else if (command.length < commandSize.size) {
-                break;
-            }
-            else {
-                // El comando es más largo de lo esperado, remover el comando completo
-                commandBuffer = commandBuffer.substring(command.length);
-                continue;
-            }
-        }
-        else {
-            // No se encontró ningún patrón reconocido, remover el primer carácter
-            commandBuffer = commandBuffer.substring(1);
-        }
-    }
-}
-function findRecognizedCommand(buffer) {
-    for (const commandSize of command_size_1.CommandsSizes) {
-        // Usar directamente el patrón como regex (ya está escapado en CommandsSizes)
-        const regex = new RegExp(`^${commandSize.pattern}`);
-        // Verificar si el buffer hace match con el patrón regex
-        if (regex.test(buffer)) {
-            // Si el buffer tiene al menos el tamaño mínimo para este comando, extraer el comando
-            if (buffer.length >= commandSize.size) {
-                const command = buffer.substring(0, commandSize.size);
-                return { command, commandSize };
-            }
-            else {
-                // No tenemos suficientes datos para este comando, pero el patrón coincide
-                return null;
-            }
-        }
-    }
-    return null;
-}
-function validateDividers(command, dividerPositions) {
-    for (const position of dividerPositions) {
-        // Verificar que la posición esté dentro del rango del comando
-        if (position < command.length) {
-            // Verificar que en esa posición haya un divider '|'
-            if (command[position] !== constants_1.DIVIDER) {
-                return false;
-            }
-        }
-        else {
-            // Si la posición está fuera del rango, el comando no es válido
-            return false;
-        }
-    }
-    return true;
-}
-// Función para limpiar el timeout al cerrar la conexión
-function clearDataTimeout() {
-    if (dataTimeout) {
-        clearTimeout(dataTimeout);
-        dataTimeout = null;
-    }
 }
 const machineResponse$ = new rxjs_1.Subject();
 const _onSoftwareWrite$ = new rxjs_1.Subject();
@@ -259,7 +164,9 @@ exports.default = {
     onSoftwareWrite$: _onSoftwareWrite$.asObservable(),
     // Nueva función para limpiar recursos
     cleanup: () => {
-        clearDataTimeout();
+        if (commandProcessor) {
+            commandProcessor.cleanup();
+        }
     }
 };
 //# sourceMappingURL=machine.js.map
