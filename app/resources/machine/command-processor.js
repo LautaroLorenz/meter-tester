@@ -20,11 +20,30 @@ class CommandProcessor {
         if (this.dataTimeout) {
             clearTimeout(this.dataTimeout);
         }
-        // Establecer timeout para procesar después de un breve período
-        this.dataTimeout = setTimeout(() => {
-            this.processCommands();
-            this.dataTimeout = null;
-        }, this.config.dataWaitTimeout);
+        // Buscar comando reconocido para calcular timeout inteligente
+        const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
+        if (recognizedCommand) {
+            const { commandSize } = recognizedCommand;
+            const remainingChars = commandSize.size - this.commandBuffer.length;
+            if (remainingChars <= 0) {
+                // Comando completo - procesar inmediatamente
+                this.processCommands();
+                return;
+            }
+            // Calcular timeout inteligente basado en caracteres faltantes
+            const estimatedTime = this.calculateSmartTimeout(remainingChars);
+            this.dataTimeout = setTimeout(() => {
+                this.processCommands();
+                this.dataTimeout = null;
+            }, estimatedTime);
+        }
+        else {
+            // No se reconoce patrón - timeout corto para buscar patrones
+            this.dataTimeout = setTimeout(() => {
+                this.processCommands();
+                this.dataTimeout = null;
+            }, 10); // 10ms para detectar patrones
+        }
     }
     /**
      * Procesa todos los comandos completos en el buffer
@@ -138,6 +157,21 @@ class CommandProcessor {
         return {
             bufferLength: this.commandBuffer.length
         };
+    }
+    /**
+     * Calcula el timeout inteligente basado en caracteres faltantes
+     * @param remainingChars - Caracteres que faltan para completar el comando
+     * @param baudRate - Velocidad del puerto serie (opcional, por defecto 19200)
+     * @returns Tiempo estimado en milisegundos
+     */
+    calculateSmartTimeout(remainingChars, baudRate = 19200) {
+        // Calcular tiempo por carácter basado en baud rate
+        // 19200 baud ≈ 1920 caracteres/segundo ≈ 0.52ms por carácter
+        const msPerChar = 1000 / (baudRate / 10); // Aproximación para caracteres de 8 bits
+        // Timeout = caracteres faltantes * tiempo por carácter + margen de seguridad
+        const estimatedTime = remainingChars * msPerChar + 5; // +5ms margen
+        // Limitar entre 5ms (mínimo) y 50ms (máximo)
+        return Math.max(5, Math.min(50, estimatedTime));
     }
 }
 exports.CommandProcessor = CommandProcessor;

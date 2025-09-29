@@ -23,7 +23,7 @@ let commandProcessor;
 function setupParser() {
     // Configuración del procesador de comandos
     const config = {
-        dataWaitTimeout: 100 // 100ms de espera
+        dataWaitTimeout: 10 // 10ms base para búsqueda de patrones (ahora se calcula dinámicamente)
     };
     // Callbacks para manejar comandos recibidos
     const callbacks = {
