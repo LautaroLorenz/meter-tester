@@ -171,7 +171,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         // Detener todos los loops y timers
         this.abortExecution$.next();
         this.stopStep.next();
-        this.deviceService.abort();
+        this.deviceService.abort$().subscribe();
 
         // Detener el generador inmediatamente para cortar el loop del patrón
         const stopGenerator$ = this.generator.stop$();

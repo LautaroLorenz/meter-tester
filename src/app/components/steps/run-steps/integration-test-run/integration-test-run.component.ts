@@ -240,7 +240,7 @@ export class IntegrationTestRunComponent
         this.abortExecution$.next();
         this.stopStep.next();
         this.isTestRunning = false;
-        this.deviceService.abort();
+        this.deviceService.abort$().subscribe();
 
         // Detener el generador inmediatamente para cortar el loop del patrón
         const stopGenerator$ = this.generator.stop$();

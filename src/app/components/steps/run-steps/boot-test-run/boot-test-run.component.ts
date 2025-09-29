@@ -168,7 +168,7 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
         this.stopStep.next();
         this.countTimerMin.stop();
         this.countTimerMax.stop();
-        this.deviceService.abort();
+        this.deviceService.abort$().subscribe();
 
         // Detener el generador inmediatamente para cortar el loop del patrón
         const stopGenerator$ = this.generator.stop$();

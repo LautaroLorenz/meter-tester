@@ -167,7 +167,7 @@ export class VacuumTestRunComponent extends TestRunComponent<VacuumTestEssayStep
         this.abortExecution$.next();
         this.stopStep.next();
         this.countTimer.stop();
-        this.deviceService.abort();
+        this.deviceService.abort$().subscribe();
 
         // Detener el generador inmediatamente para cortar el loop del patrón
         const stopGenerator$ = this.generator.stop$();

@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, Subject, concatMap, tap, takeUntil } from 'rxjs';
+import {
+    BehaviorSubject,
+    Observable,
+    ReplaySubject,
+    Subject,
+    concatMap,
+    tap,
+    takeUntil,
+    of,
+    switchMap,
+    filter,
+    take
+} from 'rxjs';
 import { IpcService } from './ipc.service';
 import { CommandInvokeResponse } from '../models/business/interafces/command-invoke-response.model';
 
@@ -19,21 +31,26 @@ export class DeviceService {
     private _readQueueCommands$ = new BehaviorSubject<string[]>([]);
 
     private _abort$ = new Subject<void>();
+    private _currentCommand$ = new BehaviorSubject<boolean>(false);
 
     constructor(private readonly ipcService: IpcService) {
         this.queue
             .pipe(
                 tap(({ command }) => this.addCommandToReadQueue(command)),
-                concatMap(({ request, response }) =>
-                    request.pipe(
+                concatMap(({ request, response }) => {
+                    this._currentCommand$.next(true);
+                    return request.pipe(
                         takeUntil(this._abort$),
                         tap((result) => {
                             response.next(result);
                             response.complete();
                         }),
-                        tap(() => this.popCommandFromReadQueue())
-                    )
-                )
+                        tap(() => {
+                            this.popCommandFromReadQueue();
+                            this._currentCommand$.next(false);
+                        })
+                    );
+                })
             )
             .subscribe();
     }
@@ -64,9 +81,23 @@ export class DeviceService {
         return response.asObservable();
     }
 
-    abort(): void {
-        this._abort$.next();
+    abort$(): Observable<void> {
+        // Clear queued commands immediately
         this._readQueueCommands$.next([]);
+
+        // If no command is currently processing, emit immediately
+        if (!this._currentCommand$.value) {
+            this._abort$.next();
+            return of(void 0);
+        }
+
+        // If a command is processing, wait for it to complete
+        return this._currentCommand$.pipe(
+            filter((isProcessing) => !isProcessing),
+            take(1),
+            tap(() => this._abort$.next()),
+            switchMap(() => of(void 0))
+        );
     }
 
     private addCommandToReadQueue(command: string): void {
