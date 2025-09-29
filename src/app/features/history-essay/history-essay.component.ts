@@ -70,7 +70,7 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
         const pdfPages = pages.map((page) => ({ html: page.html }));
 
         this.pdfGenerationService
-            .generatePDFFromPages(pdfPages, fileName, { scale: 1.5, useCORS: true })
+            .generatePDFFromPages(pdfPages, fileName)
             .then(() => {
                 this.messagesService.success('PDF descargado correctamente');
             })

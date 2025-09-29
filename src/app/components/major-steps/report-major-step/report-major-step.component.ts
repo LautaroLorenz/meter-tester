@@ -99,7 +99,7 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         const pdfPages = pages.map((page) => ({ html: page.html }));
 
         this.pdfGenerationService
-            .generatePDFFromPages(pdfPages, this.fileName, { scale: 1.5, useCORS: true })
+            .generatePDFFromPages(pdfPages, this.fileName)
             .then(() => {
                 this.isDownloading = false;
                 this.isFileDownloaded = true;

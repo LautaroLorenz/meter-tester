@@ -35,7 +35,7 @@ export class PdfGenerationService {
         fileName: string,
         options: PdfGenerationOptions = {}
     ): Promise<void> {
-        const { scale = 1.5, useCORS = true, format = 'a4', orientation = 'portrait' } = options;
+        const { scale = 1.5, useCORS = false, format = 'a4', orientation = 'portrait' } = options;
 
         const PDF = new jsPDF(orientation, 'mm', format, true);
         const canvas = await html2canvas(element, {
@@ -57,7 +57,7 @@ export class PdfGenerationService {
      * @param options Opciones de configuración para la generación
      */
     async generatePDFFromPages(pages: PdfPage[], fileName: string, options: PdfGenerationOptions = {}): Promise<void> {
-        const { scale = 1.5, useCORS = true, format = 'a4', orientation = 'portrait' } = options;
+        const { scale = 1.5, useCORS = false, format = 'a4', orientation = 'portrait' } = options;
 
         const PDF = new jsPDF(orientation, 'mm', format, true);
 
