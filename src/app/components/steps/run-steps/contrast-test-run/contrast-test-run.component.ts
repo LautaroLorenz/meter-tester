@@ -171,39 +171,43 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         // Detener todos los loops y timers
         this.abortExecution$.next();
         this.stopStep.next();
-        this.deviceService.abort$().subscribe();
 
-        // Detener el generador inmediatamente para cortar el loop del patrón
-        const stopGenerator$ = this.generator.stop$();
+        // Esperar a que deviceService.abort$() emita antes de continuar
+        return this.deviceService.abort$().pipe(
+            switchMap(() => {
+                // Detener el generador inmediatamente para cortar el loop del patrón
+                const stopGenerator$ = this.generator.stop$();
 
-        if (
-            [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
-                this.calculator.deviceStatus$.value
-            ) ||
-            (this.calculator.deviceStatus$.value === DeviceStatus.Stopped && this.isExecuting)
-        ) {
-            this.blockUIService.setBlocked(true);
-            return this.calculator.stop$(this.getActiveStands()).pipe(
-                switchMap(() => stopGenerator$),
-                map(() => true),
-                tap(() => this.blockUIService.setBlocked(false)),
-                tap(() => (this.isExecuting = false))
-            );
-        } else if (
-            [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
-                this.generator.deviceStatus$.value
-            )
-        ) {
-            this.blockUIService.setBlocked(true);
-            return stopGenerator$.pipe(
-                map(() => true),
-                tap(() => this.blockUIService.setBlocked(false)),
-                tap(() => (this.isExecuting = false))
-            );
-        }
+                if (
+                    [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
+                        this.calculator.deviceStatus$.value
+                    ) ||
+                    (this.calculator.deviceStatus$.value === DeviceStatus.Stopped && this.isExecuting)
+                ) {
+                    this.blockUIService.setBlocked(true);
+                    return this.calculator.stop$(this.getActiveStands()).pipe(
+                        switchMap(() => stopGenerator$),
+                        map(() => true),
+                        tap(() => this.blockUIService.setBlocked(false)),
+                        tap(() => (this.isExecuting = false))
+                    );
+                } else if (
+                    [DeviceStatus.Working, DeviceStatus.StartInProgress, DeviceStatus.StopInProgress].includes(
+                        this.generator.deviceStatus$.value
+                    )
+                ) {
+                    this.blockUIService.setBlocked(true);
+                    return stopGenerator$.pipe(
+                        map(() => true),
+                        tap(() => this.blockUIService.setBlocked(false)),
+                        tap(() => (this.isExecuting = false))
+                    );
+                }
 
-        // Si no hay dispositivos trabajando
-        return of(true);
+                // Si no hay dispositivos trabajando
+                return of(true);
+            })
+        );
     }
 
     override isFailCondition(result: ContrastTestStandResult): boolean {
