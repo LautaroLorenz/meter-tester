@@ -50,7 +50,7 @@ export class CommandProcessor {
      */
     processDataChunk(chunk: string): void {
         this.dataBuffer += chunk;
-
+        console.log('🔍 [COMMAND_PROCESSOR] Datos recibidos:', this.dataBuffer);
         // Si no hay respuesta pendiente, descartar datos
         if (!this.pendingResponse) {
             this.dataBuffer = '';
