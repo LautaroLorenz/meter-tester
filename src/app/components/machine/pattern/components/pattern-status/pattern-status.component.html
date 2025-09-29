@@ -5,9 +5,9 @@
     <ng-template pTemplate="header">
         <tr>
             <th class="text-center bg-gray-50 text-gray-600 font-medium text-xs uppercase tracking-wider"></th>
-            <th class="text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide">Fase L1</th>
-            <th class="text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide">Fase L2</th>
-            <th class="text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide">Fase L3</th>
+            <th class="text-center bg-gray-100 text-gray-700 font-medium text-xs uppercase tracking-wide">Fase L1</th>
+            <th class="text-center bg-gray-100 text-gray-700 font-medium text-xs uppercase tracking-wide">Fase L2</th>
+            <th class="text-center bg-gray-100 text-gray-700 font-medium text-xs uppercase tracking-wide">Fase L3</th>
             <th class="text-center bg-gray-50 text-gray-600 font-medium text-xs uppercase tracking-wider"></th>
         </tr>
     </ng-template>
@@ -16,11 +16,11 @@
         pTemplate="body"
         let-row>
         <tr>
-            <td class="text-gray-600 font-medium text-sm">{{ row.metric }}</td>
-            <td class="text-right text-gray-700 font-medium text-sm font-mono">{{ row.l1 }}</td>
-            <td class="text-right text-gray-700 font-medium text-sm font-mono">{{ row.l2 }}</td>
-            <td class="text-right text-gray-700 font-medium text-sm font-mono">{{ row.l3 }}</td>
-            <td class="text-gray-600 font-medium text-sm">
+            <td class="text-gray-600 font-medium text-xs">{{ row.metric }}</td>
+            <td class="text-right text-gray-700 font-medium text-xs font-mono">{{ row.l1 }}</td>
+            <td class="text-right text-gray-700 font-medium text-xs font-mono">{{ row.l2 }}</td>
+            <td class="text-right text-gray-700 font-medium text-xs font-mono">{{ row.l3 }}</td>
+            <td class="text-gray-600 font-medium text-xs">
                 <ng-container *ngIf="row.unit">[{{ row.unit }}]</ng-container>
             </td>
         </tr>
