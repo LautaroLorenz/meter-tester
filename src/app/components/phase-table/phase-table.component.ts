@@ -30,14 +30,18 @@ export class PhaseTableComponent {
 
     getPhaseHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
         return this.isPhaseActive(phase)
-            ? 'text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide'
-            : 'text-center bg-gray-50 text-gray-400 font-medium text-sm uppercase tracking-wide';
+            ? 'text-center bg-gray-100 text-gray-700 font-medium text-xs uppercase tracking-wide'
+            : 'text-center bg-gray-50 text-gray-400 font-medium text-xs uppercase tracking-wide';
     }
 
     getPhaseCellClass(phase: Phase | Partial<Phase> | undefined): string {
         return this.isPhaseActive(phase)
-            ? 'text-center text-gray-700 font-medium text-sm font-mono bg-white'
-            : 'text-center text-gray-400 font-medium text-sm font-mono bg-gray-25';
+            ? 'text-center text-gray-700 font-medium bg-white'
+            : 'text-center text-gray-400 font-medium bg-gray-25';
+    }
+
+    getPhaseCellStyles(): string {
+        return 'font-family: monospace; font-weight: 500; font-size: 0.75rem;';
     }
 
     getSubHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
