@@ -18,7 +18,7 @@ export const APP_CONFIG: Environment = {
         integrationTestRun: false
     },
     virtualMachine: false,
-    logsHistory: true,
+    logsHistory: false,
     delays: {
         patternCheckCycleDelay: 50,
         resultsDelay: 50,
