@@ -22,7 +22,7 @@
             <div
                 *ngIf="executionDate"
                 class="execution-date-header">
-                <span class="date-label">FECHA DE EJECUCIÓN</span>
+                <span class="date-label">FECHA DE REPORTE</span>
                 <span class="date-value">{{ executionDate | date: 'dd/MM/yyyy' }}</span>
             </div>
         </div>
@@ -31,7 +31,9 @@
         <div class="main-content">
             <!-- Título del Reporte -->
             <div class="report-title-section mb-4">
-                <h1 class="report-title m-0">Reporte - {{ essayName || 'Ensayo' }}</h1>
+                <div class="report-title-container">
+                    <span class="report-essay-name">{{ essayName || 'Ensayo' }}</span>
+                </div>
             </div>
 
             <div class="-mx-3">
