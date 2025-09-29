@@ -16,8 +16,8 @@
             <button
                 pButton
                 pRipple
-                label="Descargar PDF"
-                icon="pi pi-download"
+                [label]="isDownloading ? 'Generando PDF...' : 'Descargar PDF'"
+                [icon]="isDownloading ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
                 class="p-button p-button-outlined p-button-info"
                 [disabled]="isDownloading"
                 (click)="downloadPDF()"></button>

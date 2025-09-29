@@ -63,23 +63,27 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
         }
 
         this.isDownloading = true;
-        const essayName = this.historyEssay.run_raw.essayName;
-        const fileName = this.pdfGenerationService.generateFileName('historial', essayName);
 
-        const pages = this.getPages();
-        const pdfPages = pages.map((page) => ({ html: page.html }));
+        // ponemos el setTimeout para que se pueda actualizar el boton
+        setTimeout(() => {
+            const essayName = this.historyEssay?.run_raw?.essayName || '';
+            const fileName = this.pdfGenerationService.generateFileName('historial', essayName);
 
-        this.pdfGenerationService
-            .generatePDFFromPages(pdfPages, fileName)
-            .then(() => {
-                this.messagesService.success('PDF descargado correctamente');
-            })
-            .catch(() => {
-                this.messagesService.error('No se pudo crear el PDF');
-            })
-            .finally(() => {
-                this.isDownloading = false;
-            });
+            const pages = this.getPages();
+            const pdfPages = pages.map((page) => ({ html: page.html }));
+
+            this.pdfGenerationService
+                .generatePDFFromPages(pdfPages, fileName)
+                .then(() => {
+                    this.messagesService.info('Se abrirá el diálogo de descarga');
+                })
+                .catch(() => {
+                    this.messagesService.error('No se pudo generar el PDF');
+                })
+                .finally(() => {
+                    this.isDownloading = false;
+                });
+        }, 100);
     }
 
     deleteHistoryEssay(): void {
