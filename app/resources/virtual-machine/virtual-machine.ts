@@ -33,8 +33,8 @@ function calculateCharTransmissionDelay(config: TransmissionConfig): number {
     // Tiempo por carácter basado en baud rate
     const charTime = 1000 / (config.baudRate / 10); // ~0.52ms para 19200 baud
 
-    // Delay total = tiempo por carácter + delays fijos + jitter variable
-    const fixedDelay = config.cableDelay + config.machineProcessingDelay + config.hardwareBufferDelay;
+    // Delay por carácter = tiempo por carácter + delays fijos por carácter + jitter variable
+    const fixedDelay = config.cableDelay + config.hardwareBufferDelay;
     const jitter = Math.random() * config.systemJitter; // Jitter aleatorio 0-2ms
 
     return charTime + fixedDelay + jitter;
@@ -69,8 +69,10 @@ function simulateRealisticTransmission(command: string, serialPort: SerialPortSt
         setTimeout(transmitNextChar, delay);
     }
 
-    // Iniciar transmisión
-    transmitNextChar();
+    // Aplicar machineProcessingDelay una sola vez al inicio del comando
+    setTimeout(() => {
+        transmitNextChar();
+    }, TRANSMISSION_CONFIG.machineProcessingDelay);
 }
 
 MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
@@ -103,7 +105,8 @@ export default {
      */
     calculateTotalTransmissionTime: (commandLength: number): number => {
         const charDelay = calculateCharTransmissionDelay(TRANSMISSION_CONFIG);
-        return charDelay * commandLength;
+        // machineProcessingDelay se aplica una sola vez al inicio del comando
+        return TRANSMISSION_CONFIG.machineProcessingDelay + charDelay * commandLength;
     },
 
     register: () => {

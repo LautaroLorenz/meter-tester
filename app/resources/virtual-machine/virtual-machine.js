@@ -29,8 +29,8 @@ let secondaryWindowItem = null;
 function calculateCharTransmissionDelay(config) {
     // Tiempo por carácter basado en baud rate
     const charTime = 1000 / (config.baudRate / 10); // ~0.52ms para 19200 baud
-    // Delay total = tiempo por carácter + delays fijos + jitter variable
-    const fixedDelay = config.cableDelay + config.machineProcessingDelay + config.hardwareBufferDelay;
+    // Delay por carácter = tiempo por carácter + delays fijos por carácter + jitter variable
+    const fixedDelay = config.cableDelay + config.hardwareBufferDelay;
     const jitter = Math.random() * config.systemJitter; // Jitter aleatorio 0-2ms
     return charTime + fixedDelay + jitter;
 }
@@ -57,8 +57,10 @@ function simulateRealisticTransmission(command, serialPort) {
         // Programar siguiente carácter
         setTimeout(transmitNextChar, delay);
     }
-    // Iniciar transmisión
-    transmitNextChar();
+    // Aplicar machineProcessingDelay una sola vez al inicio del comando
+    setTimeout(() => {
+        transmitNextChar();
+    }, TRANSMISSION_CONFIG.machineProcessingDelay);
 }
 binding_mock_1.MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
 const serialPort = new stream_1.SerialPortStream({
@@ -87,7 +89,8 @@ exports.default = {
      */
     calculateTotalTransmissionTime: (commandLength) => {
         const charDelay = calculateCharTransmissionDelay(TRANSMISSION_CONFIG);
-        return charDelay * commandLength;
+        // machineProcessingDelay se aplica una sola vez al inicio del comando
+        return TRANSMISSION_CONFIG.machineProcessingDelay + charDelay * commandLength;
     },
     register: () => {
         electron_1.ipcMain.handle('open-virtual-machine', () => __awaiter(void 0, void 0, void 0, function* () {
