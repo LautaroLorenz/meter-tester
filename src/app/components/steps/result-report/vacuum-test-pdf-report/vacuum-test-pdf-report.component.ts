@@ -8,6 +8,7 @@ import { PreparationEssayStep } from '../../../../models/business/interafces/ste
 import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-vacuum-test-pdf-report',
@@ -27,7 +28,7 @@ export class VacuumTestPdfReportComponent extends PdfReportComponent {
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Impulsos',
+        header: formatHeaderWithUnits('Impulsos'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | VacuumTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';

@@ -5,7 +5,12 @@
         styleClass="progress-panel">
         <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2">
-                <span class="text-700 font-medium text-sm">Progreso -</span>
+                <i
+                    class="pi pi-stopwatch text-600"
+                    style="font-size: 0.9rem"
+                    pTooltip="Contador de Impulsos"
+                    tooltipPosition="right"></i>
+                <span class="text-700 font-medium text-sm">Contador -</span>
                 <div class="flex align-items-center gap-1">
                     <span class="text-600 font-medium text-sm">{{ statusText }}</span>
                 </div>
@@ -19,9 +24,9 @@
         <ng-template pTemplate="content">
             <div class="flex flex-column gap-1">
                 <div class="flex justify-content-between align-items-center">
-                    <span class="text-500 text-xs font-mono">0 pulsos</span>
-                    <span class="text-700 font-semibold text-sm font-mono">{{ percentage | number: '1.1-1' }}%</span>
-                    <span class="text-500 text-xs font-mono">{{ targetPulses }} pulsos</span>
+                    <span class="text-500 text-xs font-mono">0 [impulsos]</span>
+                    <span class="text-700 font-semibold text-sm font-mono">{{ pulsesCounted }} [impulsos]</span>
+                    <span class="text-500 text-xs font-mono">{{ targetPulses }} [impulsos]</span>
                 </div>
                 <p-progressBar
                     [value]="$any(percentage | number: '1.2-2')"

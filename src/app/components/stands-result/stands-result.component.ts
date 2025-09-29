@@ -15,6 +15,7 @@ import { TC_AlignHorizontal, TableColumn, TableColumnTemplateContext } from '../
 import { StandMeterConstantPipe } from '../../pipes/business/stand-meter-constant.pipe';
 import { MeterConstantEnum } from '../../models/business/constants/meter-constant.model';
 import { MeterConstantPipe } from '../../pipes/business/meter-constant.pipe';
+import { formatHeaderWithUnits } from '../../utils/table-utils';
 
 @Component({
     selector: 'app-stands-result',
@@ -82,7 +83,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
     private getColumns(): TableColumn<StandStandResult>[] {
         const columns: TableColumn<StandStandResult>[] = [];
         columns.push({
-            header: 'Puesto',
+            header: formatHeaderWithUnits('Puesto'),
             field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
             alignHorizontal: TC_AlignHorizontal.Number,
             headerStyle: 'min-width: 50px;',
@@ -90,13 +91,13 @@ export class StandsResultComponent implements OnInit, OnChanges {
         });
         if (!this.compactMode) {
             columns.push({
-                header: 'Medidor',
+                header: formatHeaderWithUnits('Medidor'),
                 template: this.meterColumnTmp,
                 headerStyle: 'min-width: 150px;'
             });
         }
         columns.push({
-            header: 'Nº de serie',
+            header: formatHeaderWithUnits('Nº de serie'),
             field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
             alignHorizontal: TC_AlignHorizontal.Text,
             headerStyle: 'min-width: 100px;',
@@ -110,7 +111,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
 
         if (!this.compactMode) {
             columns.push({
-                header: 'Año',
+                header: formatHeaderWithUnits('Año'),
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px;',
@@ -119,7 +120,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
         }
         if (!this.compactMode) {
             columns.push({
-                header: `Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`,
+                header: formatHeaderWithUnits(`Cte. ${this.meterConstantPipe.transform(this.stepMeterConstant)}`),
                 field: (item): string => {
                     if (this.stepMeterConstant === undefined) {
                         return '';
@@ -147,7 +148,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             columns.push(...this.additionalColumns);
         }
         columns.push({
-            header: 'Resultado',
+            header: formatHeaderWithUnits('Resultado'),
             template: this.resultStatusColumnTemplate || this.resultStatusColumnTmp,
             headerStyle: 'min-width: 80px;'
         });

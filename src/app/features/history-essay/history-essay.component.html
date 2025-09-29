@@ -12,21 +12,35 @@
     </ng-container>
 
     <ng-container toolbar-right>
-        <button
-            pButton
-            pRipple
-            label="Eliminar"
-            icon="pi pi-trash"
-            class="p-button p-button-outlined p-button-danger"
-            (click)="deleteHistoryEssay()"></button>
+        <div class="flex gap-3">
+            <button
+                pButton
+                pRipple
+                label="Descargar PDF"
+                icon="pi pi-download"
+                class="p-button p-button-outlined p-button-info"
+                [disabled]="isDownloading"
+                (click)="downloadPDF()"></button>
+            <button
+                pButton
+                pRipple
+                label="Eliminar"
+                icon="pi pi-trash"
+                class="p-button p-button-outlined p-button-danger"
+                (click)="deleteHistoryEssay()"></button>
+        </div>
     </ng-container>
 </app-page-title>
 
 <ng-container *ngIf="preparationStep && executionSteps">
-    <div class="report flex flex-column gap-4 align-items-center mt-4">
+    <div
+        #report
+        class="report flex flex-column gap-4 align-items-center mt-4">
         <app-report-step-switch
             [preparationStep]="preparationStep"
-            [showPreparation]="true">
+            [showPreparation]="true"
+            [essayName]="historyEssay?.run_raw?.essayName"
+            [executionDate]="historyEssay?.run_raw?.startDate">
         </app-report-step-switch>
 
         <ng-container *ngFor="let essayStep of executionSteps">

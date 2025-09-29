@@ -34,6 +34,7 @@ import { APP_CONFIG } from '../../../../../environments/environment';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-constant.pipe';
 import { MeterConstantUnitEnum } from '../../../../models/business/constants/meter-constant.model';
 
@@ -55,7 +56,7 @@ export class IntegrationTestRunComponent
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Impulsos',
+        header: formatHeaderWithUnits('Impulsos'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() || '' : '';
@@ -310,11 +311,18 @@ export class IntegrationTestRunComponent
         // resetear banderas para permitir reintentos
         this.isPreparingForUserInput = false;
         this.isUserInputEnabled = false;
+
+        // Mostrar estado de carga en el botón continuar
+        this.isStopTestInProgress = true;
+        this.cd.detectChanges();
+
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
                 finalize(() => {
+                    // Ocultar estado de carga
+                    this.isStopTestInProgress = false;
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
@@ -326,7 +334,6 @@ export class IntegrationTestRunComponent
                 })
             )
             .subscribe();
-        this.cd.detectChanges();
     }
 
     override stepExecutionDone(essayStep: IntegrationTestEssayStep): void {
@@ -656,6 +663,14 @@ export class IntegrationTestRunComponent
                 this.currentStep.form_control_raw.phaseL3
             )
             .pipe(
+                // Cambiar el estado de los resultados a locked
+                tap(() => {
+                    this.getActiveStands().forEach(({ index }) => {
+                        this.runEssayService
+                            .getStandResult<IntegrationTestStandResult>(this.currentStep.id, index)
+                            .patchValue({ resultStatus: ResultStatus.Finalizing });
+                    });
+                }),
                 // Hacer una consulta final de resultados (una sola vez, sin loop)
                 switchMap(() => this.getResults$()),
                 // Cambiar al tab "Ingreso de valores" y poner stands en estado Pending

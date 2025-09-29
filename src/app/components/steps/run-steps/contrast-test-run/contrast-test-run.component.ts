@@ -33,6 +33,7 @@ import { Stand } from '../../../../models/business/interafces/stand.model';
 import { DeviceStatus } from '../../../../models/business/enums/device-status.model';
 import { GeneratorComponent } from '../../../machine/generator/generator.component';
 import { PatternStatus } from '../../../../models/business/interafces/pattern-status.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-contrast-test-run',
@@ -52,7 +53,7 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     readonly StepRunModes: EnumAsOption[] = this.EnumAsOptionPipe.transform('StepRunMode', StepRunMode);
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error [%]',
+        header: formatHeaderWithUnits('Error [%]'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | ContrastTestStandResult;
             return 'measuredError' in realItem ? realItem.measuredError?.toFixed(2) : '';
@@ -74,9 +75,14 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
         this.getActiveStands().forEach(({ index: standIndex }, resultIndex) => {
             const stand = this.runEssayService.getStandResult<ContrastTestStandResult>(this.currentStep.id, standIndex);
             const result: CommandResultResponse = results[resultIndex];
+            const previousResultStatus = stand.getRawValue().resultStatus;
+
             // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
-                stand.patchValue({ measuredError: undefined });
+                // No limpiar el resultado si el stand ya está bloqueado
+                if (stand.getRawValue().resultStatus !== ResultStatus.Locked) {
+                    stand.patchValue({ measuredError: undefined });
+                }
                 return;
             }
             // bloqueo de resultado actual según modo de ejecución
@@ -96,6 +102,15 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 measuredError: result,
                 resultStatus
             });
+
+            // Si el stand pasa de sin resultado a Locked, detener ese stand individualmente
+            if (
+                this.stepRunMode === StepRunMode.finalResultLock &&
+                resultStatus === ResultStatus.Locked &&
+                previousResultStatus !== ResultStatus.Locked
+            ) {
+                this.calculator.stop$(standIndex).subscribe();
+            }
         });
         this.cd.detectChanges();
         // revisar si el modo de ejecución es bloqueo y todos los stands tienen resultado.
@@ -216,11 +231,18 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
 
     override stopTest(): void {
         this.stopStep.next();
+
+        // Mostrar estado de carga en el botón continuar
+        this.isStopTestInProgress = true;
+        this.cd.detectChanges();
+
         // apagar puestos
         this.calculator
             .stop$(this.getActiveStands())
             .pipe(
                 finalize(() => {
+                    // Ocultar estado de carga
+                    this.isStopTestInProgress = false;
                     // Puede continuar al siguiente step si todos los stands activos tienen
                     // un estado final (Aprobado o Falló)
                     this.canContinue = this.getCanContinue();
@@ -304,12 +326,22 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
     }
 
     private getResults$(): Observable<CommandResultResponse[]> {
+        // Obtener stands locked para no enviar comandos a ellos
+        const lockedStands = new Set<number>();
+        this.getActiveStands().forEach(({ index }) => {
+            const stand = this.runEssayService.getStandResult<ContrastTestStandResult>(this.currentStep.id, index);
+            if (stand.getRawValue().resultStatus === ResultStatus.Locked) {
+                lockedStands.add(index);
+            }
+        });
+
         return this.calculator
             .resultsTS01$(
                 this.getActiveStands(),
                 this.pattern.patternStatus?.constant || 0,
                 this.currentStep.form_control_raw.meterPulses,
-                this.currentStep.form_control_raw.meterConstant
+                this.currentStep.form_control_raw.meterConstant,
+                lockedStands
             )
             .pipe(tap((results) => this.onCalculatorResults(results)));
     }

@@ -1,6 +1,13 @@
 // Estilos específicos para el componente stands-integration-values
 // Los estilos principales se heredan de PrimeNG y las clases de Tailwind
 
+// Tooltip más ancho para headers con unidades
+.tooltip-wide {
+  min-width: inherit !important;
+  max-width: inherit !important;
+  white-space: nowrap !important;
+}
+
 app-stands-integration-values {
   // Reducir el tamaño de los inputs del integrador inicial
   .p-inputnumber {

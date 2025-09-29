@@ -5,6 +5,7 @@ import database from './resources/database/database';
 import abm from './commands/abm';
 import essay from './commands/essay';
 import history from './commands/history';
+import clientSettings from './commands/client-settings';
 import machine from './resources/machine/machine';
 import restart from './resources/restart/restart';
 import virtualMachine from './resources/virtual-machine/virtual-machine';
@@ -18,6 +19,7 @@ function registerIpc(knex: any) {
     abm.register(knex);
     essay.register(knex);
     history.register(knex);
+    clientSettings.register();
     machine.register();
     backup.register(knex);
     restart.register();

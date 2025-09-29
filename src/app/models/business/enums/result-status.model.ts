@@ -3,6 +3,7 @@ export enum ResultStatus {
     NotApply = 'NotApply',
     Pending = 'Pending',
     WorkInProgress = 'WorkInProgress',
+    Finalizing = 'Finalizing',
     Locked = 'Locked',
     Approved = 'Approved',
     Failed = 'Failed'

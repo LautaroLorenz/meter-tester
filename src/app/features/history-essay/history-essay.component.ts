@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { NavigationService } from '../../services/navigation.service';
 import { PageUrlName } from '../../models/business/enums/page-name.model';
 import { Observable, filter, map, Subject, takeUntil, switchMap, tap, first } from 'rxjs';
@@ -11,15 +11,21 @@ import { WhereKind, WhereOperator } from '../../models/core/database.model';
 import { EssayStep } from '../../models/business/interafces/essay-step.model';
 import { PreparationEssayStep } from '../../models/business/interafces/steps/preparation-step.model';
 import { StepStatus } from '../../models/business/enums/step-status.model';
+import { PdfGenerationService } from '../../services/pdf-generation.service';
+import { ReportStepSwitchComponent } from '../../components/steps/result-report/report-step-switch/report-step-switch.component';
+import { PdfPageComponent } from '../../components/steps/result-report/pdf-page/pdf-page.component';
 
 @Component({
     templateUrl: './history-essay.component.html',
     styleUrls: ['./history-essay.component.scss']
 })
 export class HistoryEssayComponent implements OnInit, OnDestroy {
+    @ViewChildren(ReportStepSwitchComponent) steps!: QueryList<ReportStepSwitchComponent>;
+
     historyEssay: HistoryEssay | undefined;
     executionSteps: EssayStep[] | undefined;
     preparationStep: PreparationEssayStep | undefined;
+    isDownloading = false;
 
     readonly title: string = 'Historial de ejecución';
     readonly id$: Observable<number>;
@@ -31,7 +37,8 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
         private readonly navigationService: NavigationService,
         private readonly dbService: DatabaseService<HistoryEssay>,
         private readonly messagesService: MessagesService,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
+        private readonly pdfGenerationService: PdfGenerationService
     ) {
         this.id$ = this.getId$();
     }
@@ -47,6 +54,32 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
 
     exit(): void {
         this.navigationService.back({ targetPage: PageUrlName.history });
+    }
+
+    downloadPDF(): void {
+        if (!this.historyEssay?.run_raw?.essayName) {
+            this.messagesService.error('No se puede generar el PDF: datos insuficientes');
+            return;
+        }
+
+        this.isDownloading = true;
+        const essayName = this.historyEssay.run_raw.essayName;
+        const fileName = this.pdfGenerationService.generateFileName('historial', essayName);
+
+        const pages = this.getPages();
+        const pdfPages = pages.map((page) => ({ html: page.html }));
+
+        this.pdfGenerationService
+            .generatePDFFromPages(pdfPages, fileName, { scale: 1.5, useCORS: true })
+            .then(() => {
+                this.messagesService.success('PDF descargado correctamente');
+            })
+            .catch(() => {
+                this.messagesService.error('No se pudo crear el PDF');
+            })
+            .finally(() => {
+                this.isDownloading = false;
+            });
     }
 
     deleteHistoryEssay(): void {
@@ -107,9 +140,15 @@ export class HistoryEssayComponent implements OnInit, OnDestroy {
                 tap((historyEssay) => {
                     this.historyEssay = historyEssay;
                     this.preparationStep = historyEssay.run_raw.essaySteps[0] as PreparationEssayStep;
-                    this.executionSteps = historyEssay.run_raw.essaySteps.slice(1).filter(({ executedStatus }) => executedStatus === StepStatus.Done);
+                    this.executionSteps = historyEssay.run_raw.essaySteps
+                        .slice(1)
+                        .filter(({ executedStatus }) => executedStatus === StepStatus.Done);
                 })
             )
             .subscribe();
+    }
+
+    private getPages(): PdfPageComponent[] {
+        return this.steps.reduce<PdfPageComponent[]>((acc, { pages }) => (acc = acc.concat(pages)), []);
     }
 }

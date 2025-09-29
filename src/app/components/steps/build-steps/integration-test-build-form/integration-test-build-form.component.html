@@ -41,28 +41,16 @@
                     <label
                         for="durationPulses"
                         class="mb-2"
-                        >Duración en impulsos<span class="ml-1 text-red-300">*</span>
+                        >Impulsos a integrar<span class="ml-1 text-red-300">*</span>
                     </label>
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i
-                                #helpIcon
-                                class="pi pi-info-circle"
-                                (mouseenter)="op1.show($event, helpIcon)"
-                                (mouseleave)="op1.hide()"></i>
-                        </span>
-                        <p-overlayPanel #op1>
-                            <div class="text-sm text-700 max-w-20rem">Cantidad de impulsos a integrar.</div>
-                        </p-overlayPanel>
-                        <p-inputNumber
-                            styleClass="flex flex-1"
-                            id="durationPulses"
-                            formControlName="durationPulses"
-                            autofocus
-                            [useGrouping]="false"
-                            [min]="0"
-                            [max]="99999"></p-inputNumber>
-                    </div>
+                    <p-inputNumber
+                        styleClass="flex flex-1"
+                        id="durationPulses"
+                        formControlName="durationPulses"
+                        autofocus
+                        [useGrouping]="false"
+                        [min]="0"
+                        [max]="99999"></p-inputNumber>
                     <app-input-error formControlName="durationPulses"></app-input-error>
                 </div>
 

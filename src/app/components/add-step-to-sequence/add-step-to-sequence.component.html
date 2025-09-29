@@ -17,8 +17,8 @@
                 </p-button>
                 <div class="col-2">
                     <app-help-text
-                        [title]="HelpTextStepsMap[step.id].title"
-                        [message]="HelpTextStepsMap[step.id].message"></app-help-text>
+                        [title]="getHelpTextTitle(step.id)"
+                        [message]="getHelpTextMessage(step.id)"></app-help-text>
                 </div>
             </div>
         </ng-container>

@@ -8,6 +8,7 @@ import { PreparationEssayStep } from '../../../../models/business/interafces/ste
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-integration-test-pdf-report',
@@ -30,7 +31,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error [%]',
+        header: formatHeaderWithUnits('Error [%]'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'calculatedError' in realItem ? realItem.calculatedError?.toFixed(2) : '';
@@ -75,10 +76,12 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
         if (hasIntegratorValues) {
             this.additionalColumns = [
                 {
-                    header: 'Integrador inicial',
+                    header: formatHeaderWithUnits('Integrador inicial [kWh]'),
                     field: (item: StandStandResult): string => {
                         const realItem = item as Stand | IntegrationTestStandResult;
-                        return 'initialIntegrator' in realItem && realItem.initialIntegrator !== null
+                        return 'initialIntegrator' in realItem &&
+                            realItem.initialIntegrator !== null &&
+                            realItem.initialIntegrator !== undefined
                             ? realItem.initialIntegrator.toFixed(1)
                             : '';
                     },
@@ -87,10 +90,12 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                     customStyles: 'font-family: monospace; font-weight: 500; font-size: 14px;'
                 },
                 {
-                    header: 'Integrador final',
+                    header: formatHeaderWithUnits('Integrador final [kWh]'),
                     field: (item: StandStandResult): string => {
                         const realItem = item as Stand | IntegrationTestStandResult;
-                        return 'finalIntegrator' in realItem && realItem.finalIntegrator !== null
+                        return 'finalIntegrator' in realItem &&
+                            realItem.finalIntegrator !== null &&
+                            realItem.finalIntegrator !== undefined
                             ? realItem.finalIntegrator.toFixed(1)
                             : '';
                     },

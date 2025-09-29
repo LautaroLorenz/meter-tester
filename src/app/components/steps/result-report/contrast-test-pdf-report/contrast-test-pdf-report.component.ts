@@ -8,6 +8,7 @@ import { PreparationEssayStep } from '../../../../models/business/interafces/ste
 import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-column.model';
 import { StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
+import { formatHeaderWithUnits } from '../../../../utils/table-utils';
 
 @Component({
     selector: 'app-contrast-test-pdf-report',
@@ -27,7 +28,7 @@ export class ContrastTestPdfReportComponent extends PdfReportComponent {
 
     readonly resultsColumn: TableColumn<StandStandResult> = {
         alignHorizontal: TC_AlignHorizontal.Number,
-        header: 'Error [%]',
+        header: formatHeaderWithUnits('Error [%]'),
         field: (item: StandStandResult): string => {
             const realItem = item as Stand | ContrastTestStandResult;
             return 'measuredError' in realItem ? realItem.measuredError?.toFixed(2) : '';

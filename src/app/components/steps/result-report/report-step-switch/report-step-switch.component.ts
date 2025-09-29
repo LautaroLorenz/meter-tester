@@ -15,6 +15,8 @@ export class ReportStepSwitchComponent {
     @Input() essayStep!: EssayStep;
     @Input() preparationStep!: PreparationEssayStep;
     @Input() showPreparation = false;
+    @Input() essayName?: string;
+    @Input() executionDate?: string;
     @ViewChild(PdfReportComponent, { static: false }) stepPdfReport!: PdfReportComponent;
 
     readonly Steps = Steps;

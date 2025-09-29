@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Step } from '../../models/business/database/step.model';
 import { HelpTextStepsMap } from '../../models/business/constants/help-texts-constant.model';
+import { Steps } from '../../models/business/enums/steps.model';
 
 @Component({
     selector: 'app-add-step-to-sequence',
@@ -37,6 +38,14 @@ export class AddStepToSequenceComponent implements OnChanges {
     stepSelected(step: Step): void {
         this.selectedStep.emit({ ...step });
         this.dialogOpened = false;
+    }
+
+    getHelpTextTitle(stepId: number): string {
+        return HelpTextStepsMap[stepId as Steps]?.title || '';
+    }
+
+    getHelpTextMessage(stepId: number): string {
+        return HelpTextStepsMap[stepId as Steps]?.message || '';
     }
 
     private getUserSelectableStepOptions(steps: Step[]): Step[] {
