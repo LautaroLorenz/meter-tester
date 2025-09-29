@@ -7,7 +7,6 @@ class CommandProcessor {
     constructor(config, callbacks) {
         this.commandBuffer = '';
         this.dataTimeout = null;
-        this.processingAttempts = 0;
         this.config = config;
         this.callbacks = callbacks;
     }
@@ -21,19 +20,16 @@ class CommandProcessor {
         if (this.dataTimeout) {
             clearTimeout(this.dataTimeout);
         }
-        // Calcular timeout adaptativo
-        const adaptiveTimeout = Math.min(this.config.dataWaitTimeout + this.processingAttempts * 10, this.config.maxDataWaitTimeout);
-        // Establecer nuevo timeout para procesar después de un breve período
+        // Establecer timeout para procesar después de un breve período
         this.dataTimeout = setTimeout(() => {
             this.processCommands();
             this.dataTimeout = null;
-        }, adaptiveTimeout);
+        }, this.config.dataWaitTimeout);
     }
     /**
      * Procesa todos los comandos completos en el buffer
      */
     processCommands() {
-        this.processingAttempts++;
         while (this.commandBuffer.length > 0) {
             // Buscar el primer comando que coincida con algún patrón
             const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
@@ -50,7 +46,6 @@ class CommandProcessor {
                             this.callbacks.onCommandReceived(command);
                             // Remover el comando procesado del buffer
                             this.commandBuffer = this.commandBuffer.substring(command.length);
-                            this.processingAttempts = 0; // Resetear contador al procesar exitosamente
                             continue;
                         }
                         else {
@@ -135,15 +130,13 @@ class CommandProcessor {
             this.dataTimeout = null;
         }
         this.commandBuffer = '';
-        this.processingAttempts = 0;
     }
     /**
      * Obtiene el estado actual del buffer (útil para debugging)
      */
     getBufferState() {
         return {
-            bufferLength: this.commandBuffer.length,
-            processingAttempts: this.processingAttempts
+            bufferLength: this.commandBuffer.length
         };
     }
 }

@@ -16,8 +16,7 @@ let commandProcessor: CommandProcessor;
 function setupParser() {
     // Configuración del procesador de comandos
     const config: CommandProcessorConfig = {
-        dataWaitTimeout: 100, // 100ms de espera
-        maxDataWaitTimeout: 500 // 500ms máximo
+        dataWaitTimeout: 100 // 100ms de espera
     };
 
     // Callbacks para manejar comandos recibidos
@@ -157,9 +156,8 @@ export default {
         observable.subscribe(async (command) => {
             // escribir por el puerto USB
             const buffer = Buffer.from(command, 'latin1');
-            const commandBuffer = buffer;
-            const coludBeSent = await new Promise((resolve) => {
-                serialPort.write(commandBuffer, (err) => {
+            await new Promise((resolve) => {
+                serialPort.write(buffer, (err) => {
                     if (err !== null && err !== undefined) {
                         console.error('No se pudo enviar el comando', err);
                         resolve(false);

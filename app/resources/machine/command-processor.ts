@@ -3,7 +3,6 @@ import { CHAR_END, DIVIDER } from './constants';
 
 export interface CommandProcessorConfig {
     dataWaitTimeout: number;
-    maxDataWaitTimeout: number;
 }
 
 export interface CommandProcessorCallbacks {
@@ -14,7 +13,6 @@ export interface CommandProcessorCallbacks {
 export class CommandProcessor {
     private commandBuffer = '';
     private dataTimeout: NodeJS.Timeout | null = null;
-    private processingAttempts = 0;
     private config: CommandProcessorConfig;
     private callbacks: CommandProcessorCallbacks;
 
@@ -35,25 +33,17 @@ export class CommandProcessor {
             clearTimeout(this.dataTimeout);
         }
 
-        // Calcular timeout adaptativo
-        const adaptiveTimeout = Math.min(
-            this.config.dataWaitTimeout + this.processingAttempts * 10,
-            this.config.maxDataWaitTimeout
-        );
-
-        // Establecer nuevo timeout para procesar después de un breve período
+        // Establecer timeout para procesar después de un breve período
         this.dataTimeout = setTimeout(() => {
             this.processCommands();
             this.dataTimeout = null;
-        }, adaptiveTimeout);
+        }, this.config.dataWaitTimeout);
     }
 
     /**
      * Procesa todos los comandos completos en el buffer
      */
     private processCommands(): void {
-        this.processingAttempts++;
-
         while (this.commandBuffer.length > 0) {
             // Buscar el primer comando que coincida con algún patrón
             const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
@@ -73,7 +63,6 @@ export class CommandProcessor {
 
                             // Remover el comando procesado del buffer
                             this.commandBuffer = this.commandBuffer.substring(command.length);
-                            this.processingAttempts = 0; // Resetear contador al procesar exitosamente
                             continue;
                         } else {
                             // Remover el comando completo ya que sabemos su tamaño
@@ -155,16 +144,14 @@ export class CommandProcessor {
             this.dataTimeout = null;
         }
         this.commandBuffer = '';
-        this.processingAttempts = 0;
     }
 
     /**
      * Obtiene el estado actual del buffer (útil para debugging)
      */
-    getBufferState(): { bufferLength: number; processingAttempts: number } {
+    getBufferState(): { bufferLength: number } {
         return {
-            bufferLength: this.commandBuffer.length,
-            processingAttempts: this.processingAttempts
+            bufferLength: this.commandBuffer.length
         };
     }
 }

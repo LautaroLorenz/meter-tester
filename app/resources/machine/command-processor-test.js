@@ -74,7 +74,6 @@ test('CommandProcessor should be created', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -92,7 +91,6 @@ test('Should process generador command', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -121,7 +119,6 @@ test('Should process calculador command', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -149,7 +146,6 @@ test('Should process command in chunks', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -184,7 +180,6 @@ test('Should handle empty data', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -210,7 +205,6 @@ test('Should clean up properly', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
@@ -230,7 +224,6 @@ test('Should clean up properly', () => {
 
   bufferState = processor.getBufferState();
   expect(bufferState.bufferLength).toBe(0);
-  expect(bufferState.processingAttempts).toBe(0);
 });
 
 test('Should handle invalid data', () => {
@@ -239,7 +232,6 @@ test('Should handle invalid data', () => {
 
   const config = {
     dataWaitTimeout: 100,
-    maxDataWaitTimeout: 500,
   };
 
   const callbacks = {
