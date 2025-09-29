@@ -5,7 +5,12 @@
         styleClass="progress-panel">
         <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2">
-                <span class="text-700 font-medium text-sm">Progreso -</span>
+                <i
+                    class="pi pi-stopwatch text-600"
+                    style="font-size: 0.9rem"
+                    pTooltip="Contador de Impulsos"
+                    tooltipPosition="right"></i>
+                <span class="text-700 font-medium text-sm">Contador -</span>
                 <div class="flex align-items-center gap-1">
                     <span class="text-600 font-medium text-sm">{{ statusText }}</span>
                 </div>
