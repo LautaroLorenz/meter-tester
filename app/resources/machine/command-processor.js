@@ -4,11 +4,15 @@ exports.CommandProcessor = void 0;
 const command_size_1 = require("./command-size");
 const constants_1 = require("./constants");
 class CommandProcessor {
-    constructor(config, callbacks) {
+    constructor(callbacks) {
         this.commandBuffer = '';
         this.dataTimeout = null;
-        this.config = config;
+        this.MAX_TIMEOUT_ATTEMPTS = 50;
+        this.timeoutAttempts = 0;
         this.callbacks = callbacks;
+        // Calcular límite dinámico basado en el mayor tamaño de comando * 10
+        const maxCommandSize = Math.max(...command_size_1.CommandsSizes.map((cmd) => cmd.size));
+        this.MAX_BUFFER_SIZE = maxCommandSize * 10;
     }
     /**
      * Procesa un chunk de datos recibidos del puerto serie
@@ -16,6 +20,11 @@ class CommandProcessor {
      */
     processDataChunk(chunk) {
         this.commandBuffer += chunk;
+        // Verificar límite de buffer (protección contra memory leak)
+        if (this.commandBuffer.length > this.MAX_BUFFER_SIZE) {
+            this.clearBuffer();
+            return;
+        }
         // Cancelar timeout anterior si existe
         if (this.dataTimeout) {
             clearTimeout(this.dataTimeout);
@@ -23,8 +32,10 @@ class CommandProcessor {
         // Buscar comando reconocido para calcular timeout inteligente
         const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
         if (recognizedCommand) {
-            const { commandSize } = recognizedCommand;
-            const remainingChars = commandSize.size - this.commandBuffer.length;
+            // Resetear contador cuando encuentra patrón válido
+            this.timeoutAttempts = 0;
+            const { commandSize, startIndex } = recognizedCommand;
+            const remainingChars = commandSize.size - (this.commandBuffer.length - startIndex);
             if (remainingChars <= 0) {
                 // Comando completo - procesar inmediatamente
                 this.processCommands();
@@ -38,6 +49,13 @@ class CommandProcessor {
             }, estimatedTime);
         }
         else {
+            // Incrementar contador de intentos
+            this.timeoutAttempts++;
+            // Si excedemos intentos máximos, limpiar buffer
+            if (this.timeoutAttempts > this.MAX_TIMEOUT_ATTEMPTS) {
+                this.clearBuffer();
+                return;
+            }
             // No se reconoce patrón - timeout corto para buscar patrones
             this.dataTimeout = setTimeout(() => {
                 this.processCommands();
@@ -53,7 +71,7 @@ class CommandProcessor {
             // Buscar el primer comando que coincida con algún patrón
             const recognizedCommand = this.findRecognizedCommand(this.commandBuffer);
             if (recognizedCommand) {
-                const { command, commandSize } = recognizedCommand;
+                const { command, commandSize, startIndex } = recognizedCommand;
                 // Verificar que el comando tenga el tamaño correcto
                 if (command.length === commandSize.size) {
                     // Verificar que termine en 'Z'
@@ -63,19 +81,19 @@ class CommandProcessor {
                             // Comando válido encontrado
                             this.callbacks.onCommandLog(command);
                             this.callbacks.onCommandReceived(command);
-                            // Remover el comando procesado del buffer
-                            this.commandBuffer = this.commandBuffer.substring(command.length);
+                            // Remover el comando procesado del buffer (incluyendo ruido antes)
+                            this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
                             continue;
                         }
                         else {
-                            // Remover el comando completo ya que sabemos su tamaño
-                            this.commandBuffer = this.commandBuffer.substring(command.length);
+                            // Remover el comando completo ya que sabemos su tamaño (incluyendo ruido)
+                            this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
                             continue;
                         }
                     }
                     else {
-                        // Remover el comando completo ya que sabemos su tamaño
-                        this.commandBuffer = this.commandBuffer.substring(command.length);
+                        // Remover el comando completo ya que sabemos su tamaño (incluyendo ruido)
+                        this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
                         continue;
                     }
                 }
@@ -83,8 +101,8 @@ class CommandProcessor {
                     break;
                 }
                 else {
-                    // El comando es más largo de lo esperado, remover el comando completo
-                    this.commandBuffer = this.commandBuffer.substring(command.length);
+                    // El comando es más largo de lo esperado, remover el comando completo (incluyendo ruido)
+                    this.commandBuffer = this.commandBuffer.substring(startIndex + command.length);
                     continue;
                 }
             }
@@ -97,21 +115,24 @@ class CommandProcessor {
     /**
      * Busca un comando reconocido en el buffer
      * @param buffer - Buffer de datos a analizar
-     * @returns Comando encontrado y su tamaño, o null si no se encuentra
+     * @returns Comando encontrado, su tamaño y posición, o null si no se encuentra
      */
     findRecognizedCommand(buffer) {
         for (const commandSize of command_size_1.CommandsSizes) {
-            // Usar directamente el patrón como regex (ya está escapado en CommandsSizes)
-            const regex = new RegExp(`^${commandSize.pattern}`);
-            // Verificar si el buffer hace match con el patrón regex
-            if (regex.test(buffer)) {
-                // Si el buffer tiene al menos el tamaño mínimo para este comando, extraer el comando
-                if (buffer.length >= commandSize.size) {
-                    const command = buffer.substring(0, commandSize.size);
-                    return { command, commandSize };
+            // Buscar el patrón en cualquier parte del buffer, no solo al inicio
+            const regex = new RegExp(commandSize.pattern);
+            const match = buffer.match(regex);
+            if (match) {
+                const startIndex = match.index;
+                const endIndex = startIndex + commandSize.size;
+                // Verificar que tenemos suficientes caracteres para el comando completo
+                if (buffer.length >= endIndex) {
+                    // Extraer comando válido y reportar ruido eliminado
+                    const command = buffer.substring(startIndex, endIndex);
+                    return { command, commandSize, startIndex };
                 }
                 else {
-                    // No tenemos suficientes datos para este comando, pero el patrón coincide
+                    // No tenemos suficientes datos para este comando
                     return null;
                 }
             }
@@ -149,13 +170,27 @@ class CommandProcessor {
             this.dataTimeout = null;
         }
         this.commandBuffer = '';
+        this.timeoutAttempts = 0;
+    }
+    /**
+     * Limpia el buffer y resetea contadores (para casos de error)
+     */
+    clearBuffer() {
+        this.commandBuffer = '';
+        this.timeoutAttempts = 0;
+        if (this.dataTimeout) {
+            clearTimeout(this.dataTimeout);
+            this.dataTimeout = null;
+        }
     }
     /**
      * Obtiene el estado actual del buffer (útil para debugging)
      */
     getBufferState() {
         return {
-            bufferLength: this.commandBuffer.length
+            bufferLength: this.commandBuffer.length,
+            maxBufferSize: this.MAX_BUFFER_SIZE,
+            timeoutAttempts: this.timeoutAttempts
         };
     }
     /**

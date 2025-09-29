@@ -14,11 +14,6 @@ let commandProcessor: CommandProcessor;
 
 // Función para configurar el parser personalizado
 function setupParser() {
-    // Configuración del procesador de comandos
-    const config: CommandProcessorConfig = {
-        dataWaitTimeout: 10 // 10ms base para búsqueda de patrones (ahora se calcula dinámicamente)
-    };
-
     // Callbacks para manejar comandos recibidos
     const callbacks: CommandProcessorCallbacks = {
         onCommandReceived: (command: string) => {
@@ -30,7 +25,7 @@ function setupParser() {
     };
 
     // Crear instancia del procesador
-    commandProcessor = new CommandProcessor(config, callbacks);
+    commandProcessor = new CommandProcessor(callbacks);
 
     serialPort.on('data', (data) => {
         // Use 'latin1' encoding to preserve all byte values (0-255)

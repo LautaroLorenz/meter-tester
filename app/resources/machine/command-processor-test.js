@@ -42,6 +42,13 @@ function expect(actual) {
         throw new Error(`Expected ${actual} to be greater than ${expected}`);
       }
     },
+    toBeGreaterThanOrEqual: (expected) => {
+      if (actual < expected) {
+        throw new Error(
+          `Expected ${actual} to be greater than or equal to ${expected}`,
+        );
+      }
+    },
     toBeTruthy: () => {
       if (!actual) {
         throw new Error(`Expected ${actual} to be truthy`);
@@ -72,16 +79,12 @@ test('CommandProcessor should be created', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
   expect(processor).toBeTruthy();
 });
 
@@ -89,16 +92,12 @@ test('Should process generador command', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
   const commandString = bytesToString(testCommands.generador);
 
   processor.processDataChunk(commandString);
@@ -117,16 +116,12 @@ test('Should process calculador command', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
   const commandString = bytesToString(testCommands.calculador);
 
   processor.processDataChunk(commandString);
@@ -144,16 +139,12 @@ test('Should process command in chunks', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
   const commandString = bytesToString(testCommands.generador);
 
   // Split into chunks
@@ -178,21 +169,19 @@ test('Should handle empty data', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
 
   processor.processDataChunk('');
 
   const bufferState = processor.getBufferState();
   expect(bufferState.bufferLength).toBe(0);
+  expect(bufferState.maxBufferSize).toBeGreaterThan(0);
+  expect(bufferState.timeoutAttempts).toBeGreaterThanOrEqual(0); // Could be 0 or 1 depending on processing
   expect(receivedCommands.length).toBe(0);
   expect(loggedCommands.length).toBe(0);
 
@@ -203,43 +192,37 @@ test('Should clean up properly', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
   const commandString = bytesToString(testCommands.generador);
 
   processor.processDataChunk(commandString.substring(0, 5));
 
   let bufferState = processor.getBufferState();
   expect(bufferState.bufferLength).toBeGreaterThan(0);
+  expect(bufferState.maxBufferSize).toBeGreaterThan(0);
 
   processor.cleanup();
 
   bufferState = processor.getBufferState();
   expect(bufferState.bufferLength).toBe(0);
+  expect(bufferState.timeoutAttempts).toBe(0);
 });
 
 test('Should handle invalid data', () => {
   const receivedCommands = [];
   const loggedCommands = [];
 
-  const config = {
-    dataWaitTimeout: 100,
-  };
-
   const callbacks = {
     onCommandReceived: (command) => receivedCommands.push(command),
     onCommandLog: (command) => loggedCommands.push(command),
   };
 
-  const processor = new CommandProcessor(config, callbacks);
+  const processor = new CommandProcessor(callbacks);
 
   processor.processDataChunk('INVALID_DATA_12345');
 
@@ -249,6 +232,37 @@ test('Should handle invalid data', () => {
 
     const bufferState = processor.getBufferState();
     expect(bufferState.bufferLength).toBe(0);
+    expect(bufferState.timeoutAttempts).toBeGreaterThan(0); // Should have attempted to find pattern
+    processor.cleanup();
+  }, 200);
+});
+
+test('Should handle noise before command pattern', () => {
+  const receivedCommands = [];
+  const loggedCommands = [];
+
+  const callbacks = {
+    onCommandReceived: (command) => receivedCommands.push(command),
+    onCommandLog: (command) => loggedCommands.push(command),
+  };
+
+  const processor = new CommandProcessor(callbacks);
+
+  // Test with noise before the command
+  const noise = 'asodijasoidjaoisdjoda';
+  const commandString = bytesToString(testCommands.generador);
+  const dataWithNoise = noise + commandString;
+
+  processor.processDataChunk(dataWithNoise);
+
+  setTimeout(() => {
+    expect(receivedCommands.length).toBe(1);
+    expect(receivedCommands[0]).toBe(commandString); // Should extract clean command
+    expect(loggedCommands.length).toBe(1);
+    expect(loggedCommands[0]).toBe(commandString);
+
+    const bufferState = processor.getBufferState();
+    expect(bufferState.bufferLength).toBe(0); // Buffer should be clean after processing
     processor.cleanup();
   }, 200);
 });
@@ -267,4 +281,4 @@ setTimeout(() => {
     console.log('\n💥 Some tests failed!');
     process.exit(1);
   }
-}, 2000);
+}, 2500);
