@@ -29,4 +29,3 @@ exports.CommandsSizes = [
         patternLength: 7
     }
 ];
-//# sourceMappingURL=command-size.js.map
