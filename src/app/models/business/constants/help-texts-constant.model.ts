@@ -21,7 +21,8 @@ export const HelpTextStepsMap: Record<Steps, HelpText> = {
             'En esta prueba, los medidores no deben emitir más impulsos de los permitidos durante el tiempo especificado. Si los impulsos exceden el máximo permitido, la prueba no se considerará superada.'
     },
     [Steps.IntegrationTest]: {
-        title: '',
-        message: ''
+        title: 'Prueba para verificar el correcto funcionamiento del integrador de los medidores',
+        message:
+            'Los medidores integrarán una cantidad de impulsos determinada. Se ingresa el estado inicial y final del contador y se calcula el error correspondiente al final de la prueba.<br>También, puede optarse por no ingresar estos valores y realizar una comprobación visual de los integradores, aprobando o rechazando de forma manual.'
     }
 };
