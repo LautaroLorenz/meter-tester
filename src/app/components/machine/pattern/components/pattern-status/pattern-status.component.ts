@@ -16,7 +16,7 @@ export class PatternStatusComponent implements OnChanges {
 
     rows: PatternStatusRow[] = [
         { metric: 'Tensión U', l1: '0', l2: '0', l3: '0', unit: 'V', decimals: 1 },
-        { metric: 'Corriente I', l1: '0', l2: '0', l3: '0', unit: 'A', decimals: 3 },
+        { metric: 'Corriente I', l1: '0', l2: '0', l3: '0', unit: 'A', decimals: 2 },
         { metric: 'Factor de potencia', l1: '0', l2: '0', l3: '0', unit: '', decimals: 2 }
     ];
 
