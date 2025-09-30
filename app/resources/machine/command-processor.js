@@ -107,7 +107,6 @@ class CommandProcessor {
     validateDividers(response, dividerPositions) {
         for (const position of dividerPositions) {
             if (position >= response.length) {
-                console.log(`[COMMAND_PROCESSOR] ERROR: Posición ${position} fuera de rango (${response.length})`);
                 return false;
             }
             if (response[position] !== constants_1.DIVIDER) {
