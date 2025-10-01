@@ -41,7 +41,7 @@ export class PhaseTableComponent {
     }
 
     getPhaseCellStyles(): string {
-        return 'font-family: monospace; font-weight: 500; font-size: 0.75rem; white-space: nowrap;';
+        return 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem; white-space: nowrap;';
     }
 
     getSubHeaderClass(phase: Phase | Partial<Phase> | undefined): string {

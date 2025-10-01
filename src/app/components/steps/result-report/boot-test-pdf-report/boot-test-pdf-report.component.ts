@@ -34,6 +34,5 @@ export class BootTestPdfReportComponent extends PdfReportComponent {
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
         },
         headerStyle: 'min-width:90px;font-size:15px;',
-        customStyles: 'font-size:14px;'
     };
 }

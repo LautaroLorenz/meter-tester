@@ -36,8 +36,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'calculatedError' in realItem ? realItem.calculatedError?.toFixed(2) : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;',
-        customStyles: 'font-size:14px;'
+        headerStyle: 'min-width:90px;font-size:15px;'
     };
 
     ngOnInit(): void {
@@ -87,7 +86,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                     },
                     alignHorizontal: TC_AlignHorizontal.Number,
                     headerStyle: 'min-width: 120px; width: 120px; font-size: 15px;',
-                    customStyles: 'font-family: monospace; font-weight: 500; font-size: 14px;'
+                    customStyles: 'font-family: var(--font-monospace); font-weight: 500;'
                 },
                 {
                     header: formatHeaderWithUnits('Integrador final [kWh]'),
@@ -101,7 +100,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                     },
                     alignHorizontal: TC_AlignHorizontal.Number,
                     headerStyle: 'min-width: 120px; width: 120px; font-size: 15px;',
-                    customStyles: 'font-family: monospace; font-weight: 500; font-size: 14px;'
+                    customStyles: 'font-family: var(--font-monospace); font-weight: 500;'
                 }
             ];
         } else {

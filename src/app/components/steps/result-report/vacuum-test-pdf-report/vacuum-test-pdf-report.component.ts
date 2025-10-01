@@ -33,7 +33,6 @@ export class VacuumTestPdfReportComponent extends PdfReportComponent {
             const realItem = item as Stand | VacuumTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;',
-        customStyles: 'font-size:14px;'
+        headerStyle: 'min-width:90px;font-size:15px;'
     };
 }

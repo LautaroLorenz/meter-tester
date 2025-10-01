@@ -73,7 +73,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 field: (item) => ('name' in item ? item.name : 'N/A'),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 50px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Medidor',
@@ -85,14 +85,14 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 100px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: 'Año',
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Active)}`,
@@ -100,7 +100,8 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                     this.standMeterConstantPipe.transform(MeterConstantEnum.Active, item?.foreign?.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
                 headerStyle: 'min-width: 100px; white-space: nowrap;',
-                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
+                customStyles:
+                    'font-family: var(--font-monospace); font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             },
             {
                 header: `Cte. ${this.meterConstantPipe.transform(MeterConstantEnum.Reactive)}`,
@@ -108,7 +109,8 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                     this.standMeterConstantPipe.transform(MeterConstantEnum.Reactive, item?.foreign?.meter),
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
                 headerStyle: 'min-width: 100px; white-space: nowrap;',
-                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
+                customStyles:
+                    'font-family: var(--font-monospace); font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             }
         ];
     }

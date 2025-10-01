@@ -23,6 +23,7 @@
   ],
   "main": "app/main.js",
   "private": true,
+  "license": "Commercial",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "ng": "ng",

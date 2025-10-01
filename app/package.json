@@ -14,6 +14,7 @@
   "version": "6.3.0",
   "main": "main.js",
   "private": true,
+  "license": "Commercial",
   "dependencies": {
     "@faker-js/faker": "^8.4.0",
     "electron-store": "^8.2.0",
