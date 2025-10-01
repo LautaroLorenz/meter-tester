@@ -61,8 +61,7 @@ export class IntegrationTestRunComponent
             const realItem = item as Stand | IntegrationTestStandResult;
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() || '' : '';
         },
-        headerStyle: 'min-width:90px;font-size:15px;',
-        customStyles: 'font-size:14px;'
+        headerStyle: 'min-width:90px;font-size:15px;'
     };
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.integrationTestRun;

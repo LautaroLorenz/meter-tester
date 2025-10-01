@@ -226,7 +226,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 field: (item: IntegrationValue) => item.standNumber,
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px; width: 60px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: formatHeaderWithUnits('Medidor'),
@@ -238,7 +238,7 @@ export class StandsIntegrationValuesComponent implements OnInit {
                 field: (item: IntegrationValue) => (item.isActive ? item.serialNumber : ''),
                 alignHorizontal: TC_AlignHorizontal.Text,
                 headerStyle: 'min-width: 120px; width: 120px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             },
             {
                 header: formatHeaderWithUnits('Intg. Inicial [kWh]'),
@@ -264,7 +264,8 @@ export class StandsIntegrationValuesComponent implements OnInit {
                     item.isActive && item.calculatedError !== null ? item.calculatedError.toFixed(2) : '',
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 100px; width:100px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem; text-align: center;'
+                customStyles:
+                    'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem; text-align: center;'
             },
             {
                 header: formatHeaderWithUnits('Resultado'),

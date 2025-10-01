@@ -57,7 +57,6 @@ export class BootTestRunComponent extends TestRunComponent<BootTestEssayStep> im
             return 'measuredPulses' in realItem ? realItem.measuredPulses?.toString() : '';
         },
         headerStyle: 'min-width:90px;font-size:15px;',
-        customStyles: 'font-size:14px;'
     };
 
     override readonly skipEnabled = APP_CONFIG.skipSteps.bootTestRun;
