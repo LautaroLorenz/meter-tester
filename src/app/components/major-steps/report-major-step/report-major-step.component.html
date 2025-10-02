@@ -25,8 +25,8 @@
                 [outlined]="true">
             </p-button>
             <p-button
-                icon="pi pi-download"
-                label="Descargar PDF"
+                [icon]="isDownloading ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+                [label]="isDownloading ? 'Generando PDF...' : 'Descargar PDF'"
                 [outlined]="true"
                 [disabled]="isDownloading"
                 (click)="downloadPDF()">

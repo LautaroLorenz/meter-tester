@@ -28,7 +28,7 @@ export class CommandHistoryComponent implements OnInit {
             header: 'Comando',
             field: 'command',
             alignHorizontal: TC_AlignHorizontal.Text,
-            customStyles: 'word-break:break-word;font-family:monospace;font-size:14px;letter-spacing:-0.5px;',
+            customStyles: 'word-break:break-word;font-family:var(--font-monospace);letter-spacing:-0.5px;'
         },
         {
             header: 'Fecha',

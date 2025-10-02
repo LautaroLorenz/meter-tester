@@ -70,7 +70,7 @@ commandLog$
 export default {
     register: () => {
         // envió de comando: STW -> Máquina
-        ipcMain.handle('software-write', async (_, { command }) => {
+        ipcMain.handle('software-write', async (_, { command }) => {            
             addCommandLog(command);
             _onSoftwareWrite$.next(command);
 

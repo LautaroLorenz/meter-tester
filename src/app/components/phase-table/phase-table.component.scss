@@ -1,8 +1,4 @@
 .phases-table ::ng-deep {
-  td {
-    font-size: 0.75rem !important;
-  }
-
   // Estilos para fases activas (clásico y tranquilo)
   th.bg-gray-100 {
     background-color: #f3f4f6 !important;
@@ -11,7 +7,6 @@
 
   td.bg-white {
     background-color: #ffffff !important;
-    font-weight: 400;
   }
 
   // Estilos para fases inactivas (más sutiles)
@@ -36,9 +31,20 @@
     font-style: italic;
   }
 
+  th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   // Mejorar la separación visual
   .p-datatable-tbody > tr > td {
     border-left: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
+  }
+
+  // Ancho uniforme usando table-layout: fixed
+  .p-datatable-table {
+    table-layout: fixed;
+    width: 100%;
   }
 }

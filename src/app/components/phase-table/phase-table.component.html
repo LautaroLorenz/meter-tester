@@ -47,35 +47,53 @@
     <ng-template pTemplate="body">
         <tr>
             <!-- Fase L1 -->
-            <td [class]="getPhaseCellClass(phaseL1)">
+            <td
+                [class]="getPhaseCellClass(phaseL1)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL1, 'voltage') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL1)">
+            <td
+                [class]="getPhaseCellClass(phaseL1)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL1, 'current') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL1)">
+            <td
+                [class]="getPhaseCellClass(phaseL1)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL1, 'powerFactor') }}
             </td>
 
             <!-- Fase L2 -->
-            <td [class]="getPhaseCellClass(phaseL2)">
+            <td
+                [class]="getPhaseCellClass(phaseL2)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL2, 'voltage') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL2)">
+            <td
+                [class]="getPhaseCellClass(phaseL2)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL2, 'current') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL2)">
+            <td
+                [class]="getPhaseCellClass(phaseL2)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL2, 'powerFactor') }}
             </td>
 
             <!-- Fase L3 -->
-            <td [class]="getPhaseCellClass(phaseL3)">
+            <td
+                [class]="getPhaseCellClass(phaseL3)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL3, 'voltage') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL3)">
+            <td
+                [class]="getPhaseCellClass(phaseL3)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL3, 'current') }}
             </td>
-            <td [class]="getPhaseCellClass(phaseL3)">
+            <td
+                [class]="getPhaseCellClass(phaseL3)"
+                [style]="getPhaseCellStyles()">
                 {{ getDisplayValue(phaseL3, 'powerFactor') }}
             </td>
         </tr>

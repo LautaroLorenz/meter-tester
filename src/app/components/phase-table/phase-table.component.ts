@@ -30,14 +30,18 @@ export class PhaseTableComponent {
 
     getPhaseHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
         return this.isPhaseActive(phase)
-            ? 'text-center bg-gray-100 text-gray-700 font-medium text-sm uppercase tracking-wide'
-            : 'text-center bg-gray-50 text-gray-400 font-medium text-sm uppercase tracking-wide';
+            ? 'text-center bg-gray-100 text-gray-700 font-medium text-xs uppercase tracking-wide'
+            : 'text-center bg-gray-50 text-gray-400 font-medium text-xs uppercase tracking-wide';
     }
 
     getPhaseCellClass(phase: Phase | Partial<Phase> | undefined): string {
         return this.isPhaseActive(phase)
-            ? 'text-center text-gray-700 font-medium text-sm font-mono bg-white'
-            : 'text-center text-gray-400 font-medium text-sm font-mono bg-gray-25';
+            ? 'text-center text-gray-700 font-medium bg-white'
+            : 'text-center text-gray-400 font-medium bg-gray-25';
+    }
+
+    getPhaseCellStyles(): string {
+        return 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem; white-space: nowrap;';
     }
 
     getSubHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
@@ -66,11 +70,11 @@ export class PhaseTableComponent {
     getDisplayValue(phase: Phase | Partial<Phase> | undefined, field: 'voltage' | 'current' | 'powerFactor'): string {
         if (this.shouldShowValue(phase, field)) {
             if (field === 'voltage') {
-                return `${phase?.voltage || 0} [V]`;
+                return `${(phase?.voltage || 0).toFixed(1)}[V]`;
             } else if (field === 'current') {
-                return `${phase?.current || 0} [A]`;
+                return `${(phase?.current || 0).toFixed(3)}[A]`;
             } else if (field === 'powerFactor') {
-                return `${phase?.powerFactor || 0}${phase?.powerFactorLetter || ''}`;
+                return `${(phase?.powerFactor || 0).toFixed(2)}${phase?.powerFactorLetter || ''}`;
             }
         }
         return '--';

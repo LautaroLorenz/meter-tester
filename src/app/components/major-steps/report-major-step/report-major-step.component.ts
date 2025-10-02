@@ -95,21 +95,25 @@ export class ReportMajorStepComponent implements OnInit, AfterViewInit {
         this.isDownloading = true;
         this.cd.detectChanges();
 
-        const pages = this.getPages();
-        const pdfPages = pages.map((page) => ({ html: page.html }));
+        // ponemos el setTimeout para que se pueda actualizar el boton
+        setTimeout(() => {
+            const pages = this.getPages();
+            const pdfPages = pages.map((page) => ({ html: page.html }));
 
-        this.pdfGenerationService
-            .generatePDFFromPages(pdfPages, this.fileName, { scale: 1.5, useCORS: true })
-            .then(() => {
-                this.isDownloading = false;
-                this.isFileDownloaded = true;
-                this.cd.detectChanges();
-            })
-            .catch(() => {
-                this.isDownloading = false;
-                this.cd.detectChanges();
-                this.messagesService.error('No se pudo crear el reporte');
-            });
+            this.pdfGenerationService
+                .generatePDFFromPages(pdfPages, this.fileName)
+                .then(() => {
+                    this.isDownloading = false;
+                    this.isFileDownloaded = true;
+                    this.messagesService.info('Se abrirá el diálogo de descarga');
+                    this.cd.detectChanges();
+                })
+                .catch(() => {
+                    this.isDownloading = false;
+                    this.cd.detectChanges();
+                    this.messagesService.error('No se pudo generar el PDF');
+                });
+        }, 100);
     }
 
     exit(): void {

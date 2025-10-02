@@ -4,6 +4,15 @@
 [![Make a pull request][prs-badge]][prs]
 [![License][license-badge]](LICENSE.md)
 
+## 🏢 Commercial Software License
+
+**OELEC - CE Soft** is a commercial software product. A valid license is required for use.
+
+- 📧 **Licensing inquiries**: lautaro.lorenz@gmail.com
+- 📋 **License types**: Evaluation (30 days), Commercial, Enterprise
+- 📄 **License agreement**: See [LICENSE.md](LICENSE.md)
+- ℹ️ **License info**: See [LICENSE_INFO.md](LICENSE_INFO.md)
+
 [![Linux Build][linux-build-badge]][linux-build]
 [![MacOS Build][macos-build-badge]][macos-build]
 [![Windows Build][windows-build-badge]][windows-build]

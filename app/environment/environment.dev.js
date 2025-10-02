@@ -4,6 +4,6 @@ exports.APP_CONFIG = void 0;
 exports.APP_CONFIG = {
     production: false,
     virtualMachine: false,
-    inspector: true
+    inspector: false
 };
 //# sourceMappingURL=environment.dev.js.map

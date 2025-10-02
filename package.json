@@ -1,6 +1,6 @@
 {
   "name": "oelec-ce-soft",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "OELEC - CE Soft",
   "homepage": "https://github.com/LautaroLorenz/meter-tester",
   "author": {
@@ -23,6 +23,7 @@
   ],
   "main": "app/main.js",
   "private": true,
+  "license": "Commercial",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "ng": "ng",

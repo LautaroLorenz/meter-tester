@@ -87,7 +87,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             field: (item) => (('standIndex' in item ? item.standIndex : 0) + 1).toString().padStart(2, '0'),
             alignHorizontal: TC_AlignHorizontal.Number,
             headerStyle: 'min-width: 50px;',
-            customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+            customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
         });
         if (!this.compactMode) {
             columns.push({
@@ -101,7 +101,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             field: (item) => ('serialNumber' in item ? item.serialNumber : ''),
             alignHorizontal: TC_AlignHorizontal.Text,
             headerStyle: 'min-width: 100px;',
-            customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+            customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
         });
 
         // Agregar columnas adicionales antes del error si se especifica
@@ -115,7 +115,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
                 field: (item) => ('yearOfProduction' in item ? item.yearOfProduction : ''),
                 alignHorizontal: TC_AlignHorizontal.Number,
                 headerStyle: 'min-width: 60px;',
-                customStyles: 'font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                customStyles: 'font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
             });
         }
         if (!this.compactMode) {
@@ -132,7 +132,8 @@ export class StandsResultComponent implements OnInit, OnChanges {
                 },
                 alignHorizontal: TC_AlignHorizontal.Alphanumeric,
                 headerStyle: 'min-width: 100px; white-space: nowrap;',
-                customStyles: 'font-family: monospace; font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
+                customStyles:
+                    'font-family: var(--font-monospace); font-weight: 500; white-space: nowrap; font-size: 0.75rem;'
             });
         }
         columns.push({
@@ -140,7 +141,7 @@ export class StandsResultComponent implements OnInit, OnChanges {
             headerStyle: (this.resultsColumn.headerStyle || '') + ' min-width: 80px;',
             customStyles:
                 (this.resultsColumn.customStyles || '') +
-                ' font-family: monospace; font-weight: 500; font-size: 0.75rem;'
+                ' font-family: var(--font-monospace); font-weight: 500; font-size: 0.75rem;'
         });
 
         // Agregar columnas adicionales después del error si se especifica

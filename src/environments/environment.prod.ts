@@ -6,8 +6,8 @@ export const APP_CONFIG: Environment = {
     production: true,
     environment: 'PROD',
     standsQuantity: 20,
-    generatorType: GeneratorEnum.Manual,
-    patternType: PatternEnum.Virtual,
+    generatorType: GeneratorEnum.SemiautomaticPYC5050,
+    patternType: PatternEnum.Sm5050,
     skipSteps: {
         photocellAdjustmentRequest: false,
         verificationMajorStep: false,
