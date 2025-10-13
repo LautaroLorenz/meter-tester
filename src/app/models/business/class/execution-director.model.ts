@@ -16,20 +16,9 @@ export class ExecutionDirector {
 
     static getInitialPhotocellAdjustmentStatus(essaySteps: EssayStep[], index: number): PhotocellAdjustmentStatus {
         const currentStep = essaySteps[index];
-
         if ('meterConstant' in currentStep.form_control_raw === false) {
             return PhotocellAdjustmentStatus.NotApply;
         }
-
-        const lastAjustmentMeterConstant: number | undefined = this.getLastAdjustmentMeterConstant(essaySteps, index);
-        if (
-            lastAjustmentMeterConstant !== undefined &&
-            currentStep.form_control_raw.meterConstant === lastAjustmentMeterConstant &&
-            APP_CONFIG.generatorType !== GeneratorEnum.SemiautomaticPYC5050
-        ) {
-            return PhotocellAdjustmentStatus.NotApply;
-        }
-
         return PhotocellAdjustmentStatus.Pending;
     }
 
