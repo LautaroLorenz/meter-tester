@@ -66,24 +66,56 @@ commandLog$
     });
 }))
     .subscribe();
+// Función auxiliar para esperar respuesta con timeout
+function waitForResponse(command, timeoutMs = 3000) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+            first: timeoutMs,
+            with: () => {
+                throw new Error('Timeout');
+            }
+        })));
+    });
+}
+// Configuración de reintentos
+const RETRY_CONFIG = {
+    maxRetries: 2,
+    timeoutMs: 200 // Timeout en milisegundos
+};
+// Función auxiliar para enviar comando con reintento automático
+function sendCommandWithRetry(command) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { maxRetries, timeoutMs } = RETRY_CONFIG;
+        // Loggear y enviar comando inicial
+        addCommandLog(command);
+        _onSoftwareWrite$.next(command);
+        // Intentar hasta maxRetries + 1 veces (intento inicial + reintentos)
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const response = yield waitForResponse(command, timeoutMs);
+                return { result: response };
+            }
+            catch (error) {
+                // Si es timeout y no es el último intento, reintentar
+                if (error instanceof Error && error.message === 'Timeout' && attempt < maxRetries) {
+                    // Loggear y reenviar el comando
+                    addCommandLog(command);
+                    _onSoftwareWrite$.next(command);
+                    continue; // Continuar al siguiente intento
+                }
+                // Si no es timeout o es el último intento, retornar error
+                return { error };
+            }
+        }
+        // Este punto no debería alcanzarse, pero por seguridad
+        return { error: new Error('Unexpected error in retry logic') };
+    });
+}
 exports.default = {
     register: () => {
         // envió de comando: STW -> Máquina
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
-            addCommandLog(command);
-            _onSoftwareWrite$.next(command);
-            try {
-                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                    first: 6000,
-                    with: () => {
-                        throw new Error('Timeout');
-                    }
-                })));
-                return { result: response };
-            }
-            catch (error) {
-                return { error };
-            }
+            return yield sendCommandWithRetry(command);
         }));
         electron_1.ipcMain.handle('subscribe-to-history', (event) => {
             if (logsSenders.some(({ id }) => event.sender.id === id)) {
