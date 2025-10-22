@@ -13,8 +13,8 @@ export const CommandsSizes: CommandSize[] = [
     {
         // Patrón -> Software - Respuesta - Constante y Valores medidos de fases
         pattern: `B\\|PS`,
-        size: 41,
-        dividerPositions: [1, 4, 9, 12, 15, 18, 21, 24, 27, 31, 35, 39]
+        size: 43,
+        dividerPositions: [1, 4, 9, 11, 14, 17, 20, 23, 26, 29, 33, 37, 41]
     },
     {
         // Generador -> Software - Respuesta - ACK

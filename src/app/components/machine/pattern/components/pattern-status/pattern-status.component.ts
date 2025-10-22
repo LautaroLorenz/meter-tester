@@ -52,6 +52,9 @@ export class PatternStatusComponent implements OnChanges {
             };
         };
 
+        // Determine current decimals based on multiplier
+        const currentDecimals = this.patternStatus?.multiplier === 10 ? 3 : 2;
+
         // Update power factor row with appropriate text based on meter constant
         const powerFactorRow = updatePhaseRow(
             this.rows[2],
@@ -80,7 +83,7 @@ export class PatternStatusComponent implements OnChanges {
                 this.patternStatus?.phaseL3
             ),
             updatePhaseRow(
-                this.rows[1],
+                { ...this.rows[1], decimals: currentDecimals },
                 'current',
                 this.patternStatus?.phaseL1,
                 this.patternStatus?.phaseL2,

@@ -48,7 +48,7 @@ export class CommandMapComponent {
             startPattern: `B\\|SP`,
             lastResponse: '',
             formatedLastResponse: '',
-            automaticResponse: () => this.getPatternAutomaticResponse()
+            automaticResponse: (command?: string) => this.getPatternAutomaticResponse(command || '')
         },
         {
             device: Devices.CAL,
@@ -118,7 +118,13 @@ export class CommandMapComponent {
         return item;
     }
 
-    private getPatternAutomaticResponse(): string {
+    private getPatternAutomaticResponse(command: string): string {
+        // Extraer los bloques del comando para obtener el puesto
+        const inputBlocks = CommandDirector.getBlocks(command);
+        const currentL1 = CommandDirector.decodeCompactNumber(inputBlocks[6] || '\x00\x00', 2);
+        const currentL2 = CommandDirector.decodeCompactNumber(inputBlocks[7] || '\x00\x00', 2);
+        const currentL3 = CommandDirector.decodeCompactNumber(inputBlocks[8] || '\x00\x00', 2);
+
         // B|PS|xKPx|UR|US|UT|IR|IS|IT|-PR|-PS|-PT|Z
         const blocks: string[] = [CommandDirector.CHAR_START, `${Devices.PAT}${Devices.STW}`];
 
@@ -126,6 +132,13 @@ export class CommandMapComponent {
         // const patternValue = Math.floor(Math.random() * 4294967296);
         // blocks.push(CommandDirector.encodeCompactNumber(patternValue, 4, 0));
         blocks.push(CommandDirector.encodeCompactNumber(2000000000, 4, 0));
+
+        // Agregamos un multiplcador de corriente basado en la corriente de entrada
+        let multiplier = 1;
+        if (currentL1 < 2.4 && currentL2 < 2.4 && currentL3 < 2.4) {
+            multiplier = 10;
+        }
+        blocks.push(CommandDirector.encodeCompactNumber(multiplier, 1, 0));
 
         // UR|US|UT - Tensiones aleatorias (2 bytes, 1 decimal) - rango: 0.0 a 255.9
         // const urValue = Math.random() * 255.9;
@@ -137,14 +150,14 @@ export class CommandMapComponent {
 
         // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
         // Simular alarma de sobrecorriente con 5% de probabilidad
-        const shouldTriggerOvercurrent = Math.random() < 0.03; // 5% de probabilidad
+        // const shouldTriggerOvercurrent = Math.random() < 0.03; // 5% de probabilidad
 
-        if (shouldTriggerOvercurrent) {
-            // Simular sobrecorriente: todas las corrientes bajo 2A, pero una supera 2.4A
-            blocks.push(CommandDirector.encodeCompactNumber(1.5, 2, 2)); // L1: 1.5A (bajo 2A)
-            blocks.push(CommandDirector.encodeCompactNumber(2.4, 2, 2)); // L2: 2.41A (sobrecorriente)
-            blocks.push(CommandDirector.encodeCompactNumber(1.8, 2, 2)); // L3: 1.8A (bajo 2A)
-        } else {
+        // if (shouldTriggerOvercurrent) {
+        //     // Simular sobrecorriente: todas las corrientes bajo 2A, pero una supera 2.4A
+        //     blocks.push(CommandDirector.encodeCompactNumber(1.5, 2, 2)); // L1: 1.5A (bajo 2A)
+        //     blocks.push(CommandDirector.encodeCompactNumber(2.4, 2, 2)); // L2: 2.41A (sobrecorriente)
+        //     blocks.push(CommandDirector.encodeCompactNumber(1.8, 2, 2)); // L3: 1.8A (bajo 2A)
+        // } else {
             // Valores normales
             const irValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
             const isValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
@@ -152,7 +165,7 @@ export class CommandMapComponent {
             blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
             blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
             blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
-        }
+        // }
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
         const prValue = Math.random() * 2.55;

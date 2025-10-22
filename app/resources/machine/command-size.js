@@ -16,8 +16,8 @@ exports.CommandMappings = [
     {
         sentCommand: 'B\\|SP.*',
         expectedResponse: 'B\\|PS',
-        responseSize: 41,
-        responseDividerPositions: [1, 4, 9, 12, 15, 18, 21, 24, 27, 31, 35, 39],
+        responseSize: 43,
+        responseDividerPositions: [1, 4, 9, 11, 14, 17, 20, 23, 26, 29, 33, 37, 41],
         responsePatternLength: 4
     },
     {
