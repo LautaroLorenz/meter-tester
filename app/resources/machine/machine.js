@@ -66,24 +66,52 @@ commandLog$
     });
 }))
     .subscribe();
+// Función auxiliar para enviar comando con reintento automático
+function sendCommandWithRetry(command) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Primer intento - timeout 3000ms
+        try {
+            const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+                first: 3000,
+                with: () => {
+                    throw new Error('Timeout');
+                }
+            })));
+            return { result: response };
+        }
+        catch (error) {
+            // Si es timeout, intentar reenviar el comando
+            if (error instanceof Error && error.message === 'Timeout') {
+                // Loggear el reintento
+                addCommandLog(command);
+                // Reenviar el comando
+                _onSoftwareWrite$.next(command);
+                // Segundo intento - timeout 3000ms
+                try {
+                    const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+                        first: 3000,
+                        with: () => {
+                            throw new Error('Timeout');
+                        }
+                    })));
+                    return { result: response };
+                }
+                catch (secondError) {
+                    return { error: secondError };
+                }
+            }
+            // Si no es timeout, retornar el error original
+            return { error };
+        }
+    });
+}
 exports.default = {
     register: () => {
         // envió de comando: STW -> Máquina
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
             addCommandLog(command);
             _onSoftwareWrite$.next(command);
-            try {
-                const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                    first: 6000,
-                    with: () => {
-                        throw new Error('Timeout');
-                    }
-                })));
-                return { result: response };
-            }
-            catch (error) {
-                return { error };
-            }
+            return yield sendCommandWithRetry(command);
         }));
         electron_1.ipcMain.handle('subscribe-to-history', (event) => {
             if (logsSenders.some(({ id }) => event.sender.id === id)) {

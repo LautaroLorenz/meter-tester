@@ -67,13 +67,33 @@ commandLog$
     )
     .subscribe();
 
-export default {
-    register: () => {
-        // envió de comando: STW -> Máquina
-        ipcMain.handle('software-write', async (_, { command }) => {            
+// Función auxiliar para enviar comando con reintento automático
+async function sendCommandWithRetry(command: string): Promise<{ result?: string; error?: any }> {
+    // Primer intento - timeout 3000ms
+    try {
+        const response = await firstValueFrom(
+            from(machineResponse$).pipe(
+                filter(
+                    (responseCommand) => CommandDirector.getTo(command) === CommandDirector.getFrom(responseCommand)
+                ),
+                timeout({
+                    first: 3000,
+                    with: () => {
+                        throw new Error('Timeout');
+                    }
+                })
+            )
+        );
+        return { result: response };
+    } catch (error) { 
+        // Si es timeout, intentar reenviar el comando
+        if (error instanceof Error && error.message === 'Timeout') {
+            // Loggear el reintento
             addCommandLog(command);
+            // Reenviar el comando
             _onSoftwareWrite$.next(command);
 
+            // Segundo intento - timeout 3000ms
             try {
                 const response = await firstValueFrom(
                     from(machineResponse$).pipe(
@@ -82,7 +102,7 @@ export default {
                                 CommandDirector.getTo(command) === CommandDirector.getFrom(responseCommand)
                         ),
                         timeout({
-                            first: 6000,
+                            first: 3000,
                             with: () => {
                                 throw new Error('Timeout');
                             }
@@ -90,9 +110,23 @@ export default {
                     )
                 );
                 return { result: response };
-            } catch (error) {
-                return { error };
+            } catch (secondError) {
+                return { error: secondError };
             }
+        }
+        // Si no es timeout, retornar el error original
+        return { error };
+    }
+}
+
+export default {
+    register: () => {
+        // envió de comando: STW -> Máquina
+        ipcMain.handle('software-write', async (_, { command }) => {
+            addCommandLog(command);
+            _onSoftwareWrite$.next(command);
+
+            return await sendCommandWithRetry(command);
         });
 
         ipcMain.handle('subscribe-to-history', (event) => {
