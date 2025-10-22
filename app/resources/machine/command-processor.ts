@@ -83,7 +83,6 @@ export class CommandProcessor {
 
         const { expectedMapping } = this.pendingResponse;
         const response = this.dataBuffer.substring(0, expectedMapping.responseSize);
-        console.log('response', response);
 
         // a. Start Character Detection
         if (response[0] !== CHAR_START) {
@@ -150,7 +149,6 @@ export class CommandProcessor {
      * Descarta el frame actual y limpia el estado
      */
     private discardFrame(): void {
-        console.log('discardFrame', this.dataBuffer);
         this.clearPendingResponse();
         this.dataBuffer = '';
     }
