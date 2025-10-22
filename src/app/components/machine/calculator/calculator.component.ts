@@ -59,6 +59,20 @@ export class CalculatorComponent extends MachineDeviceComponent {
     }
 
     /**
+     * Detiene el calculador en un stand específico y devuelve un resultado TS01
+     * @param standIndex Índice del stand
+     * @returns Observable que emite resultado de comando TS01
+     */
+    stopStandWithResultTS01$(standIndex: number): Observable<CommandResultResponse> {
+        const { standNumber, standBlock } = this.createStandBlock(standIndex);
+        const fullCommand = this.buildCommand(standBlock, COMMANDS.Software.Calculator.STOP);
+
+        return this.write$(fullCommand, () =>
+            this.messagesService.error(`Error de comunicación puesto [${standNumber}]`)
+        ).pipe(map((response) => this.mapTSxxResponse([response])[0]));
+    }
+
+    /**
      * Resetea el calculador en múltiples stands
      * @param activeStands Array de stands activos
      * @returns Observable que emite array de respuestas

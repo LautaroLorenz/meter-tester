@@ -79,7 +79,10 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             // si no se recibe resultado, se limpia el valor actual
             if (result === undefined) {
                 // No limpiar el resultado si el stand ya está bloqueado
-                if (stand.getRawValue().resultStatus !== ResultStatus.Locked) {
+                if (
+                    stand.getRawValue().resultStatus !== ResultStatus.Locked &&
+                    stand.getRawValue().resultStatus !== ResultStatus.Finalizing
+                ) {
                     stand.patchValue({ measuredError: undefined });
                 }
                 return;
@@ -87,14 +90,17 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
             // bloqueo de resultado actual según modo de ejecución
             if (
                 this.stepRunMode === StepRunMode.finalResultLock &&
-                stand.getRawValue().resultStatus === ResultStatus.Locked
+                (stand.getRawValue().resultStatus === ResultStatus.Locked ||
+                    stand.getRawValue().resultStatus === ResultStatus.Finalizing)
             ) {
                 return;
             }
             // nuevo estado de resulado
             const resultStatus =
                 // si el modo es bloqueo de resultado
-                this.stepRunMode === StepRunMode.finalResultLock ? ResultStatus.Locked : ResultStatus.WorkInProgress;
+                this.stepRunMode === StepRunMode.finalResultLock
+                    ? ResultStatus.Finalizing
+                    : ResultStatus.WorkInProgress;
 
             // actualización de resultado
             stand.patchValue({
@@ -102,13 +108,16 @@ export class ContrastTestRunComponent extends TestRunComponent<ContrastTestEssay
                 resultStatus
             });
 
-            // Si el stand pasa de sin resultado a Locked, detener ese stand individualmente
+            // Si el stand pasa de sin resultado a Finalizing, detener ese stand individualmente
             if (
                 this.stepRunMode === StepRunMode.finalResultLock &&
-                resultStatus === ResultStatus.Locked &&
+                resultStatus === ResultStatus.Finalizing &&
+                previousResultStatus !== ResultStatus.Finalizing &&
                 previousResultStatus !== ResultStatus.Locked
             ) {
-                this.calculator.stop$(standIndex).subscribe();
+                this.calculator.stopStandWithResultTS01$(standIndex).subscribe((result) => {
+                    stand.patchValue({ measuredError: result, resultStatus: ResultStatus.Locked });
+                });
             }
         });
         this.cd.detectChanges();
