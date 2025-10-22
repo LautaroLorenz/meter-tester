@@ -47,10 +47,10 @@ export class MenuComponent implements OnInit {
                     // },
                 ]
             },
-            {
-                label: 'Estadísticas',
-                routerLink: '/'.concat(PageUrlName.dashboard)
-            },
+            // {
+            //     label: 'Estadísticas',
+            //     routerLink: '/'.concat(PageUrlName.dashboard)
+            // },
             {
                 label: 'Backup',
                 items: [

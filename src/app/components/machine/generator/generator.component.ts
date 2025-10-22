@@ -7,7 +7,7 @@ import { MachineDeviceComponent } from '../../../models/business/class/machine-d
 import { Devices } from '../../../models/business/enums/devices.model';
 import { DeviceService } from '../../../services/device.service';
 import { MessagesService } from '../../../services/messages.service';
-import { Observable, tap, of } from 'rxjs';
+import { Observable, tap, of, delay } from 'rxjs';
 import { DeviceStatus } from '../../../models/business/enums/device-status.model';
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { Phase } from '../../../models/business/interafces/phase.model';
@@ -49,7 +49,11 @@ export class GeneratorComponent<T extends EssayTemplateStep> extends MachineDevi
         const commandBlocks: string[] = [startCommand];
         commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
         const command = this.buildCommand(...commandBlocks);
-        return this.write$(command).pipe(tap(() => this.deviceStatus$.next(DeviceStatus.Working)));
+        return this.write$(command).pipe(
+            tap(() => this.deviceStatus$.next(DeviceStatus.Working)),
+            // Delay de 1 segundo para que el generador físico se estabilice
+            delay(1000)
+        );
     }
 
     startVoltageMode$(

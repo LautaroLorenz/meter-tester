@@ -105,6 +105,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             const virtualConstant = this.getVirtualConstant(maxCurrent);
             return of({
                 constant: virtualConstant,
+                multiplier: 1,
                 phaseL1: EMPTY_PHASE,
                 phaseL2: EMPTY_PHASE,
                 phaseL3: EMPTY_PHASE
@@ -156,6 +157,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         const constant = Number(blocks[3]);
         return {
             constant,
+            multiplier: 1,
             phaseL1: EMPTY_PHASE,
             phaseL2: EMPTY_PHASE,
             phaseL3: EMPTY_PHASE
@@ -169,23 +171,27 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // Decodificar la constante (bloque 2) - 4 bytes, 0 decimales (número entero)
         const constant = CommandDirector.decodeCompactNumber(blocks[2] || '\x00\x00\x00\x00', 0);
 
+        // Multiplicador
+        const multiplier = CommandDirector.decodeCompactNumber(blocks[3] || '\x00', 0);
+
         // Decodificar tensiones (bloques 3, 4, 5) - 2 bytes cada una con 1 decimal
-        const voltageL1 = CommandDirector.decodeCompactNumber(blocks[3] || '\x00\x00', 1);
-        const voltageL2 = CommandDirector.decodeCompactNumber(blocks[4] || '\x00\x00', 1);
-        const voltageL3 = CommandDirector.decodeCompactNumber(blocks[5] || '\x00\x00', 1);
+        const voltageL1 = CommandDirector.decodeCompactNumber(blocks[4] || '\x00\x00', 1);
+        const voltageL2 = CommandDirector.decodeCompactNumber(blocks[5] || '\x00\x00', 1);
+        const voltageL3 = CommandDirector.decodeCompactNumber(blocks[6] || '\x00\x00', 1);
 
         // Decodificar corrientes (bloques 6, 7, 8) - 2 bytes cada una con 2 decimales
-        const currentL1 = CommandDirector.decodeCompactNumber(blocks[6] || '\x00\x00', 2);
-        const currentL2 = CommandDirector.decodeCompactNumber(blocks[7] || '\x00\x00', 2);
-        const currentL3 = CommandDirector.decodeCompactNumber(blocks[8] || '\x00\x00', 2);
+        const currentL1 = CommandDirector.decodeCompactNumber(blocks[7] || '\x00\x00', 2) / multiplier;
+        const currentL2 = CommandDirector.decodeCompactNumber(blocks[8] || '\x00\x00', 2) / multiplier;
+        const currentL3 = CommandDirector.decodeCompactNumber(blocks[9] || '\x00\x00', 2) / multiplier;
 
         // Decodificar factores de potencia (bloques 9, 10, 11) - 3 bytes cada uno
-        const powerFactorL1 = CommandDirector.decodePowerFactor(blocks[9] || ' \x00L');
-        const powerFactorL2 = CommandDirector.decodePowerFactor(blocks[10] || ' \x00L');
-        const powerFactorL3 = CommandDirector.decodePowerFactor(blocks[11] || ' \x00L');
+        const powerFactorL1 = CommandDirector.decodePowerFactor(blocks[10] || ' \x00L');
+        const powerFactorL2 = CommandDirector.decodePowerFactor(blocks[11] || ' \x00L');
+        const powerFactorL3 = CommandDirector.decodePowerFactor(blocks[12] || ' \x00L');
 
         return {
             constant,
+            multiplier,
             phaseL1: {
                 ...EMPTY_PHASE,
                 voltage: voltageL1,
