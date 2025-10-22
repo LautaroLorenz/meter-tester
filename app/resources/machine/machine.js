@@ -66,34 +66,38 @@ commandLog$
     });
 }))
     .subscribe();
+// Función auxiliar para esperar respuesta con timeout
+function waitForResponse(command, timeoutMs = 3000) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
+            first: timeoutMs,
+            with: () => {
+                throw new Error('Timeout');
+            }
+        })));
+    });
+}
 // Función auxiliar para enviar comando con reintento automático
 function sendCommandWithRetry(command) {
     return __awaiter(this, void 0, void 0, function* () {
-        // Primer intento - timeout 3000ms
+        const TIMEOUT_MS = 3000;
+        // Loggear y enviar comando
+        addCommandLog(command);
+        _onSoftwareWrite$.next(command);
+        // Primer intento
         try {
-            const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                first: 3000,
-                with: () => {
-                    throw new Error('Timeout');
-                }
-            })));
+            const response = yield waitForResponse(command, TIMEOUT_MS);
             return { result: response };
         }
         catch (error) {
             // Si es timeout, intentar reenviar el comando
             if (error instanceof Error && error.message === 'Timeout') {
-                // Loggear el reintento
+                // Loggear y reenviar el comando
                 addCommandLog(command);
-                // Reenviar el comando
                 _onSoftwareWrite$.next(command);
-                // Segundo intento - timeout 3000ms
+                // Segundo intento
                 try {
-                    const response = yield (0, rxjs_1.firstValueFrom)((0, rxjs_1.from)(machineResponse$).pipe((0, rxjs_1.filter)((responseCommand) => command_director_1.CommandDirector.getTo(command) === command_director_1.CommandDirector.getFrom(responseCommand)), (0, rxjs_1.timeout)({
-                        first: 3000,
-                        with: () => {
-                            throw new Error('Timeout');
-                        }
-                    })));
+                    const response = yield waitForResponse(command, TIMEOUT_MS);
                     return { result: response };
                 }
                 catch (secondError) {
@@ -109,8 +113,6 @@ exports.default = {
     register: () => {
         // envió de comando: STW -> Máquina
         electron_1.ipcMain.handle('software-write', (_, { command }) => __awaiter(void 0, void 0, void 0, function* () {
-            addCommandLog(command);
-            _onSoftwareWrite$.next(command);
             return yield sendCommandWithRetry(command);
         }));
         electron_1.ipcMain.handle('subscribe-to-history', (event) => {

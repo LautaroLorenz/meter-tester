@@ -67,48 +67,43 @@ commandLog$
     )
     .subscribe();
 
+// Función auxiliar para esperar respuesta con timeout
+async function waitForResponse(command: string, timeoutMs: number = 3000): Promise<string> {
+    return await firstValueFrom(
+        from(machineResponse$).pipe(
+            filter((responseCommand) => CommandDirector.getTo(command) === CommandDirector.getFrom(responseCommand)),
+            timeout({
+                first: timeoutMs,
+                with: () => {
+                    throw new Error('Timeout');
+                }
+            })
+        )
+    );
+}
+
 // Función auxiliar para enviar comando con reintento automático
 async function sendCommandWithRetry(command: string): Promise<{ result?: string; error?: any }> {
-    // Primer intento - timeout 3000ms
+    const TIMEOUT_MS = 3000;
+
+    // Loggear y enviar comando
+    addCommandLog(command);
+    _onSoftwareWrite$.next(command);
+
+    // Primer intento
     try {
-        const response = await firstValueFrom(
-            from(machineResponse$).pipe(
-                filter(
-                    (responseCommand) => CommandDirector.getTo(command) === CommandDirector.getFrom(responseCommand)
-                ),
-                timeout({
-                    first: 3000,
-                    with: () => {
-                        throw new Error('Timeout');
-                    }
-                })
-            )
-        );
+        const response = await waitForResponse(command, TIMEOUT_MS);
         return { result: response };
-    } catch (error) { 
+    } catch (error) {
         // Si es timeout, intentar reenviar el comando
         if (error instanceof Error && error.message === 'Timeout') {
-            // Loggear el reintento
+            // Loggear y reenviar el comando
             addCommandLog(command);
-            // Reenviar el comando
             _onSoftwareWrite$.next(command);
 
-            // Segundo intento - timeout 3000ms
+            // Segundo intento
             try {
-                const response = await firstValueFrom(
-                    from(machineResponse$).pipe(
-                        filter(
-                            (responseCommand) =>
-                                CommandDirector.getTo(command) === CommandDirector.getFrom(responseCommand)
-                        ),
-                        timeout({
-                            first: 3000,
-                            with: () => {
-                                throw new Error('Timeout');
-                            }
-                        })
-                    )
-                );
+                const response = await waitForResponse(command, TIMEOUT_MS);
                 return { result: response };
             } catch (secondError) {
                 return { error: secondError };
@@ -123,9 +118,6 @@ export default {
     register: () => {
         // envió de comando: STW -> Máquina
         ipcMain.handle('software-write', async (_, { command }) => {
-            addCommandLog(command);
-            _onSoftwareWrite$.next(command);
-
             return await sendCommandWithRetry(command);
         });
 
