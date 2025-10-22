@@ -82,36 +82,40 @@ async function waitForResponse(command: string, timeoutMs: number = 3000): Promi
     );
 }
 
+// Configuración de reintentos
+const RETRY_CONFIG = {
+    maxRetries: 2, // Cantidad de reintentos
+    timeoutMs: 200 // Timeout en milisegundos
+};
+
 // Función auxiliar para enviar comando con reintento automático
 async function sendCommandWithRetry(command: string): Promise<{ result?: string; error?: any }> {
-    const TIMEOUT_MS = 3000;
+    const { maxRetries, timeoutMs } = RETRY_CONFIG;
 
-    // Loggear y enviar comando
+    // Loggear y enviar comando inicial
     addCommandLog(command);
     _onSoftwareWrite$.next(command);
 
-    // Primer intento
-    try {
-        const response = await waitForResponse(command, TIMEOUT_MS);
-        return { result: response };
-    } catch (error) {
-        // Si es timeout, intentar reenviar el comando
-        if (error instanceof Error && error.message === 'Timeout') {
-            // Loggear y reenviar el comando
-            addCommandLog(command);
-            _onSoftwareWrite$.next(command);
-
-            // Segundo intento
-            try {
-                const response = await waitForResponse(command, TIMEOUT_MS);
-                return { result: response };
-            } catch (secondError) {
-                return { error: secondError };
+    // Intentar hasta maxRetries + 1 veces (intento inicial + reintentos)
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await waitForResponse(command, timeoutMs);
+            return { result: response };
+        } catch (error) {
+            // Si es timeout y no es el último intento, reintentar
+            if (error instanceof Error && error.message === 'Timeout' && attempt < maxRetries) {
+                // Loggear y reenviar el comando
+                addCommandLog(command);
+                _onSoftwareWrite$.next(command);
+                continue; // Continuar al siguiente intento
             }
+            // Si no es timeout o es el último intento, retornar error
+            return { error };
         }
-        // Si no es timeout, retornar el error original
-        return { error };
     }
+
+    // Este punto no debería alcanzarse, pero por seguridad
+    return { error: new Error('Unexpected error in retry logic') };
 }
 
 export default {

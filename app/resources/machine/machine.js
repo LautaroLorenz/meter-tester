@@ -77,36 +77,38 @@ function waitForResponse(command, timeoutMs = 3000) {
         })));
     });
 }
+// Configuración de reintentos
+const RETRY_CONFIG = {
+    maxRetries: 2,
+    timeoutMs: 200 // Timeout en milisegundos
+};
 // Función auxiliar para enviar comando con reintento automático
 function sendCommandWithRetry(command) {
     return __awaiter(this, void 0, void 0, function* () {
-        const TIMEOUT_MS = 3000;
-        // Loggear y enviar comando
+        const { maxRetries, timeoutMs } = RETRY_CONFIG;
+        // Loggear y enviar comando inicial
         addCommandLog(command);
         _onSoftwareWrite$.next(command);
-        // Primer intento
-        try {
-            const response = yield waitForResponse(command, TIMEOUT_MS);
-            return { result: response };
-        }
-        catch (error) {
-            // Si es timeout, intentar reenviar el comando
-            if (error instanceof Error && error.message === 'Timeout') {
-                // Loggear y reenviar el comando
-                addCommandLog(command);
-                _onSoftwareWrite$.next(command);
-                // Segundo intento
-                try {
-                    const response = yield waitForResponse(command, TIMEOUT_MS);
-                    return { result: response };
-                }
-                catch (secondError) {
-                    return { error: secondError };
-                }
+        // Intentar hasta maxRetries + 1 veces (intento inicial + reintentos)
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const response = yield waitForResponse(command, timeoutMs);
+                return { result: response };
             }
-            // Si no es timeout, retornar el error original
-            return { error };
+            catch (error) {
+                // Si es timeout y no es el último intento, reintentar
+                if (error instanceof Error && error.message === 'Timeout' && attempt < maxRetries) {
+                    // Loggear y reenviar el comando
+                    addCommandLog(command);
+                    _onSoftwareWrite$.next(command);
+                    continue; // Continuar al siguiente intento
+                }
+                // Si no es timeout o es el último intento, retornar error
+                return { error };
+            }
         }
+        // Este punto no debería alcanzarse, pero por seguridad
+        return { error: new Error('Unexpected error in retry logic') };
     });
 }
 exports.default = {
