@@ -83,6 +83,7 @@ export class CommandProcessor {
 
         const { expectedMapping } = this.pendingResponse;
         const response = this.dataBuffer.substring(0, expectedMapping.responseSize);
+        console.log('response', response);
 
         // a. Start Character Detection
         if (response[0] !== CHAR_START) {
