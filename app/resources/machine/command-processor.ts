@@ -149,6 +149,7 @@ export class CommandProcessor {
      * Descarta el frame actual y limpia el estado
      */
     private discardFrame(): void {
+        console.log('discardFrame', this.dataBuffer);
         this.clearPendingResponse();
         this.dataBuffer = '';
     }
