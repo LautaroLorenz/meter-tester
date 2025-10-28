@@ -139,14 +139,13 @@ export class CommandMapComponent {
             multiplier = 10;
         }
         blocks.push(CommandDirector.encodeCompactNumber(multiplier, 1, 0));
-
         // UR|US|UT - Tensiones aleatorias (2 bytes, 1 decimal) - rango: 0.0 a 255.9
         // const urValue = Math.random() * 255.9;
         // const usValue = Math.random() * 255.9;
         // const utValue = Math.random() * 255.9;
-        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
-        blocks.push(CommandDirector.encodeCompactNumber(220, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(221.2, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 1));
+        blocks.push(CommandDirector.encodeCompactNumber(0, 2, 1));
 
         // IR|IS|IT - Corrientes aleatorias (2 bytes, 2 decimales) - rango: 0.00 a 25.59
         // Simular alarma de sobrecorriente con 5% de probabilidad
@@ -159,33 +158,26 @@ export class CommandMapComponent {
         //     blocks.push(CommandDirector.encodeCompactNumber(1.8, 2, 2)); // L3: 1.8A (bajo 2A)
         // } else {
             // Valores normales
-            const irValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
-            const isValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
-            const itValue = Math.random() * 1.5; // 0 a 1.5A (bajo 2A)
-            blocks.push(CommandDirector.encodeCompactNumber(irValue, 2, 2));
-            blocks.push(CommandDirector.encodeCompactNumber(isValue, 2, 2));
-            blocks.push(CommandDirector.encodeCompactNumber(itValue, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(4.98, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
+            blocks.push(CommandDirector.encodeCompactNumber(0, 2, 2));
         // }
 
         // -PR|-PS|-PT - Factores de potencia aleatorios (1 byte, 2 decimales) - rango: 0.00 a 2.55
-        const prValue = Math.random() * 2.55;
-        const psValue = Math.random() * 2.55;
-        const ptValue = Math.random() * 2.55;
-
         // Generar signo aleatorio para PR
-        const prSign = Math.random() > 0.5 ? '-' : ' ';
-        const prType = Math.random() > 0.5 ? 'L' : 'C';
-        blocks.push(`${prSign}${CommandDirector.encodeCompactNumber(prValue, 1, 2)}${prType}`);
+        // const prSign = Math.random() > 0.5 ? '-' : ' ';
+        // const prType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${' '}${CommandDirector.encodeCompactNumber(0.98, 1, 2)}${'L'}`);
 
         // Generar signo aleatorio para PS
-        const psSign = Math.random() > 0.5 ? '-' : ' ';
-        const psType = Math.random() > 0.5 ? 'L' : 'C';
-        blocks.push(`${psSign}${CommandDirector.encodeCompactNumber(psValue, 1, 2)}${psType}`);
+        // const psSign = Math.random() > 0.5 ? '-' : ' ';
+        // const psType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${' '}${CommandDirector.encodeCompactNumber(0, 1, 2)}${'C'}`);
 
         // Generar signo aleatorio para PT
-        const ptSign = Math.random() > 0.5 ? '-' : ' ';
-        const ptType = Math.random() > 0.5 ? 'L' : 'C';
-        blocks.push(`${ptSign}${CommandDirector.encodeCompactNumber(ptValue, 1, 2)}${ptType}`);
+        // const ptSign = Math.random() > 0.5 ? '-' : ' ';
+        // const ptType = Math.random() > 0.5 ? 'L' : 'C';
+        blocks.push(`${' '}${CommandDirector.encodeCompactNumber(0, 1, 2)}${'C'}`);
 
         blocks.push(CommandDirector.CHAR_END);
         return blocks.join(CommandDirector.DIVIDER);
