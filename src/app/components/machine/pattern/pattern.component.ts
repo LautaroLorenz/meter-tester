@@ -11,7 +11,8 @@ import {
 import { MachineDeviceComponent } from '../../../models/business/class/machine-device.model';
 import { Devices } from '../../../models/business/enums/devices.model';
 import { PatternStatus } from '../../../models/business/interafces/pattern-status.model';
-import { Observable, map, tap, take, of } from 'rxjs';
+import { EMPTY, Observable, ReplaySubject, map, tap, take } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { CommandDirector } from '../../../models/business/class/command-director.model';
 import { MeterConstantEnum } from '../../../models/business/constants/meter-constant.model';
 import { APP_CONFIG } from '../../../../environments/environment';
@@ -45,6 +46,7 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
 
     private secondaryWindowId: number | null = null;
     private virtualConstants: VirtualPattern[] = [];
+    private readonly virtualConstantsReady$ = new ReplaySubject<void>(1);
     private readonly PATTERN_WINDOW_URL = 'pattern-status-window';
 
     constructor(
@@ -65,9 +67,19 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
                 .getTable$(VirtualPatternDbTableContext.tableName)
                 .pipe(
                     take(1),
-                    tap(({ rows }) => (this.virtualConstants = rows.sort((a, b) => a.current - b.current)))
+                    tap(({ rows }) => (this.virtualConstants = rows.sort((a, b) => a.current - b.current))),
+                    tap(() => this.virtualConstantsReady$.next()),
+                    // Si falla la lectura, evitamos deadlock: habilitamos igual y el cálculo devolverá 0.
+                    // (El caller puede decidir qué hacer con esa condición.)
+                    catchError(() => {
+                        this.virtualConstantsReady$.next();
+                        return EMPTY;
+                    })
                 )
                 .subscribe();
+        } else {
+            // Para tipos no-virtuales no necesitamos esperar nada.
+            this.virtualConstantsReady$.next();
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
             this.hasRealTimeStatus = true;
@@ -96,20 +108,27 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
     ): Observable<PatternStatus> {
         // si es un patrón virtual, respondemos la constante virtual.
         if (APP_CONFIG.patternType === PatternEnum.Virtual) {
-            // Tomamos la corriente mayor
-            const corrienteL1 = phaseL1.current;
-            const corrienteL2 = phaseL2.current;
-            const corrienteL3 = phaseL3.current;
-            const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
+            // Espera a que las constantes virtuales estén cargadas desde BBDD.
+            return this.virtualConstantsReady$.pipe(
+                take(1),
+                map(() => {
+                    // Tomamos la corriente mayor
+                    const corrienteL1 = phaseL1.current;
+                    const corrienteL2 = phaseL2.current;
+                    const corrienteL3 = phaseL3.current;
+                    const maxCurrent = Math.max(corrienteL1, corrienteL2, corrienteL3);
 
-            const virtualConstant = this.getVirtualConstant(maxCurrent);
-            return of({
-                constant: virtualConstant,
-                multiplier: 1,
-                phaseL1: EMPTY_PHASE,
-                phaseL2: EMPTY_PHASE,
-                phaseL3: EMPTY_PHASE
-            });
+                    const virtualConstant = this.getVirtualConstant(maxCurrent);
+                    return {
+                        constant: virtualConstant,
+                        multiplier: 1,
+                        phaseL1: EMPTY_PHASE,
+                        phaseL2: EMPTY_PHASE,
+                        phaseL3: EMPTY_PHASE
+                    };
+                }),
+                tap((patternStatus) => this.updatePatternStatus(patternStatus))
+            );
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
             return this.constantWithParams$(stepMeterConstant, phaseL1, phaseL2, phaseL3);
@@ -265,6 +284,14 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
 
     private updatePatternStatus(newPatternStatus: PatternStatus): void {
         this.patternStatus = newPatternStatus;
+
+        // `constant$()` puede ejecutarse antes de que Angular setee el @Input `currentStep`.
+        // En ese caso, forzar detectChanges hace que el template intente leer `currentStep.form_control_raw`
+        // y falle. Guardamos el status y dejamos que el próximo ciclo de CD renderice normalmente.
+        if (!this.currentStep) {
+            return;
+        }
+
         this.cd.detectChanges();
         if (this.secondaryWindowId) {
             this.secondaryWindowService.sendToWindow(this.secondaryWindowId, {
