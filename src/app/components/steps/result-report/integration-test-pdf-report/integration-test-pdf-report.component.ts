@@ -81,7 +81,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                         return 'initialIntegrator' in realItem &&
                             realItem.initialIntegrator !== null &&
                             realItem.initialIntegrator !== undefined
-                            ? realItem.initialIntegrator.toFixed(1)
+                            ? this.formatIntegrator(realItem.initialIntegrator)
                             : '';
                     },
                     alignHorizontal: TC_AlignHorizontal.Number,
@@ -95,7 +95,7 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
                         return 'finalIntegrator' in realItem &&
                             realItem.finalIntegrator !== null &&
                             realItem.finalIntegrator !== undefined
-                            ? realItem.finalIntegrator.toFixed(1)
+                            ? this.formatIntegrator(realItem.finalIntegrator)
                             : '';
                     },
                     alignHorizontal: TC_AlignHorizontal.Number,
@@ -106,5 +106,14 @@ export class IntegrationTestPdfReportComponent extends PdfReportComponent implem
         } else {
             this.additionalColumns = [];
         }
+    }
+
+    /**
+     * Al ingresar los valores de los ingradores el formato es 999999.999,
+     * en el reporte se debe mostrar solo la cantidad de decimales que se ingresó.
+     */
+    private formatIntegrator(value: number): string {
+        // Hasta 3 decimales, sin ceros finales.
+        return value.toFixed(3).replace(/\.?0+$/, '');
     }
 }
