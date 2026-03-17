@@ -8,6 +8,9 @@ export interface Environment {
     // nombre del ambiente
     environment: string;
 
+    // path del logo de la compañía (assets/...)
+    companyLogoPath: string;
+
     // cantidad de puestos que tiene la máquina
     standsQuantity: number;
 

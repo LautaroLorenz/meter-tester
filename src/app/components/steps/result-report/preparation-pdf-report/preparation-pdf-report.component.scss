@@ -25,9 +25,8 @@
   width: auto;
   max-width: 300px;
   margin-bottom: 0.5rem;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
+  object-fit: contain;
+  image-rendering: auto;
 }
 
 .company-name-header {

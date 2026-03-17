@@ -5,6 +5,7 @@ import { Environment } from '../app/models/core/environment.model';
 export const APP_CONFIG: Environment = {
     production: true,
     environment: 'PROD',
+    companyLogoPath: 'assets/icons/company-logos/company-logo-usina-tandil.png',
     standsQuantity: 20,
     generatorType: GeneratorEnum.SemiautomaticPYC5050,
     patternType: PatternEnum.Sm5050,

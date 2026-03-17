@@ -27,6 +27,7 @@ import { MeterConstantPipe } from '../../../../pipes/business/meter-constant.pip
 import { StandMeterConstantPipe } from '../../../../pipes/business/stand-meter-constant.pipe';
 import { ClientSettingsService } from '../../../../services/client-settings.service';
 import { finalize } from 'rxjs';
+import { APP_CONFIG } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-preparation-pdf-report',
@@ -133,7 +134,7 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
                 next: (settings) => {
                     this.companyName = settings.companyName;
                     this.brandDescription = settings.brandDescription;
-                    this.companyLogo = 'assets/icons/company-logo.png';
+                    this.companyLogo = APP_CONFIG.companyLogoPath;
                 },
                 error: () => {
                     // Usar valores por defecto en caso de error
