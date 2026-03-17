@@ -24,8 +24,13 @@ export class PhaseTableComponent {
         return 'FP';
     }
 
+    /**
+     * En versiones viejas no se podia apagar una fase, por lo que si la key isActive no existe, 
+     * se considera que la fase está activa.
+     * Solo esta inactiva cunado la propiedad isActive es false.
+     */
     isPhaseActive(phase: Phase | Partial<Phase> | undefined): boolean {
-        return phase?.isActive === true;
+        return phase?.isActive === true || (!!phase && !('isActive' in phase));
     }
 
     getPhaseHeaderClass(phase: Phase | Partial<Phase> | undefined): string {
