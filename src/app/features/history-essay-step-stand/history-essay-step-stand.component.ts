@@ -19,8 +19,9 @@ import { Meter, MeterDbTableContext } from '../../models/business/database/meter
 import { EnumAsOptionPipe } from '../../pipes/core/enum-as-option.pipe';
 import { ResultStatus } from '../../models/business/enums/result-status.model';
 import { RequestTableResponse } from '../../models/core/database.model';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { TranslateEnumPipe } from '../../pipes/core/translate-enum.pipe';
+import { StepResultUnitEnum } from '../../models/business/constants/step-result-unit.model';
 
 @Component({
     templateUrl: './history-essay-step-stand.component.html',
@@ -96,7 +97,7 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
             alignHorizontal: TC_AlignHorizontal.Number
         },
         {
-            field: 'result_value',
+            field: (item) => this.formatResultValue(item),
             header: 'Valor obtenido',
             sortable: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
             globalFilter: `${HistoryEssayStepStandDbTableContext.tableName}.result_value`,
@@ -137,6 +138,7 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
     readonly excelExportFileName = 'historial de ejecución';
 
     private datePipe = inject(DatePipe);
+    private decimalPipe = inject(DecimalPipe);
     private translateEnumPipe = inject(TranslateEnumPipe);
 
     constructor(private readonly dbService: DatabaseService<HistoryEssayStepStand>) {
@@ -167,16 +169,16 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
 
     override exportDataTransform(data: RequestTableResponse<HistoryEssayStepStand>): any[] {
         return data.rows.map((row) => ({
-            'Realizado': this.datePipe.transform(row.saved_time, 'dd/MM/yyyy'),
-            'Ensayo': row.essay_name,
-            'Paso': row.step_name,
-            'Marca': row.foreign.meter.foreign.brand.name,
-            'Modelo': row.foreign.meter.model,
+            Realizado: this.datePipe.transform(row.saved_time, 'dd/MM/yyyy'),
+            Ensayo: row.essay_name,
+            Paso: row.step_name,
+            Marca: row.foreign.meter.foreign.brand.name,
+            Modelo: row.foreign.meter.model,
             'Número de serie': row.serial_number,
             'Año de fabricación': row.year_of_production,
-            'Valor obtenido': row.result_value,
-            'Unidad': row.result_unit,
-            'Resultado': this.translateEnumPipe.transform(row.result_status_enum, 'ResultStatus')
+            'Valor obtenido': this.formatResultValue(row),
+            Unidad: row.result_unit,
+            Resultado: this.translateEnumPipe.transform(row.result_status_enum, 'ResultStatus')
         }));
     }
 
@@ -188,5 +190,23 @@ export class HistoryEssayStepStandComponent extends AbmPage<HistoryEssayStepStan
     closeMeterDialog(): void {
         this.meterDetailDialogVisible = false;
         this.selectedMeter = undefined;
+    }
+
+    private formatResultValue(item: HistoryEssayStepStand): string {
+        const raw = (item as any)?.result_value;
+        if (raw === null || raw === undefined || raw === '') {
+            return '';
+        }
+
+        const n = typeof raw === 'number' ? raw : Number(raw);
+        if (!Number.isFinite(n)) {
+            return String(raw);
+        }
+
+        const unit = (item as any)?.result_unit as string | undefined;
+        const format =
+            unit === StepResultUnitEnum.pulses ? '1.0-0' : unit === StepResultUnitEnum.percentage ? '1.2-2' : '1.0-2';
+
+        return this.decimalPipe.transform(n, format) ?? String(raw);
     }
 }
