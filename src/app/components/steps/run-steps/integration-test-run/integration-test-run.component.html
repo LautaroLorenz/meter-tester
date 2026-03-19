@@ -131,3 +131,29 @@
     (cancel)="onStepSelectionCancel()"
     (confirm)="onStepSelectionConfirm($event)">
 </app-retry-step-selection-dialog>
+
+<!-- Diálogo para detener el generador en modo manual -->
+<p-dialog
+    [(visible)]="showStopGeneratorDialog"
+    [modal]="true"
+    [closable]="false"
+    styleClass="w-40rem">
+    <ng-template pTemplate="header">
+        <strong class="stop-generator-dialog-title">Detener generador</strong>
+    </ng-template>
+    <div class="flex flex-column gap-4">
+        <div class="flex align-items-center gap-2">
+            <i class="pi pi-exclamation-triangle stop-generator-dialog-icon"></i>
+            <p class="m-0">Para finalizar la prueba, debe detener el generador.</p>
+        </div>
+
+        <div class="flex justify-content-end">
+            <p-button
+                label="Generador apagado"
+                icon="pi pi-check"
+                [outlined]="true"
+                (click)="onGeneratorOffContinue()">
+            </p-button>
+        </div>
+    </div>
+</p-dialog>

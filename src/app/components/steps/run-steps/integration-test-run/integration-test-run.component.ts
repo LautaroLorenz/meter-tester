@@ -12,6 +12,7 @@ import {
     finalize,
     Observable,
     Subject,
+    take,
     takeUntil,
     of,
     map,
@@ -28,6 +29,7 @@ import { TC_AlignHorizontal, TableColumn } from '../../../../models/core/table-c
 import { CommandResultResponse, StandStandResult } from '../../../../models/business/interafces/stand-result.model';
 import { Stand } from '../../../../models/business/interafces/stand.model';
 import { ResultStatus } from '../../../../models/business/enums/result-status.model';
+import { GeneratorEnum } from '../../../../models/business/enums/generator-enum.model';
 import { TestRunComponent } from '../../../../models/business/class/test-run-component.model';
 import { PatternComponent } from '../../../machine/pattern/pattern.component';
 import { APP_CONFIG } from '../../../../../environments/environment';
@@ -78,7 +80,9 @@ export class IntegrationTestRunComponent
     // User input control
     isUserInputEnabled = false;
 
+    showStopGeneratorDialog = false;
     private isPreparingForUserInput = false;
+    private readonly generatorOffContinue$ = new Subject<void>();
     private stopStep = new Subject<void>();
     private readonly stop$ = merge(this.onDestroy, this.stopStep);
     private readonly standMeterConstantPipe = inject(StandMeterConstantPipe);
@@ -314,6 +318,7 @@ export class IntegrationTestRunComponent
         // resetear banderas para permitir reintentos
         this.isPreparingForUserInput = false;
         this.isUserInputEnabled = false;
+        this.showStopGeneratorDialog = false;
 
         // Mostrar estado de carga en el botón continuar
         this.isStopTestInProgress = true;
@@ -367,6 +372,16 @@ export class IntegrationTestRunComponent
                 .patchValue({ resultStatus, measuredPulses: undefined, calculatedError: undefined });
         });
         this.cd.detectChanges();
+    }
+
+    onGeneratorOffContinue(): void {
+        if (!this.showStopGeneratorDialog) {
+            return;
+        }
+
+        this.showStopGeneratorDialog = false;
+        this.cd.detectChanges();
+        this.generatorOffContinue$.next();
     }
 
     protected getGeneratorComponent(): GeneratorComponent<IntegrationTestEssayStep> {
@@ -657,6 +672,21 @@ export class IntegrationTestRunComponent
      * Nota: Se usa la bandera isPreparingForUserInput para evitar loops del calculador
      */
     private prepareForUserInput(): void {
+        if (APP_CONFIG.generatorType === GeneratorEnum.Manual) {
+            this.showStopGeneratorDialog = true;
+            this.cd.detectChanges();
+
+            // Esperar confirmación del operador antes de ejecutar la preparación final.
+            this.generatorOffContinue$
+                .pipe(take(1), takeUntil(this.stop$))
+                .subscribe(() => this.prepareForUserInputCore$());
+            return;
+        }
+
+        this.prepareForUserInputCore$();
+    }
+
+    private prepareForUserInputCore$(): void {
         // Cambiar el generador a modo voltage (corriente en 0)
         this.generator
             .startVoltageMode$(
