@@ -104,7 +104,8 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         stepMeterConstant: MeterConstantEnum,
         phaseL1: Phase,
         phaseL2: Phase,
-        phaseL3: Phase
+        phaseL3: Phase,
+        refreshConstant = false
     ): Observable<PatternStatus> {
         // si es un patrón virtual, respondemos la constante virtual.
         if (APP_CONFIG.patternType === PatternEnum.Virtual) {
@@ -131,10 +132,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
             );
         }
         if (APP_CONFIG.patternType === PatternEnum.Sm5050) {
-            return this.constantWithParams$(stepMeterConstant, phaseL1, phaseL2, phaseL3);
+            return this.constantWithParams$(stepMeterConstant, phaseL1, phaseL2, phaseL3, refreshConstant);
         }
         // responder la constante obtenida desde el patrón físico.
-        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
+        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant, refreshConstant);
         return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
             map((response) => this.mapConstantResponse(response)),
             tap((patternStatus) => this.updatePatternStatus(patternStatus))
@@ -146,10 +147,11 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         stepMeterConstant: MeterConstantEnum,
         phaseL1: Phase,
         phaseL2: Phase,
-        phaseL3: Phase
+        phaseL3: Phase,
+        refreshConstant = false
     ): Observable<PatternStatus> {
         const commandBlocks: string[] = [];
-        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
+        const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant, refreshConstant);
         commandBlocks.push(stepMeterConstantBlock);
         commandBlocks.push(...this.phasesToCommandPipe.transform(phaseL1, phaseL2, phaseL3));
         const command = this.buildCommand(...commandBlocks);
@@ -235,7 +237,10 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         };
     }
 
-    private getStepConstantBlock(stepMeterConstant: MeterConstantEnum): string {
+    private getStepConstantBlock(stepMeterConstant: MeterConstantEnum, refreshConstant = false): string {
+        if (refreshConstant) {
+            return 'X';
+        }
         switch (stepMeterConstant) {
             case MeterConstantEnum.Active:
                 return 'A';

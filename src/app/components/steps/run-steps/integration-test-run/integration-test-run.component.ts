@@ -844,13 +844,21 @@ export class IntegrationTestRunComponent
      */
     private prepareGeneratorBeforeExecution(): void {
         // consulta la constante del patron en loop
+        let isFirstPatternConstantRequest = true;
         const getPatternConstantLoop$: Observable<PatternStatus> = defer(() =>
-            this.pattern.constant$(
-                this.currentStep.form_control_raw.meterConstant,
-                this.currentStep.form_control_raw.phaseL1,
-                this.currentStep.form_control_raw.phaseL2,
-                this.currentStep.form_control_raw.phaseL3
-            )
+            this.pattern
+                .constant$(
+                    this.currentStep.form_control_raw.meterConstant,
+                    this.currentStep.form_control_raw.phaseL1,
+                    this.currentStep.form_control_raw.phaseL2,
+                    this.currentStep.form_control_raw.phaseL3,
+                    !isFirstPatternConstantRequest
+                )
+                .pipe(
+                    tap(() => {
+                        isFirstPatternConstantRequest = false;
+                    })
+                )
         ).pipe(
             // tap((result) => results), <- si fuera necesario consumir el pattern status
             // Repite indefinidamente tras completar (puedes agregar delay si querés)
