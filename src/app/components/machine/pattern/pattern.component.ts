@@ -173,10 +173,16 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
 
     private mapConstantResponse(command: string): PatternStatus {
         const blocks = CommandDirector.getBlocks(command);
-        const constant = Number(blocks[3]);
+
+        // Decodificar la constante (bloque 2) - 4 bytes, 0 decimales (número entero)
+        const constant = CommandDirector.decodeCompactNumber(blocks[2] || '\x00\x00\x00\x00', 0);
+
+        // Multiplicador
+        const multiplier = CommandDirector.decodeCompactNumber(blocks[3] || '\x00', 0);
+
         return {
             constant,
-            multiplier: 1,
+            multiplier,
             phaseL1: EMPTY_PHASE,
             phaseL2: EMPTY_PHASE,
             phaseL3: EMPTY_PHASE
