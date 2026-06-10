@@ -136,7 +136,9 @@ export class PatternComponent<T extends EssayTemplateStep> extends MachineDevice
         // responder la constante obtenida desde el patrón físico.
         const stepMeterConstantBlock = this.getStepConstantBlock(stepMeterConstant);
         return this.write$(this.buildCommand(stepMeterConstantBlock)).pipe(
+            tap((response) => console.log([...response].map((char) => char.charCodeAt(0)))),
             map((response) => this.mapConstantResponse(response)),
+            // tap((response) => console.log(response),
             tap((patternStatus) => this.updatePatternStatus(patternStatus))
         );
     }
