@@ -85,7 +85,7 @@ async function waitForResponse(command: string, timeoutMs: number = 3000): Promi
 // Configuración de reintentos
 const RETRY_CONFIG = {
     maxRetries: 2, // Cantidad de reintentos
-    timeoutMs: 200 // Timeout en milisegundos
+    timeoutMs: 1500 // Timeout en milisegundos
 };
 
 // Función auxiliar para enviar comando con reintento automático
