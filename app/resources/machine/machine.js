@@ -80,7 +80,7 @@ function waitForResponse(command, timeoutMs = 3000) {
 // Configuración de reintentos
 const RETRY_CONFIG = {
     maxRetries: 2,
-    timeoutMs: 200 // Timeout en milisegundos
+    timeoutMs: 1500 // Timeout en milisegundos
 };
 // Función auxiliar para enviar comando con reintento automático
 function sendCommandWithRetry(command) {
