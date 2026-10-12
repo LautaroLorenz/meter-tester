@@ -84,9 +84,17 @@ repo no hay valores propios de cada cliente.
 El mismo catálogo genera el release: una configuración de Angular y un script por cliente
 (`npm run electron:build:<cliente>`), con el cliente en el nombre del portable. Ya no se edita
 `environment.prod.ts` a mano, y lo que se entrega es exactamente la configuración que pasó los
-tests. Probarlo de punta a punta requiere arreglar antes el build de release en la Mac (ver
-"Fuera del plan") o probarlo donde hoy se genera el portable.
+tests. Se prueba de punta a punta en la PC con Windows, donde se genera el portable.
 
-## Fuera del plan
+## Release
 
-- **El release no se puede generar en la Mac del usuario.** `npm run electron:build` falla con Node 18 y con 20: al recompilar `@serialport/bindings-cpp`, el `node-gyp` viejo del proyecto importa `distutils`, que Python 3.12+ ya no trae. Falta saber de dónde sale hoy el portable. Arreglo posible: `setuptools` en ese Python, o actualizar `node-gyp` / `@electron/rebuild`.
+- **El portable de Windows que reciben los clientes se genera en una PC con Windows**, no en la
+  Mac. En la Mac, `npm run electron:build` genera solo el `.dmg` de Mac.
+- **electron-builder 26.0.20** ([[ADR - electron-builder 26]]): el release ya no compila los
+  módulos nativos, usa binarios precompilados. En la Mac sale con `npm run electron:build` a secas;
+  los problemas de `distutils` (Python 3.12+) y del SDK de macOS 27 dejan de importar.
+- **Pendiente en la PC con Windows:** instalar Node 20 (por ejemplo con nvm-windows), `npm ci`,
+  generar el portable y compararlo con el último entregado.
+- **Fase 2b:** los scripts `electron:build:<cliente>` se prueban de punta a punta en esa PC.
+- **A futuro (fase 8):** el workflow de Windows en CI podría generar los portables de cada
+  cliente, sin depender de una PC.
