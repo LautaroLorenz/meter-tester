@@ -8,3 +8,4 @@ Conocimiento del proyecto, versionado con el código. Abrir esta carpeta como va
 | [[soluciones/README\|soluciones]] | Bugs ya resueltos: síntoma, causa, fix. |
 | [[recetas/README\|recetas]] | Patrones repetibles de desarrollo. |
 | [[adr/README\|adr]] | Decisiones de arquitectura. |
+| [[planes/README\|planes]] | Trabajo de varias etapas, con estado y checkpoints. |

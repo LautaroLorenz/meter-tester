@@ -16,6 +16,12 @@ App de escritorio en Electron: renderer Angular (`src/`) y proceso main en Node 
   `vault/reglas/README.md`. El hook solo inyecta las reglas enlazadas ahí.
 - NUNCA escribir al vault automáticamente. Solo cuando el usuario lo pida explícitamente.
 
+## Trabajo en curso
+
+- **Plan de QA e2e** — fases, estado, checkpoints y dudas abiertas en
+  `vault/planes/Plan - QA e2e.md`. Leerlo antes de seguir con los tests y actualizar su
+  tabla de estado al cerrar cada fase.
+
 <!-- VAULT-SYNC-START -->
 
 <!-- VAULT-SYNC-END -->
