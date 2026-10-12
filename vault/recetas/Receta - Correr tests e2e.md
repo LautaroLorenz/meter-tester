@@ -47,3 +47,25 @@ de Playwright cuelga el arranque de la app.
    Funciona con las ventanas ocultas.
 8. Diálogos de PrimeNG: `getByRole('dialog').filter({ hasText: '<título>' })`. PrimeNG 16 no
    les da nombre accesible, así que `getByRole('dialog', { name })` no los encuentra.
+9. Tests de funciones comunes a todos los clientes (ABM): `{ tag: '@un-cliente' }` en el
+   `describe`; corren solo en el proyecto `edet`.
+10. Pantallas con `app-abm` (marcas, modelos, plantillas): helpers de `e2e/support/abm.ts`
+    (`abm(page).nuevo()`, `.fila(texto)`, `.guardar`, `confirmar`, `aviso`, `elegir` para
+    `p-dropdown`, `escribirNumero` para `p-inputNumber`, `esperarAvisos`). Botones de cada fila:
+    `data-testid="abm-editar"` / `"abm-borrar"`.
+
+## Particularidades de la app que afectan a los tests
+
+- **Arranque:** con la base nueva, la app muestra dos avisos fijos ("Base de datos creada" /
+  "actualizada") al terminar las migraciones. `launchApp` espera ese momento (la base está lista)
+  y los cierra; sin eso tapan los botones de arriba a la derecha.
+- **`p-inputNumber`:** con `fill()` de Playwright, el valor llega al formulario recién al perder
+  el foco (tipeando tecla por tecla llega al instante). `escribirNumero` sale del campo con Tab.
+- **Nombre de plantilla:** se valida contra la base 1 s después de escribirlo (`ng-pending`
+  mientras tanto); esperar con `expect(...).toBeEnabled()` o a que no tenga `ng-pending`.
+- **Avisos y botón Guardar de plantillas:** el aviso tapa el botón mientras dura y no se va con
+  el mouse encima; `esperarAvisos` aleja el mouse y espera.
+- **Textos parecidos:** `getByText('Activa')` también encuentra "Reactiva"; usar `{ exact: true }`.
+- **Paso de vacío:** además de constante, impulsos y tiempo, pide la tensión de las tres fases
+  (tres `p-inputNumber` con el mismo `id="voltage"`).
+

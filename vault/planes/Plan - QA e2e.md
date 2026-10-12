@@ -25,8 +25,8 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **0. Base** | ✅ `194c2e2` | Node 20, Playwright 1.64, smoke test real con trace y reporte HTML. | `npm run e2e` en verde; abrir trace y reporte. |
 | **1. Entorno aislado** | ✅ `cd7249c` | Modo `e2e`: simulador obligatorio, ventanas ocultas, `userData` temporal, descargas a `userData/downloads`, diálogos nativos y `app.relaunch` anulados. 6 tests. | Dos corridas iguales, sin ventanas; la base real sin modificar; `npm start` igual que antes. |
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
-| **2b. Configuraciones por cliente** | ✅ `55acdc3` (falta probar el portable en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
-| **3. ABM básicos** | ⏭️ Sigue | Altas, bajas y modificaciones de medidores, marcas y plantillas de ensayo. Es el foco de la implementación inicial. | Validar la lista de casos con sus capturas. |
+| **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
+| **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
 | **4. Ensayo completo** | ⏳ Detalle más adelante | `run-essay` de punta a punta: ensayo, resultados, historial, PDF. Corrientes simuladas deterministas (hoy usan `Math.random` en `command-map`). | Video del ensayo; revisar el PDF generado. |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
@@ -103,6 +103,17 @@ El mismo catálogo genera el release: una configuración de Angular y un script 
 `environment.prod.ts` a mano, y lo que se entrega es exactamente la configuración que pasó los
 tests. Se prueba de punta a punta en la PC con Windows, donde se genera el portable.
 
+## Hallazgos de QA
+
+Comportamientos de la app encontrados al escribir los tests. No se tocaron; quedan para decidir.
+
+- **Los avisos tapan el "Guardar" de las plantillas.** Los avisos (p-toast) salen arriba a la
+  derecha, justo sobre el botón "Guardar" del armado de plantillas. Después de guardar, el aviso
+  "Guardado correctamente" aparece bajo el cursor y tapa el botón mientras dura.
+- **Avisos fijos en el primer arranque.** Con una base nueva, "Base de datos creada" y "Base de
+  datos actualizada" quedan fijos (no se van solos) sobre la misma zona hasta que el usuario los
+  cierra.
+
 ## Release
 
 - **El portable de Windows que reciben los clientes se genera en una PC con Windows**, no en la
@@ -110,8 +121,9 @@ tests. Se prueba de punta a punta en la PC con Windows, donde se genera el porta
 - **electron-builder 26.0.20** ([[ADR - electron-builder 26]]): el release ya no compila los
   módulos nativos, usa binarios precompilados. En la Mac sale con `npm run electron:build` a secas;
   los problemas de `distutils` (Python 3.12+) y del SDK de macOS 27 dejan de importar.
-- **Pendiente en la PC con Windows:** instalar Node 20 (por ejemplo con nvm-windows), `npm ci`,
-  generar el portable y compararlo con el último entregado.
+- **Probado en la PC con Windows (2026-10-12):** Node 20, `npm ci` y
+  `npm run electron:build:<cliente>` generan el portable y funciona igual que el último entregado
+  ([[Receta - Release en Windows]]).
 - **Fase 2b:** los scripts `electron:build:<cliente>` se prueban de punta a punta en esa PC.
 - **Los workflows de CI llaman a `npm run electron:build`**, que ahora pide cliente: fallan hasta
   la fase 8 (el de Linux ya fallaba por `ubuntu-18.04`; el de Windows corre al pushear a `main`).

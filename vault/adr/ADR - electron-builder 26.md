@@ -52,7 +52,7 @@ Electron (`@electron/node-gyp`, sin `distutils`), y funciona con Node 20.
 
 ## Pendiente
 
-- **Generar el portable en la PC con Windows** (con Node 20 y `npm ci`) y comparar con el último
-  entregado. Desde la Mac no se puede: necesita Wine x64.
+- ~~Generar el portable en la PC con Windows~~: probado el 2026-10-12, funciona igual que el
+  último entregado.
 - Al usar binarios precompilados, la PC con Windows probablemente ya no necesite las Build Tools
   de Visual Studio para el release.
