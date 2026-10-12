@@ -83,7 +83,88 @@
                 }
               ]
             },
-            "e2e": {
+            "production-edet": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.edet.ts"
+                }
+              ]
+            },
+            "production-chaco": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.chaco.ts"
+                }
+              ]
+            },
+            "production-tandil": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.tandil.ts"
+                }
+              ]
+            },
+            "production-edelap": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.edelap.ts"
+                }
+              ]
+            },
+            "e2e-edet": {
+              "outputPath": "dist-e2e/edet",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -96,6 +177,73 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.e2e.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.edet.ts"
+                }
+              ]
+            },
+            "e2e-chaco": {
+              "outputPath": "dist-e2e/chaco",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.chaco.ts"
+                }
+              ]
+            },
+            "e2e-tandil": {
+              "outputPath": "dist-e2e/tandil",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.tandil.ts"
+                }
+              ]
+            },
+            "e2e-edelap": {
+              "outputPath": "dist-e2e/edelap",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                },
+                {
+                  "replace": "src/environments/client.ts",
+                  "with": "src/environments/client.edelap.ts"
                 }
               ]
             },

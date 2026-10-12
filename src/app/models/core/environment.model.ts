@@ -39,3 +39,6 @@ export interface Environment {
         loopDelay: number;
     };
 }
+
+// lo que distingue a cada cliente; el resto del entorno es común (ver src/environments/client.<cliente>.ts)
+export type ClientConfig = Pick<Environment, 'companyLogoPath' | 'standsQuantity' | 'generatorType' | 'patternType'>;

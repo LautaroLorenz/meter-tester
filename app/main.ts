@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { pathToFileURL } from 'url';
 import database from './resources/database/database';
 import abm from './commands/abm';
 import essay from './commands/essay';
@@ -35,6 +36,8 @@ const environmentName = args.find((val) => val.includes('environment'))?.split('
 const environment = APP_CONFIG(environmentName);
 // en e2e las ventanas van ocultas, salvo que el test pida verlas (playwright --headed, graba video)
 const hideWindows = !!environment.e2e && !args.includes('--e2e-headed');
+// en e2e cada cliente se compila en su carpeta (dist-e2e/<cliente>) y el test elige cuál cargar
+const e2eDist = environment.e2e ? args.find((val) => val.startsWith('--e2e-dist='))?.split('=')[1] : undefined;
 
 if (environment.e2e && !environment.virtualMachine) {
     throw new Error('Modo e2e sin máquina virtual: no se permite abrir el puerto serie real');
@@ -98,6 +101,9 @@ function createWindow(): BrowserWindow {
             pathIndex = '../dist/index.html';
         }
         mainWindowUrl = new URL(path.join('file:', __dirname, pathIndex)).href;
+        if (e2eDist) {
+            mainWindowUrl = pathToFileURL(path.join(e2eDist, 'index.html')).href;
+        }
     }
     mainWindowUrl += '#';
 
