@@ -14,23 +14,33 @@ de nvm ([[ADR - Node 20 y Playwright 1.64]]).
 |---|---|
 | Compilar en modo e2e y correr todo | `source ~/.nvm/nvm.sh && nvm use && npm run e2e` |
 | Correr sin recompilar | `source ~/.nvm/nvm.sh && nvm use && npx playwright test -c e2e/playwright.config.ts e2e/` |
-| Ver cada paso (capturas, DOM, consola) | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:show-trace` |
-| Reporte HTML con capturas adjuntas | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:report` |
+| Ver los tests en vivo (ventanas visibles) | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:headed` |
+| Reporte HTML: capturas y trace de cada test | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:report` |
 | Confirmar que la base real no se tocó (macOS) | `stat -f "%Sm" ~/Library/Application\ Support/oelec-ce-soft/database.db` |
 
-Salidas (todas ignoradas por git): `e2e/tracing/trace.zip`, `e2e/report/`, `e2e/screenshots/`.
+Salidas (ignoradas por git): `e2e/report/` y `e2e/screenshots/`. Cada test adjunta su trace al
+reporte: desde el test en el reporte se abre el visor, con la línea de tiempo cuadro a cuadro, el
+DOM, la consola y la red de cada paso. Si el test falla, adjunta también una captura.
+
+Sin video, por decisión: alcanza con las capturas. Además, con Electron 25 la grabación de video
+de Playwright cuelga el arranque de la app.
 
 ## Escribir un test
 
-1. Lanzar con `launchApp()` de `e2e/support/launch-app.ts`: modo e2e, `userData` temporal,
-   diálogos anulados ([[ADR - Entorno e2e aislado]]). Cerrar con `close()`, que borra la
-   carpeta temporal.
-2. Ventana principal: `launched.mainWindow`. Ventana del simulador: invocar
+1. Importar `test` y `expect` de `e2e/support/fixtures.ts` y pedir el fixture `launched`: cada
+   test arranca su propia app en modo e2e, con `userData` temporal y diálogos anulados
+   ([[ADR - Entorno e2e aislado]]). El fixture graba el trace y cierra la app al final.
+2. Navegar con `openMenu(page, [...])` de `e2e/support/menu.ts`, pasando el camino de
+   `automationId` del menú (por ejemplo `['menu-medidores', 'menu-medidores-marcas']`).
+   Para elementos propios de la app, usar `data-testid` y `getByTestId`.
+3. Ventana principal: `launched.mainWindow`. Ventana del simulador: invocar
    `open-virtual-machine` y esperar `app.waitForEvent('window')`.
-3. Canales IPC del main desde el renderer (hay `nodeIntegration`):
+4. Canales IPC del main desde el renderer (hay `nodeIntegration`):
    `mainWindow.evaluate(() => require('electron').ipcRenderer.invoke('<canal>'))`.
-4. Si el flujo abre un diálogo de carpeta o archivo: `await launched.mockOpenDialog([ruta])`
+5. Si el flujo abre un diálogo de carpeta o archivo: `await launched.mockOpenDialog([ruta])`
    antes de la acción. Sin eso, el diálogo devuelve "cancelado".
-5. Archivos descargados: quedan en `launched.downloadsDir`.
-6. Evidencia: `await test.info().attach('<nombre>', { body: await page.screenshot(), contentType: 'image/png' })`.
+6. Archivos descargados: quedan en `launched.downloadsDir`.
+7. Evidencia: `await test.info().attach('<nombre>', { body: await page.screenshot(), contentType: 'image/png' })`.
    Funciona con las ventanas ocultas.
+8. Diálogos de PrimeNG: `getByRole('dialog').filter({ hasText: '<título>' })`. PrimeNG 16 no
+   les da nombre accesible, así que `getByRole('dialog', { name })` no los encuentra.

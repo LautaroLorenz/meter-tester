@@ -32,7 +32,7 @@ Con `e2e: true` el main:
 | Riesgo | Cómo se evita |
 |---|---|
 | Puerto serie real | Siempre el simulador; si `e2e` sin `virtualMachine`, la app no arranca. |
-| Ventanas en pantalla | `show: false` en principal y secundarias; sin `maximize()` ni `focus()` (en macOS las mostrarían). |
+| Ventanas en pantalla | `show: false` en principal y secundarias; sin `maximize()` ni `focus()` (en macOS las mostrarían). Con `--e2e-headed` (lo pasa el fixture con `playwright test --headed`) se muestran, para mirar el test en vivo. |
 | Descargas (PDF, Excel) | `will-download` las guarda en `userData/downloads`, sin diálogo. |
 
 Y el helper de tests (`e2e/support/launch-app.ts`):
