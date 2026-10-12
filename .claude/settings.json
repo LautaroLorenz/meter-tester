@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "VAULT_KIT_CONFIG=\"$CLAUDE_PROJECT_DIR/.claude/vault-kit.env\" bash \"$CLAUDE_PROJECT_DIR/.claude/sync-vault-rules.sh\" || exit 0",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
