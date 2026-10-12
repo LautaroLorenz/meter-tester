@@ -33,6 +33,8 @@ const serve = args.some((val) => val === '--serve');
 const environmentName = args.find((val) => val.includes('environment'))?.split('=')?.[1];
 
 const environment = APP_CONFIG(environmentName);
+// en e2e las ventanas van ocultas, salvo que el test pida verlas (playwright --headed, graba video)
+const hideWindows = !!environment.e2e && !args.includes('--e2e-headed');
 
 if (environment.e2e && !environment.virtualMachine) {
     throw new Error('Modo e2e sin máquina virtual: no se permite abrir el puerto serie real');
@@ -61,7 +63,7 @@ function createWindow(): BrowserWindow {
         y: 0,
         width: size.width,
         height: size.height,
-        show: !environment.e2e,
+        show: !hideWindows,
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: serve,
@@ -105,7 +107,7 @@ function createWindow(): BrowserWindow {
     secondaryWindow.setConfig({
         baseUrl: mainWindowUrl,
         inspector: environment.inspector,
-        hidden: !!environment.e2e
+        hidden: hideWindows
     });
     registerIpc(knex);
 

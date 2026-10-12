@@ -13,13 +13,16 @@ export interface LaunchedApp {
   close: () => Promise<void>;
 }
 
-// Lanza la app en modo e2e: máquina virtual, ventanas ocultas y userData temporal
+// Lanza la app en modo e2e: máquina virtual, ventanas ocultas (salvo headed) y userData temporal
 // (base, electron-store y descargas). Los diálogos nativos y app.relaunch quedan anulados
 // para que nada bloquee el test ni lo saque de control.
-export async function launchApp(): Promise<LaunchedApp> {
+// Con headed las ventanas se muestran, para mirar el test en vivo. No se graba video: con
+// Electron 25 la grabación de Playwright cuelga el arranque; el trace trae los cuadros igual.
+export async function launchApp(options: { headed?: boolean } = {}): Promise<LaunchedApp> {
   const userDataDir = FS.mkdtempSync(PATH.join(OS.tmpdir(), 'meter-tester-e2e-'));
+  const args = [PATH.join(__dirname, '../../app/main.js'), '--environment=e2e', `--user-data-dir=${userDataDir}`];
   const app = await electron.launch({
-    args: [PATH.join(__dirname, '../../app/main.js'), '--environment=e2e', `--user-data-dir=${userDataDir}`],
+    args: options.headed ? [...args, '--e2e-headed'] : args,
   });
 
   await app.evaluate(({ app: electronApp, dialog }) => {
