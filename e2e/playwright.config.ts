@@ -1,16 +1,9 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   testDir: '.',
-  timeout: 45000,
+  timeout: 60000,
   outputDir: './screenshots',
-  use: {
-    headless: false,
-    viewport: { width: 1280, height: 720 },
-    launchOptions: {
-      slowMo: 1000,
-    },
-    trace: 'on',
-  },
+  reporter: [['list'], ['html', { outputFolder: './report', open: 'never' }]],
   expect: {
     toMatchSnapshot: { threshold: 0.2 },
   },

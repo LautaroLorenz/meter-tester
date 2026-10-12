@@ -45,8 +45,13 @@ testem.log
 !/e2e/protractor.conf.js
 /e2e/*.map
 /e2e/tracing
+/e2e/report
 /e2e/screenshots
 
 # System Files
 .DS_Store
 Thumbs.db
+
+# Obsidian: estado local del vault
+/vault/.obsidian/workspace*.json
+/vault/.trash/

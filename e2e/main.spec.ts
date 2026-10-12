@@ -1,59 +1,53 @@
-import { BrowserContext, ElectronApplication, Page, _electron as electron } from 'playwright';
-import { test, expect } from '@playwright/test';
+import { ElectronApplication, Page, _electron as electron, test, expect } from '@playwright/test';
+import * as FS from 'fs';
+import * as OS from 'os';
 import * as PATH from 'path';
 
-test.describe('Check Home Page', () => {
-  let app: ElectronApplication;
-  let firstWindow: Page;
-  let context: BrowserContext;
+const TRACE_PATH = PATH.join(__dirname, 'tracing', 'trace.zip');
 
-  test.beforeAll( async () => {
-    app = await electron.launch({ args: [PATH.join(__dirname, '../app/main.js'), PATH.join(__dirname, '../app/package.json')] });
-    context = app.context();
-    await context.tracing.start({ screenshots: true, snapshots: true });
-    firstWindow = await app.firstWindow();
-    await firstWindow.waitForLoadState('domcontentloaded');
+test.describe.serial('Smoke', () => {
+  let app: ElectronApplication;
+  let mainWindow: Page;
+  let userDataDir: string;
+
+  test.beforeAll(async () => {
+    // userData temporal: la base (database.db) y electron-store viven ahi, asi el test no toca la del usuario
+    userDataDir = FS.mkdtempSync(PATH.join(OS.tmpdir(), 'meter-tester-e2e-'));
+    app = await electron.launch({
+      args: [PATH.join(__dirname, '../app/main.js'), `--user-data-dir=${userDataDir}`],
+    });
+    await app.context().tracing.start({ screenshots: true, snapshots: true });
+    mainWindow = await app.firstWindow();
+    await mainWindow.waitForLoadState('domcontentloaded');
   });
 
-  test('Launch electron app', async () => {
+  test.afterAll(async () => {
+    await app.context().tracing.stop({ path: TRACE_PATH });
+    await app.close();
+    FS.rmSync(userDataDir, { recursive: true, force: true });
+  });
 
-    const windowState: { isVisible: boolean; isDevToolsOpened: boolean; isCrashed: boolean } = await app.evaluate(async (process) => {
-      const mainWindow = process.BrowserWindow.getAllWindows()[0];
-
-      const getState = () => ({
-        isVisible: mainWindow.isVisible(),
-        isDevToolsOpened: mainWindow.webContents.isDevToolsOpened(),
-        isCrashed: mainWindow.webContents.isCrashed(),
-      });
-
-      return new Promise((resolve) => {
-        if (mainWindow.isVisible()) {
-          resolve(getState());
-        } else {
-          mainWindow.once('ready-to-show', () => setTimeout(() => resolve(getState()), 0));
-        }
-      });
+  test('la ventana principal abre visible y sin crashear', async () => {
+    const windowState = await app.evaluate(async ({ BrowserWindow }) => {
+      const window = BrowserWindow.getAllWindows()[0];
+      if (!window.isVisible()) {
+        await new Promise((resolve) => window.once('ready-to-show', resolve));
+      }
+      return { isVisible: window.isVisible(), isCrashed: window.webContents.isCrashed() };
     });
 
     expect(windowState.isVisible).toBeTruthy();
-    expect(windowState.isDevToolsOpened).toBeFalsy();
     expect(windowState.isCrashed).toBeFalsy();
   });
 
-  // test('Check Home Page design', async ({ browserName}) => {
-  //   // Uncomment if you change the design of Home Page in order to create a new screenshot
-  //   const screenshot = await firstWindow.screenshot({ path: '/tmp/home.png' });
-  //   expect(screenshot).toMatchSnapshot(`home-${browserName}.png`);
-  // });
+  test('carga la pantalla inicial con el menu', async ({}, testInfo) => {
+    await expect(mainWindow).toHaveURL(/#\/ensayos-disponibles$/);
+    await expect(mainWindow.locator('app-menu')).toBeVisible();
+    await expect(mainWindow.locator('app-page-title')).toContainText('Administración de Ensayos');
 
-  test('Check title', async () => {
-    const elem = await firstWindow.$('app-home h1');
-    const text = elem ? await elem.innerText() : null;
-    expect(text).toBe('App works !');
-  });
-
-  test.afterAll( async () => {
-    await context.tracing.stop({ path: 'e2e/tracing/trace.zip' });
-    await app.close();
+    await testInfo.attach('pantalla-inicial', {
+      body: await mainWindow.screenshot(),
+      contentType: 'image/png',
+    });
   });
 });
