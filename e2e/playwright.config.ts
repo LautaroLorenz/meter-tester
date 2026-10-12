@@ -10,7 +10,12 @@ const config = {
     toMatchSnapshot: { threshold: 0.2 },
   },
   // un cliente solo: npx playwright test -c e2e/playwright.config.ts --project=chaco
-  projects: Object.keys(CLIENTS).map((client) => ({ name: client, use: { client } })),
+  // los tests @un-cliente cubren funciones comunes a todos (ABM): corren solo en el primero (edet)
+  projects: Object.keys(CLIENTS).map((client, index) => ({
+    name: client,
+    use: { client },
+    grepInvert: index === 0 ? undefined : /@un-cliente/,
+  })),
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

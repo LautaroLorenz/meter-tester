@@ -1,4 +1,4 @@
-import { ElectronApplication, Page, _electron as electron } from '@playwright/test';
+import { ElectronApplication, Page, _electron as electron, expect } from '@playwright/test';
 import * as FS from 'fs';
 import * as OS from 'os';
 import * as PATH from 'path';
@@ -46,6 +46,18 @@ export async function launchApp(options: { client: string; headed?: boolean }): 
 
   const mainWindow = await app.firstWindow();
   await mainWindow.waitForLoadState('domcontentloaded');
+
+  // Con la base nueva la app avisa "Base de datos creada" y "Base de datos actualizada" al terminar
+  // las migraciones. Son avisos fijos (no se van solos) que tapan la zona de arriba a la derecha:
+  // se espera a que la base esté lista y se cierran.
+  // El botón de cerrar nunca queda "estable" para Playwright (animación del toast): se dispara el
+  // click directo y se verifica que desaparezcan.
+  const avisos = mainWindow.locator('p-toast p-toastitem');
+  await avisos.getByText('Base de datos actualizada').waitFor();
+  for (const cerrar of await avisos.getByRole('button', { name: 'Close' }).all()) {
+    await cerrar.dispatchEvent('click');
+  }
+  await expect(avisos).toHaveCount(0);
 
   return {
     app,

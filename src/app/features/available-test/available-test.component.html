@@ -9,6 +9,7 @@
         (lazyLoad)="lazyLoad($event)">
         <ng-container toolbar-group-right>
             <p-button
+                data-testid="plantilla-nueva"
                 label="Nuevo"
                 icon="pi pi-plus"
                 styleClass="ml-2"
@@ -28,6 +29,7 @@
                 tooltipPosition="left"
                 [queryParams]="{ id: element.id }"></button>
             <button
+                data-testid="plantilla-editar"
                 pButton
                 pRipple
                 icon="pi pi-pencil"
