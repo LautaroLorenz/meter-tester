@@ -25,8 +25,8 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **0. Base** | ✅ `194c2e2` | Node 20, Playwright 1.64, smoke test real con trace y reporte HTML. | `npm run e2e` en verde; abrir trace y reporte. |
 | **1. Entorno aislado** | ✅ `cd7249c` | Modo `e2e`: simulador obligatorio, ventanas ocultas, `userData` temporal, descargas a `userData/downloads`, diálogos nativos y `app.relaunch` anulados. 6 tests. | Dos corridas iguales, sin ventanas; la base real sin modificar; `npm start` igual que antes. |
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
-| **2b. Configuraciones por cliente** | ⏭️ Sigue (catálogo listo) | Catálogo de clientes en el repo, una corrida de toda la suite por cliente y un script de release por cliente. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde. |
-| **3. ABM básicos** | ⏳ Después de la 2 | Altas, bajas y modificaciones de medidores, marcas y plantillas de ensayo. Es el foco de la implementación inicial. | Validar la lista de casos con sus capturas. |
+| **2b. Configuraciones por cliente** | ✅ `55acdc3` (falta probar el portable en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
+| **3. ABM básicos** | ⏭️ Sigue | Altas, bajas y modificaciones de medidores, marcas y plantillas de ensayo. Es el foco de la implementación inicial. | Validar la lista de casos con sus capturas. |
 | **4. Ensayo completo** | ⏳ Detalle más adelante | `run-essay` de punta a punta: ensayo, resultados, historial, PDF. Corrientes simuladas deterministas (hoy usan `Math.random` en `command-map`). | Video del ensayo; revisar el PDF generado. |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
@@ -67,13 +67,30 @@ que en todas las configuraciones de cliente va todo en `false`.
 | Tandil | 6 | `Virtual` | `Manual` | `company-logo-usina-tandil.png` |
 | EDELAP - La Plata | 8 | `Physical` | `Manual` | `company-logo-edelap.png` |
 
-⚠️ El `environment.prod.ts` commiteado mezcla clientes: logo de Usina Tandil con la
-configuración de EDET (20 puestos, `Sm5050`, `SemiautomaticPYC5050`). Es el riesgo de editar el
-archivo a mano. El entorno `e2e` actual heredó esa mezcla; la fase 2b lo reemplaza por el catálogo.
+Resuelto en la 2b: el `environment.prod.ts` commiteado mezclaba clientes (logo de Usina Tandil con
+la configuración de EDET). Ahora toma los valores del catálogo y ya no se edita a mano.
 
-Propuesta (fase 2b): un archivo por cliente en el repo con sus valores, una compilación e2e por
-cliente y un proyecto de Playwright por cliente que lanza la app con esa compilación. Agregar un
-cliente pasa a ser agregar un archivo.
+### Cómo funciona (fase 2b)
+
+- **Catálogo:** `src/environments/client.<cliente>.ts` (`edet`, `chaco`, `tandil`, `edelap`), con
+  lo propio de cada cliente (`ClientConfig`: logo, puestos, generador, patrón). Están al mismo
+  nivel que `client.ts` porque Angular resuelve los imports del archivo reemplazado desde la
+  ubicación del original.
+- **`environment.prod.ts` y `environment.e2e.ts`** toman los valores de `client.ts`; lo común
+  (pasos, delays) queda en el entorno. `client.ts` apunta a EDET: es el cliente de los builds sin
+  cliente (`build:prod`, `electron:local`).
+- **Angular:** `production-<cliente>` (release, en `dist/`) y `e2e-<cliente>` (tests, en
+  `dist-e2e/<cliente>`) reemplazan `environment.ts` y `client.ts`.
+- **Tests:** un proyecto de Playwright por cliente; el fixture lanza la app con
+  `--e2e-dist=dist-e2e/<cliente>`. `cliente.spec.ts` verifica que el build tenga la configuración
+  del catálogo (el renderer la expone en `window.__APP_CONFIG__`, solo en E2E).
+- **Release:** `npm run electron:build:<cliente>` (`scripts/release.js`). `npm run electron:build`
+  sin cliente falla a propósito. El nombre del archivo lleva el cliente:
+  `OELEC - CE Soft - <Cliente> - <versión>.exe` en Windows.
+
+**Agregar un cliente:** crear `client.<cliente>.ts`, sumar `production-<cliente>` y
+`e2e-<cliente>` en `angular.json`, `build:e2e:<cliente>` y `electron:build:<cliente>` en
+`package.json`, y el cliente en `scripts/release.js` y `e2e/support/clients.ts`.
 
 Comunes a todos los clientes: `delays` de producción (50 ms en los tres), `skipSteps` todo en
 `false`, y `ClientSettings` por defecto (`EDET` / `Laboratorio de Medidores`): en el historial del
@@ -96,5 +113,7 @@ tests. Se prueba de punta a punta en la PC con Windows, donde se genera el porta
 - **Pendiente en la PC con Windows:** instalar Node 20 (por ejemplo con nvm-windows), `npm ci`,
   generar el portable y compararlo con el último entregado.
 - **Fase 2b:** los scripts `electron:build:<cliente>` se prueban de punta a punta en esa PC.
+- **Los workflows de CI llaman a `npm run electron:build`**, que ahora pide cliente: fallan hasta
+  la fase 8 (el de Linux ya fallaba por `ubuntu-18.04`; el de Windows corre al pushear a `main`).
 - **A futuro (fase 8):** el workflow de Windows en CI podría generar los portables de cada
   cliente, sin depender de una PC.

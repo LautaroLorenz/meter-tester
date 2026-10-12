@@ -12,8 +12,9 @@ de nvm ([[ADR - Node 20 y Playwright 1.64]]).
 
 | Para qué | Comando |
 |---|---|
-| Compilar en modo e2e y correr todo | `source ~/.nvm/nvm.sh && nvm use && npm run e2e` |
+| Compilar los 4 clientes en modo e2e y correr todo | `source ~/.nvm/nvm.sh && nvm use && npm run e2e` |
 | Correr sin recompilar | `source ~/.nvm/nvm.sh && nvm use && npx playwright test -c e2e/playwright.config.ts e2e/` |
+| Un solo cliente, sin recompilar | `source ~/.nvm/nvm.sh && nvm use && npx playwright test -c e2e/playwright.config.ts e2e/ --project=chaco` |
 | Ver los tests en vivo (ventanas visibles) | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:headed` |
 | Reporte HTML: capturas y trace de cada test | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:report` |
 | Confirmar que la base real no se tocó (macOS) | `stat -f "%Sm" ~/Library/Application\ Support/oelec-ce-soft/database.db` |
@@ -30,6 +31,8 @@ de Playwright cuelga el arranque de la app.
 1. Importar `test` y `expect` de `e2e/support/fixtures.ts` y pedir el fixture `launched`: cada
    test arranca su propia app en modo e2e, con `userData` temporal y diálogos anulados
    ([[ADR - Entorno e2e aislado]]). El fixture graba el trace y cierra la app al final.
+   Cada test corre una vez por cliente (proyectos de Playwright); el fixture `client` dice cuál, y
+   `CLIENTS[client]` de `e2e/support/clients.ts` da su configuración.
 2. Navegar con `openMenu(page, [...])` de `e2e/support/menu.ts`, pasando el camino de
    `automationId` del menú (por ejemplo `['menu-medidores', 'menu-medidores-marcas']`).
    Para elementos propios de la app, usar `data-testid` y `getByTestId`.

@@ -24,8 +24,10 @@ Un **entorno `e2e`** propio, para el proceso main y para el renderer:
   `virtualMachine: true` y `e2e: true`. `APP_CONFIG` ahora recibe el nombre del entorno
   (`dev` / `e2e` / producción por defecto). El campo `e2e` es opcional en `Config` para no
   obligar a tocar `environment.dev.ts`, que es configuración local.
-- **Renderer** (`src/environments/environment.e2e.ts`, configuración `e2e` de `angular.json`):
-  igual a producción (Usina Tandil, 20 puestos, PYC5050 / SM5050) pero con `virtualMachine: true`.
+- **Renderer** (`src/environments/environment.e2e.ts`, configuraciones `e2e-<cliente>` de
+  `angular.json`): igual a producción, con el cliente del build, pero con `virtualMachine: true`.
+  Cada cliente se compila en `dist-e2e/<cliente>` y el main lo carga con `--e2e-dist`
+  (ver "Configuración por cliente" en [[Plan - QA e2e]]).
 
 Con `e2e: true` el main:
 
