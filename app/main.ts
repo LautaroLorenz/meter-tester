@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import database from './resources/database/database';
@@ -30,9 +30,13 @@ let win: BrowserWindow | null = null;
 let knex: KnexLib.Knex;
 const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
-const isDev = args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
+const environmentName = args.find((val) => val.includes('environment'))?.split('=')?.[1];
 
-const environment = APP_CONFIG(isDev);
+const environment = APP_CONFIG(environmentName);
+
+if (environment.e2e && !environment.virtualMachine) {
+    throw new Error('Modo e2e sin máquina virtual: no se permite abrir el puerto serie real');
+}
 
 if (environment.virtualMachine) {
     virtualMachine.register();
@@ -57,6 +61,7 @@ function createWindow(): BrowserWindow {
         y: 0,
         width: size.width,
         height: size.height,
+        show: !environment.e2e,
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: serve,
@@ -65,7 +70,14 @@ function createWindow(): BrowserWindow {
         }
     });
     win.setMenuBarVisibility(false);
-    if (win.isMaximizable()) win.maximize();
+    if (win.isMaximizable() && !environment.e2e) win.maximize();
+    if (environment.e2e) {
+        // PDF y Excel se guardan sin diálogo dentro de userData (temporal en los tests)
+        const downloadsDir = path.join(app.getPath('userData'), 'downloads');
+        session.defaultSession.on('will-download', (_, item) => {
+            item.setSavePath(path.join(downloadsDir, item.getFilename()));
+        });
+    }
     backup.setMainWindow(win);
     database.setMainWindow(win);
     secondaryWindow.setMainWindow(win);
@@ -92,7 +104,8 @@ function createWindow(): BrowserWindow {
 
     secondaryWindow.setConfig({
         baseUrl: mainWindowUrl,
-        inspector: environment.inspector
+        inspector: environment.inspector,
+        hidden: !!environment.e2e
     });
     registerIpc(knex);
 

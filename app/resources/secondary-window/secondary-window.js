@@ -14,6 +14,7 @@ let mainWindow = null;
 let openedWindows = [];
 let baseUrl = null;
 let inspector = false;
+let hidden = false;
 function closeAllOpenedWindow() {
     openedWindows.forEach((window) => {
         closeWindow(window);
@@ -58,7 +59,8 @@ function openWindow(url, options) {
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
-        windowIsOpen.window.focus();
+        if (!hidden)
+            windowIsOpen.window.focus();
         return windowIsOpen;
     }
     const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
@@ -68,7 +70,7 @@ function openWindow(url, options) {
             allowRunningInsecureContent: true,
             contextIsolation: false,
             devTools: openInspector
-        }, alwaysOnTop: alwaysOnTop }), options));
+        }, alwaysOnTop: alwaysOnTop, show: !hidden }), options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
     const windowitem = {
@@ -100,6 +102,7 @@ exports.default = {
     setConfig: (settings) => {
         baseUrl = settings.baseUrl;
         inspector = settings.inspector;
+        hidden = settings.hidden;
     },
     register: () => {
         electron_1.ipcMain.handle('open-secondary-window', (_, params) => __awaiter(void 0, void 0, void 0, function* () {

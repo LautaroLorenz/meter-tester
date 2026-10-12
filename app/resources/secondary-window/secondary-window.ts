@@ -6,6 +6,7 @@ let mainWindow: BrowserWindow | null = null;
 let openedWindows: WindowItem[] = [];
 let baseUrl: string | null = null;
 let inspector: boolean = false;
+let hidden: boolean = false;
 
 function closeAllOpenedWindow(): void {
     openedWindows.forEach((window) => {
@@ -64,7 +65,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
-        windowIsOpen.window.focus();
+        if (!hidden) windowIsOpen.window.focus();
         return windowIsOpen;
     }
 
@@ -79,6 +80,7 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
             devTools: openInspector
         },
         alwaysOnTop: alwaysOnTop,
+        show: !hidden,
         ...options
     });
     window.setMenuBarVisibility(false);
@@ -112,9 +114,10 @@ export default {
     openWindow,
     closeWindowById,
     closeAllOpenedWindow,
-    setConfig: (settings: { baseUrl: string; inspector: boolean }) => {
+    setConfig: (settings: { baseUrl: string; inspector: boolean; hidden: boolean }) => {
         baseUrl = settings.baseUrl;
         inspector = settings.inspector;
+        hidden = settings.hidden;
     },
     register: () => {
         ipcMain.handle('open-secondary-window', async (_, params: WindowOpenParams) => {
