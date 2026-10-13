@@ -1,0 +1,72 @@
+<ng-container *ngIf="view$ | async as view">
+    <div class="flex align-items-center gap-3 mx-3 mb-3">
+        <label for="simulador-escenario">Escenario</label>
+        <p-dropdown
+            inputId="simulador-escenario"
+            data-testid="simulador-escenario"
+            [options]="scenarios"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="view.state.scenario"
+            (ngModelChange)="setScenario($event)">
+        </p-dropdown>
+        <span
+            *ngIf="view.runningStep"
+            data-testid="simulador-paso">
+            Paso en curso: <strong>{{ stepLabels[view.runningStep] }}</strong>
+        </span>
+    </div>
+
+    <p
+        *ngIf="view.state.scenario === 'aleatorio'"
+        class="mx-3">
+        Los medidores responden valores al azar (el comportamiento de siempre). Elegí otro escenario para decidir qué
+        aprueba y qué falla en cada paso.
+    </p>
+
+    <p-table
+        *ngIf="view.state.scenario !== 'aleatorio'"
+        styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+        [value]="view.rows"
+        [rowTrackBy]="trackByStand">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Puesto</th>
+                <th
+                    *ngFor="let stepType of stepTypes"
+                    [class.surface-200]="stepType === view.runningStep"
+                    [pTooltip]="'Valor: ' + units[stepType]">
+                    {{ stepLabels[stepType] }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template
+            pTemplate="body"
+            let-row>
+            <tr data-testid="simulador-puesto">
+                <td>{{ row.stand }}</td>
+                <td *ngFor="let cell of row.cells">
+                    <div class="flex align-items-center gap-2">
+                        <p-dropdown
+                            [options]="cell.options"
+                            optionLabel="label"
+                            optionValue="value"
+                            [ngModel]="cell.setting.outcome"
+                            (ngModelChange)="setOutcome(row.stand, cell, $event)">
+                        </p-dropdown>
+                        <p-inputNumber
+                            *ngIf="cell.setting.outcome === 'valor'"
+                            [ngModel]="cell.setting.value"
+                            (ngModelChange)="setValue(row.stand, cell, $event)"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="2"
+                            [placeholder]="cell.stepType === 'boot' ? 'no arranca' : ''"
+                            inputStyleClass="w-6rem">
+                        </p-inputNumber>
+                        <small *ngIf="cell.effective">→ {{ cell.effective }}</small>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</ng-container>

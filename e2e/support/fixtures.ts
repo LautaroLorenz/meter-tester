@@ -13,12 +13,15 @@ export const test = base.extend<{ launched: LaunchedApp }, { client: string }>({
 
     await use(launched);
 
-    if (testInfo.status !== testInfo.expectedStatus) {
-      await testInfo.attach('falla', { body: await launched.mainWindow.screenshot(), contentType: 'image/png' });
+    // un test que cierra la app (para reabrirla sobre los mismos datos) no deja trace de esta
+    if (launched.app.windows().length > 0) {
+      if (testInfo.status !== testInfo.expectedStatus) {
+        await testInfo.attach('falla', { body: await launched.mainWindow.screenshot(), contentType: 'image/png' });
+      }
+      const tracePath = testInfo.outputPath('trace.zip');
+      await launched.app.context().tracing.stop({ path: tracePath });
+      await testInfo.attach('trace', { path: tracePath, contentType: 'application/zip' });
     }
-    const tracePath = testInfo.outputPath('trace.zip');
-    await launched.app.context().tracing.stop({ path: tracePath });
-    await testInfo.attach('trace', { path: tracePath, contentType: 'application/zip' });
 
     await launched.close();
   },

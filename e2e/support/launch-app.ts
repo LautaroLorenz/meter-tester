@@ -19,8 +19,10 @@ export interface LaunchedApp {
 // para que nada bloquee el test ni lo saque de control.
 // Con headed las ventanas se muestran, para mirar el test en vivo. No se graba video: con
 // Electron 25 la grabación de Playwright cuelga el arranque; el trace trae los cuadros igual.
-export async function launchApp(options: { client: string; headed?: boolean }): Promise<LaunchedApp> {
-  const userDataDir = FS.mkdtempSync(PATH.join(OS.tmpdir(), 'meter-tester-e2e-'));
+// Con `userDataDir` reabre la app sobre los datos de otra (para probar lo que se recuerda entre
+// sesiones): la base ya existe y `close` no borra la carpeta.
+export async function launchApp(options: { client: string; headed?: boolean; userDataDir?: string }): Promise<LaunchedApp> {
+  const userDataDir = options.userDataDir ?? FS.mkdtempSync(PATH.join(OS.tmpdir(), 'meter-tester-e2e-'));
   const args = [
     PATH.join(__dirname, '../../app/main.js'),
     '--environment=e2e',
@@ -52,12 +54,15 @@ export async function launchApp(options: { client: string; headed?: boolean }): 
   // se espera a que la base esté lista y se cierran.
   // El botón de cerrar nunca queda "estable" para Playwright (animación del toast): se dispara el
   // click directo y se verifica que desaparezcan.
-  const avisos = mainWindow.locator('p-toast p-toastitem');
-  await avisos.getByText('Base de datos actualizada').waitFor();
-  for (const cerrar of await avisos.getByRole('button', { name: 'Close' }).all()) {
-    await cerrar.dispatchEvent('click');
+  if (!options.userDataDir) {
+    const avisos = mainWindow.locator('p-toast p-toastitem');
+    await avisos.getByText('Base de datos actualizada').waitFor();
+    for (const cerrar of await avisos.getByRole('button', { name: 'Close' }).all()) {
+      await cerrar.dispatchEvent('click');
+    }
+    await expect(avisos).toHaveCount(0);
   }
-  await expect(avisos).toHaveCount(0);
+  await mainWindow.locator('[data-automationid="menu-ensayos"]').waitFor();
 
   return {
     app,
@@ -70,7 +75,9 @@ export async function launchApp(options: { client: string; headed?: boolean }): 
       }, filePaths),
     close: async () => {
       await app.close();
-      FS.rmSync(userDataDir, { recursive: true, force: true });
+      if (!options.userDataDir) {
+        FS.rmSync(userDataDir, { recursive: true, force: true });
+      }
     },
   };
 }

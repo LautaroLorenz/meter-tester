@@ -25,6 +25,8 @@ const TRANSMISSION_CONFIG: TransmissionConfig = {
 
 let secondaryWindowItem: WindowItem | null = null;
 let commandProcessor: CommandProcessor | null = null;
+// Condiciones del banco (paso en curso y sus parámetros) para el simulador: ver VirtualBench
+let currentBench: unknown = null;
 
 /**
  * Calcula el delay de transmisión realista para un carácter
@@ -127,6 +129,17 @@ export default {
             secondaryWindowItem?.close();
             return;
         });
+
+        // la app avisa el paso en curso; el simulador lo usa para responder como el medidor
+        ipcMain.handle('virtual-machine-bench', async (_, bench) => {
+            currentBench = bench;
+            if (secondaryWindowItem?.window && !secondaryWindowItem.window.isDestroyed()) {
+                secondaryWindowItem.window.webContents.send('handle-virtual-machine-bench', bench);
+            }
+        });
+
+        // la ventana del simulador lo pide al abrirse, por si ya hay un paso en curso
+        ipcMain.handle('get-virtual-machine-bench', async () => currentBench);
 
         // envió de comando Máquina virtual -> puerto USB (continua en parser.on)
         ipcMain.handle('virtual-machine-write', async (_, { command }) => {

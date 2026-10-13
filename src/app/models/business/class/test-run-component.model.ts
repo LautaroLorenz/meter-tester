@@ -15,6 +15,8 @@ import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { ExecutionDirector } from './execution-director.model';
 import { GeneratorAlarmType } from '../enums/generator-alarm-type.model';
 import { DeviceStatus } from '../enums/device-status.model';
+import { APP_CONFIG } from '../../../../environments/environment';
+import { VirtualMachineService } from '../../../services/virtual-machine.service';
 
 @Component({
     template: '',
@@ -44,6 +46,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
     protected readonly confirmationService = inject(ConfirmationService);
     protected readonly messagesService = inject(MessagesService);
     protected readonly onDestroy = new Subject<void>();
+    private readonly virtualMachineService = inject(VirtualMachineService);
 
     abstract readonly skipEnabled: boolean;
 
@@ -85,6 +88,7 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.runEssayService.canDeactivate = this.abort.bind(this);
         this.executionSkip();
         this.updateSplitButtonItems();
+        this.notifyVirtualMachine();
         this.onStepInit();
         this.restartResults(ResultStatus.Pending);
     }
@@ -426,6 +430,18 @@ export abstract class TestRunComponent<T extends EssayStep> implements OnInit, O
         this.previousSteps = executionSteps.slice(0, currentStepIndex);
         this.showStepSelectionDialog = true;
         this.cd.detectChanges();
+    }
+
+    /**
+     * Con la máquina virtual, el simulador necesita saber qué paso se ejecuta y con qué parámetros
+     * para responder como el medidor (en el banco real lo ajusta el operario).
+     */
+    private notifyVirtualMachine(): void {
+        if (!APP_CONFIG.virtualMachine) {
+            return;
+        }
+        const { step_id, form_control_raw } = this.currentStep;
+        this.virtualMachineService.setBench({ step_id, form_control_raw: { ...form_control_raw } }).catch(() => {});
     }
 
     abstract onStepInit(): void;
