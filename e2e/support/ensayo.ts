@@ -151,11 +151,15 @@ export async function prepararPuestos(page: Page, activos: number[]): Promise<vo
  * Deja la fuente lista y empieza a medir el paso. Con generador manual el operario confirma las
  * fotocélulas; con el generador PYC 5050 (EDET) la app lo enciende.
  */
-export async function comenzarMedicion(page: Page): Promise<void> {
+export async function comenzarMedicion(page: Page, antesDeMedir?: () => Promise<void>): Promise<void> {
   const habilitar = page
     .getByRole('button', { name: 'Fotocélulas ajustadas' })
     .or(page.getByRole('button', { name: 'Iniciar generador' }));
   await habilitar.click();
+  // por ejemplo, cargar los integradores iniciales
+  if (antesDeMedir) {
+    await antesDeMedir();
+  }
   const comenzar = page.getByRole('button', { name: 'Comenzar medición' });
   await expect(comenzar).toBeEnabled();
   await comenzar.click();
