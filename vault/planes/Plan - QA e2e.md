@@ -27,7 +27,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
-| **4. Ensayo completo** | ⏭️ Sigue (4a) | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
+| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`; sigue 4b | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
@@ -112,22 +112,30 @@ Decidido con el usuario el 2026-10-13.
 Hoy el simulador es aleatorio (valores al azar y dependientes del reloj); mejorarlo era una deuda
 conocida. Va en la ventana de la máquina virtual, que existe para simular la máquina física.
 
-- **Medidor simulado por puesto**, con valores directos (no cálculo físico: con generador manual
-  el simulador no recibe la corriente):
-  - error del medidor (%) → lo que devuelve la calculadora en contraste;
-  - impulsos en vacío (sí/no y ritmo) → vacío;
-  - tiempo de arranque (s hasta el primer impulso) → arranque;
-  - ritmo con carga (imp/s) → arranque e integración.
-- **Escenarios** con nombre: "Aleatorio" (el comportamiento actual), "Todo aprueba", "Todo
-  falla", "Mixto", y ajuste puesto por puesto.
-- **Por defecto "Aleatorio"**; la última selección se recuerda entre sesiones (en `userData`, así
-  los tests, que arrancan con `userData` temporal, siempre empiezan del mismo estado).
-- **Panel "Escenario"** en la ventana de la máquina virtual (desarrollo) y la misma API para los
-  tests (e2e).
-- Las respuestas siguen el camino real: puerto serie simulado, validación de tramas e historial de
-  comandos.
-- Alcance del modelo: cubrir los escenarios que el código distingue (aprobado/fallado de cada paso,
-  en sus bordes). Fallas de comunicación, alarma de sobrecorriente y errores del generador: fase 5.
+✅ `148c70a` (checkpoint del usuario OK). Cómo quedó:
+
+- **Medidor simulado por puesto** (`src/app/services/simulator.service.ts`). En cada paso, cada
+  puesto Aprueba, Falla o responde un **valor directo**:
+  - vacío: impulsos en todo el paso (se emiten en el primer 40 % del tiempo);
+  - contraste: error [%];
+  - arranque: segundos hasta llegar a los impulsos permitidos (vacío = no arranca);
+  - integración: segundos hasta completar los impulsos (por defecto 3 s); se queda en los
+    impulsos del paso, así el error depende solo de los integradores.
+  - Aprueba/Falla calculan el valor con los parámetros del paso. Arranque que falla: los puestos
+    impares llegan antes del mínimo y los pares no arrancan. Contraste: el signo alterna por puesto.
+- **Escenarios:** "Aleatorio" (el simulador histórico, sin cambios), "Todo aprueba", "Todo
+  falla", "Mixto" (el puesto n falla el paso k —vacío 0, contraste 1, arranque 2— si n + k es
+  múltiplo de 3) y "Personalizado" (al tocar un puesto).
+- **Condiciones del banco:** vacío, arranque e integración piden lo mismo a la calculadora (TS02)
+  y con generador manual la máquina no recibe la carga, así que el simulador no puede deducir el
+  paso. En modo máquina virtual, al empezar cada paso la app le avisa el paso y sus parámetros
+  (`TestRunComponent` → IPC `virtual-machine-bench` → ventana del simulador). Las respuestas
+  siguen el camino real (puerto serie simulado y validación de tramas).
+- **Panel "Escenario"** en la ventana de la máquina virtual, con el paso en curso y el valor que
+  responde cada puesto. Para los tests, la misma API en `window.__simulador`.
+- **Recuerda la última selección** en el `localStorage` de la ventana (vive en `userData`): los
+  tests, con `userData` temporal, arrancan siempre en "Aleatorio".
+- Fallas de comunicación, alarma de sobrecorriente y errores del generador: fase 5.
 
 ### 4b. Ensayo completo por cliente (los 4)
 
@@ -171,8 +179,8 @@ Reglas (del código, confirmadas por el usuario):
 
 - **Wake lock:** al empezar la ejecución la app pide que la pantalla no se apague
   (`wake-lock.service.ts`); si falla, el código entra en un camino que nunca continúa y la
-  ejecución quedaría en blanco. Con ventanas ocultas es probable que pase. Si se confirma, es un
-  error que puede afectar a usuarios.
+  ejecución quedaría en blanco. En la 4a los ensayos corrieron completos con ventanas ocultas
+  (Chaco y EDET): no se reprodujo. Se vuelve a mirar en la 4b con los 4 clientes.
 
 ## Hallazgos de QA
 
@@ -184,6 +192,8 @@ Comportamientos de la app encontrados al escribir los tests. No se tocaron; qued
 - **Avisos fijos en el primer arranque.** Con una base nueva, "Base de datos creada" y "Base de
   datos actualizada" quedan fijos (no se van solos) sobre la misma zona hasta que el usuario los
   cierra.
+- **"Prueba de constraste".** En "Agregar paso" de las plantillas, el paso de contraste se llama
+  "Prueba de constraste" (con una "s" de más).
 
 ## Release
 

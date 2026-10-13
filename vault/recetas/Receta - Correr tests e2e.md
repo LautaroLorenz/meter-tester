@@ -36,8 +36,8 @@ de Playwright cuelga el arranque de la app.
 2. Navegar con `openMenu(page, [...])` de `e2e/support/menu.ts`, pasando el camino de
    `automationId` del menú (por ejemplo `['menu-medidores', 'menu-medidores-marcas']`).
    Para elementos propios de la app, usar `data-testid` y `getByTestId`.
-3. Ventana principal: `launched.mainWindow`. Ventana del simulador: invocar
-   `open-virtual-machine` y esperar `app.waitForEvent('window')`.
+3. Ventana principal: `launched.mainWindow`. La ventana del simulador la abre la app al entrar a
+   ejecutar un ensayo: `abrirEnsayo` de `e2e/support/ensayo.ts` la devuelve.
 4. Canales IPC del main desde el renderer (hay `nodeIntegration`):
    `mainWindow.evaluate(() => require('electron').ipcRenderer.invoke('<canal>'))`.
 5. Si el flujo abre un diálogo de carpeta o archivo: `await launched.mockOpenDialog([ruta])`
@@ -53,6 +53,15 @@ de Playwright cuelga el arranque de la app.
     (`abm(page).nuevo()`, `.fila(texto)`, `.guardar`, `confirmar`, `aviso`, `elegir` para
     `p-dropdown`, `escribirNumero` para `p-inputNumber`, `esperarAvisos`). Botones de cada fila:
     `data-testid="abm-editar"` / `"abm-borrar"`.
+11. Ensayos: helpers de `e2e/support/ensayo.ts`: `crearMedidor`, `crearPlantillaEnsayo(page,
+    nombre, [{ paso: 'vacio' | 'contraste' | 'arranque' | 'integracion', parametros? }])` (con
+    parámetros cortos por defecto), `abrirEnsayo`, `verificar`, `prepararPuestos(page, [1, 2, 3])`,
+    `comenzarMedicion` (fotocélulas o generador según el cliente) y `resultadoPuesto(page, n)`.
+12. Simulador: `simulador(ventana).escenario('mixto')` y `.puesto(n, 'contrast', { outcome:
+    'valor', value: 0.8 })` (ver "4a" en [[Plan - QA e2e]]). Hay que elegir el escenario antes de
+    que empiece el paso.
+13. Para probar lo que se recuerda entre sesiones: cerrar `launched.app` y
+    `launchApp({ client, userDataDir: launched.userDataDir })`.
 
 ## Particularidades de la app que afectan a los tests
 
@@ -68,4 +77,13 @@ de Playwright cuelga el arranque de la app.
 - **Textos parecidos:** `getByText('Activa')` también encuentra "Reactiva"; usar `{ exact: true }`.
 - **Paso de vacío:** además de constante, impulsos y tiempo, pide la tensión de las tres fases
   (tres `p-inputNumber` con el mismo `id="voltage"`).
+- **Fases con carga** (contraste, arranque, integración): tensión, corriente, cos φ y su letra
+  (L/C) en cada fase; los ids se repiten, así que se busca dentro de cada `app-phase-form-group`.
+  La lista de la letra tarda en cerrarse: esperar a que no quede ningún `listbox` antes de abrir
+  la siguiente.
+- **Contraste en modo secuencial** mide hasta que se pasa a "Ensayo unitario".
+- **Integración sin integradores iniciales:** pregunta "Faltan valores iniciales" en un
+  `p-confirmdialog`.
+- **Tests unitarios (`npm test`):** ya daban "Some of your tests did a full page reload!" antes
+  de la fase 4.
 
