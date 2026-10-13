@@ -27,7 +27,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
-| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`; sigue 4b | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
+| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`, 4b ✅ `9a51103`; sigue 4c | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
@@ -139,6 +139,15 @@ conocida. Va en la ventana de la máquina virtual, que existe para simular la m�
 
 ### 4b. Ensayo completo por cliente (los 4)
 
+✅ `9a51103` (checkpoint del usuario OK). `e2e/ensayo-completo.spec.ts`, en los 4 clientes (40 s en
+Chaco, 70 s en EDET): integración con aprobación manual (impares aprueban, pares se rechazan),
+PDF validado y adjunto al reporte, historial con una fila por puesto activo y paso (20 por página).
+Al hacerla apareció y se corrigió un problema del simulador: el historial de comandos crecía sin
+límite (main lo mandaba entero con cada comando y la ventana lo redibujaba), así que la máquina
+virtual respondía cada vez más lento; con 19 puestos la primera lectura del arranque llegaba
+después del mínimo y un puesto que tenía que fallar salía OK. Ahora main manda solo el comando
+nuevo y la tabla guarda los últimos 500.
+
 - Verificación → preparación (todos los puestos, uno inactivo) → los 4 pasos → reporte.
 - Escenario "Mixto": en cada paso, algunos puestos aprueban y otros fallan.
 - Generador manual: "Fotocélulas ajustadas" y "Generador apagado"; EDET: "Iniciar generador".
@@ -180,7 +189,8 @@ Reglas (del código, confirmadas por el usuario):
 - **Wake lock:** al empezar la ejecución la app pide que la pantalla no se apague
   (`wake-lock.service.ts`); si falla, el código entra en un camino que nunca continúa y la
   ejecución quedaría en blanco. En la 4a los ensayos corrieron completos con ventanas ocultas
-  (Chaco y EDET): no se reprodujo. Se vuelve a mirar en la 4b con los 4 clientes.
+  (Chaco y EDET): no se reprodujo. En la 4b los 4 clientes ejecutaron el ensayo completo sin
+  quedar en blanco: verificado, no se reproduce.
 
 ## Hallazgos de QA
 

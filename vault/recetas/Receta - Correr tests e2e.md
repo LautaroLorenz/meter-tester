@@ -19,7 +19,8 @@ de nvm ([[ADR - Node 20 y Playwright 1.64]]).
 | Reporte HTML: capturas y trace de cada test | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:report` |
 | Confirmar que la base real no se tocó (macOS) | `stat -f "%Sm" ~/Library/Application\ Support/oelec-ce-soft/database.db` |
 
-Salidas (ignoradas por git): `e2e/report/` y `e2e/screenshots/`. Cada test adjunta su trace al
+Salidas (ignoradas por git): `e2e/report/` y `e2e/screenshots/`. Ojo: pasar `--reporter=line`
+(u otro) reemplaza los reporters de la config y no se regenera el reporte HTML. Cada test adjunta su trace al
 reporte: desde el test en el reporte se abre el visor, con la línea de tiempo cuadro a cuadro, el
 DOM, la consola y la red de cada paso. Si el test falla, adjunta también una captura.
 
