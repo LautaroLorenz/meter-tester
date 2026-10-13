@@ -27,7 +27,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
-| **4. Ensayo completo** | ⏳ Detalle más adelante | `run-essay` de punta a punta: ensayo, resultados, historial, PDF. Corrientes simuladas deterministas (hoy usan `Math.random` en `command-map`). | Capturas de cada etapa del ensayo; revisar el PDF generado. |
+| **4. Ensayo completo** | ⏭️ Sigue (4a) | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
@@ -63,7 +63,7 @@ que en todas las configuraciones de cliente va todo en `false`.
 | Cliente | Puestos | Patrón (`PatternEnum`) | Generador (`GeneratorEnum`) | Logo en el repo |
 |---|---|---|---|---|
 | EDET - Tucumán | 20 | `Sm5050` | `SemiautomaticPYC5050` | `company-logo-edet.png` / `.svg` |
-| Chaco | 3 | `Physical` | `Manual` | Sin logo (`companyLogoPath: ''`): el PDF muestra el nombre de la empresa |
+| Chaco | 3 | `Physical` | `Manual` | Sin logo (`companyLogoPath: ''`): el PDF muestra el nombre de la empresa, **Secheep** |
 | Tandil | 6 | `Virtual` | `Manual` | `company-logo-usina-tandil.png` |
 | EDELAP - La Plata | 8 | `Physical` | `Manual` | `company-logo-edelap.png` |
 
@@ -102,6 +102,77 @@ El mismo catálogo genera el release: una configuración de Angular y un script 
 (`npm run electron:build:<cliente>`), con el cliente en el nombre del portable. Ya no se edita
 `environment.prod.ts` a mano, y lo que se entrega es exactamente la configuración que pasó los
 tests. Se prueba de punta a punta en la PC con Windows, donde se genera el portable.
+
+## Fase 4 — detalle
+
+Decidido con el usuario el 2026-10-13.
+
+### 4a. Simulador configurable (sirve para desarrollo y para e2e)
+
+Hoy el simulador es aleatorio (valores al azar y dependientes del reloj); mejorarlo era una deuda
+conocida. Va en la ventana de la máquina virtual, que existe para simular la máquina física.
+
+- **Medidor simulado por puesto**, con valores directos (no cálculo físico: con generador manual
+  el simulador no recibe la corriente):
+  - error del medidor (%) → lo que devuelve la calculadora en contraste;
+  - impulsos en vacío (sí/no y ritmo) → vacío;
+  - tiempo de arranque (s hasta el primer impulso) → arranque;
+  - ritmo con carga (imp/s) → arranque e integración.
+- **Escenarios** con nombre: "Aleatorio" (el comportamiento actual), "Todo aprueba", "Todo
+  falla", "Mixto", y ajuste puesto por puesto.
+- **Por defecto "Aleatorio"**; la última selección se recuerda entre sesiones (en `userData`, así
+  los tests, que arrancan con `userData` temporal, siempre empiezan del mismo estado).
+- **Panel "Escenario"** en la ventana de la máquina virtual (desarrollo) y la misma API para los
+  tests (e2e).
+- Las respuestas siguen el camino real: puerto serie simulado, validación de tramas e historial de
+  comandos.
+- Alcance del modelo: cubrir los escenarios que el código distingue (aprobado/fallado de cada paso,
+  en sus bordes). Fallas de comunicación, alarma de sobrecorriente y errores del generador: fase 5.
+
+### 4b. Ensayo completo por cliente (los 4)
+
+- Verificación → preparación (todos los puestos, uno inactivo) → los 4 pasos → reporte.
+- Escenario "Mixto": en cada paso, algunos puestos aprueban y otros fallan.
+- Generador manual: "Fotocélulas ajustadas" y "Generador apagado"; EDET: "Iniciar generador".
+- Contraste: se mide en modo secuencial y se termina cambiando el selector a "Ensayo unitario",
+  como lo hace el usuario.
+- Reporte: resultado de cada puesto, filas del historial y PDF descargado. Capturas de cada etapa.
+- Corre siempre en la suite; si la duración molesta, se toman medidas.
+
+### 4c. Reglas en sus bordes (un cliente) e historial
+
+- Cada regla de aprobado/rechazado en su borde (por ejemplo vacío: impulsos = máximo aprueba,
+  máximo + 1 falla).
+- Integración con integradores tipeados (además de "Aprobar todos" / "Rechazar todos").
+- Exportación del historial a Excel.
+
+Reglas (del código, confirmadas por el usuario):
+
+| Paso | Falla si | Tiempo |
+|---|---|---|
+| Vacío | impulsos medidos > impulsos permitidos | durante `durationSeconds`; al terminar, los que no fallaron aprueban |
+| Arranque | llega a los impulsos permitidos antes del mínimo, o no llega al terminar el máximo | ventana `minDurationSeconds`–`maxDurationSeconds`; dura siempre el máximo |
+| Contraste | \|error\| > error máximo | sin tiempo: el usuario lo termina con el selector |
+| Integración | \|error calculado\| > error máximo; error = (final − inicial − estimado) / estimado × 100 | hasta que todos los puestos llegan a `durationPulses` |
+
+### 4d. PDF
+
+- **Chaco:** el PDF muestra "EDET" porque Chaco no tiene logo y el nombre de la empresa está fijo.
+  Corregir: que muestre "Secheep" (la empresa de Chaco). El nombre de la empresa pasa al catálogo
+  de clientes, así cada build trae el suyo.
+- **EDET (20 puestos):** cada paso se dibuja en una hoja A4 fija; verificar que entren los 20 y que
+  el test lo detecte si deja de entrar (el PDF cambia seguido).
+
+### Fuera de la fase 4
+
+"Omitir paso", "Detener todo", "Reiniciar paso" y "Reintentar otros pasos": otra fase.
+
+### A verificar al empezar
+
+- **Wake lock:** al empezar la ejecución la app pide que la pantalla no se apague
+  (`wake-lock.service.ts`); si falla, el código entra en un camino que nunca continúa y la
+  ejecución quedaría en blanco. Con ventanas ocultas es probable que pase. Si se confirma, es un
+  error que puede afectar a usuarios.
 
 ## Hallazgos de QA
 
