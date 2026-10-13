@@ -20,6 +20,7 @@
                             [rounded]="false"
                             [disabled]="disableCalculateError || !canCalculateAllErrors()"
                             severity="info"
+                            data-testid="integracion-calcular-todos"
                             pTooltip="Calcular todos"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
@@ -33,6 +34,7 @@
                             [rounded]="false"
                             [disabled]="disableManualApproval || !canApproveAll()"
                             severity="info"
+                            data-testid="integracion-aprobar-todos"
                             pTooltip="Aprobar todos"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
@@ -46,6 +48,7 @@
                             [rounded]="false"
                             [disabled]="disableManualRejection || !canRejectAll()"
                             severity="info"
+                            data-testid="integracion-rechazar-todos"
                             pTooltip="Rechazar todos"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
@@ -70,7 +73,7 @@
         let-rowData
         let-columns="columns"
         let-rowIndex="rowIndex">
-        <tr>
+        <tr data-testid="integracion-puesto">
             <td
                 *ngFor="let col of columns"
                 class="text-center text-gray-700 font-medium text-xs">
@@ -133,6 +136,7 @@
                             [rounded]="false"
                             [disabled]="disableCalculateError || !canCalculateError(rowIndex)"
                             severity="info"
+                            data-testid="integracion-calcular"
                             pTooltip="Calcular"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
@@ -147,6 +151,7 @@
                             [rounded]="false"
                             [disabled]="disableManualApproval"
                             severity="info"
+                            data-testid="integracion-aprobar"
                             pTooltip="Aprobar"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"
@@ -161,6 +166,7 @@
                             [rounded]="false"
                             [disabled]="disableManualRejection"
                             severity="info"
+                            data-testid="integracion-rechazar"
                             pTooltip="Rechazar"
                             tooltipPosition="top"
                             [tooltipOptions]="{ showDelay: 500 }"

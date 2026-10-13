@@ -49,7 +49,9 @@ function addCommandLog(command) {
     if (!logsSenders.length) {
         return;
     }
-    commandLog$.next([...commandLog$.value, command]);
+    // la ventana del historial solo usa el último comando: mandar el historial entero con cada
+    // comando hacía que la máquina virtual respondiera cada vez más lento en sesiones largas
+    commandLog$.next([command]);
 }
 function clearCommandLog() {
     commandLog$.next([]);

@@ -135,10 +135,13 @@ export async function prepararPuestos(page: Page, activos: number[]): Promise<vo
     if (!debeEstarActivo) {
       continue;
     }
+    // cada lista tarda en cerrarse: se espera antes de abrir la siguiente
     await fila.locator('#meter').click();
     await page.getByRole('option', { name: MEDIDOR }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
     await fila.locator('#yearOfProduction').click();
     await page.getByRole('option').first().click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
     await fila.locator('input[formcontrolname=serialNumber]').fill(`E2E-${indice + 1}`);
   }
   await page.getByRole('button', { name: 'Continuar' }).click();

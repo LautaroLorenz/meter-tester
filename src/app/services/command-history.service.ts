@@ -7,6 +7,8 @@ import { CommandDirector } from '../models/business/class/command-director.model
 import { IpcService } from './ipc.service';
 import { CommandFormatterUtil } from '../utils/command-formatter.util';
 
+const MAX_HISTORY = 500;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -26,6 +28,8 @@ export class CommandHistoryService {
                     return;
                 }
                 const command = commands[commands.length - 1];
+                // se muestran los últimos comandos: con el historial completo la tabla se redibuja
+                // entera en cada comando y la máquina virtual se pone cada vez más lenta
                 this.history$.next([
                     {
                         from: this.deviceConstantPipe.transform(CommandDirector.getFrom(command)),
@@ -33,7 +37,7 @@ export class CommandHistoryService {
                         command: CommandFormatterUtil.formatCommandForDisplay(command),
                         date: this.datePipe.transform(new Date(), 'HH:mm:ss.SSS') || ''
                     },
-                    ...this.history$.value
+                    ...this.history$.value.slice(0, MAX_HISTORY - 1)
                 ]);
             });
         });
