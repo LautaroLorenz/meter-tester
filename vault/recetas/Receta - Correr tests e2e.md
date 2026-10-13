@@ -83,6 +83,10 @@ de Playwright cuelga el arranque de la app.
   La lista de la letra tarda en cerrarse: esperar a que no quede ningún `listbox` antes de abrir
   la siguiente.
 - **Contraste en modo secuencial** mide hasta que se pasa a "Ensayo unitario".
+- **Decimales con coma:** los `p-inputNumber` con decimales (integradores) usan coma; con punto,
+  "101.009" queda 101009. Escribir `String(valor).replace('.', ',')`.
+- **Hallazgos:** si un test encuentra un error de la app, no se corrige en el momento: el test
+  prueba lo que la app hace hoy y el error va a "Hallazgos de QA" del [[Plan - QA e2e]].
 - **Integración sin integradores iniciales:** pregunta "Faltan valores iniciales" en un
   `p-confirmdialog`.
 - **Tests unitarios (`npm test`):** ya daban "Some of your tests did a full page reload!" antes

@@ -27,7 +27,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
-| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`, 4b ✅ `9a51103`; sigue 4c | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
+| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`, 4b ✅ `9a51103`, 4c ✅ `ab0de63`; sigue 4d | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
@@ -163,6 +163,15 @@ nuevo y la tabla guarda los últimos 500.
 - Integración con integradores tipeados (además de "Aprobar todos" / "Rechazar todos").
 - Exportación del historial a Excel.
 
+✅ `ab0de63` (checkpoint del usuario OK): `e2e/reglas.spec.ts`, en EDET, un ensayo con 4 puestos
+con valores directos del simulador. Vacío: 2 impulsos (= máximo) OK, 3 Falló, 0 OK, 10 Falló.
+Contraste (máx. 1 %): 1,00 OK, 1,01 Falló, −1,00 OK, −1,01 Falló. Arranque (1 impulso entre 3 y
+6 s): llega a 1,5 s Falló, a 4,5 s OK, no arranca Falló, a 7,5 s Falló (los tiempos llevan 1,5 s de
+margen: la app lee a todos los puestos en cada vuelta). Integración (1000 imp = 1 kWh, máx. 1 %)
+con integradores escritos en pantalla: 0 % OK, 0,9 % OK, 1,1 % Falló, −1,1 % Falló. Exportación a
+Excel leída con `xlsx`: 16 filas y el mismo resultado por puesto y paso que en pantalla. El borde
+exacto de integración (±1 %) no está en el test: hoy la app falla (ver "Hallazgos de QA").
+
 Reglas (del código, confirmadas por el usuario):
 
 | Paso | Falla si | Tiempo |
@@ -175,8 +184,8 @@ Reglas (del código, confirmadas por el usuario):
 ### 4d. PDF
 
 - **Chaco:** el PDF muestra "EDET" porque Chaco no tiene logo y el nombre de la empresa está fijo.
-  Corregir: que muestre "Secheep" (la empresa de Chaco). El nombre de la empresa pasa al catálogo
-  de clientes, así cada build trae el suyo.
+  Debe mostrar "Secheep" (la empresa de Chaco). La corrección va al final con las demás (ver
+  "Correcciones pendientes"); en la 4d el test documenta lo que sale hoy.
 - **EDET (20 puestos):** cada paso se dibuja en una hoja A4 fija; verificar que entren los 20 y que
   el test lo detecte si deja de entrar (el PDF cambia seguido).
 
@@ -194,7 +203,9 @@ Reglas (del código, confirmadas por el usuario):
 
 ## Hallazgos de QA
 
-Comportamientos de la app encontrados al escribir los tests. No se tocaron; quedan para decidir.
+Comportamientos de la app encontrados al escribir los tests. **Las correcciones de código se hacen
+todas al final** (decisión del usuario, 2026-10-13): mientras tanto los tests prueban lo que la
+app hace hoy y cada hallazgo se anota acá.
 
 - **Los avisos tapan el "Guardar" de las plantillas.** Los avisos (p-toast) salen arriba a la
   derecha, justo sobre el botón "Guardar" del armado de plantillas. Después de guardar, el aviso
@@ -204,6 +215,22 @@ Comportamientos de la app encontrados al escribir los tests. No se tocaron; qued
   cierra.
 - **"Prueba de constraste".** En "Agregar paso" de las plantillas, el paso de contraste se llama
   "Prueba de constraste" (con una "s" de más).
+- **Integración rechaza un error exactamente igual al máximo (error).** Con máximo 1 %, integrador
+  inicial 100 y final 101,01 (1000 imp a 1000 imp/kWh), la pantalla muestra error "1.00" y
+  "Falló". `integration-test-run.component.ts` compara `Math.abs(error) > máximo` sin redondear y
+  en punto flotante el error da 1,0000000000005; con inicial 1000 y final 1001,01 da 0,99999… y
+  aprueba. Contraste en el mismo borde (1,00 %) aprueba. Propuesta: redondear el error a 2
+  decimales (los que se muestran) antes de comparar, y sumar al test de la 4c los casos ±1 %.
+- **Integradores con punto decimal.** Los integradores se escriben con coma decimal; si se escribe
+  o pega "101.009" con punto, queda 101009 sin aviso.
+- **El PDF de Chaco dice "EDET".** Ver 4d.
+
+### Correcciones pendientes (al final)
+
+1. Redondear el error de integración antes de comparar (y casos ±1 % en `e2e/reglas.spec.ts`).
+2. Nombre de la empresa por cliente en el catálogo: Chaco → "Secheep" (4d).
+3. Decidir sobre los avisos que tapan el "Guardar", los avisos fijos del primer arranque,
+   "constraste" y el punto decimal en los integradores.
 
 ## Release
 
