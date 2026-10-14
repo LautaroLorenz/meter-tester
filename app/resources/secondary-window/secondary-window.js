@@ -66,6 +66,8 @@ function openWindow(url, options) {
     const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
     const alwaysOnTop = options && 'alwaysOnTop' in options ? !!options.alwaysOnTop : false;
     const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset(options)), { webPreferences: {
+            // oculta (e2e), Windows la frena (timers y pintado) y el simulador responde tarde
+            backgroundThrottling: !hidden,
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,

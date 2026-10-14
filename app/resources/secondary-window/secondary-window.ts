@@ -74,6 +74,8 @@ function openWindow(url: string, options?: BrowserWindowConstructorOptions): Win
     const window = new BrowserWindow({
         ...openOffset(options),
         webPreferences: {
+            // oculta (e2e), Windows la frena (timers y pintado) y el simulador responde tarde
+            backgroundThrottling: !hidden,
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,

@@ -71,11 +71,13 @@ jobs:
       # Sin el postinstall (electron-builder install-app-deps): recompila sqlite3 para Electron y en
       # los runners falla (Linux no compila, Windows no reconoce el Visual Studio nuevo). sqlite3 y
       # serialport son N-API: los binarios precompilados que baja un `npm ci` común andan en Electron.
-      # `npm rebuild` corre los scripts de las dependencias (p. ej. bajar Electron), no el postinstall.
+      # El postinstall se borra solo en la copia del runner; `npm rebuild` no sirve: también lo corre.
+      # Con bash, si un comando falla corta (en Windows PowerShell sigue y el paso sale verde igual).
       - name: Instalar dependencias
+        shell: bash
         run: |
-          npm ci --ignore-scripts
-          npm rebuild
+          npm pkg delete scripts.postinstall
+          npm ci
           npm ci --prefix app
 
       - name: Lint (informativo)
@@ -124,9 +126,10 @@ jobs:
 
       # igual que en los tests (ver arriba)
       - name: Instalar dependencias
+        shell: bash
         run: |
-          npm ci --ignore-scripts
-          npm rebuild
+          npm pkg delete scripts.postinstall
+          npm ci
           npm ci --prefix app
 
       # sin recompilar los módulos nativos al empaquetar, por lo mismo

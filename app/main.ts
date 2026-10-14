@@ -68,6 +68,8 @@ function createWindow(): BrowserWindow {
         height: size.height,
         show: !hideWindows,
         webPreferences: {
+            // oculta, Windows la frena (timers y pintado) y el ensayo se atrasa
+            backgroundThrottling: !hideWindows,
             nodeIntegration: true,
             allowRunningInsecureContent: serve,
             contextIsolation: false,

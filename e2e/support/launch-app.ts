@@ -28,6 +28,9 @@ export async function launchApp(options: { client: string; headed?: boolean; use
     '--environment=e2e',
     `--e2e-dist=${PATH.join(__dirname, '../../dist-e2e', options.client)}`,
     `--user-data-dir=${userDataDir}`,
+    // idioma de los clientes: números con coma decimal (los runners del CI están en inglés). Electron 25
+    // no conoce es-AR: con ese valor vuelve a en-US
+    '--lang=es',
   ];
   const app = await electron.launch({
     args: options.headed ? [...args, '--e2e-headed'] : args,
