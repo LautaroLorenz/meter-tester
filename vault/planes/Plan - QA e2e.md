@@ -31,7 +31,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ✅ `cc25a46` (ver "Fase 6 — detalle") | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ✅ `759c551` | Solo máquina virtual (decisión del usuario; la real, más adelante). `npm run interactivo -- <cliente>` abre la app visible y Claude la maneja con `e2e/interactivo/ejecutar.js` (ver [[Receta - Modo interactivo]]). CDP no funciona con Electron 25: un servidor local mantiene la app con `_electron.launch`. | Pedir "probá X" y recibir capturas de la app real. |
-| **8. CI** | ⏭️ Sigue (repo público: GitHub Actions gratis y sin límite de minutos en Linux, Windows y macOS) | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
+| **8. CI** | ⏭️ Workflow hecho, falta probarlo en GitHub (ver "Fase 8 — detalle") | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
 
 ## Dudas resueltas
 
@@ -302,6 +302,31 @@ El test viejo hecho a mano (`app/resources/machine/command-processor-test.js` y
 `command-processor-test-run.sh`, con una ruta fija a `/home/ubuntu/...`) se borró en `cc25a46`: lo
 reemplaza esta fase.
 
+## Fase 8 — detalle
+
+Decidido con el usuario el 2026-10-14.
+
+- **Costo:** el repo es público: GitHub Actions es gratis y sin límite de minutos (Linux, Windows y
+  macOS). Si algún día pasara a privado y se acabaran los minutos, solo se frena el CI (push,
+  PRs y merges siguen); la cuenta gratis no cobra (tope de gasto $0).
+- **Cuándo corre:** en los PR hacia `release/*` y `main` (el ✅/❌ aparece en el PR antes del merge)
+  y en cada merge (push) a esas ramas. En las ramas de trabajo no; se puede lanzar a mano.
+- **Dónde:** Linux (rápido) y Windows (donde se usa la app). macOS solo a mano.
+- **Ejecutables:** solo con el botón, para emergencias: portables de Windows de los 4 clientes
+  como archivos descargables (30 días). Nunca automático.
+- **Informativo:** el ✅ no es obligatorio para mergear.
+- **Lint:** corre pero no pone el CI en rojo (`continue-on-error`) mientras la app tenga los errores
+  previos. Los 11 de los tests (`e2e/support/ensayo.ts`) se corrigieron.
+
+`.github/workflows/ci.yml` reemplaza a `macos.yml`, `ubuntu.yml` y `windows.yml` (estaban rotos:
+Linux pedía `ubuntu-18.04`, retirada, y quedaba esperando 24 h; Node 18.16; solo en `main`;
+`electron:build` sin cliente). Pasos: `npm ci` (con `postinstall` instala `app/` y los módulos
+nativos), lint informativo, `npm run test:serial`, `npm run e2e` (en Linux con `xvfb-run` y el
+sandbox de Electron habilitado con `sysctl`), y sube `e2e/report` + `e2e/screenshots` (14 días).
+
+Para probarlo hace falta subir `release/6.4.0` (hoy solo existe local) y abrir el PR de
+`feature/e2e-tests`.
+
 ## Hallazgos de QA
 
 Comportamientos de la app encontrados al escribir los tests. **Las correcciones de código se hacen
@@ -340,6 +365,13 @@ app hace hoy y cada hallazgo se anota acá.
 1. Redondear el error de integración antes de comparar (y casos ±1 % en `e2e/reglas.spec.ts`).
 1. Resultados por puesto aunque uno no responda (y validar el puesto de la respuesta) — fase 5.
 1. Las 5 decisiones de la fase 5 ("Deuda para el final").
+1. Lint de la app (17 errores, 13 advertencias, previos al plan). Analizado: **fix limpio, sin
+   riesgo**, son anotaciones de tipo y orden de código, no cambian el comportamiento:
+   `count-timer` (2, `: void`), `table-column` (1, `as string` de más), `input-focused.directive` (7,
+   orden de métodos, `: void`, funciones tipadas `any`), `random.model` (2; la clase `Random` no se
+   usa), `relations-manager` (1, `: void`), `navigation.service` (4, tipo de retorno y tres
+   `router.navigate` sin esperar → marcar con `void`). Al corregirlo, el lint pasa a obligatorio
+   en el CI.
 2. ~~Nombre de la empresa por cliente en el catálogo: Chaco → "Secheep" (4d).~~ Hecho.
 3. Decidir sobre los avisos que tapan el "Guardar", los avisos fijos del primer arranque,
    "constraste" y el punto decimal en los integradores.
