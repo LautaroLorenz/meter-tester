@@ -111,5 +111,9 @@ source ~/.nvm/nvm.sh && nvm use && E2E_CPU_LENTO=6 npx playwright test -c e2e/pl
 ```
 
 - Tiempos con margen: el arranque usa mínimo 6 s / máximo 12 s y las esperas de resultados 30 s.
+- En el CI (`CI` definida) la espera de cada verificación es 15 s (local 5 s), crear la base 60 s y
+  generar el PDF 90 s. Para correr local como en el CI: `CI=1 npx playwright test ...`.
+- No sacar capturas de la ventana de la máquina virtual de una app reabierta: en el CI no se
+  dibuja y la captura se cuelga.
 - En el CI cada test se reintenta una vez (los que pasan al reintentar salen "flaky" en el reporte)
   y solo se guardan los traces de los que fallan.

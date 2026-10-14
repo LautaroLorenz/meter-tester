@@ -386,6 +386,17 @@ de EDET en las mismas líneas.
 En local: con `E2E_CPU_LENTO=6` pasan los tests de EDET que fallaron; sin frenar, la suite completa
 da 63 pasados y 3 salteados.
 
+**4ª corrida (`a1eb646`):** Linux 62 pasados, 1 falla; Windows 59 pasados, 3 flaky, 1 falla. Serial
+OK en los dos. El lint marca los errores previos de la app (informativo).
+
+- **Falla (los dos):** simulador, "se recuerda al volver a abrir": la verificación pasa, pero la
+  captura de la ventana de la máquina virtual de la app reabierta (oculta) se cuelga: en el CI no
+  se dibuja nunca. Se sacó esa captura.
+- **Flaky en Windows** (pasaron al reintentar), por la base de datos lenta: ABM de marcas (no
+  terminó de guardar en 5 s), ABM de plantillas (crear la base pasó de 30 s), ensayo completo EDET
+  (el PDF pasó de 30 s). En el CI la espera de las verificaciones pasa a 15 s (local sigue en 5 s),
+  crear la base a 60 s y el PDF a 90 s.
+
 El botón de portables (`workflow_dispatch`) recién aparece cuando el workflow esté en `main`.
 
 ## Hallazgos de QA
