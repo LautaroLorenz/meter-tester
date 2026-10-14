@@ -93,3 +93,10 @@ de Playwright cuelga el arranque de la app.
 - **Tests unitarios (`npm test`):** ya daban "Some of your tests did a full page reload!" antes
   de la fase 4.
 
+## Idioma y ventanas ocultas
+
+- La app de los tests se lanza con `--lang=es`: números con coma decimal, como en las PC de los
+  clientes, aunque el sistema esté en inglés (runners del CI). `--lang=es-AR` no sirve: Electron 25
+  no lo conoce y vuelve a `en-US`.
+- En e2e las ventanas van ocultas y sin `backgroundThrottling`: si no, Windows las frena y el
+  simulador responde tarde.

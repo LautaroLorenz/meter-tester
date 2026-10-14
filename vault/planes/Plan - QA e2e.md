@@ -31,7 +31,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ✅ `cc25a46` (ver "Fase 6 — detalle") | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ✅ `759c551` | Solo máquina virtual (decisión del usuario; la real, más adelante). `npm run interactivo -- <cliente>` abre la app visible y Claude la maneja con `e2e/interactivo/ejecutar.js` (ver [[Receta - Modo interactivo]]). CDP no funciona con Electron 25: un servidor local mantiene la app con `_electron.launch`. | Pedir "probá X" y recibir capturas de la app real. |
-| **8. CI** | ⏭️ Workflow hecho, falta probarlo en GitHub (ver "Fase 8 — detalle") | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
+| **8. CI** | ⏭️ PR #71 abierto; la instalación en los runners se arregló en dos intentos (ver "Fase 8 — detalle") | Linux y Windows en PR y merge a `release/*` y `main`; macOS y portables a mano. Xvfb en Linux, módulos nativos sin recompilar, sube reportes, traces y capturas. | PR con el check en verde y los archivos descargables. |
 
 ## Dudas resueltas
 
@@ -320,12 +320,42 @@ Decidido con el usuario el 2026-10-14.
 
 `.github/workflows/ci.yml` reemplaza a `macos.yml`, `ubuntu.yml` y `windows.yml` (estaban rotos:
 Linux pedía `ubuntu-18.04`, retirada, y quedaba esperando 24 h; Node 18.16; solo en `main`;
-`electron:build` sin cliente). Pasos: `npm ci` (con `postinstall` instala `app/` y los módulos
-nativos), lint informativo, `npm run test:serial`, `npm run e2e` (en Linux con `xvfb-run` y el
+`electron:build` sin cliente). Pasos: instalar dependencias (ver abajo), lint informativo, `npm run test:serial`, `npm run e2e` (en Linux con `xvfb-run` y el
 sandbox de Electron habilitado con `sysctl`), y sube `e2e/report` + `e2e/screenshots` (14 días).
 
-Para probarlo hace falta subir `release/6.4.0` (hoy solo existe local) y abrir el PR de
-`feature/e2e-tests`.
+`release/6.4.0` ya está subida y el PR es
+[#71](https://github.com/LautaroLorenz/meter-tester/pull/71) (`feature/e2e-tests` → `release/6.4.0`).
+
+**1ª corrida (2026-10-14): falló en Linux y Windows al instalar**, antes de los tests. El
+`postinstall` recompila `sqlite3` para Electron y en los runners no compila. Ver
+[[Solución - CI no instala sqlite3 para Electron]]. Fix: el CI borra el `postinstall` en el runner
+(`npm pkg delete scripts.postinstall`) e instala con `npm ci` + `npm ci --prefix app` (binarios
+N-API precompilados) y
+empaqueta los portables con `-c.npmRebuild=false` (`scripts/release.js` acepta opciones extra de
+electron-builder).
+
+**2ª corrida:** Windows instaló bien y llegó a los e2e. Linux volvió a fallar al instalar: el primer
+intento usaba `npm ci --ignore-scripts` + `npm rebuild`, y `npm rebuild` también corre el
+`postinstall` de la raíz. Se cambió por borrar el `postinstall`. En Windows ese paso había salido
+verde aunque `npm rebuild` falló (PowerShell sigue después de un comando que falla): los pasos de
+instalación ahora usan `shell: bash`.
+
+Windows, e2e: **60 pasaron, 3 salteados (Chaco en los otros clientes), 3 fallaron, todos de EDET**:
+
+1. *Reglas:* el integrador "101,009" quedó en 101009. El runner está en inglés y Electron toma el
+   idioma del sistema: el `p-inputNumber` usa el punto como decimal y descarta la coma. Fix: la app
+   de los tests se lanza con `--lang=es` (`e2e/support/launch-app.ts`), como las PC de los
+   clientes. **Ojo: `--lang=es-AR` no sirve**, Electron 25 no lo conoce y vuelve a `en-US`.
+2. *Ensayo completo:* a los 5 s el puesto 1 seguía en "Esperando", sin el error de contraste.
+3. *Simulador:* la captura de la ventana de la máquina virtual al reabrir la app se colgó (30 s).
+
+2 y 3 son de las ventanas ocultas: Windows las frena (timers y pintado) y el simulador responde
+tarde; EDET, con 20 puestos, es el que más lo sufre. Fix: con las ventanas ocultas (e2e)
+`backgroundThrottling: false` en la principal (`app/main.ts`) y en las secundarias
+(`secondary-window.ts`). Las ventanas visibles (uso normal) no cambian. Hipótesis: se confirma con
+la próxima corrida en Windows. En local (macOS) los 3 tests pasan con los cambios.
+
+El botón de portables (`workflow_dispatch`) recién aparece cuando el workflow esté en `main`.
 
 ## Hallazgos de QA
 
