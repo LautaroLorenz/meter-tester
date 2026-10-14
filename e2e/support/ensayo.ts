@@ -186,3 +186,24 @@ export function simulador(ventana: Page) {
       ventana.evaluate(([p, s, a]) => (window as any).__simulador.setStand(p, s, a), [puesto, paso, ajuste] as const),
   };
 }
+
+export interface HojaPdf {
+  hoja: number;
+  altoHoja: number;
+  /** hasta dónde llega el contenido, medido desde el borde de arriba de la hoja */
+  altoUsado: number;
+}
+
+/**
+ * Hojas del reporte (cada una es un A4 de alto fijo que se captura como imagen para el PDF).
+ * Si el contenido supera el alto de la hoja, en el PDF queda cortado sin aviso.
+ */
+export function hojasPdf(page: Page): Promise<HojaPdf[]> {
+  return page.locator('app-pdf-page .page').evaluateAll((hojas) =>
+    hojas.map((hoja, indice) => {
+      const arriba = hoja.getBoundingClientRect().top;
+      const abajo = Math.max(...Array.from(hoja.querySelectorAll('*'), (elemento) => elemento.getBoundingClientRect().bottom));
+      return { hoja: indice + 1, altoHoja: hoja.clientHeight, altoUsado: Math.ceil(abajo - arriba) };
+    }),
+  );
+}

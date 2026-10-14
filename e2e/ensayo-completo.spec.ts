@@ -13,6 +13,7 @@ import {
   prepararPuestos,
   resultadoPuesto,
   simulador,
+  hojasPdf,
   verificar,
 } from './support/ensayo';
 
@@ -130,16 +131,39 @@ test('ensayo completo: verificación, preparación, los 4 pasos y reporte', asyn
     await continuar(page);
   });
 
+  let hojas: Awaited<ReturnType<typeof hojasPdf>> = [];
   await test.step('reporte y PDF', async () => {
     const descargar = page.getByRole('button', { name: 'Descargar PDF' });
     await expect(descargar).toBeVisible();
     await captura(page, 'reporte');
+
+    // preparación + una hoja por paso; el reporte dibuja todos los puestos (activos o no), así que
+    // EDET con 20 es el caso más cargado. Si una tabla no entra, el PDF la corta sin aviso.
+    hojas = await hojasPdf(page);
+    await test.info().attach('alto de cada hoja', { body: JSON.stringify(hojas, null, 2), contentType: 'application/json' });
+    expect(hojas).toHaveLength(5);
+    for (const hoja of hojas) {
+      expect(hoja.altoUsado, `el contenido de la hoja ${hoja.hoja} entra en el A4`).toBeLessThanOrEqual(hoja.altoHoja);
+    }
+
+    // encabezado: el logo del cliente o, si no tiene, el nombre de la empresa
+    const encabezado = page.locator('app-preparation-pdf-report .company-info');
+    const logo = CLIENTS[client].companyLogoPath;
+    if (logo) {
+      const imagen = encabezado.locator('img.company-logo');
+      await expect(imagen).toHaveAttribute('src', logo);
+      await expect.poll(() => imagen.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+    } else {
+      await expect(encabezado.locator('.company-name-header')).toBeVisible();
+    }
     await descargar.click();
     await expect.poll(() => (FS.existsSync(downloadsDir) ? FS.readdirSync(downloadsDir) : []), { timeout: 30000 })
       .toHaveLength(1);
     const pdf = PATH.join(downloadsDir, FS.readdirSync(downloadsDir)[0]);
     await expect.poll(() => FS.statSync(pdf).size).toBeGreaterThan(0);
-    expect(FS.readFileSync(pdf).subarray(0, 4).toString()).toBe('%PDF');
+    const contenido = FS.readFileSync(pdf);
+    expect(contenido.subarray(0, 4).toString()).toBe('%PDF');
+    expect(contenido.toString('latin1').match(/\/Type\s*\/Page[^s]/g), 'una página por hoja').toHaveLength(hojas.length);
     await test.info().attach('reporte.pdf', { path: pdf, contentType: 'application/pdf' });
   });
 
