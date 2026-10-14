@@ -1,4 +1,5 @@
 import { Steps } from '../enums/steps.model';
+import { Devices } from '../enums/devices.model';
 
 /**
  * Simulador de la máquina virtual: cada puesto tiene un medidor simulado que responde a la
@@ -66,4 +67,36 @@ export interface SimulatorState {
 export interface VirtualBench {
     step_id: Steps;
     form_control_raw: Record<string, unknown>;
+}
+
+/**
+ * Fallas programables de la máquina simulada (no se recuerdan entre sesiones):
+ * - `sin-respuesta`: el dispositivo no contesta.
+ * - `tarde`: contesta después de `delayMs`.
+ * - `corrupta`: contesta una trama inválida (sin el fin de trama).
+ * - `otro-puesto`: la calculadora contesta con el número de otro puesto.
+ * - `ignorado`: la calculadora contesta el resultado con signo X (puesto bloqueado).
+ * - `sobrecorriente`: el patrón informa más de 2,4 A en L1 (alarma con patrón SM 5050 y
+ *   corrientes de ensayo de hasta 2 A).
+ */
+export type SimulatedFaultKind = 'sin-respuesta' | 'tarde' | 'corrupta' | 'otro-puesto' | 'ignorado' | 'sobrecorriente';
+
+export const SIMULATED_FAULT_KINDS: Array<{ label: string; value: SimulatedFaultKind }> = [
+    { label: 'Sin respuesta', value: 'sin-respuesta' },
+    { label: 'Responde tarde', value: 'tarde' },
+    { label: 'Trama corrupta', value: 'corrupta' },
+    { label: 'Responde otro puesto', value: 'otro-puesto' },
+    { label: 'Resultado ignorado (X)', value: 'ignorado' },
+    { label: 'Sobrecorriente', value: 'sobrecorriente' }
+];
+
+export interface SimulatedFault {
+    kind: SimulatedFaultKind;
+    device: Devices.CAL | Devices.GEN | Devices.PAT;
+    /** solo calculador: puesto afectado (1 = primer puesto); sin puesto, todos */
+    stand?: number | null;
+    /** respuestas que afecta; sin valor, todas mientras esté activa */
+    times?: number | null;
+    /** `tarde`: demora de la respuesta */
+    delayMs?: number | null;
 }

@@ -1,9 +1,12 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { APP_CONFIG } from '../../environments/environment';
+import { Devices } from '../models/business/enums/devices.model';
+import { CommandDirector } from '../models/business/class/command-director.model';
 import {
     SIMULATED_STEP_BY_STEP_ID,
     SIMULATED_STEP_TYPES,
+    SimulatedFault,
     SimulatedMeter,
     SimulatedStepSetting,
     SimulatedStepType,
@@ -23,6 +26,17 @@ const DEFAULT_INTEGRATION_SECONDS = 3;
 // que tiene que fallar falla antes de que termine el tiempo.
 const VACUUM_EMISSION_FRACTION = 0.4;
 
+const DEFAULT_FAULT_DELAY_MS = 2000;
+
+// Posiciones fijas en las tramas de respuesta (ver CommandsSizes):
+// calculador B|CS|<puesto>|<resultado 3>|Z y patrón B|PS|<K 4>|<multiplicador>|UR|US|UT|<IR 2>|...
+const CAL_STAND_OFFSET = 5;
+const CAL_RESULT_OFFSET = 7;
+const PAT_MULTIPLIER_OFFSET = 10;
+const PAT_CURRENT_L1_OFFSET = 21;
+// corriente informada por el patrón con la falla `sobrecorriente` (la alarma salta con más de 2,4 A)
+const OVERCURRENT_AMPS = 2.5;
+
 /**
  * Simulador de la máquina virtual (corre en la ventana de la máquina virtual).
  *
@@ -39,6 +53,8 @@ const VACUUM_EMISSION_FRACTION = 0.4;
 export class SimulatorService {
     readonly state$: BehaviorSubject<SimulatorState>;
     readonly bench$ = new BehaviorSubject<VirtualBench | null>(null);
+    /** fallas activas; no se recuerdan entre sesiones para no dejar una olvidada en desarrollo */
+    readonly faults$ = new BehaviorSubject<SimulatedFault[]>([]);
 
     // momento del último RESET de la calculadora en cada puesto (inicio de la medición)
     private readonly resetAt = new Map<number, number>();
@@ -80,6 +96,70 @@ export class SimulatorService {
             index === stand - 1 ? { ...meter, [stepType]: { ...setting } } : meter
         );
         this.save({ scenario: 'personalizado', meters });
+    }
+
+    addFault(fault: SimulatedFault): void {
+        this.faults$.next([...this.faults$.value, { ...fault }]);
+    }
+
+    removeFault(index: number): void {
+        this.faults$.next(this.faults$.value.filter((_, faultIndex) => faultIndex !== index));
+    }
+
+    clearFaults(): void {
+        this.faults$.next([]);
+    }
+
+    /**
+     * Aplica la primera falla activa que corresponde al comando recibido. Devuelve la respuesta a
+     * enviar (`null` = no contestar) y cuánto demorarla.
+     */
+    applyFaults(command: string, response: string): { response: string | null; delayMs: number } {
+        const device = CommandDirector.getTo(command);
+        const stand =
+            device === Devices.CAL
+                ? CommandDirector.decodeCompactNumber(CommandDirector.getBlocks(command)[2] ?? '', 0)
+                : null;
+        const index = this.faults$.value.findIndex(
+            (fault) =>
+                fault.device === device &&
+                (device !== Devices.CAL || !fault.stand || fault.stand === stand) &&
+                (fault.kind !== 'sobrecorriente' || device === Devices.PAT) &&
+                (!['otro-puesto', 'ignorado'].includes(fault.kind) || device === Devices.CAL)
+        );
+        if (index < 0 || !response) {
+            return { response, delayMs: 0 };
+        }
+        const fault = this.consumeFault(index);
+
+        switch (fault.kind) {
+            case 'sin-respuesta':
+                return { response: null, delayMs: 0 };
+            case 'tarde':
+                return { response, delayMs: fault.delayMs ?? DEFAULT_FAULT_DELAY_MS };
+            case 'corrupta':
+                // sin el fin de trama: la app la descarta
+                return { response: `${response.slice(0, -1)}Y`, delayMs: 0 };
+            case 'otro-puesto': {
+                const otherStand = ((stand ?? 1) % APP_CONFIG.standsQuantity) + 1;
+                return {
+                    response: replaceAt(
+                        response,
+                        CAL_STAND_OFFSET,
+                        CommandDirector.encodeCompactNumber(otherStand, 1, 0)
+                    ),
+                    delayMs: 0
+                };
+            }
+            case 'ignorado':
+                return { response: replaceAt(response, CAL_RESULT_OFFSET, 'X00'), delayMs: 0 };
+            case 'sobrecorriente': {
+                // la app divide la corriente por el multiplicador del patrón (10 con corrientes bajas)
+                const multiplier = CommandDirector.decodeCompactNumber(response.charAt(PAT_MULTIPLIER_OFFSET), 0) || 1;
+                const current = CommandDirector.encodeCompactNumber(OVERCURRENT_AMPS * multiplier, 2, 2);
+                return { response: replaceAt(response, PAT_CURRENT_L1_OFFSET, current), delayMs: 0 };
+            }
+        }
     }
 
     /** La calculadora del puesto se reinicia: empieza la medición */
@@ -155,6 +235,21 @@ export class SimulatorService {
         }
     }
 
+    private consumeFault(index: number): SimulatedFault {
+        const fault = this.faults$.value[index];
+        if (fault.times) {
+            const remaining = fault.times - 1;
+            this.faults$.next(
+                remaining > 0
+                    ? this.faults$.value.map((item, itemIndex) =>
+                          itemIndex === index ? { ...item, times: remaining } : item
+                      )
+                    : this.faults$.value.filter((_, itemIndex) => itemIndex !== index)
+            );
+        }
+        return fault;
+    }
+
     private secondsSinceReset(stand: number): number {
         if (!this.resetAt.has(stand)) {
             this.resetAt.set(stand, Date.now());
@@ -202,10 +297,17 @@ export class SimulatorService {
             setScenario: (scenario: SimulatorScenario) => this.zone.run(() => this.setScenario(scenario)),
             setStand: (stand: number, stepType: SimulatedStepType, setting: SimulatedStepSetting) =>
                 this.zone.run(() => this.setStand(stand, stepType, setting)),
+            addFault: (fault: SimulatedFault) => this.zone.run(() => this.addFault(fault)),
+            clearFaults: () => this.zone.run(() => this.clearFaults()),
+            getFaults: () => this.faults$.value,
             getState: () => this.state,
             getBench: () => this.bench
         };
     }
+}
+
+function replaceAt(text: string, offset: number, value: string): string {
+    return text.slice(0, offset) + value + text.slice(offset + value.length);
 }
 
 function numberParam(params: Record<string, unknown>, name: string, fallback: number): number {

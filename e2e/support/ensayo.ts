@@ -48,17 +48,20 @@ export async function crearMedidor(page: Page): Promise<void> {
   await expect(abm(page).fila('Modelo E2E')).toBeVisible();
 }
 
-/** Plantilla de ensayo con los pasos en ese orden, energía activa, 220 V / 5 A / cos φ 1 */
+/**
+ * Plantilla de ensayo con los pasos en ese orden, energía activa, 220 V / cos φ 1 y la corriente
+ * de cada paso (5 A si no se indica).
+ */
 export async function crearPlantillaEnsayo(
   page: Page,
   nombre: string,
-  pasos: Array<{ paso: PasoEnsayo; parametros?: Record<string, string> }>,
+  pasos: Array<{ paso: PasoEnsayo; parametros?: Record<string, string>; corriente?: string }>,
 ): Promise<void> {
   await openMenu(page, ['menu-ensayos', 'menu-ensayos-administracion']);
   await page.getByTestId('plantilla-nueva').click();
   await page.locator('#name').fill(nombre);
 
-  for (const { paso, parametros } of pasos) {
+  for (const { paso, parametros, corriente = '5' } of pasos) {
     await page.getByTestId('plantilla-agregar-paso').click();
     await page.getByRole('dialog').filter({ hasText: 'Seleccione un paso' }).getByRole('button', { name: NOMBRE_PASO[paso] }).click();
     await page.getByTestId('plantilla-editar-paso').last().click();
@@ -71,7 +74,7 @@ export async function crearPlantillaEnsayo(
     // cada fase repite los ids: se completa dentro de su grupo (vacío solo pide tensión)
     const fases = dialogo.locator('app-phase-form-group');
     for (let fase = 0; fase < (await fases.count()); fase++) {
-      for (const [id, valor] of [['voltage', '220'], ['current', '5'], ['powerFactor', '1']]) {
+      for (const [id, valor] of [['voltage', '220'], ['current', corriente], ['powerFactor', '1']]) {
         const input = fases.nth(fase).locator(`#${id} input`);
         if (await input.count()) {
           await input.fill(valor);
@@ -174,6 +177,17 @@ export function resultadoPuesto(page: Page, puesto: number): Locator {
 // API del simulador en la ventana de la máquina virtual (ver SimulatorService)
 type Escenario = 'aleatorio' | 'todo-aprueba' | 'todo-falla' | 'mixto' | 'personalizado';
 
+/** Falla de comunicación programada en el simulador (ver SimulatedFault) */
+export interface Falla {
+  kind: 'sin-respuesta' | 'tarde' | 'corrupta' | 'otro-puesto' | 'ignorado' | 'sobrecorriente';
+  /** C = calculador, G = generador, P = patrón */
+  device: 'C' | 'G' | 'P';
+  stand?: number | null;
+  /** sin valor: siempre */
+  times?: number | null;
+  delayMs?: number | null;
+}
+
 export function simulador(ventana: Page) {
   return {
     escenario: (escenario: Escenario): Promise<void> =>
@@ -184,6 +198,9 @@ export function simulador(ventana: Page) {
       ajuste: { outcome: 'aprueba' | 'falla' | 'valor'; value?: number | null },
     ): Promise<void> =>
       ventana.evaluate(([p, s, a]) => (window as any).__simulador.setStand(p, s, a), [puesto, paso, ajuste] as const),
+    falla: (falla: Falla): Promise<void> => ventana.evaluate((f) => (window as any).__simulador.addFault(f), falla),
+    sinFallas: (): Promise<void> => ventana.evaluate(() => (window as any).__simulador.clearFaults()),
+    fallasActivas: (): Promise<Falla[]> => ventana.evaluate(() => (window as any).__simulador.getFaults()),
   };
 }
 

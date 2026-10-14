@@ -6,6 +6,7 @@ import { FormBuilder } from '@angular/forms';
 import { CommandMapComponent } from '../../components/virtual-machine/command-map/command-map.component';
 import { take } from 'rxjs/operators';
 import { CommandHistoryService } from '../../services/command-history.service';
+import { SimulatorService } from '../../services/simulator.service';
 
 @Component({
     templateUrl: './virtual-machine.component.html',
@@ -22,7 +23,8 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
         private readonly virtualMachineService: VirtualMachineService,
         private readonly fb: FormBuilder,
         public readonly commandHistoryService: CommandHistoryService,
-        private secondaryWindowService: SecondaryWindowService
+        private secondaryWindowService: SecondaryWindowService,
+        private readonly simulator: SimulatorService
     ) {}
 
     ngOnInit(): void {
@@ -44,7 +46,15 @@ export class VirtualMachineComponent implements OnInit, OnDestroy {
 
     private observeSoftware(): void {
         this.virtualMachineService.handleSoftwareToMachine$.pipe(takeUntil(this.onDestroy)).subscribe((command) => {
-            const response = this.processCommand(command);
+            // las fallas programadas en el simulador pueden demorar, cambiar o suprimir la respuesta
+            const { response, delayMs } = this.simulator.applyFaults(command, this.processCommand(command));
+            if (response === null) {
+                return;
+            }
+            if (delayMs > 0) {
+                setTimeout(() => this.virtualMachineWrite(response), delayMs);
+                return;
+            }
             this.virtualMachineWrite(response);
         });
     }

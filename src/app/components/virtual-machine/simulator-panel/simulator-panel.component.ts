@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable, combineLatest, map } from 'rxjs';
 import { SimulatorService } from '../../../services/simulator.service';
+import { Devices } from '../../../models/business/enums/devices.model';
+import { DeviceConstants } from '../../../models/business/constants/devices-constant.model';
 import {
+    SIMULATED_FAULT_KINDS,
+    SimulatedFault,
     SIMULATED_STEP_BY_STEP_ID,
     SIMULATED_STEP_TYPES,
     SIMULATED_VALUE_UNITS,
@@ -63,6 +67,17 @@ export class SimulatorPanelComponent {
         ]
     };
 
+    readonly faultKinds = SIMULATED_FAULT_KINDS;
+    readonly faultDevices = [Devices.CAL, Devices.GEN, Devices.PAT].map((device) => ({
+        label: DeviceConstants[device],
+        value: device
+    }));
+
+    /** falla que se está armando en el formulario */
+    newFault: SimulatedFault = { kind: 'sin-respuesta', device: Devices.CAL, stand: null, times: 1, delayMs: null };
+
+    readonly faults$ = this.simulator.faults$;
+
     readonly view$: Observable<SimulatorView> = combineLatest([this.simulator.state$, this.simulator.bench$]).pipe(
         map(([state, bench]) => {
             const runningStep = bench ? SIMULATED_STEP_BY_STEP_ID[bench.step_id] : undefined;
@@ -94,6 +109,27 @@ export class SimulatorPanelComponent {
 
     setValue(stand: number, cell: SimulatorCell, value: number | null): void {
         this.simulator.setStand(stand, cell.stepType, { outcome: 'valor', value });
+    }
+
+    addFault(): void {
+        this.simulator.addFault(this.newFault);
+    }
+
+    removeFault(index: number): void {
+        this.simulator.removeFault(index);
+    }
+
+    clearFaults(): void {
+        this.simulator.clearFaults();
+    }
+
+    faultLabel(fault: SimulatedFault): string {
+        const label = SIMULATED_FAULT_KINDS.find(({ value }) => value === fault.kind)?.label ?? fault.kind;
+        return fault.kind === 'tarde' ? `${label} (${fault.delayMs ?? 2000} ms)` : label;
+    }
+
+    faultDevice(fault: SimulatedFault): string {
+        return DeviceConstants[fault.device];
     }
 
     trackByStand(_: number, row: SimulatorRow): number {
