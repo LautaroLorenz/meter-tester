@@ -9,6 +9,8 @@ const config = {
   outputDir: './screenshots',
   reporter: [['list'], ['html', { outputFolder: './report', open: 'never' }]],
   expect: {
+    // en el CI la base de datos (sobre todo en Windows) a veces tarda más de los 5 s por defecto
+    timeout: process.env.CI ? 15000 : 5000,
     toMatchSnapshot: { threshold: 0.2 },
   },
   // un cliente solo: npx playwright test -c e2e/playwright.config.ts --project=chaco

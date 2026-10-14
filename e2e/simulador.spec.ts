@@ -81,7 +81,8 @@ test.describe('Simulador de la máquina virtual', { tag: '@un-cliente' }, () => 
     try {
       const otraMaquina = await abrirEnsayo(reabierta.app, reabierta.mainWindow, 'Ensayo simulador');
       await expect(otraMaquina.getByTestId('simulador-escenario')).toContainText('Todo falla');
-      await test.info().attach('al reabrir', { body: await otraMaquina.screenshot(), contentType: 'image/png' });
+      // sin captura de esta ventana: en el CI (Linux y Windows) la de la app reabierta, oculta, no se
+      // dibuja y la captura se cuelga
     } finally {
       await reabierta.close();
     }

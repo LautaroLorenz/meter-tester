@@ -73,7 +73,8 @@ export async function launchApp(options: { client: string; headed?: boolean; use
   // click directo y se verifica que desaparezcan.
   if (!options.userDataDir) {
     const avisos = mainWindow.locator('p-toast p-toastitem');
-    await avisos.getByText('Base de datos actualizada').waitFor();
+    // en el CI (Windows) crear la base a veces pasa de los 30 s
+    await avisos.getByText('Base de datos actualizada').waitFor({ timeout: 60000 });
     for (const cerrar of await avisos.getByRole('button', { name: 'Close' }).all()) {
       await cerrar.dispatchEvent('click');
     }

@@ -157,7 +157,8 @@ test('ensayo completo: verificación, preparación, los 4 pasos y reporte', asyn
       await expect(encabezado.locator('.company-name-header')).toHaveText(CLIENTS[client].companyName);
     }
     await descargar.click();
-    await expect.poll(() => (FS.existsSync(downloadsDir) ? FS.readdirSync(downloadsDir) : []), { timeout: 30000 })
+    // arma el PDF capturando cada hoja (html2canvas): en el CI tarda bastante más
+    await expect.poll(() => (FS.existsSync(downloadsDir) ? FS.readdirSync(downloadsDir) : []), { timeout: 90000 })
       .toHaveLength(1);
     const pdf = PATH.join(downloadsDir, FS.readdirSync(downloadsDir)[0]);
     await expect.poll(() => FS.statSync(pdf).size).toBeGreaterThan(0);
