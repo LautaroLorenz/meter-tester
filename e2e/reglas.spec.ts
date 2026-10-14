@@ -74,8 +74,13 @@ async function captura(page: Page, nombre: string): Promise<void> {
 async function escribirIntegrador(fila: Locator, columna: 0 | 1, valor: number): Promise<void> {
   const input = fila.locator('p-inputnumber input').nth(columna);
   // la app usa coma decimal: con punto, "101.009" queda como 101009
-  await input.fill(String(valor).replace('.', ','));
-  await input.press('Tab');
+  const texto = String(valor).replace('.', ',');
+  // al apagarse el generador la tabla se vuelve a dibujar y puede perderse lo escrito: se reintenta
+  await expect(async () => {
+    await input.fill(texto);
+    await input.press('Tab');
+    await expect(input).toHaveValue(texto, { timeout: 1000 });
+  }).toPass({ timeout: 10000 });
 }
 
 test.describe('Reglas de aprobado y rechazado en sus bordes', { tag: '@un-cliente' }, () => {

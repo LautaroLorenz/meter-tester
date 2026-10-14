@@ -14,10 +14,6 @@ import {
 // completo de cada cliente.
 test('Chaco: el encabezado del reporte dice "Secheep"', async ({ launched: { app, mainWindow: page }, client }) => {
   test.skip(client !== 'chaco', 'Chaco es el único cliente sin logo: el reporte muestra el nombre de la empresa');
-  // Hallazgo de QA pendiente de corregir (ver "Correcciones pendientes" del plan): el nombre está
-  // fijo en "EDET". Mientras tanto el test falla como se espera; cuando se corrija, pasa y hay que
-  // sacar esta línea.
-  test.fail(true, 'Hoy el reporte de Chaco dice "EDET"');
 
   await crearMedidor(page);
   await crearPlantillaEnsayo(page, 'Ensayo PDF', [{ paso: 'vacio' }]);

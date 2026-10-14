@@ -132,7 +132,8 @@ export class PreparationPdfReportComponent extends PdfReportComponent implements
             .pipe(finalize(() => this.cdr.detectChanges()))
             .subscribe({
                 next: (settings) => {
-                    this.companyName = settings.companyName;
+                    // el nombre es del cliente del build; client-settings trae "EDET" para todos
+                    this.companyName = APP_CONFIG.companyName || settings.companyName;
                     this.brandDescription = settings.brandDescription;
                     this.companyLogo = APP_CONFIG.companyLogoPath;
                 },

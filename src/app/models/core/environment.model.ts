@@ -11,6 +11,10 @@ export interface Environment {
     // path del logo de la compañía (assets/...)
     companyLogoPath: string;
 
+    // nombre de la empresa en el encabezado del reporte (se muestra si no hay logo); sin valor se
+    // usa el de client-settings del proceso main
+    companyName?: string;
+
     // cantidad de puestos que tiene la máquina
     standsQuantity: number;
 
@@ -41,4 +45,5 @@ export interface Environment {
 }
 
 // lo que distingue a cada cliente; el resto del entorno es común (ver src/environments/client.<cliente>.ts)
-export type ClientConfig = Pick<Environment, 'companyLogoPath' | 'standsQuantity' | 'generatorType' | 'patternType'>;
+export type ClientConfig = Pick<Environment, 'companyLogoPath' | 'standsQuantity' | 'generatorType' | 'patternType'> &
+    Required<Pick<Environment, 'companyName'>>;

@@ -154,7 +154,7 @@ test('ensayo completo: verificación, preparación, los 4 pasos y reporte', asyn
       await expect(imagen).toHaveAttribute('src', logo);
       await expect.poll(() => imagen.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
     } else {
-      await expect(encabezado.locator('.company-name-header')).toBeVisible();
+      await expect(encabezado.locator('.company-name-header')).toHaveText(CLIENTS[client].companyName);
     }
     await descargar.click();
     await expect.poll(() => (FS.existsSync(downloadsDir) ? FS.readdirSync(downloadsDir) : []), { timeout: 30000 })
