@@ -6,6 +6,7 @@ import { DeviceConstants } from '../../../models/business/constants/devices-cons
 import { COMMANDS } from '../../../models/business/constants/commands.model';
 import { CommandFormatterUtil } from '../../../utils/command-formatter.util';
 import { PositionMemoryMap } from '../../../models/business/interafces/position-memory.model';
+import { SimulatorService } from '../../../services/simulator.service';
 
 @Component({
     selector: 'app-command-map',
@@ -85,6 +86,7 @@ export class CommandMapComponent {
     ];
 
     private readonly cdr = inject(ChangeDetectorRef);
+    private readonly simulator = inject(SimulatorService);
 
     // Memoria por puesto para hacer ensayos más realistas
     private positionMemory: PositionMemoryMap = {};
@@ -108,6 +110,11 @@ export class CommandMapComponent {
                 // Verificar si es RESET o STOP para limpiar memoria
                 if (this.isResetOrStopCommand(command)) {
                     this.clearPositionMemory(position);
+                }
+
+                // RESET: el medidor simulado empieza a medir
+                if (this.isResetCommand(command)) {
+                    this.simulator.reset(this.decodeStand(position));
                 }
             }
 
@@ -230,6 +237,16 @@ export class CommandMapComponent {
         // Incluir el puesto en la respuesta
         responseBlocks.push(position);
 
+        // Escenario armado: responde el medidor simulado del puesto
+        if (this.simulator.isActive) {
+            // punto fijo con 2 decimales: el error en centésimos, en 2 bytes
+            const error = this.simulator.contrastError(this.decodeStand(position));
+            const hundredths = Math.min(9999, Math.round(Math.abs(error) * 100));
+            responseBlocks.push(`${error < 0 ? '-' : ' '}${CommandDirector.encodeCompactNumber(hundredths, 2, 0)}`);
+            responseBlocks.push(CommandDirector.CHAR_END);
+            return responseBlocks.join(CommandDirector.DIVIDER);
+        }
+
         // Obtener o crear memoria del puesto
         if (!this.positionMemory[position]) {
             // Generar tiempo de espera aleatorio entre 0 y 3 segundos
@@ -290,6 +307,14 @@ export class CommandMapComponent {
         const responseBlocks: string[] = [CommandDirector.CHAR_START, `${Devices.CAL}${Devices.STW}`];
         // Incluir el puesto en la respuesta
         responseBlocks.push(position);
+
+        // Escenario armado: responde el medidor simulado del puesto (3 bytes, sin signo)
+        if (this.simulator.isActive) {
+            const pulses = this.simulator.pulses(this.decodeStand(position));
+            responseBlocks.push(CommandDirector.encodeCompactNumber(pulses, 3, 0));
+            responseBlocks.push(CommandDirector.CHAR_END);
+            return responseBlocks.join(CommandDirector.DIVIDER);
+        }
 
         // Obtener o crear memoria del puesto
         if (!this.positionMemory[position]) {
@@ -392,6 +417,16 @@ export class CommandMapComponent {
             );
         }
         return false;
+    }
+
+    private isResetCommand(command: string): boolean {
+        const blocks = CommandDirector.getBlocks(command);
+        return blocks.length >= 4 && blocks[1] === 'SC' && blocks[3] === COMMANDS.Software.Calculator.RESET;
+    }
+
+    /** El puesto viaja codificado en 1 byte (puesto 1 = primer puesto) */
+    private decodeStand(position: string): number {
+        return CommandDirector.decodeCompactNumber(position, 0);
     }
 
     /**

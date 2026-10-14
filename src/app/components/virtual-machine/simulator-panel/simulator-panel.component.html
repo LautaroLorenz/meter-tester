@@ -1,0 +1,181 @@
+<ng-container *ngIf="view$ | async as view">
+    <div class="flex align-items-center gap-3 mx-3 mb-3">
+        <label for="simulador-escenario">Escenario</label>
+        <p-dropdown
+            inputId="simulador-escenario"
+            data-testid="simulador-escenario"
+            [options]="scenarios"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="view.state.scenario"
+            (ngModelChange)="setScenario($event)">
+        </p-dropdown>
+        <span
+            *ngIf="view.runningStep"
+            data-testid="simulador-paso">
+            Paso en curso: <strong>{{ stepLabels[view.runningStep] }}</strong>
+        </span>
+    </div>
+
+    <p
+        *ngIf="view.state.scenario === 'aleatorio'"
+        class="mx-3">
+        Los medidores responden valores al azar (el comportamiento de siempre). Elegí otro escenario para decidir qué
+        aprueba y qué falla en cada paso.
+    </p>
+
+    <p-table
+        *ngIf="view.state.scenario !== 'aleatorio'"
+        styleClass="p-datatable-gridlines p-datatable-striped mx-3 p-datatable-sm"
+        [value]="view.rows"
+        [rowTrackBy]="trackByStand">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Puesto</th>
+                <th
+                    *ngFor="let stepType of stepTypes"
+                    [class.surface-200]="stepType === view.runningStep"
+                    [pTooltip]="'Valor: ' + units[stepType]">
+                    {{ stepLabels[stepType] }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template
+            pTemplate="body"
+            let-row>
+            <tr data-testid="simulador-puesto">
+                <td>{{ row.stand }}</td>
+                <td *ngFor="let cell of row.cells">
+                    <div class="flex align-items-center gap-2">
+                        <p-dropdown
+                            [options]="cell.options"
+                            optionLabel="label"
+                            optionValue="value"
+                            [ngModel]="cell.setting.outcome"
+                            (ngModelChange)="setOutcome(row.stand, cell, $event)">
+                        </p-dropdown>
+                        <p-inputNumber
+                            *ngIf="cell.setting.outcome === 'valor'"
+                            [ngModel]="cell.setting.value"
+                            (ngModelChange)="setValue(row.stand, cell, $event)"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="2"
+                            [placeholder]="cell.stepType === 'boot' ? 'no arranca' : ''"
+                            inputStyleClass="w-6rem">
+                        </p-inputNumber>
+                        <small *ngIf="cell.effective">→ {{ cell.effective }}</small>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <h4 class="mx-3 mt-4 mb-2">Fallas</h4>
+    <p class="mx-3 mt-0 text-sm">
+        Fallas de comunicación de la máquina simulada. Se aplican a las próximas respuestas y no se recuerdan al cerrar
+        la app.
+    </p>
+    <div
+        class="flex flex-wrap align-items-end gap-3 mx-3 mb-3"
+        data-testid="simulador-nueva-falla">
+        <div class="flex flex-column gap-1">
+            <label for="falla-dispositivo">Dispositivo</label>
+            <p-dropdown
+                inputId="falla-dispositivo"
+                [options]="faultDevices"
+                optionLabel="label"
+                optionValue="value"
+                [(ngModel)]="newFault.device">
+            </p-dropdown>
+        </div>
+        <div
+            *ngIf="newFault.device === 'C'"
+            class="flex flex-column gap-1">
+            <label for="falla-puesto">Puesto (vacío = todos)</label>
+            <p-inputNumber
+                inputId="falla-puesto"
+                [(ngModel)]="newFault.stand"
+                [min]="1"
+                inputStyleClass="w-6rem">
+            </p-inputNumber>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label for="falla-tipo">Falla</label>
+            <p-dropdown
+                inputId="falla-tipo"
+                [options]="faultKinds"
+                optionLabel="label"
+                optionValue="value"
+                [(ngModel)]="newFault.kind">
+            </p-dropdown>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label for="falla-veces">Veces (vacío = siempre)</label>
+            <p-inputNumber
+                inputId="falla-veces"
+                [(ngModel)]="newFault.times"
+                [min]="1"
+                inputStyleClass="w-6rem">
+            </p-inputNumber>
+        </div>
+        <div
+            *ngIf="newFault.kind === 'tarde'"
+            class="flex flex-column gap-1">
+            <label for="falla-demora">Demora [ms]</label>
+            <p-inputNumber
+                inputId="falla-demora"
+                [(ngModel)]="newFault.delayMs"
+                [min]="0"
+                placeholder="2000"
+                inputStyleClass="w-6rem">
+            </p-inputNumber>
+        </div>
+        <p-button
+            label="Agregar falla"
+            icon="pi pi-plus"
+            [outlined]="true"
+            (click)="addFault()">
+        </p-button>
+    </div>
+
+    <ng-container *ngIf="faults$ | async as faults">
+        <p-table
+            *ngIf="faults.length"
+            styleClass="p-datatable-gridlines mx-3 p-datatable-sm"
+            [value]="faults">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Dispositivo</th>
+                    <th>Puesto</th>
+                    <th>Falla</th>
+                    <th>Quedan</th>
+                    <th>
+                        <p-button
+                            label="Quitar todas"
+                            [text]="true"
+                            (click)="clearFaults()">
+                        </p-button>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template
+                pTemplate="body"
+                let-fault
+                let-index="rowIndex">
+                <tr data-testid="simulador-falla">
+                    <td>{{ faultDevice(fault) }}</td>
+                    <td>{{ fault.stand || 'Todos' }}</td>
+                    <td>{{ faultLabel(fault) }}</td>
+                    <td>{{ fault.times || 'Siempre' }}</td>
+                    <td>
+                        <p-button
+                            icon="pi pi-times"
+                            [text]="true"
+                            (click)="removeFault(index)">
+                        </p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-container>
+</ng-container>

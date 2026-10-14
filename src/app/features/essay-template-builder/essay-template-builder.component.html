@@ -15,6 +15,7 @@
                 </div>
 
                 <p-splitButton
+                    data-testid="plantilla-guardar"
                     label="Guardar"
                     styleClass="p-button-success"
                     [disabled]="saveButtonDisabled"
@@ -51,6 +52,7 @@
 
                 <ng-container *ngIf="steps">
                     <p-button
+                        data-testid="plantilla-agregar-paso"
                         label="Agregar paso"
                         icon="pi pi-plus"
                         [outlined]="true"
@@ -91,6 +93,7 @@
                 (click)="moveUpByIndex(element.order)"></p-button>
 
             <button
+                data-testid="plantilla-editar-paso"
                 pButton
                 pRipple
                 icon="pi pi-file-edit"
@@ -101,6 +104,7 @@
                 (click)="selectedEssayTemplateStep = element"></button>
 
             <button
+                data-testid="plantilla-borrar-paso"
                 pButton
                 pRipple
                 icon="pi pi-trash"

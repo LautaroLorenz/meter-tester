@@ -14,6 +14,7 @@ let mainWindow = null;
 let openedWindows = [];
 let baseUrl = null;
 let inspector = false;
+let hidden = false;
 function closeAllOpenedWindow() {
     openedWindows.forEach((window) => {
         closeWindow(window);
@@ -58,17 +59,20 @@ function openWindow(url, options) {
     const windowUrl = `${baseUrl}/${url}`;
     const windowIsOpen = openedWindows.find((window) => window.url === windowUrl);
     if (windowIsOpen) {
-        windowIsOpen.window.focus();
+        if (!hidden)
+            windowIsOpen.window.focus();
         return windowIsOpen;
     }
     const openInspector = options && 'inspector' in options ? !!options.inspector : inspector;
     const alwaysOnTop = options && 'alwaysOnTop' in options ? !!options.alwaysOnTop : false;
     const window = new electron_1.BrowserWindow(Object.assign(Object.assign(Object.assign({}, openOffset(options)), { webPreferences: {
+            // oculta (e2e), Windows la frena (timers y pintado) y el simulador responde tarde
+            backgroundThrottling: !hidden,
             nodeIntegration: true,
             allowRunningInsecureContent: true,
             contextIsolation: false,
             devTools: openInspector
-        }, alwaysOnTop: alwaysOnTop }), options));
+        }, alwaysOnTop: alwaysOnTop, show: !hidden }), options));
     window.setMenuBarVisibility(false);
     window.loadURL(windowUrl);
     const windowitem = {
@@ -100,6 +104,7 @@ exports.default = {
     setConfig: (settings) => {
         baseUrl = settings.baseUrl;
         inspector = settings.inspector;
+        hidden = settings.hidden;
     },
     register: () => {
         electron_1.ipcMain.handle('open-secondary-window', (_, params) => __awaiter(void 0, void 0, void 0, function* () {

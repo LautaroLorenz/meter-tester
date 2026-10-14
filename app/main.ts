@@ -1,6 +1,7 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { pathToFileURL } from 'url';
 import database from './resources/database/database';
 import abm from './commands/abm';
 import essay from './commands/essay';
@@ -30,9 +31,17 @@ let win: BrowserWindow | null = null;
 let knex: KnexLib.Knex;
 const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
-const isDev = args.find((val) => val.includes('environment'))?.split('=')?.[1] === 'dev';
+const environmentName = args.find((val) => val.includes('environment'))?.split('=')?.[1];
 
-const environment = APP_CONFIG(isDev);
+const environment = APP_CONFIG(environmentName);
+// en e2e las ventanas van ocultas, salvo que el test pida verlas (playwright --headed, graba video)
+const hideWindows = !!environment.e2e && !args.includes('--e2e-headed');
+// en e2e cada cliente se compila en su carpeta (dist-e2e/<cliente>) y el test elige cuál cargar
+const e2eDist = environment.e2e ? args.find((val) => val.startsWith('--e2e-dist='))?.split('=')[1] : undefined;
+
+if (environment.e2e && !environment.virtualMachine) {
+    throw new Error('Modo e2e sin máquina virtual: no se permite abrir el puerto serie real');
+}
 
 if (environment.virtualMachine) {
     virtualMachine.register();
@@ -57,7 +66,10 @@ function createWindow(): BrowserWindow {
         y: 0,
         width: size.width,
         height: size.height,
+        show: !hideWindows,
         webPreferences: {
+            // oculta, Windows la frena (timers y pintado) y el ensayo se atrasa
+            backgroundThrottling: !hideWindows,
             nodeIntegration: true,
             allowRunningInsecureContent: serve,
             contextIsolation: false,
@@ -65,7 +77,14 @@ function createWindow(): BrowserWindow {
         }
     });
     win.setMenuBarVisibility(false);
-    if (win.isMaximizable()) win.maximize();
+    if (win.isMaximizable() && !environment.e2e) win.maximize();
+    if (environment.e2e) {
+        // PDF y Excel se guardan sin diálogo dentro de userData (temporal en los tests)
+        const downloadsDir = path.join(app.getPath('userData'), 'downloads');
+        session.defaultSession.on('will-download', (_, item) => {
+            item.setSavePath(path.join(downloadsDir, item.getFilename()));
+        });
+    }
     backup.setMainWindow(win);
     database.setMainWindow(win);
     secondaryWindow.setMainWindow(win);
@@ -84,6 +103,9 @@ function createWindow(): BrowserWindow {
             pathIndex = '../dist/index.html';
         }
         mainWindowUrl = new URL(path.join('file:', __dirname, pathIndex)).href;
+        if (e2eDist) {
+            mainWindowUrl = pathToFileURL(path.join(e2eDist, 'index.html')).href;
+        }
     }
     mainWindowUrl += '#';
 
@@ -92,7 +114,8 @@ function createWindow(): BrowserWindow {
 
     secondaryWindow.setConfig({
         baseUrl: mainWindowUrl,
-        inspector: environment.inspector
+        inspector: environment.inspector,
+        hidden: hideWindows
     });
     registerIpc(knex);
 

@@ -1,14 +1,11 @@
-import { GeneratorEnum } from '../app/models/business/enums/generator-enum.model';
-import { PatternEnum } from '../app/models/business/enums/pattern-enum.model';
 import { Environment } from '../app/models/core/environment.model';
+import { CLIENT } from './client';
 
+// Los valores del cliente vienen de src/environments/client.<cliente>.ts: no editar acá para cada release
 export const APP_CONFIG: Environment = {
     production: true,
     environment: 'PROD',
-    companyLogoPath: 'assets/icons/company-logos/company-logo-usina-tandil.png',
-    standsQuantity: 20,
-    generatorType: GeneratorEnum.SemiautomaticPYC5050,
-    patternType: PatternEnum.Sm5050,
+    ...CLIENT,
     skipSteps: {
         photocellAdjustmentRequest: false,
         verificationMajorStep: false,

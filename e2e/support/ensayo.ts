@@ -1,0 +1,246 @@
+import { ElectronApplication, Locator, Page, expect } from '@playwright/test';
+import { openMenu } from './menu';
+import { abm, aviso, elegir, escribirNumero, esperarAvisos } from './abm';
+
+// Ensayo de punta a punta: medidor, plantilla, ejecución y simulador de la máquina virtual.
+
+export type PasoEnsayo = 'vacio' | 'contraste' | 'arranque' | 'integracion';
+
+// Nombre del paso en el diálogo "Agregar paso" ("constraste" está así en la app)
+const NOMBRE_PASO: Record<PasoEnsayo, string> = {
+  vacio: 'Prueba de vacío',
+  contraste: 'Prueba de constraste',
+  arranque: 'Prueba de arranque',
+  integracion: 'Prueba de integración',
+};
+
+// Parámetros cortos para que el ensayo dure poco (ids de los p-inputNumber del diálogo).
+// Arranque: el simulador hace llegar el impulso en min/2 (falla) o (min+max)/2 (aprueba) y la app lo
+// ve en la vuelta de lectura siguiente; con 20 puestos y una PC lenta (CI) la vuelta pasa de 1 s,
+// así que cada borde necesita varios segundos de margen.
+export const PARAMETROS: Record<PasoEnsayo, Record<string, string>> = {
+  vacio: { maxAllowedPulses: '2', durationSeconds: '5' },
+  contraste: { maxAllowedError: '1', meterPulses: '10' },
+  arranque: { minDurationSeconds: '6', maxDurationSeconds: '12', allowedPulses: '1' },
+  integracion: { durationPulses: '10', maxAllowedError: '1' },
+};
+
+export const MEDIDOR = 'Marca E2E - Modelo E2E';
+
+/** Marca y modelo de medidor (monofásico, 1000 imp/kWh) para usar en la preparación */
+export async function crearMedidor(page: Page): Promise<void> {
+  await openMenu(page, ['menu-medidores', 'menu-medidores-marcas']);
+  await abm(page).nuevo();
+  await page.locator('#name').fill('Marca E2E');
+  await abm(page).guardar.click();
+  await expect(abm(page).fila('Marca E2E')).toBeVisible();
+
+  await openMenu(page, ['menu-medidores', 'menu-medidores-modelos']);
+  await abm(page).nuevo();
+  await elegir(page, 'brand_id', 'Marca E2E');
+  await page.locator('#model').fill('Modelo E2E');
+  await elegir(page, 'connection_id', 'Monofásico');
+  await escribirNumero(page, 'ratedVoltage', '220');
+  await escribirNumero(page, 'maximumCurrent', '60');
+  await escribirNumero(page, 'ratedCurrent', '10');
+  await elegir(page, 'activeConstantUnit_id', 'imp/kwh');
+  await escribirNumero(page, 'activeConstantValue', '1000');
+  await elegir(page, 'reactiveConstantUnit_id', 'imp/kvarh');
+  await escribirNumero(page, 'reactiveConstantValue', '1000');
+  await abm(page).guardar.click();
+  await expect(abm(page).fila('Modelo E2E')).toBeVisible();
+}
+
+/**
+ * Plantilla de ensayo con los pasos en ese orden, energía activa, 220 V / cos φ 1 y la corriente
+ * de cada paso (5 A si no se indica).
+ */
+export async function crearPlantillaEnsayo(
+  page: Page,
+  nombre: string,
+  pasos: Array<{ paso: PasoEnsayo; parametros?: Record<string, string>; corriente?: string }>,
+): Promise<void> {
+  await openMenu(page, ['menu-ensayos', 'menu-ensayos-administracion']);
+  await page.getByTestId('plantilla-nueva').click();
+  await page.locator('#name').fill(nombre);
+
+  for (const { paso, parametros, corriente = '5' } of pasos) {
+    await page.getByTestId('plantilla-agregar-paso').click();
+    await page.getByRole('dialog').filter({ hasText: 'Seleccione un paso' }).getByRole('button', { name: NOMBRE_PASO[paso] }).click();
+    await page.getByTestId('plantilla-editar-paso').last().click();
+
+    const dialogo = page.getByRole('dialog').filter({ hasText: 'Ajustar parámetros' });
+    await dialogo.locator('#meterConstant').getByText('Activa', { exact: true }).click();
+    for (const [id, valor] of Object.entries({ ...PARAMETROS[paso], ...parametros })) {
+      await escribirNumero(page, id, valor);
+    }
+    // cada fase repite los ids: se completa dentro de su grupo (vacío solo pide tensión)
+    const fases = dialogo.locator('app-phase-form-group');
+    for (let fase = 0; fase < (await fases.count()); fase++) {
+      for (const [id, valor] of [['voltage', '220'], ['current', corriente], ['powerFactor', '1']]) {
+        const input = fases.nth(fase).locator(`#${id} input`);
+        if (await input.count()) {
+          await input.fill(valor);
+          await input.press('Tab');
+        }
+      }
+      const letra = fases.nth(fase).locator('#powerFactorLetter');
+      if (await letra.count()) {
+        await letra.click();
+        await page.getByRole('option', { name: 'L', exact: true }).click();
+        // la lista de la fase anterior tarda en cerrarse: si no, hay dos opciones "L"
+        await expect(page.getByRole('listbox')).toHaveCount(0);
+      }
+    }
+    await dialogo.getByRole('button', { name: 'Aceptar' }).click();
+    await expect(dialogo).toBeHidden();
+  }
+
+  const guardar = page.getByTestId('plantilla-guardar').getByRole('button', { name: 'Guardar' });
+  await expect(guardar).toBeEnabled();
+  await guardar.click();
+  await expect(aviso(page, 'Guardado correctamente')).toBeVisible();
+  await esperarAvisos(page);
+}
+
+/**
+ * Abre la ejecución del ensayo. Con la máquina virtual la app abre su ventana (oculta en e2e):
+ * se devuelve para manejar el simulador.
+ */
+export async function abrirEnsayo(app: ElectronApplication, page: Page, nombre: string): Promise<Page> {
+  await openMenu(page, ['menu-ensayos', 'menu-ensayos-administracion']);
+  await abm(page).fila(nombre).getByTestId('plantilla-ejecutar').click();
+  await expect(page.getByRole('button', { name: 'Verificar todos' })).toBeVisible();
+  return ventanaSimulador(app);
+}
+
+export async function ventanaSimulador(app: ElectronApplication): Promise<Page> {
+  await expect.poll(() => app.windows().some((ventana) => ventana.url().includes('maquina-virtual'))).toBe(true);
+  const ventana = app.windows().find((w) => w.url().includes('maquina-virtual')) as Page;
+  await ventana.getByTestId('simulador-escenario').waitFor();
+  return ventana;
+}
+
+export async function verificar(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Verificar todos' }).click();
+  await page.getByRole('button', { name: 'Continuar' }).click();
+}
+
+/** Activa los puestos indicados (1 = primer puesto) con el medidor de prueba y desactiva el resto */
+export async function prepararPuestos(page: Page, activos: number[]): Promise<void> {
+  const filas = page.getByTestId('preparacion-puesto');
+  await expect(filas.first()).toBeVisible();
+  for (let indice = 0; indice < (await filas.count()); indice++) {
+    const fila = filas.nth(indice);
+    const casilla = fila.locator('p-checkbox .p-checkbox-box');
+    const activo = await casilla.evaluate((elemento) => elemento.classList.contains('p-highlight'));
+    const debeEstarActivo = activos.includes(indice + 1);
+    if (activo !== debeEstarActivo) {
+      await casilla.click();
+    }
+    if (!debeEstarActivo) {
+      continue;
+    }
+    // cada lista tarda en cerrarse: se espera antes de abrir la siguiente
+    await fila.locator('#meter').click();
+    await page.getByRole('option', { name: MEDIDOR }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await fila.locator('#yearOfProduction').click();
+    await page.getByRole('option').first().click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await fila.locator('input[formcontrolname=serialNumber]').fill(`E2E-${indice + 1}`);
+  }
+  await page.getByRole('button', { name: 'Continuar' }).click();
+}
+
+/**
+ * Deja la fuente lista y empieza a medir el paso. Con generador manual el operario confirma las
+ * fotocélulas; con el generador PYC 5050 (EDET) la app lo enciende.
+ */
+export async function comenzarMedicion(page: Page, antesDeMedir?: () => Promise<void>): Promise<void> {
+  const habilitar = page
+    .getByRole('button', { name: 'Fotocélulas ajustadas' })
+    .or(page.getByRole('button', { name: 'Iniciar generador' }));
+  await habilitar.click();
+  // por ejemplo, cargar los integradores iniciales
+  if (antesDeMedir) {
+    await antesDeMedir();
+  }
+  const comenzar = page.getByRole('button', { name: 'Comenzar medición' });
+  await expect(comenzar).toBeEnabled();
+  await comenzar.click();
+}
+
+/** Fila de resultados de un puesto en el paso en curso (1 = primer puesto) */
+export function resultadoPuesto(page: Page, puesto: number): Locator {
+  const numero = String(puesto).padStart(2, '0');
+  return page.getByTestId('resultado-puesto').filter({ has: page.getByRole('cell', { name: numero, exact: true }) });
+}
+
+// API del simulador en la ventana de la máquina virtual (ver SimulatorService)
+type Escenario = 'aleatorio' | 'todo-aprueba' | 'todo-falla' | 'mixto' | 'personalizado';
+
+/** Falla de comunicación programada en el simulador (ver SimulatedFault) */
+export interface Falla {
+  kind: 'sin-respuesta' | 'tarde' | 'corrupta' | 'otro-puesto' | 'ignorado' | 'sobrecorriente';
+  /** C = calculador, G = generador, P = patrón */
+  device: 'C' | 'G' | 'P';
+  stand?: number | null;
+  /** sin valor: siempre */
+  times?: number | null;
+  delayMs?: number | null;
+}
+
+type PasoSimulado = 'vacuum' | 'contrast' | 'boot' | 'integration';
+type AjustePuesto = { outcome: 'aprueba' | 'falla' | 'valor'; value?: number | null };
+
+/** `window.__simulador` de la ventana de la máquina virtual (ver SimulatorService) */
+interface ConSimulador {
+  __simulador: {
+    setScenario(escenario: Escenario): void;
+    setStand(puesto: number, paso: PasoSimulado, ajuste: AjustePuesto): void;
+    addFault(falla: Falla): void;
+    clearFaults(): void;
+    getFaults(): Falla[];
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function simulador(ventana: Page) {
+  return {
+    escenario: (escenario: Escenario): Promise<void> =>
+      ventana.evaluate((valor) => (window as unknown as ConSimulador).__simulador.setScenario(valor), escenario),
+    puesto: (puesto: number, paso: PasoSimulado, ajuste: AjustePuesto): Promise<void> =>
+      ventana.evaluate(
+        ([p, s, a]) => (window as unknown as ConSimulador).__simulador.setStand(p, s, a),
+        [puesto, paso, ajuste] as const,
+      ),
+    falla: (falla: Falla): Promise<void> =>
+      ventana.evaluate((f) => (window as unknown as ConSimulador).__simulador.addFault(f), falla),
+    sinFallas: (): Promise<void> =>
+      ventana.evaluate(() => (window as unknown as ConSimulador).__simulador.clearFaults()),
+    fallasActivas: (): Promise<Falla[]> =>
+      ventana.evaluate(() => (window as unknown as ConSimulador).__simulador.getFaults()),
+  };
+}
+
+export interface HojaPdf {
+  hoja: number;
+  altoHoja: number;
+  /** hasta dónde llega el contenido, medido desde el borde de arriba de la hoja */
+  altoUsado: number;
+}
+
+/**
+ * Hojas del reporte (cada una es un A4 de alto fijo que se captura como imagen para el PDF).
+ * Si el contenido supera el alto de la hoja, en el PDF queda cortado sin aviso.
+ */
+export function hojasPdf(page: Page): Promise<HojaPdf[]> {
+  return page.locator('app-pdf-page .page').evaluateAll((hojas) =>
+    hojas.map((hoja, indice) => {
+      const arriba = hoja.getBoundingClientRect().top;
+      const abajo = Math.max(...Array.from(hoja.querySelectorAll('*'), (elemento) => elemento.getBoundingClientRect().bottom));
+      return { hoja: indice + 1, altoHoja: hoja.clientHeight, altoUsado: Math.ceil(abajo - arriba) };
+    }),
+  );
+}

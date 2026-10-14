@@ -1,5 +1,13 @@
 <div class="mt-4">
     <p-panel
+        header="Escenario"
+        [toggleable]="true">
+        <app-simulator-panel></app-simulator-panel>
+    </p-panel>
+</div>
+
+<div class="mt-4">
+    <p-panel
         header="Mapeo de respuestas automáticas"
         [toggleable]="true">
         <app-command-map #commandMap></app-command-map>

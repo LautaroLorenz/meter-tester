@@ -1,59 +1,76 @@
-import { BrowserContext, ElectronApplication, Page, _electron as electron } from 'playwright';
-import { test, expect } from '@playwright/test';
+import * as FS from 'fs';
 import * as PATH from 'path';
+import { Page } from '@playwright/test';
+import { test, expect } from './support/fixtures';
 
-test.describe('Check Home Page', () => {
-  let app: ElectronApplication;
-  let firstWindow: Page;
-  let context: BrowserContext;
+// invoca un canal IPC del proceso main desde una ventana (nodeIntegration activo)
+const invoke = <T = unknown>(page: Page, channel: string, ...args: unknown[]): Promise<T> =>
+  page.evaluate(
+    ({ channel, args }) => (window as any).require('electron').ipcRenderer.invoke(channel, ...args) as Promise<T>,
+    { channel, args },
+  );
 
-  test.beforeAll( async () => {
-    app = await electron.launch({ args: [PATH.join(__dirname, '../app/main.js'), PATH.join(__dirname, '../app/package.json')] });
-    context = app.context();
-    await context.tracing.start({ screenshots: true, snapshots: true });
-    firstWindow = await app.firstWindow();
-    await firstWindow.waitForLoadState('domcontentloaded');
-  });
-
-  test('Launch electron app', async () => {
-
-    const windowState: { isVisible: boolean; isDevToolsOpened: boolean; isCrashed: boolean } = await app.evaluate(async (process) => {
-      const mainWindow = process.BrowserWindow.getAllWindows()[0];
-
-      const getState = () => ({
-        isVisible: mainWindow.isVisible(),
-        isDevToolsOpened: mainWindow.webContents.isDevToolsOpened(),
-        isCrashed: mainWindow.webContents.isCrashed(),
-      });
-
-      return new Promise((resolve) => {
-        if (mainWindow.isVisible()) {
-          resolve(getState());
-        } else {
-          mainWindow.once('ready-to-show', () => setTimeout(() => resolve(getState()), 0));
-        }
-      });
+test.describe('Smoke', () => {
+  test('la ventana principal abre sin crashear, oculta salvo en headed', async ({ launched, headless }) => {
+    const windowState = await launched.app.evaluate(({ BrowserWindow }) => {
+      const window = BrowserWindow.getAllWindows()[0];
+      return { isVisible: window.isVisible(), isCrashed: window.webContents.isCrashed() };
     });
 
-    expect(windowState.isVisible).toBeTruthy();
-    expect(windowState.isDevToolsOpened).toBeFalsy();
+    expect(windowState.isVisible).toBe(!headless);
     expect(windowState.isCrashed).toBeFalsy();
   });
 
-  // test('Check Home Page design', async ({ browserName}) => {
-  //   // Uncomment if you change the design of Home Page in order to create a new screenshot
-  //   const screenshot = await firstWindow.screenshot({ path: '/tmp/home.png' });
-  //   expect(screenshot).toMatchSnapshot(`home-${browserName}.png`);
-  // });
+  test('carga la pantalla inicial con el menu', async ({ launched }) => {
+    const { mainWindow } = launched;
 
-  test('Check title', async () => {
-    const elem = await firstWindow.$('app-home h1');
-    const text = elem ? await elem.innerText() : null;
-    expect(text).toBe('App works !');
+    await expect(mainWindow).toHaveURL(/#\/ensayos-disponibles$/);
+    await expect(mainWindow.locator('app-menu')).toBeVisible();
+    await expect(mainWindow.locator('app-page-title')).toContainText('Administración de Ensayos');
+
+    await test.info().attach('pantalla-inicial', { body: await mainWindow.screenshot(), contentType: 'image/png' });
   });
 
-  test.afterAll( async () => {
-    await context.tracing.stop({ path: 'e2e/tracing/trace.zip' });
-    await app.close();
+  test('no busca puertos serie reales', async ({ launched }) => {
+    const { ports } = await invoke<{ ports?: unknown }>(launched.mainWindow, 'check-connection-logs');
+
+    expect(ports).toBeUndefined();
+  });
+
+  test('la ventana de la maquina virtual abre, oculta salvo en headed', async ({ launched, headless }) => {
+    const [virtualMachineWindow] = await Promise.all([
+      launched.app.waitForEvent('window'),
+      invoke(launched.mainWindow, 'open-virtual-machine'),
+    ]);
+    await virtualMachineWindow.waitForLoadState('domcontentloaded');
+
+    const visibleWindows = await launched.app.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows().filter((window) => window.isVisible()).length,
+    );
+    expect(visibleWindows).toBe(headless ? 0 : 2);
+    await expect(virtualMachineWindow).toHaveURL(/maquina-virtual$/);
+
+    await test.info().attach('maquina-virtual', { body: await virtualMachineWindow.screenshot(), contentType: 'image/png' });
+    await invoke(launched.mainWindow, 'close-virtual-machine');
+  });
+
+  test('las descargas van a userData sin dialogo', async ({ launched }) => {
+    await launched.mainWindow.evaluate(() => {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob(['e2e'], { type: 'text/plain' }));
+      link.download = 'descarga-e2e.txt';
+      link.click();
+    });
+
+    const downloadedFile = PATH.join(launched.downloadsDir, 'descarga-e2e.txt');
+    await expect.poll(() => FS.existsSync(downloadedFile)).toBeTruthy();
+    expect(FS.readFileSync(downloadedFile, 'utf8')).toBe('e2e');
+  });
+
+  test('los dialogos nativos no se abren', async ({ launched }) => {
+    expect(await invoke(launched.mainWindow, 'select-backup-folder')).toBeNull();
+
+    await launched.mockOpenDialog([launched.userDataDir]);
+    expect(await invoke(launched.mainWindow, 'select-backup-folder')).toBe(launched.userDataDir);
   });
 });

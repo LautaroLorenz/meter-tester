@@ -8,6 +8,11 @@ if (APP_CONFIG.production) {
     enableProdMode();
 }
 
+// los tests e2e verifican con esto que el build tomó la configuración del cliente
+if (APP_CONFIG.environment === 'E2E') {
+    (window as unknown as { __APP_CONFIG__: typeof APP_CONFIG }).__APP_CONFIG__ = APP_CONFIG;
+}
+
 platformBrowserDynamic()
     .bootstrapModule(AppModule, {
         preserveWhitespaces: false

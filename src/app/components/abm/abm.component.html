@@ -13,6 +13,7 @@
                     [showDelay]="700"
                     (click)="clearSearch()"></i>
                 <input
+                    data-testid="abm-buscar"
                     type="text"
                     class="w-20rem"
                     pInputText
@@ -30,6 +31,7 @@
         <div class="p-toolbar-group-right">
             <ng-container *ngIf="abmDetailTemplate">
                 <p-button
+                    data-testid="abm-nuevo"
                     label="Nuevo"
                     icon="pi pi-plus"
                     styleClass="ml-2"
@@ -127,7 +129,7 @@
         let-rowData
         let-columns="columns"
         let-rowIndex="rowIndex">
-        <tr>
+        <tr data-testid="abm-fila">
             <td *ngFor="let col of columns">
                 <app-table-column
                     [tableColumn]="col"
@@ -140,6 +142,7 @@
                     [ngTemplateOutletContext]="{ element: rowData, index: rowIndex }"></ng-container>
                 <ng-container *ngIf="abmDetailTemplate">
                     <button
+                        data-testid="abm-editar"
                         pButton
                         pRipple
                         icon="pi pi-pencil"
@@ -148,6 +151,7 @@
                 </ng-container>
                 <ng-container *ngIf="deleteButton">
                     <button
+                        data-testid="abm-borrar"
                         pButton
                         pRipple
                         icon="pi pi-trash"
@@ -173,6 +177,7 @@
         <ng-template pTemplate="footer">
             <div class="mt-2">
                 <button
+                    data-testid="abm-cancelar"
                     pButton
                     pRipple
                     label="Cancelar"
@@ -180,6 +185,7 @@
                     class="p-button-text p-button-outlined"
                     (click)="closeDialog()"></button>
                 <button
+                    data-testid="abm-guardar"
                     pButton
                     pRipple
                     label="Guardar"

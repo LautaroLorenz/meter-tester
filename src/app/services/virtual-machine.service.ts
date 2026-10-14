@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { IpcService } from './ipc.service';
+import { VirtualBench } from '../models/business/interafces/simulator.model';
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +22,11 @@ export class VirtualMachineService {
         return this.ipcService.invoke$('virtual-machine-write', {
             command
         });
+    }
+
+    /** Avisa al simulador el paso que empieza y sus parámetros (condiciones del banco) */
+    setBench(bench: VirtualBench): Promise<void> {
+        return this.ipcService.invoke('virtual-machine-bench', bench);
     }
 
     private observe(): void {
