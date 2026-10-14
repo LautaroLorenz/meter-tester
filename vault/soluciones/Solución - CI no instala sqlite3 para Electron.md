@@ -45,6 +45,6 @@ Portables: `electron-builder` también recompila al empaquetar (`npmRebuild`), a
 
 ## Pendiente
 
-- Confirmar con la corrida del CI de PR #71.
+- ~~Confirmar con la corrida del CI de PR #71.~~ Confirmado: la instalación anda en Linux y Windows.
 - El botón de portables (`workflow_dispatch`) solo aparece cuando el workflow está en `main`:
   la generación con `npmRebuild=false` se prueba recién ahí.

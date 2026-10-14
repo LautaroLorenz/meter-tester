@@ -31,7 +31,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ✅ `cc25a46` (ver "Fase 6 — detalle") | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ✅ `759c551` | Solo máquina virtual (decisión del usuario; la real, más adelante). `npm run interactivo -- <cliente>` abre la app visible y Claude la maneja con `e2e/interactivo/ejecutar.js` (ver [[Receta - Modo interactivo]]). CDP no funciona con Electron 25: un servidor local mantiene la app con `_electron.launch`. | Pedir "probá X" y recibir capturas de la app real. |
-| **8. CI** | ⏭️ PR #71 abierto; la instalación en los runners se arregló en dos intentos (ver "Fase 8 — detalle") | Linux y Windows en PR y merge a `release/*` y `main`; macOS y portables a mano. Xvfb en Linux, módulos nativos sin recompilar, sube reportes, traces y capturas. | PR con el check en verde y los archivos descargables. |
+| **8. CI** | ✅ `818d8c9`, PR #71 en verde en Linux y Windows (ver "Fase 8 — detalle") | Linux y Windows en PR y merge a `release/*` y `main`; macOS y portables a mano. Xvfb en Linux, módulos nativos sin recompilar, sube reportes, traces y capturas. | PR con el check en verde y los archivos descargables. |
 
 ## Dudas resueltas
 
@@ -402,6 +402,13 @@ falla, pero el job en rojo: el smoke de Chaco pasó y al terminar Electron no se
 colgó más de 60 s ("1 error was not a part of any test"). Tandil (ensayo completo) falló al primer
 intento en ese momento (el "Nuevo" de modelos no abrió el diálogo) y pasó al reintentar. Fix: si la
 app no cierra en 15 s, se mata el proceso (`close` de `e2e/support/launch-app.ts`).
+
+**6ª corrida (`818d8c9`): ✅ verde en los dos.** Linux y Windows: serial 3/3 archivos, e2e 63
+pasados y 3 salteados (Chaco en los otros clientes), sin flaky. Linux ~9 min y Windows ~11,5 min
+de e2e. **Fase 8 cerrada (2026-10-14).**
+
+Queda para cuando el workflow esté en `main`: probar el botón de los portables de Windows
+(`workflow_dispatch` con `-c.npmRebuild=false`).
 
 El botón de portables (`workflow_dispatch`) recién aparece cuando el workflow esté en `main`.
 
