@@ -92,7 +92,18 @@ export async function launchApp(options: { client: string; headed?: boolean; use
         (globalThis as any).__e2e.nextOpenDialog = paths;
       }, filePaths),
     close: async () => {
-      await app.close();
+      // a veces Electron no termina de cerrarse (visto en el CI de Linux) y el test se cuelga al
+      // terminar: si no cierra en 15 s, se mata el proceso
+      const cerrada = await Promise.race([
+        app.close().then(
+          () => true,
+          () => true,
+        ),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 15000)),
+      ]);
+      if (!cerrada) {
+        app.process().kill('SIGKILL');
+      }
       if (!options.userDataDir) {
         FS.rmSync(userDataDir, { recursive: true, force: true });
       }
