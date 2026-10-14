@@ -14,11 +14,14 @@ const NOMBRE_PASO: Record<PasoEnsayo, string> = {
   integracion: 'Prueba de integración',
 };
 
-// Parámetros cortos para que el ensayo dure poco (ids de los p-inputNumber del diálogo)
+// Parámetros cortos para que el ensayo dure poco (ids de los p-inputNumber del diálogo).
+// Arranque: el simulador hace llegar el impulso en min/2 (falla) o (min+max)/2 (aprueba) y la app lo
+// ve en la vuelta de lectura siguiente; con 20 puestos y una PC lenta (CI) la vuelta pasa de 1 s,
+// así que cada borde necesita varios segundos de margen.
 export const PARAMETROS: Record<PasoEnsayo, Record<string, string>> = {
   vacio: { maxAllowedPulses: '2', durationSeconds: '5' },
   contraste: { maxAllowedError: '1', meterPulses: '10' },
-  arranque: { minDurationSeconds: '2', maxDurationSeconds: '5', allowedPulses: '1' },
+  arranque: { minDurationSeconds: '6', maxDurationSeconds: '12', allowedPulses: '1' },
   integracion: { durationPulses: '10', maxAllowedError: '1' },
 };
 

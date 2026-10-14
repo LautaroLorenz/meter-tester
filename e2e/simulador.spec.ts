@@ -14,7 +14,7 @@ import {
 
 async function esperarResultados(page: Page, esperados: string[]): Promise<void> {
   for (const [indice, resultado] of esperados.entries()) {
-    await expect(resultadoPuesto(page, indice + 1)).toContainText(resultado, { timeout: 15000 });
+    await expect(resultadoPuesto(page, indice + 1)).toContainText(resultado, { timeout: 30000 });
   }
 }
 

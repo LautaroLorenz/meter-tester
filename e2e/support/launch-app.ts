@@ -34,6 +34,8 @@ export async function launchApp(options: { client: string; headed?: boolean; use
   ];
   const app = await electron.launch({
     args: options.headed ? [...args, '--e2e-headed'] : args,
+    // en Linux Chromium ignora --lang y toma el idioma de estas variables
+    env: { ...process.env, LANG: 'es_ES.UTF-8', LANGUAGE: 'es' },
   });
 
   await app.evaluate(({ app: electronApp, dialog }) => {
@@ -48,6 +50,18 @@ export async function launchApp(options: { client: string; headed?: boolean; use
     dialog.showMessageBox = (() => Promise.resolve({ response: 0, checkboxChecked: false })) as typeof dialog.showMessageBox;
     electronApp.relaunch = () => undefined;
   });
+
+  // E2E_CPU_LENTO=<n>: frena n veces la CPU de cada ventana, para reproducir una PC lenta (los
+  // runners del CI no tienen placa de video)
+  const cpuLento = Number(process.env.E2E_CPU_LENTO);
+  if (cpuLento > 1) {
+    const frenar = async (ventana: Page): Promise<void> => {
+      const cdp = await app.context().newCDPSession(ventana);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuLento });
+    };
+    app.on('window', (ventana) => void frenar(ventana));
+    await Promise.all(app.windows().map(frenar));
+  }
 
   const mainWindow = await app.firstWindow();
   await mainWindow.waitForLoadState('domcontentloaded');

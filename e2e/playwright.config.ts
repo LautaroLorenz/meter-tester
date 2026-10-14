@@ -4,6 +4,8 @@ import { CLIENTS } from './support/clients';
 const config = {
   testDir: '.',
   timeout: 60000,
+  // en el CI (PC lenta, compartida) un reintento: si pasa al reintentar, el reporte lo marca "flaky"
+  retries: process.env.CI ? 1 : 0,
   outputDir: './screenshots',
   reporter: [['list'], ['html', { outputFolder: './report', open: 'never' }]],
   expect: {

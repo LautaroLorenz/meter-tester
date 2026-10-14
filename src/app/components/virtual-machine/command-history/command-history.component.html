@@ -2,7 +2,9 @@
     <p-table
         styleClass="p-datatable-gridlines p-datatable-striped -mx-1 p-datatable-sm"
         [columns]="columns"
-        [value]="history">
+        [value]="history"
+        [paginator]="true"
+        [rows]="25">
         <ng-template
             pTemplate="header"
             let-columns>

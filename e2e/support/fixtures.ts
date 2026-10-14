@@ -18,9 +18,14 @@ export const test = base.extend<{ launched: LaunchedApp }, { client: string }>({
       if (testInfo.status !== testInfo.expectedStatus) {
         await testInfo.attach('falla', { body: await launched.mainWindow.screenshot(), contentType: 'image/png' });
       }
-      const tracePath = testInfo.outputPath('trace.zip');
-      await launched.app.context().tracing.stop({ path: tracePath });
-      await testInfo.attach('trace', { path: tracePath, contentType: 'application/zip' });
+      // en el CI solo de los que fallan: con todos, el reporte pesaba más de 2 GB
+      if (process.env.CI && testInfo.status === testInfo.expectedStatus) {
+        await launched.app.context().tracing.stop();
+      } else {
+        const tracePath = testInfo.outputPath('trace.zip');
+        await launched.app.context().tracing.stop({ path: tracePath });
+        await testInfo.attach('trace', { path: tracePath, contentType: 'application/zip' });
+      }
     }
 
     await launched.close();

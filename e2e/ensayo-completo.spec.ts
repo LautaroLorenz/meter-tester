@@ -31,7 +31,7 @@ function fallaMixto(puesto: number, paso: 'vacio' | 'contraste' | 'arranque' | '
 async function esperarResultados(page: Page, activos: number[], paso: Parameters<typeof fallaMixto>[1]): Promise<void> {
   for (const puesto of activos) {
     await expect(resultadoPuesto(page, puesto)).toContainText(fallaMixto(puesto, paso) ? 'Falló' : 'OK', {
-      timeout: 15000,
+      timeout: 30000,
     });
   }
 }
