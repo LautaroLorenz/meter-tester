@@ -54,6 +54,8 @@
     "e2e": "npm run build:e2e && playwright test -c e2e/playwright.config.ts e2e/",
     "e2e:headed": "npm run build:e2e && playwright test -c e2e/playwright.config.ts e2e/ --headed --workers=1",
     "e2e:report": "playwright show-report e2e/report",
+    "interactivo": "node e2e/interactivo/abrir.js",
+    "interactivo:cerrar": "node e2e/interactivo/abrir.js cerrar",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.{ts,html}\""

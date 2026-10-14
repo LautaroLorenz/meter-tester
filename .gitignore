@@ -56,3 +56,6 @@ Thumbs.db
 # Obsidian: estado local del vault
 /vault/.obsidian/workspace*.json
 /vault/.trash/
+
+# Modo interactivo: estado, log y capturas locales
+/.interactivo
