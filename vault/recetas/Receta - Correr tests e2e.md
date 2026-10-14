@@ -115,5 +115,7 @@ source ~/.nvm/nvm.sh && nvm use && E2E_CPU_LENTO=6 npx playwright test -c e2e/pl
   generar el PDF 90 s. Para correr local como en el CI: `CI=1 npx playwright test ...`.
 - No sacar capturas de la ventana de la máquina virtual de una app reabierta: en el CI no se
   dibuja y la captura se cuelga.
+- Si la app no termina de cerrarse en 15 s, `close` mata el proceso (en el CI de Linux un cierre
+  colgado ponía el job en rojo aunque pasaran todos los tests).
 - En el CI cada test se reintenta una vez (los que pasan al reintentar salen "flaky" en el reporte)
   y solo se guardan los traces de los que fallan.

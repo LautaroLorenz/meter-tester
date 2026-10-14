@@ -397,6 +397,12 @@ OK en los dos. El lint marca los errores previos de la app (informativo).
   (el PDF pasó de 30 s). En el CI la espera de las verificaciones pasa a 15 s (local sigue en 5 s),
   crear la base a 60 s y el PDF a 90 s.
 
+**5ª corrida (`5735a84`): Windows ✅ (63 pasados, sin flaky).** Linux: 61 pasados, 2 flaky, ninguna
+falla, pero el job en rojo: el smoke de Chaco pasó y al terminar Electron no se cerró; el cierre se
+colgó más de 60 s ("1 error was not a part of any test"). Tandil (ensayo completo) falló al primer
+intento en ese momento (el "Nuevo" de modelos no abrió el diálogo) y pasó al reintentar. Fix: si la
+app no cierra en 15 s, se mata el proceso (`close` de `e2e/support/launch-app.ts`).
+
 El botón de portables (`workflow_dispatch`) recién aparece cuando el workflow esté en `main`.
 
 ## Hallazgos de QA
