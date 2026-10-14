@@ -95,8 +95,21 @@ de Playwright cuelga el arranque de la app.
 
 ## Idioma y ventanas ocultas
 
-- La app de los tests se lanza con `--lang=es`: números con coma decimal, como en las PC de los
-  clientes, aunque el sistema esté en inglés (runners del CI). `--lang=es-AR` no sirve: Electron 25
-  no lo conoce y vuelve a `en-US`.
-- En e2e las ventanas van ocultas y sin `backgroundThrottling`: si no, Windows las frena y el
-  simulador responde tarde.
+- La app de los tests se lanza con `--lang=es` y `LANG=es_ES.UTF-8` / `LANGUAGE=es` (en Linux
+  Chromium ignora `--lang`): números con coma decimal, como en las PC de los clientes, aunque el
+  sistema esté en inglés (runners del CI). `--lang=es-AR` no sirve: Electron 25 no lo conoce y
+  vuelve a `en-US`.
+- En e2e las ventanas van ocultas y sin `backgroundThrottling`.
+
+## PC lenta (como el CI)
+
+Los runners del CI no tienen placa de video y son mucho más lentos. Para reproducir una falla del
+CI en local, frenar la CPU de cada ventana:
+
+```bash
+source ~/.nvm/nvm.sh && nvm use && E2E_CPU_LENTO=6 npx playwright test -c e2e/playwright.config.ts --project=edet e2e/ensayo-completo.spec.ts
+```
+
+- Tiempos con margen: el arranque usa mínimo 6 s / máximo 12 s y las esperas de resultados 30 s.
+- En el CI cada test se reintenta una vez (los que pasan al reintentar salen "flaky" en el reporte)
+  y solo se guardan los traces de los que fallan.

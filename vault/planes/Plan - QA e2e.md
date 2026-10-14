@@ -355,6 +355,37 @@ tarde; EDET, con 20 puestos, es el que más lo sufre. Fix: con las ventanas ocul
 (`secondary-window.ts`). Las ventanas visibles (uso normal) no cambian. Hipótesis: se confirma con
 la próxima corrida en Windows. En local (macOS) los 3 tests pasan con los cambios.
 
+**3ª corrida (`26baad6`): 4 fallas en cada sistema.** La instalación anda en los dos.
+
+| Test | Linux | Windows | Causa |
+|---|---|---|---|
+| Ensayo completo EDET: el contraste no llega a los 5 s | ✘ | ✘ | máquina virtual atrasada |
+| Simulador: captura colgada al reabrir | ✘ | ✘ | máquina virtual atrasada |
+| Ensayo completo EDELAP: arranque da "4 OK" (debía fallar) | ✘ | — | margen del test |
+| Reglas: "101,009" → 101009 | ✘ | ✔ | en Linux `--lang` no cambia el idioma |
+| ABM plantillas baja / fallas generador | — | ✘ | arranque lento de la app |
+
+`backgroundThrottling: false` no alcanzó. Para reproducirlo en local se agregó
+`E2E_CPU_LENTO=<n>` (frena n veces la CPU de cada ventana por CDP): con `6` se reproducen las fallas
+de EDET en las mismas líneas.
+
+- **Causa de fondo:** el historial de comandos de la máquina virtual (tabla de hasta 500 filas, con
+  filtros) se procesa entero con cada comando; sin placa de video (runners) la ventana se atrasa y
+  el simulador contesta tarde. Probado con la CPU frenada: con 20 filas pasa; rastrear por
+  identidad no cambia nada (PrimeNG ya lo hace); **500 filas con paginador de a 25: pasa todo.**
+  Queda el paginador (`command-history.component.html`).
+- **Arranque:** la app lee los puestos de a uno; con 20 puestos y una PC lenta la vuelta pasa de
+  1 s y el impulso (que llega en min/2) se lee después del mínimo → "OK". Los parámetros del test
+  pasaron de mínimo 2 s / máximo 5 s a **6 s / 12 s** (cada ensayo ~7 s más) y la espera de los
+  resultados a 30 s. Es del test, no de la app.
+- **Idioma en Linux:** Chromium ignora `--lang` y toma `LANG` / `LANGUAGE`: la app de los tests se
+  lanza con `LANG=es_ES.UTF-8` y `LANGUAGE=es`.
+- **En el CI:** un reintento por test (`retries: 1`; si pasa al reintentar el reporte lo marca
+  "flaky") y traces solo de los que fallan (el reporte pesaba 2,1 GB).
+
+En local: con `E2E_CPU_LENTO=6` pasan los tests de EDET que fallaron; sin frenar, la suite completa
+da 63 pasados y 3 salteados.
+
 El botón de portables (`workflow_dispatch`) recién aparece cuando el workflow esté en `main`.
 
 ## Hallazgos de QA
