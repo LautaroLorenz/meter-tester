@@ -29,8 +29,8 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
 | **4. Ensayo completo** | ✅ 4a `148c70a`, 4b `9a51103`, 4c `ab0de63`, 4d `9198242` | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
-| **6. Protocolo serial** | ⏭️ Sigue | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
-| **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
+| **6. Protocolo serial** | ✅ `cc25a46` (ver "Fase 6 — detalle") | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
+| **7. Modo interactivo** | ⏭️ Sigue | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
 | **8. CI** | ⏳ | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
 
 ## Dudas resueltas
@@ -271,6 +271,35 @@ esperada (`test.fail`): cuando se corrija, el test avisa.
 4. Volver durante la medición: pedir confirmación antes de descartar el ensayo.
 5. Falla permanente: aviso de error cada ~4,7 s o uno solo.
 
+## Fase 6 — detalle
+
+Tests del protocolo serial sin interfaz ni Electron, con Vitest 3.2.7: `npm run test:serial`
+(35 tests, ~15 s; casi todo el tiempo son las esperas reales de 1,5 s de los reintentos).
+Config en `test/serial/vitest.config.ts`; los tests viven en `test/serial/`, fuera de `app/`, para no
+entrar en la compilación del proceso main.
+
+- **`command-processor.test.ts`** (14): arma la respuesta aunque llegue byte a byte; acepta valores
+  binarios iguales a `|`, `B` o `Z` (posiciones fijas); descarta sin comando pendiente, comando sin
+  respuesta conocida, otro dispositivo, sin fin de trama, separador fuera de lugar y trama
+  incompleta (a los 100 ms). Comportamiento actual con bytes de más: después de una respuesta se
+  descartan; de dos respuestas juntas toma la primera; un byte suelto antes de la trama o restos de
+  una respuesta a medias hacen descartar la respuesta buena (no busca el inicio de trama).
+- **`codificacion.test.ts`** (13): números compactos (big-endian, punto fijo) con los ejemplos del
+  código, redondeo, rangos, factor de potencia, y bloques de las tramas en renderer y main.
+- **`machine.test.ts`** (8): reintentos de `machine.ts` con el puerto simulado de serialport
+  (`@serialport/binding-mock`), `electron` y `serialport` (bindings nativos) simulados. Responde al
+  primer intento; reenvía a los 1,5 s y toma la respuesta; sin respuesta: 3 envíos y "Timeout" a
+  los ~4,5 s; trama corrupta y vale la del reintento; respuesta tardía tomada como la del reintento;
+  respuesta de otro puesto aceptada; respuesta de otro dispositivo → timeout; generador.
+
+Particularidades: en `app/` cada `.ts` tiene su `.js` compilado al lado y Vite prioriza el `.js`
+(que usa `require` y no pasa por los mocks): la config prioriza `.ts`. Los paquetes de serialport
+están en `app/node_modules`: alias en la config.
+
+El test viejo hecho a mano (`app/resources/machine/command-processor-test.js` y
+`command-processor-test-run.sh`, con una ruta fija a `/home/ubuntu/...`) se borró en `cc25a46`: lo
+reemplaza esta fase.
+
 ## Hallazgos de QA
 
 Comportamientos de la app encontrados al escribir los tests. **Las correcciones de código se hacen
@@ -300,6 +329,9 @@ app hace hoy y cada hallazgo se anota acá.
   el número de otro puesto (fase 5).
 - **Generador en error y "Comenzar medición" habilitado** (EDET, fase 5).
 - **Volver durante la medición no pide confirmación** y descarta el ensayo (fase 5).
+- **No busca el inicio de trama.** Si antes de una respuesta llega un byte suelto o quedan restos de
+  una respuesta a medias, el `CommandProcessor` descarta la respuesta buena; la salva el reintento
+  (1,5 s más). Ver fase 6.
 
 ### Correcciones pendientes (al final)
 

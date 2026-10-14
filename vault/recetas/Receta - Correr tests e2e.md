@@ -17,6 +17,7 @@ de nvm ([[ADR - Node 20 y Playwright 1.64]]).
 | Un solo cliente, sin recompilar | `source ~/.nvm/nvm.sh && nvm use && npx playwright test -c e2e/playwright.config.ts e2e/ --project=chaco` |
 | Ver los tests en vivo (ventanas visibles) | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:headed` |
 | Reporte HTML: capturas y trace de cada test | `source ~/.nvm/nvm.sh && nvm use && npm run e2e:report` |
+| Tests del protocolo serial (sin interfaz, ~15 s) | `source ~/.nvm/nvm.sh && nvm use && npm run test:serial` |
 | Confirmar que la base real no se tocó (macOS) | `stat -f "%Sm" ~/Library/Application\ Support/oelec-ce-soft/database.db` |
 
 Salidas (ignoradas por git): `e2e/report/` y `e2e/screenshots/`. Ojo: pasar `--reporter=line`
