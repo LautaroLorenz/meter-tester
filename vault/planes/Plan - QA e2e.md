@@ -27,7 +27,7 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2. Base de los tests** | ✅ `660d72f` | Fixture `launched` (una app limpia por test, con trace adjunto y captura si falla); modo visible `npm run e2e:headed`; `automationId` en el menú; un test que recorre las 6 pantallas y los 2 diálogos del menú. Sin video: alcanza con las capturas (además, con Electron 25 la grabación cuelga el arranque). El parámetro de cliente se suma en la 2b. | En el reporte, el trace del recorrido con todas las pantallas; `npm run e2e:headed` muestra el recorrido en vivo. |
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
-| **4. Ensayo completo** | ⏭️ 4a ✅ `148c70a`, 4b ✅ `9a51103`, 4c ✅ `ab0de63`; sigue 4d | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
+| **4. Ensayo completo** | ✅ 4a `148c70a`, 4b `9a51103`, 4c `ab0de63`, 4d `9198242` | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
@@ -188,6 +188,17 @@ Reglas (del código, confirmadas por el usuario):
   "Correcciones pendientes"); en la 4d el test documenta lo que sale hoy.
 - **EDET (20 puestos):** cada paso se dibuja en una hoja A4 fija; verificar que entren los 20 y que
   el test lo detecte si deja de entrar (el PDF cambia seguido).
+
+✅ `9198242` (checkpoint del usuario OK). Cada hoja del reporte es un `div` A4 de alto fijo
+(`app-pdf-page .page`) que html2canvas captura como imagen: si el contenido se pasa, el PDF lo
+corta sin aviso. El ensayo completo de cada cliente mide hasta dónde llega el contenido de cada
+hoja (`hojasPdf` en `e2e/support/ensayo.ts`) y falla si supera el A4; también verifica 5 páginas
+(preparación + 4 pasos) y el encabezado (logo que carga, o nombre de la empresa si no hay logo).
+El reporte dibuja todos los puestos (los inactivos, con la fila vacía). Alto usado / alto de la
+hoja (px): EDET 873 preparación y 961 por paso de 1123 (86 %, entran ~6 filas más); EDELAP 561/553;
+Tandil 509/485; Chaco 406/383. Comprobado que detecta: 25 filas de más llevan una hoja a 1467 px.
+Chaco: `e2e/pdf.spec.ts` espera "Secheep" y está marcado como falla esperada (`test.fail`)
+mientras el hallazgo siga; cuando se corrija, el test avisa y hay que sacar la marca.
 
 ### Fuera de la fase 4
 
