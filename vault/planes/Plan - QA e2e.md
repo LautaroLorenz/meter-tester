@@ -28,8 +28,8 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **2b. Configuraciones por cliente** | ✅ `55acdc3` (portable probado en Windows) | Catálogo en `src/environments/client.<cliente>.ts`; un build e2e y un proyecto de Playwright por cliente (32 tests = 8 × 4); test que verifica la configuración de cada build; `npm run electron:build:<cliente>` con el cliente en el nombre del archivo. Ver "Configuración por cliente". | El reporte muestra cada test una vez por cliente, todos en verde; el portable de un cliente generado en la PC con Windows. |
 | **3. ABM básicos** | ✅ `5b01748` | 15 casos, solo en EDET (`@un-cliente`): marcas (alta, validación, edición, búsqueda, baja, baja cancelada), modelos (alta, validaciones, edición, baja con marca en uso) y plantillas (alta con un paso, validaciones, nombre repetido, edición, baja). | Validar la lista de casos con sus capturas. |
 | **4. Ensayo completo** | ✅ 4a `148c70a`, 4b `9a51103`, 4c `ab0de63`, 4d `9198242` | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
-| **5. Fallas del simulador** | ⏳ Detalle más adelante | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
-| **6. Protocolo serial** | ⏳ | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
+| **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
+| **6. Protocolo serial** | ⏭️ Sigue | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
 | **7. Modo interactivo** | ⏳ | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
 | **8. CI** | ⏳ | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
 
@@ -212,6 +212,65 @@ mientras el hallazgo siga; cuando se corrija, el test avisa y hay que sacar la m
   (Chaco y EDET): no se reprodujo. En la 4b los 4 clientes ejecutaron el ensayo completo sin
   quedar en blanco: verificado, no se reproduce.
 
+## Fase 5 — detalle
+
+Empezada el 2026-10-14. Primero se relevó qué hace hoy la app en cada falla (código + experimentos
+con el simulador); con eso el usuario decide qué es correcto y se escriben los tests.
+
+### Fallas programables en el simulador (✅ `16f5675`)
+
+Sección "Fallas" en el panel de la máquina virtual y `window.__simulador.addFault / clearFaults /
+getFaults` para los tests. Por dispositivo (calculador, generador, patrón), por puesto (calculador)
+y por cantidad de respuestas: sin respuesta, responde tarde (ms), trama corrupta, responde otro
+puesto, resultado ignorado (signo X) y sobrecorriente (patrón; tiene en cuenta el multiplicador).
+No se recuerdan entre sesiones, para no dejar una falla olvidada en desarrollo.
+
+### Cómo maneja hoy la app una falla de comunicación (código)
+
+- Main (`app/resources/machine/machine.ts`): espera la respuesta 1,5 s; si no llega reenvía el
+  comando hasta 2 veces (3 intentos, ~4,5 s) y devuelve error.
+- `CommandProcessor` descarta sin aviso una trama inválida (inicio, fin, separadores, tamaño):
+  cuenta como sin respuesta.
+- Renderer (`MachineDeviceComponent.write$`): con error, el dispositivo pasa a Error y muestra
+  "Error de comunicación puesto [NN]" (calculador) o "Error de comunicación [Patrón|Generador]".
+- La calculadora lee a todos los puestos en una vuelta y asigna las respuestas por posición.
+- Main reconoce la respuesta por dispositivo, no por puesto; nadie valida el puesto de la respuesta.
+
+### Qué pasa hoy (experimentos, contraste secuencial, 3 puestos con 0,10 / 0,20 / 0,30 %)
+
+| Caso | Qué pasa hoy |
+|---|---|
+| Calculador sin respuesta 1 vez | El reintento lo recupera; nada visible. |
+| Trama corrupta 1 vez | Igual: se descarta y el reintento la recupera. |
+| Sin respuesta 3 veces seguidas (falla un pedido completo) | Aviso "Error de comunicación puesto [02]" y sigue midiendo. |
+| Puesto 2 sin respuesta siempre | **Error:** el puesto 2 muestra el valor del puesto 3 (0,30) y el 3 queda vacío; sigue "Calculando" sin fin, con un aviso cada ~4,7 s. |
+| Responde tarde (1,6 s) siempre | En 49 respuestas no hubo cruces entre puestos (el riesgo del código no se reprodujo). |
+| Responde otro puesto | La app la acepta igual (no valida el puesto); con el mismo valor no se nota. |
+| Resultado ignorado (X) siempre | El puesto queda sin valor y "Calculando" sin fin, sin aviso. |
+| Patrón sin respuesta siempre | Aviso cada ~4,7 s; la medición sigue. |
+| Generador (EDET) sin respuesta al iniciar | "Realizando start" ~4,5 s, después generador en Error y aviso. Al volver la comunicación sigue en Error; **"Comenzar medición" queda habilitado** con el generador en error. Para reintentar: "Detener todo" → "Iniciar generador". |
+| Sobrecorriente (EDET, 1 A) | Aviso fijo "Sobrecarga del generador", calculador Detenido, los puestos quedan "Calculando". |
+| "Detener todo" midiendo | Vuelve a "Iniciar generador"; se puede volver a medir. |
+| Volver (flecha) midiendo | Vuelve a la lista de ensayos sin preguntar y cierra la máquina virtual; el ensayo se pierde. |
+
+### Tests (`e2e/fallas.spec.ts`, en EDET) — ✅ `16f5675`, checkpoint del usuario OK
+
+Prueban el comportamiento de hoy (decisión del usuario: los cambios van al final). 8 tests, ~3 min:
+calculador (falla puntual que se recupera, 3 intentos con aviso, respuesta tarde sin cruces,
+respuesta de otro puesto aceptada, resultado X sin valor ni aviso), puesto que no responde nunca
+(aviso repetido, "Calculando"), patrón sin respuesta, generador sin respuesta (queda en Error,
+"Comenzar medición" habilitado, se reintenta con "Detener todo"), sobrecorriente, "Detener todo"
+y volver a medir, y volver sale sin preguntar. Los resultados corridos de puesto son falla
+esperada (`test.fail`): cuando se corrija, el test avisa.
+
+### Deuda para el final (decisiones del usuario, cambian el comportamiento)
+
+1. Puesto que no responde: qué mostrar (vacío + error en ese puesto) y cuándo cortar.
+2. Resultado ignorado (X): avisar y hasta cuándo esperar.
+3. Generador en error: si se debe poder "Comenzar medición".
+4. Volver durante la medición: pedir confirmación antes de descartar el ensayo.
+5. Falla permanente: aviso de error cada ~4,7 s o uno solo.
+
 ## Hallazgos de QA
 
 Comportamientos de la app encontrados al escribir los tests. **Las correcciones de código se hacen
@@ -235,10 +294,18 @@ app hace hoy y cada hallazgo se anota acá.
 - **Integradores con punto decimal.** Los integradores se escriben con coma decimal; si se escribe
   o pega "101.009" con punto, queda 101009 sin aviso.
 - **El PDF de Chaco dice "EDET".** Ver 4d.
+- **Resultados corridos de puesto (error).** Si un puesto no responde, la calculadora asigna las
+  respuestas por posición y el valor del puesto siguiente aparece en el que falló (fase 5).
+- **Respuesta sin validar el puesto.** La app acepta una respuesta de la calculadora aunque traiga
+  el número de otro puesto (fase 5).
+- **Generador en error y "Comenzar medición" habilitado** (EDET, fase 5).
+- **Volver durante la medición no pide confirmación** y descarta el ensayo (fase 5).
 
 ### Correcciones pendientes (al final)
 
 1. Redondear el error de integración antes de comparar (y casos ±1 % en `e2e/reglas.spec.ts`).
+1. Resultados por puesto aunque uno no responda (y validar el puesto de la respuesta) — fase 5.
+1. Las 5 decisiones de la fase 5 ("Deuda para el final").
 2. Nombre de la empresa por cliente en el catálogo: Chaco → "Secheep" (4d).
 3. Decidir sobre los avisos que tapan el "Guardar", los avisos fijos del primer arranque,
    "constraste" y el punto decimal en los integradores.
