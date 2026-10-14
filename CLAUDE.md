@@ -24,4 +24,18 @@ App de escritorio en Electron: renderer Angular (`src/`) y proceso main en Node 
 
 <!-- VAULT-SYNC-START -->
 
+# Reglas del vault — ÍNDICE (NO es el texto completo)
+
+Cada entrada es un puntero. **Antes de escribir código en un área, LEER su .md**
+con Read. Todas viven en `/Users/lautaroenriquelorenz/Documents/Git/meter-tester/vault/reglas/` — abrirlas por su nombre de archivo.
+
+El vault MANDA: en conflicto con este CLAUDE.md o con cualquier .cursor*/.mdc
+de un subrepo, gana el archivo del vault.
+
+## 🚨 Críticas — la regla va acá; el detalle, en el archivo
+
+### Regla - Cuenta de GitHub LautaroLorenz
+**BLOQUEANTE.** En meter-tester, todo lo que se hace con `gh` (PRs, reviews, merges, CI, API) va con la cuenta **`LautaroLorenz`**, la dueña del repo. Nunca con otra cuenta, aunque sea la activa. Decidido por el usuario el 2026-10-14. En la máquina hay más de una cuenta logueada en `gh` y la activa puede ser otra (por ejemplo, `jim-lautaro-cargoproduce`, de otro trabajo). Con esa cuenta se abrió el PR #71: no es admin del repo y, como autora del PR, no lo puede aprobar, así que el merge quedó bloqueado. No cambiar la cuenta activa de `gh` (la usan otros proyectos): pasar el token de `LautaroLorenz` en cada comando. Antes de crear o mergear algo, confirmar la cuenta:
+→ `Regla - Cuenta de GitHub LautaroLorenz.md`
+
 <!-- VAULT-SYNC-END -->

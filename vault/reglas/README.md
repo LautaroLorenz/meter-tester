@@ -6,3 +6,7 @@ Una nota por regla. **Este README es el índice que lee el hook**
 
 Una regla con `BLOQUEANTE` en el texto, o `⛔` / `⚠️` en el título, entra al `CLAUDE.md` con
 su extracto; el resto entra como puntero.
+
+## GitHub
+
+- [[Regla - Cuenta de GitHub LautaroLorenz]] — `gh` siempre con la cuenta `LautaroLorenz` (token por comando, sin cambiar la cuenta activa).
