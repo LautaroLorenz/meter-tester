@@ -1,0 +1,135 @@
+# CI de meter-tester (fase 8 del plan de QA, ver vault/planes/Plan - QA e2e.md)
+#
+# - PR hacia release/* o main, y merge a esas ramas: tests en Linux (rápido) y Windows (donde se
+#   usa la app).
+# - A mano ("Run workflow" en la pestaña Actions): elegir el sistema (macOS solo así) y, si hace
+#   falta por una emergencia, generar los portables de Windows de los 4 clientes.
+# El ✅/❌ es informativo: no bloquea los merges. El lint se muestra pero no pone el CI en rojo
+# (la app tiene errores de lint previos, pendientes para el final).
+name: CI
+
+on:
+  pull_request:
+    branches: [main, 'release/**']
+  push:
+    branches: [main, 'release/**']
+  workflow_dispatch:
+    inputs:
+      sistema:
+        description: Dónde correr los tests
+        type: choice
+        options: [linux-y-windows, linux, windows, macos, todos]
+        default: linux-y-windows
+      ejecutables:
+        description: Generar los portables de Windows de los 4 clientes (emergencias)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sistemas:
+    name: Elegir sistemas
+    runs-on: ubuntu-latest
+    outputs:
+      lista: ${{ steps.elegir.outputs.lista }}
+    steps:
+      - id: elegir
+        shell: bash
+        run: |
+          case "${{ github.event.inputs.sistema || 'linux-y-windows' }}" in
+            linux) lista='["ubuntu-latest"]' ;;
+            windows) lista='["windows-latest"]' ;;
+            macos) lista='["macos-latest"]' ;;
+            todos) lista='["ubuntu-latest","windows-latest","macos-latest"]' ;;
+            *) lista='["ubuntu-latest","windows-latest"]' ;;
+          esac
+          echo "lista=$lista" >> "$GITHUB_OUTPUT"
+
+  tests:
+    name: Tests (${{ matrix.os }})
+    needs: sistemas
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(needs.sistemas.outputs.lista) }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # instala también las dependencias de app/ y los módulos nativos para Electron (postinstall)
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint (informativo)
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Tests del protocolo serial
+        run: npm run test:serial
+
+      # Ubuntu 24 restringe los namespaces que usa el sandbox de Electron
+      - name: Permitir el sandbox de Electron (Linux)
+        if: runner.os == 'Linux'
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Tests e2e (Linux, con pantalla virtual)
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum npm run e2e
+
+      - name: Tests e2e
+        if: runner.os != 'Linux'
+        run: npm run e2e
+
+      - name: Subir reporte, capturas y traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-e2e-${{ matrix.os }}
+          path: |
+            e2e/report
+            e2e/screenshots
+          retention-days: 14
+          if-no-files-found: ignore
+
+  ejecutables:
+    name: Portables de Windows (a mano)
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.ejecutables == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Generar los portables de los 4 clientes
+        shell: bash
+        run: |
+          for cliente in edet chaco tandil edelap; do
+            npm run electron:build:$cliente
+          done
+
+      - name: Subir los portables
+        uses: actions/upload-artifact@v4
+        with:
+          name: portables-windows
+          path: release/*.exe
+          retention-days: 30
+          if-no-files-found: error

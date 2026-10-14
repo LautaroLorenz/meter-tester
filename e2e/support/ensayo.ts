@@ -188,19 +188,36 @@ export interface Falla {
   delayMs?: number | null;
 }
 
+type PasoSimulado = 'vacuum' | 'contrast' | 'boot' | 'integration';
+type AjustePuesto = { outcome: 'aprueba' | 'falla' | 'valor'; value?: number | null };
+
+/** `window.__simulador` de la ventana de la máquina virtual (ver SimulatorService) */
+interface ConSimulador {
+  __simulador: {
+    setScenario(escenario: Escenario): void;
+    setStand(puesto: number, paso: PasoSimulado, ajuste: AjustePuesto): void;
+    addFault(falla: Falla): void;
+    clearFaults(): void;
+    getFaults(): Falla[];
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function simulador(ventana: Page) {
   return {
     escenario: (escenario: Escenario): Promise<void> =>
-      ventana.evaluate((valor) => (window as any).__simulador.setScenario(valor), escenario),
-    puesto: (
-      puesto: number,
-      paso: 'vacuum' | 'contrast' | 'boot' | 'integration',
-      ajuste: { outcome: 'aprueba' | 'falla' | 'valor'; value?: number | null },
-    ): Promise<void> =>
-      ventana.evaluate(([p, s, a]) => (window as any).__simulador.setStand(p, s, a), [puesto, paso, ajuste] as const),
-    falla: (falla: Falla): Promise<void> => ventana.evaluate((f) => (window as any).__simulador.addFault(f), falla),
-    sinFallas: (): Promise<void> => ventana.evaluate(() => (window as any).__simulador.clearFaults()),
-    fallasActivas: (): Promise<Falla[]> => ventana.evaluate(() => (window as any).__simulador.getFaults()),
+      ventana.evaluate((valor) => (window as unknown as ConSimulador).__simulador.setScenario(valor), escenario),
+    puesto: (puesto: number, paso: PasoSimulado, ajuste: AjustePuesto): Promise<void> =>
+      ventana.evaluate(
+        ([p, s, a]) => (window as unknown as ConSimulador).__simulador.setStand(p, s, a),
+        [puesto, paso, ajuste] as const,
+      ),
+    falla: (falla: Falla): Promise<void> =>
+      ventana.evaluate((f) => (window as unknown as ConSimulador).__simulador.addFault(f), falla),
+    sinFallas: (): Promise<void> =>
+      ventana.evaluate(() => (window as unknown as ConSimulador).__simulador.clearFaults()),
+    fallasActivas: (): Promise<Falla[]> =>
+      ventana.evaluate(() => (window as unknown as ConSimulador).__simulador.getFaults()),
   };
 }
 
