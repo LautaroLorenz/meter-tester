@@ -30,8 +30,8 @@ virtual en lugar del equipo por USB. Se avanza **por fases**: cada una cierra co
 | **4. Ensayo completo** | ✅ 4a `148c70a`, 4b `9a51103`, 4c `ab0de63`, 4d `9198242` | En sub-fases 4a–4d: simulador configurable (desarrollo y e2e), ensayo completo por cliente, reglas en sus bordes y PDF. Ver "Fase 4 — detalle". | Uno por sub-fase (ver detalle). |
 | **5. Fallas del simulador** | ✅ `16f5675` (ver "Fase 5 — detalle") | Simulador programable: timeout, trama corrupta, sin respuesta, cancelar un ensayo. | Definir qué debería pasar en cada falla y que el test lo compruebe. |
 | **6. Protocolo serial** | ✅ `cc25a46` (ver "Fase 6 — detalle") | Vitest sobre `CommandProcessor` y `machine` con `@serialport/binding-mock`, sin UI. | Lista de comandos cubiertos; `npm run test:serial`. |
-| **7. Modo interactivo** | ⏭️ Sigue | Flag de CDP (`--remote-debugging-port`) + MCP para que Claude maneje la app en vivo. | Pedir "probá X" y recibir capturas de la app real. |
-| **8. CI** | ⏳ | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
+| **7. Modo interactivo** | ✅ `759c551` | Solo máquina virtual (decisión del usuario; la real, más adelante). `npm run interactivo -- <cliente>` abre la app visible y Claude la maneja con `e2e/interactivo/ejecutar.js` (ver [[Receta - Modo interactivo]]). CDP no funciona con Electron 25: un servidor local mantiene la app con `_electron.launch`. | Pedir "probá X" y recibir capturas de la app real. |
+| **8. CI** | ⏭️ Sigue (repo público: GitHub Actions gratis y sin límite de minutos en Linux, Windows y macOS) | Matriz macOS + Linux + Windows. Arreglar los workflows (Linux usa `ubuntu-18.04`, retirada; Windows sigue en Node 18.16), Xvfb en Linux, módulos nativos por plataforma, subir reportes, traces y capturas como archivos de la corrida. | PR con el check en verde y los archivos descargables. |
 
 ## Dudas resueltas
 
