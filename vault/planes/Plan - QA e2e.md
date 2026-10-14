@@ -60,12 +60,12 @@ que en todas las configuraciones de cliente va todo en `false`.
 
 ### Catálogo de clientes
 
-| Cliente | Puestos | Patrón (`PatternEnum`) | Generador (`GeneratorEnum`) | Logo en el repo |
-|---|---|---|---|---|
-| EDET - Tucumán | 20 | `Sm5050` | `SemiautomaticPYC5050` | `company-logo-edet.png` / `.svg` |
-| Chaco | 3 | `Physical` | `Manual` | Sin logo (`companyLogoPath: ''`): el PDF muestra el nombre de la empresa, **Secheep** |
-| Tandil | 6 | `Virtual` | `Manual` | `company-logo-usina-tandil.png` |
-| EDELAP - La Plata | 8 | `Physical` | `Manual` | `company-logo-edelap.png` |
+| Cliente | Empresa (`companyName`) | Puestos | Patrón (`PatternEnum`) | Generador (`GeneratorEnum`) | Logo en el repo |
+|---|---|---|---|---|---|
+| EDET - Tucumán | EDET | 20 | `Sm5050` | `SemiautomaticPYC5050` | `company-logo-edet.png` / `.svg` |
+| Chaco | Secheep | 3 | `Physical` | `Manual` | Sin logo (`companyLogoPath: ''`): el PDF muestra el nombre de la empresa, **Secheep** |
+| Tandil | Usina Tandil | 6 | `Virtual` | `Manual` | `company-logo-usina-tandil.png` |
+| EDELAP - La Plata | EDELAP | 8 | `Physical` | `Manual` | `company-logo-edelap.png` |
 
 Resuelto en la 2b: el `environment.prod.ts` commiteado mezclaba clientes (logo de Usina Tandil con
 la configuración de EDET). Ahora toma los valores del catálogo y ya no se edita a mano.
@@ -184,8 +184,10 @@ Reglas (del código, confirmadas por el usuario):
 ### 4d. PDF
 
 - **Chaco:** el PDF muestra "EDET" porque Chaco no tiene logo y el nombre de la empresa está fijo.
-  Debe mostrar "Secheep" (la empresa de Chaco). La corrección va al final con las demás (ver
-  "Correcciones pendientes"); en la 4d el test documenta lo que sale hoy.
+  Debe mostrar "Secheep" (la empresa de Chaco). **Corregido** en `57f4827` (a pedido del usuario, antes de la
+  fase 7): `companyName` en el catálogo de clientes (`ClientConfig`); el reporte lo usa y, si un
+  entorno no lo trae (environment.ts, dev, web), sigue usando el de client-settings. En el entorno
+  es opcional para no tocar los entornos locales.
 - **EDET (20 puestos):** cada paso se dibuja en una hoja A4 fija; verificar que entren los 20 y que
   el test lo detecte si deja de entrar (el PDF cambia seguido).
 
@@ -197,8 +199,8 @@ hoja (`hojasPdf` en `e2e/support/ensayo.ts`) y falla si supera el A4; también v
 El reporte dibuja todos los puestos (los inactivos, con la fila vacía). Alto usado / alto de la
 hoja (px): EDET 873 preparación y 961 por paso de 1123 (86 %, entran ~6 filas más); EDELAP 561/553;
 Tandil 509/485; Chaco 406/383. Comprobado que detecta: 25 filas de más llevan una hoja a 1467 px.
-Chaco: `e2e/pdf.spec.ts` espera "Secheep" y está marcado como falla esperada (`test.fail`)
-mientras el hallazgo siga; cuando se corrija, el test avisa y hay que sacar la marca.
+Chaco: `e2e/pdf.spec.ts` verifica "Secheep" (ya sin falla esperada) y el ensayo completo de cada
+cliente sin logo verifica el nombre del catálogo.
 
 ### Fuera de la fase 4
 
@@ -322,7 +324,7 @@ app hace hoy y cada hallazgo se anota acá.
   decimales (los que se muestran) antes de comparar, y sumar al test de la 4c los casos ±1 %.
 - **Integradores con punto decimal.** Los integradores se escriben con coma decimal; si se escribe
   o pega "101.009" con punto, queda 101009 sin aviso.
-- **El PDF de Chaco dice "EDET".** Ver 4d.
+- ~~**El PDF de Chaco dice "EDET".**~~ Corregido: ver 4d.
 - **Resultados corridos de puesto (error).** Si un puesto no responde, la calculadora asigna las
   respuestas por posición y el valor del puesto siguiente aparece en el que falló (fase 5).
 - **Respuesta sin validar el puesto.** La app acepta una respuesta de la calculadora aunque traiga
@@ -338,7 +340,7 @@ app hace hoy y cada hallazgo se anota acá.
 1. Redondear el error de integración antes de comparar (y casos ±1 % en `e2e/reglas.spec.ts`).
 1. Resultados por puesto aunque uno no responda (y validar el puesto de la respuesta) — fase 5.
 1. Las 5 decisiones de la fase 5 ("Deuda para el final").
-2. Nombre de la empresa por cliente en el catálogo: Chaco → "Secheep" (4d).
+2. ~~Nombre de la empresa por cliente en el catálogo: Chaco → "Secheep" (4d).~~ Hecho.
 3. Decidir sobre los avisos que tapan el "Guardar", los avisos fijos del primer arranque,
    "constraste" y el punto decimal en los integradores.
 
