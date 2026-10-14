@@ -68,9 +68,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      # instala también las dependencias de app/ y los módulos nativos para Electron (postinstall)
+      # Sin el postinstall (electron-builder install-app-deps): recompila sqlite3 para Electron y en
+      # los runners falla (Linux no compila, Windows no reconoce el Visual Studio nuevo). sqlite3 y
+      # serialport son N-API: los binarios precompilados que baja un `npm ci` común andan en Electron.
+      # `npm rebuild` corre los scripts de las dependencias (p. ej. bajar Electron), no el postinstall.
       - name: Instalar dependencias
-        run: npm ci
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild
+          npm ci --prefix app
 
       - name: Lint (informativo)
         continue-on-error: true
@@ -116,14 +122,19 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
+      # igual que en los tests (ver arriba)
       - name: Instalar dependencias
-        run: npm ci
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild
+          npm ci --prefix app
 
+      # sin recompilar los módulos nativos al empaquetar, por lo mismo
       - name: Generar los portables de los 4 clientes
         shell: bash
         run: |
           for cliente in edet chaco tandil edelap; do
-            npm run electron:build:$cliente
+            npm run electron:build:$cliente -- -c.npmRebuild=false
           done
 
       - name: Subir los portables

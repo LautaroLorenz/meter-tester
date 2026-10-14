@@ -1,7 +1,8 @@
 // Genera el release de un cliente: compila el proceso main, el renderer con la configuración del
 // cliente (src/environments/client.<cliente>.ts) y empaqueta con electron-builder, con el nombre
 // del cliente en el archivo generado.
-// Uso: node scripts/release.js <cliente>   (o npm run electron:build:<cliente>)
+// Uso: node scripts/release.js <cliente> [opciones de electron-builder]
+//      (o npm run electron:build:<cliente> -- [opciones])
 const { spawnSync } = require('child_process');
 
 const CLIENTS = {
@@ -34,5 +35,7 @@ run('electron-builder/cli.js', [
     '--publish=never',
     `-c.artifactName=\${productName}-${label}-\${version}-\${arch}.\${ext}`,
     `-c.win.artifactName=OELEC - CE Soft - ${label} - \${version}.\${ext}`,
-    `-c.linux.artifactName=OELEC - CE Soft - ${label} - \${version}.\${ext}`
+    `-c.linux.artifactName=OELEC - CE Soft - ${label} - \${version}.\${ext}`,
+    // opciones extra para electron-builder (p. ej. el CI pasa -c.npmRebuild=false)
+    ...process.argv.slice(3)
 ]);
